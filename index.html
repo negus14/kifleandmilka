@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kifle & Milka — August 16, 2026</title>
-  <meta name="description" content="Join us in celebrating the wedding of Kifle and Milka on August 16, 2026 in Winnipeg, Manitoba, Canada.">
+  <title>Kifle & Milka — August 1 & 2, 2026</title>
+  <meta name="description" content="Join us in celebrating the wedding of Kifle and Milka on August 1st & 2nd, 2026 in Winnipeg, Manitoba, Canada.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Great+Vibes&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Pinyon+Script&family=Josefin+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after {
       margin: 0;
@@ -25,9 +25,9 @@
       --color-tan-dark: #b5a992;
       --color-cream-dark: #efe4d0;
 
-      --font-script: 'Great Vibes', cursive;
+      --font-script: 'Pinyon Script', cursive;
       --font-serif: 'Cormorant Garamond', Georgia, serif;
-      --font-sans: 'Montserrat', system-ui, sans-serif;
+      --font-sans: 'Josefin Sans', system-ui, sans-serif;
 
       --section-padding: clamp(5rem, 12vw, 9rem);
       --container-width: min(88%, 1060px);
@@ -35,12 +35,12 @@
 
     html {
       scroll-behavior: smooth;
-      font-size: 16px;
+      font-size: 18px;
     }
 
     body {
       font-family: var(--font-sans);
-      font-weight: 300;
+      font-weight: 400;
       color: var(--color-dark);
       background: var(--color-cream);
       line-height: 1.7;
@@ -93,7 +93,7 @@
 
     .nav__link {
       font-family: var(--font-sans);
-      font-size: 0.65rem;
+      font-size: 0.76rem;
       font-weight: 500;
       letter-spacing: 0.2em;
       text-transform: uppercase;
@@ -191,7 +191,7 @@
       inset: 0;
       background:
         linear-gradient(180deg, rgba(45, 43, 37, 0.25) 0%, rgba(45, 43, 37, 0.4) 100%),
-        url('https://images.unsplash.com/photo-1519741497674-611481863552?w=1600&q=80') center/cover no-repeat;
+        url('images/photo-1.jpg') center/cover no-repeat;
       transform: scale(1.05);
       animation: heroZoom 20s ease-in-out infinite alternate;
     }
@@ -208,7 +208,7 @@
 
     .hero__pretext {
       font-family: var(--font-sans);
-      font-size: 0.65rem;
+      font-size: 0.76rem;
       font-weight: 500;
       letter-spacing: 0.4em;
       text-transform: uppercase;
@@ -242,7 +242,7 @@
       height: 1px;
       background: var(--color-cream);
       margin: 1.5rem auto;
-      opacity: 0.4;
+      opacity: 0.75;
       opacity: 0;
       animation: fadeUp 0.8s ease 0.8s forwards;
     }
@@ -263,7 +263,7 @@
     .hero__btn {
       display: inline-block;
       font-family: var(--font-sans);
-      font-size: 0.65rem;
+      font-size: 0.76rem;
       font-weight: 500;
       letter-spacing: 0.25em;
       text-transform: uppercase;
@@ -284,12 +284,16 @@
 
     .hero__date-line {
       font-family: var(--font-sans);
-      font-size: 0.6rem;
-      font-weight: 400;
-      letter-spacing: 0.3em;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.35em;
       text-transform: uppercase;
       color: var(--color-cream);
       margin-top: 3rem;
+      background: rgba(250, 241, 225, 0.12);
+      display: inline-block;
+      padding: 0.6rem 1.5rem;
+      border: 1px solid rgba(250, 241, 225, 0.2);
       opacity: 0;
       transform: translateY(20px);
       animation: fadeUp 1s ease 1.5s forwards;
@@ -311,20 +315,20 @@
 
     .countdown__number {
       font-family: var(--font-serif);
-      font-size: clamp(1.6rem, 3.5vw, 2.4rem);
-      font-weight: 300;
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 500;
       color: var(--color-cream);
       line-height: 1;
     }
 
     .countdown__label {
       font-family: var(--font-sans);
-      font-size: 0.55rem;
+      font-size: 0.7rem;
       font-weight: 400;
       letter-spacing: 0.2em;
       text-transform: uppercase;
       color: var(--color-cream);
-      opacity: 0.5;
+      opacity: 0.7;
       margin-top: 0.4rem;
     }
 
@@ -436,7 +440,7 @@
     }
 
     .story__text {
-      font-size: 0.88rem;
+      font-size: 0.95rem;
       color: var(--color-dark);
       line-height: 2;
       margin-bottom: 1.25rem;
@@ -468,12 +472,12 @@
 
     .info-card__label {
       font-family: var(--font-sans);
-      font-size: 0.6rem;
+      font-size: 0.72rem;
       font-weight: 600;
       letter-spacing: 0.25em;
       text-transform: uppercase;
       color: var(--color-dark);
-      opacity: 0.5;
+      opacity: 0.7;
       margin-bottom: 1rem;
     }
 
@@ -486,7 +490,7 @@
     }
 
     .info-card__text {
-      font-size: 0.82rem;
+      font-size: 0.92rem;
       color: var(--color-dark);
       line-height: 1.8;
       opacity: 0.7;
@@ -494,11 +498,15 @@
 
     .info-card__time {
       font-family: var(--font-serif);
-      font-size: 1.1rem;
-      font-weight: 300;
+      font-size: 1.4rem;
+      font-weight: 500;
       color: var(--color-dark);
-      margin-top: 1rem;
-      opacity: 0.6;
+      margin-top: 1.25rem;
+      opacity: 1;
+      background: rgba(45, 43, 37, 0.06);
+      display: inline-block;
+      padding: 0.4rem 1.2rem;
+      border: 1px solid rgba(45, 43, 37, 0.12);
     }
 
     /* ===== QUOTE (Section 4) ===== */
@@ -526,7 +534,7 @@
       letter-spacing: 0.2em;
       text-transform: uppercase;
       color: var(--color-dark);
-      opacity: 0.4;
+      opacity: 0.75;
     }
 
     /* ===== FEATURED PHOTO (Section 5) ===== */
@@ -548,7 +556,7 @@
       font-size: 1.3rem;
       color: var(--color-dark);
       margin-top: 1.5rem;
-      opacity: 0.6;
+      opacity: 0.75;
     }
 
     /* ===== LOVE LETTER (Section 6 — Dark) ===== */
@@ -606,20 +614,21 @@
 
     .timeline__hour {
       font-family: var(--font-serif);
-      font-size: 1.4rem;
-      font-weight: 300;
+      font-size: 1.7rem;
+      font-weight: 500;
       color: var(--color-dark);
       line-height: 1;
     }
 
     .timeline__period {
       font-family: var(--font-sans);
-      font-size: 0.6rem;
+      font-size: 0.76rem;
+      font-weight: 500;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--color-dark);
-      opacity: 0.45;
-      margin-top: 0.3rem;
+      opacity: 0.85;
+      margin-top: 0.35rem;
     }
 
     .timeline__line {
@@ -639,7 +648,7 @@
       border-radius: 50%;
       border: 1px solid var(--color-dark);
       background: var(--color-tan);
-      opacity: 0.5;
+      opacity: 0.7;
     }
 
     .timeline__details {
@@ -660,15 +669,15 @@
       font-weight: 500;
       letter-spacing: 0.05em;
       color: var(--color-dark);
-      opacity: 0.5;
+      opacity: 0.7;
       margin-bottom: 0.5rem;
     }
 
     .timeline__desc {
-      font-size: 0.82rem;
+      font-size: 0.92rem;
       color: var(--color-dark);
       line-height: 1.8;
-      opacity: 0.65;
+      opacity: 0.75;
     }
 
     /* ===== GALLERY (Section 8) ===== */
@@ -731,7 +740,7 @@
       font-weight: 300;
       font-style: italic;
       color: var(--color-dark);
-      opacity: 0.6;
+      opacity: 0.75;
       margin-bottom: 2.5rem;
     }
 
@@ -741,12 +750,12 @@
 
     .form__label {
       display: block;
-      font-size: 0.62rem;
+      font-size: 0.74rem;
       font-weight: 600;
       letter-spacing: 0.2em;
       text-transform: uppercase;
       color: var(--color-dark);
-      opacity: 0.5;
+      opacity: 0.7;
       margin-bottom: 0.5rem;
     }
 
@@ -759,7 +768,7 @@
       border: 1px solid rgba(45, 43, 37, 0.18);
       color: var(--color-dark);
       font-family: var(--font-sans);
-      font-size: 0.88rem;
+      font-size: 0.95rem;
       font-weight: 300;
       transition: border-color 0.3s ease;
       outline: none;
@@ -799,7 +808,7 @@
       align-items: center;
       gap: 0.6rem;
       cursor: pointer;
-      font-size: 0.88rem;
+      font-size: 0.95rem;
       color: var(--color-dark);
       font-weight: 300;
     }
@@ -845,7 +854,7 @@
       border: 1px solid var(--color-dark);
       color: var(--color-cream);
       font-family: var(--font-sans);
-      font-size: 0.65rem;
+      font-size: 0.76rem;
       font-weight: 500;
       letter-spacing: 0.25em;
       text-transform: uppercase;
@@ -867,8 +876,271 @@
       margin-top: 1.25rem;
       font-size: 0.75rem;
       color: var(--color-dark);
-      opacity: 0.35;
+      opacity: 0.75;
       font-style: italic;
+    }
+
+    /* ===== VENUE INFO (two-column details) ===== */
+    .details-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(3rem, 6vw, 5rem);
+      max-width: 960px;
+      margin: 3rem auto 0;
+    }
+
+    .venue-info__heading {
+      font-family: var(--font-serif);
+      font-size: 1.3rem;
+      font-weight: 400;
+      color: var(--color-dark);
+      margin-bottom: 0.75rem;
+    }
+
+    .venue-info__subheading {
+      font-family: var(--font-sans);
+      font-size: 0.76rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--color-dark);
+      opacity: 0.7;
+      margin-bottom: 0.5rem;
+      margin-top: 1.75rem;
+    }
+
+    .venue-info__subheading:first-child {
+      margin-top: 0;
+    }
+
+    .venue-info__text {
+      font-size: 0.94rem;
+      color: var(--color-dark);
+      line-height: 1.9;
+      opacity: 0.7;
+    }
+
+    .venue-info__address {
+      font-family: var(--font-sans);
+      font-size: 0.78rem;
+      color: var(--color-dark);
+      opacity: 0.7;
+      margin-top: 0.25rem;
+      font-style: italic;
+    }
+
+    /* ===== DAY 2 ===== */
+    .day2 {
+      text-align: center;
+      max-width: 620px;
+      margin: 0 auto;
+    }
+
+    .day2__heading {
+      font-family: var(--font-script);
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      color: var(--color-dark);
+      margin-bottom: 1rem;
+    }
+
+    .day2__time {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      font-weight: 500;
+      color: var(--color-dark);
+      opacity: 1;
+      margin-bottom: 1rem;
+      background: rgba(45, 43, 37, 0.06);
+      display: inline-block;
+      padding: 0.4rem 1.2rem;
+      border: 1px solid rgba(45, 43, 37, 0.12);
+    }
+
+    .day2__address {
+      font-size: 0.95rem;
+      color: var(--color-dark);
+      line-height: 1.8;
+      opacity: 0.75;
+    }
+
+    .day2__note {
+      font-family: var(--font-serif);
+      font-size: 0.95rem;
+      font-style: italic;
+      color: var(--color-dark);
+      opacity: 0.7;
+      margin-top: 2rem;
+    }
+
+    /* ===== MENU ===== */
+    .menu-section {
+      max-width: 700px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .menu__heading {
+      font-family: var(--font-script);
+      font-size: clamp(2.2rem, 5vw, 3.2rem);
+      color: var(--color-cream);
+      margin-bottom: clamp(2rem, 4vw, 3rem);
+    }
+
+    .menu__item {
+      margin-bottom: 2rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid rgba(205, 193, 171, 0.15);
+    }
+
+    .menu__item:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .menu__item-name {
+      font-family: var(--font-sans);
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--color-cream);
+      margin-bottom: 0.6rem;
+    }
+
+    .menu__item-desc {
+      font-family: var(--font-serif);
+      font-size: 1rem;
+      font-weight: 300;
+      color: var(--color-tan);
+      line-height: 1.8;
+      opacity: 0.8;
+    }
+
+    .menu__note {
+      margin-top: 2.5rem;
+      font-family: var(--font-serif);
+      font-size: 0.95rem;
+      font-style: italic;
+      color: var(--color-tan);
+      opacity: 0.7;
+    }
+
+    /* ===== THINGS TO DO ===== */
+    .explore-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .explore-col__heading {
+      font-family: var(--font-serif);
+      font-size: 1.3rem;
+      font-weight: 400;
+      color: var(--color-dark);
+      margin-bottom: 1.25rem;
+    }
+
+    .explore-col__list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .explore-col__list li {
+      font-size: 0.95rem;
+      color: var(--color-dark);
+      line-height: 1.7;
+      opacity: 0.7;
+      padding: 0.4rem 0;
+      padding-left: 1.25rem;
+      position: relative;
+    }
+
+    .explore-col__list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--color-dark);
+      opacity: 0.25;
+      transform: translateY(-50%);
+    }
+
+    .explore-col__list a {
+      color: var(--color-dark);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      text-decoration-color: rgba(45, 43, 37, 0.3);
+      transition: text-decoration-color 0.3s ease;
+    }
+
+    .explore-col__list a:hover {
+      text-decoration-color: var(--color-dark);
+      opacity: 1;
+    }
+
+    .explore-col__subheading {
+      font-family: var(--font-sans);
+      font-size: 0.74rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--color-dark);
+      opacity: 0.75;
+      margin-top: 2rem;
+      margin-bottom: 0.75rem;
+    }
+
+    /* ===== GALLERY (dark with floral overlay) ===== */
+    .gallery-dark {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .gallery-dark__bg {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(45, 43, 37, 0.85) 0%, rgba(45, 43, 37, 0.9) 100%),
+        url('images/photo-3.jpg') center/cover no-repeat;
+    }
+
+    .gallery-dark .container {
+      position: relative;
+      z-index: 2;
+    }
+
+    .gallery-float {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .gallery-float__img {
+      width: 280px;
+      aspect-ratio: 3 / 4;
+      object-fit: cover;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+      transition: transform 0.5s ease;
+    }
+
+    .gallery-float__img:nth-child(2) {
+      transform: translateY(2rem);
+    }
+
+    .gallery-float__img:hover {
+      transform: scale(1.03);
+    }
+
+    .gallery-float__img:nth-child(2):hover {
+      transform: translateY(2rem) scale(1.03);
     }
 
     /* ===== MAP EMBEDS ===== */
@@ -904,7 +1176,7 @@
     .hotel-card__badge {
       display: inline-block;
       font-family: var(--font-sans);
-      font-size: 0.55rem;
+      font-size: 0.7rem;
       font-weight: 600;
       letter-spacing: 0.15em;
       text-transform: uppercase;
@@ -924,16 +1196,16 @@
 
     .hotel-card__distance {
       font-family: var(--font-sans);
-      font-size: 0.68rem;
+      font-size: 0.78rem;
       font-weight: 500;
       letter-spacing: 0.1em;
       color: var(--color-tan);
-      opacity: 0.6;
+      opacity: 0.75;
       margin-bottom: 1rem;
     }
 
     .hotel-card__desc {
-      font-size: 0.84rem;
+      font-size: 0.94rem;
       color: var(--color-tan);
       line-height: 1.8;
       opacity: 0.7;
@@ -943,7 +1215,7 @@
     .hotel-card__link {
       display: inline-block;
       font-family: var(--font-sans);
-      font-size: 0.62rem;
+      font-size: 0.74rem;
       font-weight: 500;
       letter-spacing: 0.2em;
       text-transform: uppercase;
@@ -962,7 +1234,7 @@
     /* ===== RSVP LOADING & ERROR ===== */
     .form__submit--loading {
       pointer-events: none;
-      opacity: 0.6;
+      opacity: 0.75;
       position: relative;
     }
 
@@ -1026,9 +1298,9 @@
     }
 
     .rsvp__success-text {
-      font-size: 0.88rem;
+      font-size: 0.95rem;
       color: var(--color-dark);
-      opacity: 0.6;
+      opacity: 0.75;
       line-height: 1.8;
     }
 
@@ -1094,7 +1366,7 @@
       font-size: 0.95rem;
       font-style: italic;
       color: var(--color-dark);
-      opacity: 0.55;
+      opacity: 0.7;
     }
 
     /* ===== FOOTER (Section 10) ===== */
@@ -1117,7 +1389,7 @@
       font-weight: 300;
       letter-spacing: 0.12em;
       color: var(--color-dark);
-      opacity: 0.5;
+      opacity: 0.7;
       margin-bottom: 2rem;
     }
 
@@ -1132,7 +1404,7 @@
     .footer__contact {
       font-size: 0.78rem;
       color: var(--color-dark);
-      opacity: 0.4;
+      opacity: 0.75;
       margin-bottom: 0.5rem;
     }
 
@@ -1142,11 +1414,28 @@
     }
 
     .footer__copy {
-      font-size: 0.65rem;
+      font-size: 0.76rem;
       color: var(--color-dark);
       opacity: 0.25;
       letter-spacing: 0.1em;
       margin-top: 2rem;
+    }
+
+    .footer__dev {
+      font-size: 0.58rem;
+      color: var(--color-dark);
+      opacity: 0.28;
+      margin-top: 1.25rem;
+      line-height: 1.7;
+    }
+
+    .footer__dev strong {
+      font-weight: 500;
+    }
+
+    .footer__dev a {
+      text-decoration: underline;
+      text-underline-offset: 2px;
     }
 
     /* ===== RESPONSIVE ===== */
@@ -1214,6 +1503,29 @@
         aspect-ratio: 16 / 9;
       }
 
+      .details-split {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+      }
+
+      .explore-grid {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+      }
+
+      .gallery-float__img {
+        width: 100%;
+        max-width: 320px;
+      }
+
+      .gallery-float__img:nth-child(2) {
+        transform: none;
+      }
+
+      .gallery-float__img:nth-child(2):hover {
+        transform: scale(1.03);
+      }
+
       .hotels-grid {
         grid-template-columns: 1fr;
       }
@@ -1256,9 +1568,70 @@
         max-width: none;
       }
     }
+
+    /* ===== LIGHTBOX ===== */
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: rgba(0, 0, 0, 0.92);
+      justify-content: center;
+      align-items: center;
+      cursor: zoom-out;
+      padding: 2rem;
+    }
+
+    .lightbox.open {
+      display: flex;
+    }
+
+    .lightbox__img {
+      max-width: 90vw;
+      max-height: 90vh;
+      object-fit: contain;
+      animation: lightboxIn 0.3s ease;
+    }
+
+    @keyframes lightboxIn {
+      from { opacity: 0; transform: scale(0.92); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .lightbox__close {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      width: 40px;
+      height: 40px;
+      background: none;
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      color: white;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.3s ease;
+    }
+
+    .lightbox__close:hover {
+      border-color: white;
+    }
+
+    img[data-zoomable] {
+      cursor: zoom-in;
+    }
   </style>
 </head>
 <body>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox">
+    <button class="lightbox__close" aria-label="Close">&times;</button>
+    <img class="lightbox__img" id="lightbox-img" src="" alt="">
+  </div>
 
   <!-- Navigation -->
   <nav class="nav" role="navigation" aria-label="Main navigation">
@@ -1267,13 +1640,12 @@
       <span></span><span></span><span></span>
     </button>
     <ul class="nav__links">
-      <li><a href="#story" class="nav__link">Our Story</a></li>
       <li><a href="#details" class="nav__link">Details</a></li>
-      <li><a href="#schedule" class="nav__link">Schedule</a></li>
-      <li><a href="#gallery" class="nav__link">Gallery</a></li>
+      <li><a href="#menu" class="nav__link">Menu</a></li>
       <li><a href="#accommodations" class="nav__link">Stay</a></li>
+      <li><a href="#explore" class="nav__link">Explore</a></li>
+      <li><a href="#gallery" class="nav__link">Gallery</a></li>
       <li><a href="#rsvp" class="nav__link">RSVP</a></li>
-      <li><a href="#gift" class="nav__link">Gift</a></li>
     </ul>
   </nav>
 
@@ -1287,8 +1659,8 @@
       </h1>
       <div class="hero__line"></div>
       <p class="hero__tagline">are getting married</p>
-      <a href="#rsvp" class="hero__btn">RSVP Now</a>
-      <p class="hero__date-line">August 16, 2026 &bull; Winnipeg, Manitoba</p>
+      <a href="#rsvp" class="hero__btn">RSVP Here</a>
+      <p class="hero__date-line">1st & 2nd August 2026 &bull; Winnipeg, Manitoba</p>
       <div class="hero__countdown" aria-label="Countdown to wedding">
         <div class="countdown__item">
           <div class="countdown__number" id="countdown-days">---</div>
@@ -1339,8 +1711,9 @@
         </div>
         <img
           class="story__img reveal reveal-delay-1"
-          src="https://images.unsplash.com/photo-1591604466107-ec97de577aff?w=600&q=80"
-          alt="Couple portrait"
+          src="images/photo-2.jpg"
+          alt="Kifle and Milka on steps"
+          data-zoomable
           loading="lazy"
         >
       </div>
@@ -1366,7 +1739,7 @@
           <p class="info-card__time">2:00 PM</p>
           <iframe
             class="info-card__map"
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2571.0!2d-97.1384!3d49.8879!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x52ea714f40c85587%3A0x4e5a94dbae3e0e6a!2sCanadian%20Museum%20for%20Human%20Rights!5e0!3m2!1sen!2sca!4v1700000000000"
+            src="https://maps.google.com/maps?q=Canadian+Museum+for+Human+Rights,+85+Israel+Asper+Way,+Winnipeg,+MB&t=&z=15&ie=UTF8&iwloc=&output=embed"
             allowfullscreen=""
             loading="lazy"
             referrerpolicy="no-referrer-when-downgrade"
@@ -1383,13 +1756,54 @@
           <p class="info-card__time">6:00 PM</p>
           <iframe
             class="info-card__map"
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2571.0!2d-97.1384!3d49.8879!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x52ea7159ce2349e7%3A0x9c5e6e4c3e3a57a0!2sThe%20Fort%20Garry%20Hotel!5e0!3m2!1sen!2sca!4v1700000000000"
+            src="https://maps.google.com/maps?q=Fort+Garry+Hotel,+222+Broadway,+Winnipeg,+MB&t=&z=15&ie=UTF8&iwloc=&output=embed"
             allowfullscreen=""
             loading="lazy"
             referrerpolicy="no-referrer-when-downgrade"
             title="Reception venue map"
           ></iframe>
         </div>
+      </div>
+      <div class="details-split reveal">
+        <div class="venue-info">
+          <h3 class="venue-info__heading">Reception Venue</h3>
+          <p class="venue-info__text">
+            Our reception will take place at The Gates on Roblin in
+            Winnipeg, a beautiful venue set along the Assiniboine
+            River and surrounded by gardens and green space.
+          </p>
+          <p class="venue-info__address">The Gates on Roblin &mdash; 3440 Roblin Blvd, Headingley, MB R4H 1A1</p>
+        </div>
+        <div class="venue-info">
+          <div class="venue-info__subheading">Shuttle Service</div>
+          <p class="venue-info__text">
+            For guests staying downtown, we are planning to provide a
+            shuttle service from one of the downtown hotels to the
+            venue and back. Shuttle details will be confirmed closer
+            to the date.
+          </p>
+          <div class="venue-info__subheading">Parking & Directions</div>
+          <p class="venue-info__text">
+            Free parking is available on-site, with designated areas
+            for PMRs and senior guests. If you need special assistance
+            or a drop-off closer to the garden entrance, let us know.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Day 2 Celebration -->
+  <section class="section section--cream" id="day2">
+    <div class="container">
+      <div class="day2 reveal">
+        <h2 class="day2__heading">Day Two Celebration</h2>
+        <p class="day2__time">Starting from 5:30 PM</p>
+        <p class="day2__address">
+          181 Austin St N<br>
+          Winnipeg, MB R2W 3M5, Canada
+        </p>
+        <p class="day2__note">Join us for an evening of food, music, and celebration as we continue the festivities.</p>
       </div>
     </div>
   </section>
@@ -1413,8 +1827,9 @@
       <div class="featured-photo reveal">
         <img
           class="featured-photo__img"
-          src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=600&q=80"
+          src="images/photo-4.jpg"
           alt="Kifle and Milka"
+          data-zoomable
           loading="lazy"
         >
         <p class="featured-photo__caption">Forever starts here</p>
@@ -1516,39 +1931,110 @@
     </div>
   </section>
 
-  <!-- Section 8: Photo Gallery -->
-  <section class="section section--cream" id="gallery">
+  <!-- Menu -->
+  <section class="section section--dark" id="menu">
+    <div class="container">
+      <div class="menu-section reveal">
+        <h2 class="menu__heading">Menu</h2>
+        <div class="menu__item">
+          <div class="menu__item-name">Beef</div>
+          <p class="menu__item-desc">
+            Charred beef filet with a bordelaise sauce;<br>
+            Served with roasted green beans
+          </p>
+        </div>
+        <div class="menu__item">
+          <div class="menu__item-name">Chicken</div>
+          <p class="menu__item-desc">
+            Pesto and fontina cheese stuffed chicken breast with a basil tomato sauce;<br>
+            Served with roasted peppers and zucchini medley
+          </p>
+        </div>
+        <div class="menu__item">
+          <div class="menu__item-name">Vegetarian</div>
+          <p class="menu__item-desc">
+            Creamy pesto gnocchi with wilted greens and grilled portobello 'steak'; topped with parmesan
+          </p>
+        </div>
+        <div class="menu__item">
+          <div class="menu__item-name">Fish</div>
+          <p class="menu__item-desc">
+            Herb crusted salmon with a lemon caper cream sauce; served on sauteed swiss chard
+          </p>
+        </div>
+        <p class="menu__note">Your meal will also include soup, salad, sides and dessert</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Photo Gallery (Dark with floral overlay) -->
+  <section class="section section--dark gallery-dark" id="gallery">
+    <div class="gallery-dark__bg"></div>
     <div class="container">
       <div class="section__header reveal">
         <p class="section__subtitle">Moments</p>
         <h2 class="section__title">Our Gallery</h2>
         <div class="section__line"></div>
       </div>
-      <div class="gallery reveal">
+      <div class="gallery-float reveal">
         <img
-          class="gallery__hero"
-          src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=1200&q=80"
-          alt="Wedding celebration"
+          class="gallery-float__img"
+          src="images/photo-5.jpg"
+          alt="Ring detail"
+          data-zoomable
           loading="lazy"
         >
         <img
-          class="gallery__thumb"
-          src="https://images.unsplash.com/photo-1606216794079-73f85bbd57d5?w=500&q=80"
-          alt="Couple together"
+          class="gallery-float__img"
+          src="images/photo-4.jpg"
+          alt="Kifle and Milka together"
+          data-zoomable
           loading="lazy"
         >
         <img
-          class="gallery__thumb"
-          src="https://images.unsplash.com/photo-1519741497674-611481863552?w=500&q=80"
-          alt="Wedding moment"
+          class="gallery-float__img"
+          src="images/photo-6.jpg"
+          alt="Kifle and Milka walking"
+          data-zoomable
           loading="lazy"
         >
-        <img
-          class="gallery__thumb"
-          src="https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=500&q=80"
-          alt="Together"
-          loading="lazy"
-        >
+      </div>
+    </div>
+  </section>
+
+  <!-- Things to Do -->
+  <section class="section section--tan" id="explore">
+    <div class="container">
+      <div class="section__header reveal">
+        <p class="section__subtitle">While You're Here</p>
+        <h2 class="section__title">Things to Do</h2>
+        <div class="section__line"></div>
+      </div>
+      <div class="explore-grid">
+        <div class="reveal">
+          <h3 class="explore-col__heading">Things to Do in Winnipeg</h3>
+          <ul class="explore-col__list">
+            <li><a href="https://www.thermea.ca" target="_blank" rel="noopener">Thermia</a></li>
+            <li><a href="https://humanrights.ca" target="_blank" rel="noopener">Human Rights Museum</a></li>
+            <li><a href="https://www.assiniboinepark.ca/the-leaf" target="_blank" rel="noopener">The Leaf</a></li>
+            <li><a href="https://manitobamuseum.ca" target="_blank" rel="noopener">Manitoba Museum</a></li>
+            <li><a href="https://www.theforks.com" target="_blank" rel="noopener">The Forks Market</a></li>
+            <li><a href="https://www.wag.ca" target="_blank" rel="noopener">Winnipeg Art Gallery</a></li>
+          </ul>
+        </div>
+        <div class="reveal reveal-delay-1">
+          <h3 class="explore-col__heading">If Flying in from Calgary</h3>
+          <ul class="explore-col__list">
+            <li><a href="https://www.banfflakelouise.com" target="_blank" rel="noopener">Visit Banff</a></li>
+            <li><a href="https://www.pc.gc.ca/en/pn-np/ab/banff/activ/randonee-hiking/johnston" target="_blank" rel="noopener">Johnston Canyon</a></li>
+          </ul>
+          <div class="explore-col__subheading">Places to Eat</div>
+          <ul class="explore-col__list">
+            <li><a href="https://www.clementinecalgary.com" target="_blank" rel="noopener">Clementine</a></li>
+            <li><a href="https://www.harthrestaurant.com" target="_blank" rel="noopener">Harth</a></li>
+            <li><a href="https://www.parcelpizza.com" target="_blank" rel="noopener">Parcel Pizza</a></li>
+          </ul>
+        </div>
       </div>
     </div>
   </section>
@@ -1563,41 +2049,41 @@
       </div>
       <div class="hotels-grid">
         <div class="hotel-card reveal">
-          <span class="hotel-card__badge">Reception Venue</span>
-          <h3 class="hotel-card__name">The Fort Garry Hotel</h3>
-          <p class="hotel-card__distance">0 min walk to reception</p>
+          <h3 class="hotel-card__name">Viscount Gort Hotel</h3>
+          <p class="hotel-card__distance">10 min drive to venues</p>
           <p class="hotel-card__desc">
-            A Winnipeg landmark since 1913. Stay where the celebration happens and enjoy
-            the Grand Ballroom just steps from your room.
+            A comfortable and affordable option with easy access to
+            both wedding venues. Complimentary parking included.
           </p>
-          <a href="https://www.fortgarryhotel.com" target="_blank" rel="noopener" class="hotel-card__link">Book Your Stay</a>
+          <a href="https://www.viscountgort.com" target="_blank" rel="noopener" class="hotel-card__link">Book Your Stay</a>
         </div>
         <div class="hotel-card reveal reveal-delay-1">
           <h3 class="hotel-card__name">Inn at The Forks</h3>
           <p class="hotel-card__distance">3 min walk to ceremony</p>
           <p class="hotel-card__desc">
-            A boutique hotel at The Forks, steps from the ceremony venue. Rooftop spa and
-            river views make it a perfect wedding weekend retreat.
+            A boutique hotel at The Forks, steps from the ceremony venue.
+            Rooftop spa and river views for a perfect wedding weekend.
           </p>
           <a href="https://www.innforks.com" target="_blank" rel="noopener" class="hotel-card__link">Book Your Stay</a>
         </div>
         <div class="hotel-card reveal reveal-delay-2">
-          <h3 class="hotel-card__name">Fairmont Winnipeg</h3>
-          <p class="hotel-card__distance">5 min drive</p>
+          <span class="hotel-card__badge">Reception Venue</span>
+          <h3 class="hotel-card__name">The Fort Garry Hotel</h3>
+          <p class="hotel-card__distance">0 min walk to reception</p>
           <p class="hotel-card__desc">
-            Classic luxury in the heart of downtown. Connected to Winnipeg's skywalk system
-            and close to all wedding venues.
+            A Winnipeg landmark since 1913. Stay where the celebration
+            happens, just steps from the ballroom.
           </p>
-          <a href="https://www.fairmont.com/winnipeg" target="_blank" rel="noopener" class="hotel-card__link">Book Your Stay</a>
+          <a href="https://www.fortgarryhotel.com" target="_blank" rel="noopener" class="hotel-card__link">Book Your Stay</a>
         </div>
         <div class="hotel-card reveal reveal-delay-3">
-          <h3 class="hotel-card__name">Alt Hotel Winnipeg</h3>
-          <p class="hotel-card__distance">5 min drive</p>
+          <h3 class="hotel-card__name">Birchwood Hotel</h3>
+          <p class="hotel-card__distance">15 min drive</p>
           <p class="hotel-card__desc">
-            Modern and stylish with a great downtown location. A contemporary option with
-            comfortable rooms and easy access to both venues.
+            A great value option in south Winnipeg with spacious rooms,
+            free parking, and easy highway access to all venues.
           </p>
-          <a href="https://www.althotels.com/en/winnipeg" target="_blank" rel="noopener" class="hotel-card__link">Book Your Stay</a>
+          <a href="https://www.birchwoodhotel.ca" target="_blank" rel="noopener" class="hotel-card__link">Book Your Stay</a>
         </div>
       </div>
     </div>
@@ -1606,26 +2092,25 @@
   <!-- Section 10: RSVP -->
   <section class="section section--tan" id="rsvp">
     <div class="container">
-      <div class="rsvp-section">
-        <div class="rsvp__form-wrap reveal" style="max-width: 800px; margin: 0 auto; width: 100%;">
-          <h2 class="rsvp__heading">Join Our Celebration</h2>
-          <p class="rsvp__subheading" style="margin-bottom: 2rem;">Kindly respond by July 1st, 2026</p>
-          
-          <!-- Tally Embed -->
-          <iframe 
-            data-tally-src="https://tally.so/embed/Gx10Jk?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" 
-            loading="lazy" 
-            width="100%" 
-            height="500" 
-            frameborder="0" 
-            marginheight="0" 
-            marginwidth="0" 
-            title="Wedding RSVP">
-          </iframe>
-          <script>
-            var d=document,w="https://tally.so/widgets/embed.js",v=function(){"undefined"!=typeof Tally?Tally.loadEmbeds():d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach((function(e){e.src=e.dataset.tallySrc}))};if("undefined"!=typeof Tally)v();else if(d.querySelector('script[src="'+w+'"]'))v();else{var s=d.createElement("script");s.src=w,s.onload=v,s.onerror=v,d.body.appendChild(s);}
-          </script>
-        </div>
+      <div class="rsvp__form-wrap reveal" style="max-width: 700px; margin: 0 auto; text-align: center;">
+        <h2 class="rsvp__heading">Join Our Celebration</h2>
+        <p class="rsvp__subheading" style="margin-bottom: 2rem;">Kindly respond by July 1st, 2026</p>
+
+        <!-- Tally Embed -->
+        <iframe
+          data-tally-src="https://tally.so/embed/Gx10Jk?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
+          loading="lazy"
+          width="100%"
+          height="500"
+          frameborder="0"
+          marginheight="0"
+          marginwidth="0"
+          title="Wedding RSVP"
+          style="min-height: 500px;">
+        </iframe>
+        <script>
+          var d=document,w="https://tally.so/widgets/embed.js",v=function(){"undefined"!=typeof Tally?Tally.loadEmbeds():d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach((function(e){e.src=e.dataset.tallySrc}))};if("undefined"!=typeof Tally)v();else if(d.querySelector('script[src="'+w+'"]'))v();else{var s=d.createElement("script");s.src=w,s.onload=v,s.onerror=v,d.body.appendChild(s);}
+        </script>
       </div>
     </div>
   </section>
@@ -1650,19 +2135,28 @@
   <!-- Section 10: Footer -->
   <footer class="footer">
     <p class="footer__names">Kifle & Milka</p>
-    <p class="footer__date">August 16, 2026 &bull; Winnipeg, Manitoba</p>
+    <p class="footer__date">August 1 & 2, 2026 &bull; Winnipeg, Manitoba</p>
     <div class="footer__line"></div>
     <p class="footer__contact">
-      Questions? Reach out at
-      <a href="mailto:kifleandmilka@gmail.com">kifleandmilka@gmail.com</a>
+      Questions? Reach out to us<br>
+      <a href="mailto:kifletekle76@gmail.com">kifletekle76@gmail.com</a> &bull;
+      <a href="tel:+447961014933">+44 7961 014933</a><br>
+      <a href="mailto:yaelhagheray@gmail.com">yaelhagheray@gmail.com</a> &bull;
+      <a href="tel:+447432781050">+44 7432 781050</a>
     </p>
     <p class="footer__copy">Made with love &bull; K & M 2026</p>
+    <p class="footer__dev">
+      Want a wedding website like this?<br>
+      Built by <strong>Abel Ghebrezadik</strong> &mdash;
+      <a href="mailto:abelghebz@gmail.com">abelghebz@gmail.com</a> &bull;
+      <a href="tel:+447527841324">+44 7527 841324</a>
+    </p>
   </footer>
 
   <script>
     // ===== COUNTDOWN TIMER =====
     (function countdown() {
-      const weddingDate = new Date('2026-08-16T14:00:00-05:00');
+      const weddingDate = new Date('2026-08-01T14:00:00-05:00');
       const els = {
         days: document.getElementById('countdown-days'),
         hours: document.getElementById('countdown-hours'),
@@ -1744,6 +2238,33 @@
           toggle.classList.remove('active');
           toggle.setAttribute('aria-expanded', 'false');
         });
+      });
+    })();
+
+    // ===== LIGHTBOX =====
+    (function lightbox() {
+      const lb = document.getElementById('lightbox');
+      const lbImg = document.getElementById('lightbox-img');
+
+      document.querySelectorAll('img[data-zoomable]').forEach(img => {
+        img.addEventListener('click', () => {
+          lbImg.src = img.src;
+          lbImg.alt = img.alt;
+          lb.classList.add('open');
+          document.body.style.overflow = 'hidden';
+        });
+      });
+
+      lb.addEventListener('click', () => {
+        lb.classList.remove('open');
+        document.body.style.overflow = '';
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && lb.classList.contains('open')) {
+          lb.classList.remove('open');
+          document.body.style.overflow = '';
+        }
       });
     })();
   </script>
