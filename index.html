@@ -1607,74 +1607,24 @@
   <section class="section section--tan" id="rsvp">
     <div class="container">
       <div class="rsvp-section">
-        <img
-          class="rsvp__img reveal"
-          src="https://images.unsplash.com/photo-1549417229-7686ac5595fd?w=600&q=80"
-          alt="Kifle and Milka"
-          loading="lazy"
-        >
-        <div class="rsvp__form-wrap reveal reveal-delay-1">
+        <div class="rsvp__form-wrap reveal" style="max-width: 800px; margin: 0 auto; width: 100%;">
           <h2 class="rsvp__heading">Join Our Celebration</h2>
-          <p class="rsvp__subheading">Kindly respond by July 1st, 2026</p>
-          <form id="rsvp-form" novalidate>
-            <div class="form__row">
-              <div class="form__group">
-                <label class="form__label" for="rsvp-name">Full Name</label>
-                <input class="form__input" type="text" id="rsvp-name" placeholder="Your name" required>
-              </div>
-              <div class="form__group">
-                <label class="form__label" for="rsvp-email">Email</label>
-                <input class="form__input" type="email" id="rsvp-email" placeholder="your@email.com" required>
-              </div>
-            </div>
-            <div class="form__group">
-              <label class="form__label">Will you be attending?</label>
-              <div class="form__radio-group">
-                <label class="form__radio">
-                  <input type="radio" name="attending" value="yes" required>
-                  Joyfully Accepts
-                </label>
-                <label class="form__radio">
-                  <input type="radio" name="attending" value="no">
-                  Regretfully Declines
-                </label>
-              </div>
-            </div>
-            <div class="form__row">
-              <div class="form__group">
-                <label class="form__label" for="rsvp-guests">Number of Guests</label>
-                <select class="form__select" id="rsvp-guests">
-                  <option value="1">1 Guest</option>
-                  <option value="2">2 Guests</option>
-                  <option value="3">3 Guests</option>
-                  <option value="4">4 Guests</option>
-                </select>
-              </div>
-              <div class="form__group">
-                <label class="form__label" for="rsvp-dietary">Dietary Restrictions</label>
-                <input class="form__input" type="text" id="rsvp-dietary" placeholder="Any allergies">
-              </div>
-            </div>
-            <div class="form__group">
-              <label class="form__label" for="rsvp-message">Message for the Couple</label>
-              <textarea class="form__textarea" id="rsvp-message" placeholder="Share your well-wishes..."></textarea>
-            </div>
-            <button class="form__submit" type="submit">Send Your Response</button>
-            <p class="form__note">Please respond by July 1st, 2026</p>
-            <div class="form__error" id="rsvp-error">Something went wrong. Please try again or email us directly.</div>
-          </form>
-
-          <div class="rsvp__success" id="rsvp-success">
-            <div class="rsvp__success-icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="20 6 9 17 4 12"/>
-              </svg>
-            </div>
-            <h3 class="rsvp__success-title">Thank You!</h3>
-            <p class="rsvp__success-text">
-              Your response has been received. We are so excited to celebrate with you!
-            </p>
-          </div>
+          <p class="rsvp__subheading" style="margin-bottom: 2rem;">Kindly respond by July 1st, 2026</p>
+          
+          <!-- Tally Embed -->
+          <iframe 
+            data-tally-src="https://tally.so/embed/n0P9da?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" 
+            loading="lazy" 
+            width="100%" 
+            height="500" 
+            frameborder="0" 
+            marginheight="0" 
+            marginwidth="0" 
+            title="Wedding RSVP">
+          </iframe>
+          <script>
+            var d=document,w="https://tally.so/widgets/embed.js",v=function(){"undefined"!=typeof Tally?Tally.loadEmbeds():d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach((function(e){e.src=e.dataset.tallySrc}))};if("undefined"!=typeof Tally)v();else if(d.querySelector('script[src="'+w+'"]'))v();else{var s=d.createElement("script");s.src=w,s.onload=v,s.onerror=v,d.body.appendChild(s);}
+          </script>
         </div>
       </div>
     </div>
@@ -1794,60 +1744,6 @@
           toggle.classList.remove('active');
           toggle.setAttribute('aria-expanded', 'false');
         });
-      });
-    })();
-
-    // ===== RSVP FORM =====
-    (function rsvpForm() {
-      const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzRha2PcbRkCuIRlB1hDwcRnWjflbyLkQkzIxWiBqbW-lAnQxKGH1ddw4EjCnldc5AThA/exec';
-      const form = document.getElementById('rsvp-form');
-      const success = document.getElementById('rsvp-success');
-      const submitBtn = form.querySelector('.form__submit');
-      const errorEl = document.getElementById('rsvp-error');
-
-      form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        errorEl.classList.remove('show');
-
-        const data = {
-          name: document.getElementById('rsvp-name').value.trim(),
-          email: document.getElementById('rsvp-email').value.trim(),
-          attending: form.querySelector('input[name="attending"]:checked')?.value || '',
-          guests: document.getElementById('rsvp-guests').value,
-          dietary: document.getElementById('rsvp-dietary').value.trim(),
-          message: document.getElementById('rsvp-message').value.trim()
-        };
-
-        if (!data.name || !data.email || !data.attending) {
-          errorEl.textContent = 'Please fill in all required fields.';
-          errorEl.classList.add('show');
-          return;
-        }
-
-        submitBtn.classList.add('form__submit--loading');
-        submitBtn.textContent = 'Sending...';
-
-        try {
-          // Send data as text/plain to stay within "simple request" limits for no-cors
-          await fetch(APPS_SCRIPT_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'text/plain' },
-            body: JSON.stringify(data)
-          });
-
-          // Since we can't read the response in no-cors mode, 
-          // we assume success if no network error occurred.
-          setTimeout(() => {
-            form.style.display = 'none';
-            success.classList.add('show');
-            success.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          }, 500);
-        } catch (err) {          errorEl.textContent = 'Something went wrong. Please try again or email us directly.';
-          errorEl.classList.add('show');
-          submitBtn.classList.remove('form__submit--loading');
-          submitBtn.textContent = 'Send Your Response';
-        }
       });
     })();
   </script>
