@@ -1,15 +1,24 @@
 /**
  * Google Apps Script for handling RSVP form submissions
  * 
- * This version ONLY logs to a Google Sheet and does NOT send emails.
+ * This version uses robust JSON parsing for text/plain content
+ * to ensure compatibility with no-cors requests.
  */
 
 var SHEET_ID = "1ZLvdGJhHxvOU0QMiJZSfsL_9zJ-5G6Nkhmop7wPBIW8"; // Your Google Sheet ID
 
 function doPost(e) {
   try {
-    // When using no-cors from fetch, data usually arrives in e.postData.contents
-    var data = JSON.parse(e.postData.contents);
+    // Robustly parse the incoming contents
+    var contents = e.postData.contents;
+    var data;
+    
+    try {
+      data = JSON.parse(contents);
+    } catch (parseError) {
+      // Return error if parsing fails
+      return ContentService.createTextOutput("Error: Failed to parse JSON").setMimeType(ContentService.MimeType.TEXT);
+    }
     
     // Log to the Google Sheet
     if (SHEET_ID) {
@@ -17,10 +26,10 @@ function doPost(e) {
       var sheet = ss.getSheets()[0]; // Log to the first tab
       sheet.appendRow([
         new Date(), 
-        data.name, 
-        data.email, 
+        data.name || "N/A", 
+        data.email || "N/A", 
         data.attending === 'yes' ? 'Accepts' : 'Declines',
-        data.guests, 
+        data.guests || 0, 
         data.dietary || 'None', 
         data.message || 'No message'
       ]);
