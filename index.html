@@ -1799,7 +1799,7 @@
 
     // ===== RSVP FORM =====
     (function rsvpForm() {
-      const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwNprB_chCpyS0k13dx4seOlPygKX7DLH9vWKvOpjbVlQXbxwVRlPRhxCzCAJ0BepjQ9w/exec';
+      const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzRha2PcbRkCuIRlB1hDwcRnWjflbyLkQkzIxWiBqbW-lAnQxKGH1ddw4EjCnldc5AThA/exec';
       const form = document.getElementById('rsvp-form');
       const success = document.getElementById('rsvp-success');
       const submitBtn = form.querySelector('.form__submit');
@@ -1828,18 +1828,22 @@
         submitBtn.textContent = 'Sending...';
 
         try {
+          // Send data as text/plain to stay within "simple request" limits for no-cors
           await fetch(APPS_SCRIPT_URL, {
             method: 'POST',
             mode: 'no-cors',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'text/plain' },
             body: JSON.stringify(data)
           });
 
-          form.style.display = 'none';
-          success.classList.add('show');
-          success.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        } catch (err) {
-          errorEl.textContent = 'Something went wrong. Please try again or email us directly.';
+          // Since we can't read the response in no-cors mode, 
+          // we assume success if no network error occurred.
+          setTimeout(() => {
+            form.style.display = 'none';
+            success.classList.add('show');
+            success.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 500);
+        } catch (err) {          errorEl.textContent = 'Something went wrong. Please try again or email us directly.';
           errorEl.classList.add('show');
           submitBtn.classList.remove('form__submit--loading');
           submitBtn.textContent = 'Send Your Response';
