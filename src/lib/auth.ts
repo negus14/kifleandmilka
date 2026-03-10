@@ -12,7 +12,7 @@ interface SessionPayload {
 }
 
 export async function createSession(slug: string) {
-  const token = await new SignJWT({ slug } as SessionPayload)
+  const token = await new SignJWT({ slug })
     .setProtectedHeader({ alg: "HS256" })
     .setExpirationTime("7d")
     .sign(SECRET);
