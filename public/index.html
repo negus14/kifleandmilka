@@ -1,0 +1,2272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kifle & Milka — August 1 & 2, 2026</title>
+  <meta name="description" content="Join us in celebrating the wedding of Kifle and Milka on August 1st & 2nd, 2026 in Winnipeg, Manitoba, Canada.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Pinyon+Script&family=Josefin+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --color-dark: #2d2b25;
+      --color-tan: #cdc1ab;
+      --color-cream: #faf1e1;
+      --color-black: #000000;
+      --color-white: #ffffff;
+      --color-tan-light: #d9d0be;
+      --color-tan-dark: #b5a992;
+      --color-cream-dark: #efe4d0;
+
+      --font-script: 'Pinyon Script', cursive;
+      --font-serif: 'Cormorant Garamond', Georgia, serif;
+      --font-sans: 'Josefin Sans', system-ui, sans-serif;
+
+      --section-padding: clamp(5rem, 12vw, 9rem);
+      --container-width: min(88%, 1060px);
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 18px;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      font-weight: 400;
+      color: var(--color-dark);
+      background: var(--color-cream);
+      line-height: 1.7;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    a {
+      color: var(--color-dark);
+      text-decoration: none;
+      transition: opacity 0.3s ease;
+    }
+
+    a:hover {
+      opacity: 0.7;
+    }
+
+    /* ===== NAVIGATION ===== */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 1.25rem 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: all 0.4s ease;
+    }
+
+    .nav.scrolled {
+      background: rgba(250, 241, 225, 0.92);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 1px 0 rgba(45, 43, 37, 0.08);
+      padding: 0.75rem 2rem;
+    }
+
+    .nav__links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+      align-items: center;
+    }
+
+    .nav__link {
+      font-family: var(--font-sans);
+      font-size: 0.76rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--color-cream);
+      text-decoration: none;
+      position: relative;
+      padding: 0.25rem 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .nav.scrolled .nav__link {
+      color: var(--color-dark);
+    }
+
+    .nav__link::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: currentColor;
+      transition: width 0.3s ease;
+    }
+
+    .nav__link:hover {
+      opacity: 0.7;
+    }
+
+    .nav__link:hover::after {
+      width: 100%;
+    }
+
+    .nav__brand {
+      font-family: var(--font-script);
+      font-size: 1.3rem;
+      color: var(--color-cream);
+      padding: 0 1.5rem;
+      transition: color 0.4s ease;
+    }
+
+    .nav.scrolled .nav__brand {
+      color: var(--color-dark);
+    }
+
+    .nav__toggle {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.5rem;
+      z-index: 1001;
+    }
+
+    .nav__toggle span {
+      display: block;
+      width: 22px;
+      height: 1px;
+      background: var(--color-cream);
+      margin: 6px 0;
+      transition: all 0.3s ease;
+    }
+
+    .nav.scrolled .nav__toggle span {
+      background: var(--color-dark);
+    }
+
+    .nav__toggle.active span:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+    }
+
+    .nav__toggle.active span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .nav__toggle.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(6px, -6px);
+    }
+
+    /* ===== HERO (Section 1) ===== */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero__bg {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(45, 43, 37, 0.25) 0%, rgba(45, 43, 37, 0.4) 100%),
+        url('images/photo-1.jpg') center/cover no-repeat;
+      transform: scale(1.05);
+      animation: heroZoom 20s ease-in-out infinite alternate;
+    }
+
+    @keyframes heroZoom {
+      from { transform: scale(1.05); }
+      to { transform: scale(1.12); }
+    }
+
+    .hero__content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero__pretext {
+      font-family: var(--font-sans);
+      font-size: 0.76rem;
+      font-weight: 500;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--color-cream);
+      margin-bottom: 2rem;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 1s ease 0.3s forwards;
+    }
+
+    .hero__names {
+      font-family: var(--font-script);
+      font-size: clamp(3.5rem, 13vw, 9rem);
+      color: var(--color-cream);
+      line-height: 1.1;
+      margin-bottom: 1rem;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeUp 1.2s ease 0.6s forwards;
+    }
+
+    .hero__ampersand {
+      display: inline-block;
+      font-size: 0.6em;
+      margin: 0 0.15em;
+      opacity: 0.8;
+    }
+
+    .hero__line {
+      width: 60px;
+      height: 1px;
+      background: var(--color-cream);
+      margin: 1.5rem auto;
+      opacity: 0.75;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.8s forwards;
+    }
+
+    .hero__tagline {
+      font-family: var(--font-serif);
+      font-size: clamp(1rem, 2vw, 1.3rem);
+      font-weight: 300;
+      font-style: italic;
+      color: var(--color-cream);
+      letter-spacing: 0.05em;
+      margin-bottom: 2rem;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 1s ease 1s forwards;
+    }
+
+    .hero__btn {
+      display: inline-block;
+      font-family: var(--font-sans);
+      font-size: 0.76rem;
+      font-weight: 500;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--color-cream);
+      border: 1px solid rgba(250, 241, 225, 0.5);
+      padding: 0.9rem 2.5rem;
+      transition: all 0.4s ease;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 1s ease 1.2s forwards;
+    }
+
+    .hero__btn:hover {
+      background: var(--color-cream);
+      color: var(--color-dark);
+      opacity: 1;
+    }
+
+    .hero__date-line {
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--color-cream);
+      margin-top: 3rem;
+      background: rgba(250, 241, 225, 0.12);
+      display: inline-block;
+      padding: 0.6rem 1.5rem;
+      border: 1px solid rgba(250, 241, 225, 0.2);
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 1s ease 1.5s forwards;
+    }
+
+    .hero__countdown {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      margin-top: 2rem;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 1s ease 1.7s forwards;
+    }
+
+    .countdown__item {
+      text-align: center;
+    }
+
+    .countdown__number {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 500;
+      color: var(--color-cream);
+      line-height: 1;
+    }
+
+    .countdown__label {
+      font-family: var(--font-sans);
+      font-size: 0.7rem;
+      font-weight: 400;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--color-cream);
+      opacity: 0.7;
+      margin-top: 0.4rem;
+    }
+
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===== SHARED SECTION STYLES ===== */
+    .section {
+      padding: var(--section-padding) 0;
+    }
+
+    .section--cream {
+      background: var(--color-cream);
+    }
+
+    .section--tan {
+      background: var(--color-tan);
+    }
+
+    .section--dark {
+      background: var(--color-dark);
+      color: var(--color-tan);
+    }
+
+    .container {
+      width: var(--container-width);
+      margin: 0 auto;
+    }
+
+    .section__header {
+      text-align: center;
+      margin-bottom: clamp(3rem, 6vw, 5rem);
+    }
+
+    .section__subtitle {
+      font-family: var(--font-script);
+      font-size: clamp(1.5rem, 2.8vw, 2rem);
+      color: var(--color-dark);
+      margin-bottom: 0.5rem;
+    }
+
+    .section--dark .section__subtitle {
+      color: var(--color-tan);
+    }
+
+    .section__title {
+      font-family: var(--font-serif);
+      font-size: clamp(1.6rem, 3.5vw, 2.5rem);
+      font-weight: 300;
+      letter-spacing: 0.1em;
+      color: var(--color-dark);
+      text-transform: uppercase;
+    }
+
+    .section--dark .section__title {
+      color: var(--color-cream);
+    }
+
+    .section__line {
+      width: 40px;
+      height: 1px;
+      background: var(--color-dark);
+      margin: 1.25rem auto 0;
+      opacity: 0.25;
+    }
+
+    .section--dark .section__line {
+      background: var(--color-tan);
+      opacity: 0.3;
+    }
+
+    /* ===== REVEAL ANIMATIONS ===== */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-delay-1 { transition-delay: 0.15s; }
+    .reveal-delay-2 { transition-delay: 0.3s; }
+    .reveal-delay-3 { transition-delay: 0.45s; }
+
+    /* ===== STORY (Section 2) ===== */
+    .story {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(3rem, 6vw, 5rem);
+      align-items: center;
+    }
+
+    .story__text-block {
+      max-width: 480px;
+    }
+
+    .story__lead {
+      font-family: var(--font-serif);
+      font-size: clamp(1.2rem, 2.2vw, 1.6rem);
+      font-weight: 300;
+      font-style: italic;
+      color: var(--color-dark);
+      line-height: 1.9;
+      margin-bottom: 2rem;
+    }
+
+    .story__text {
+      font-size: 0.95rem;
+      color: var(--color-dark);
+      line-height: 2;
+      margin-bottom: 1.25rem;
+      opacity: 0.8;
+    }
+
+    .story__img {
+      width: 100%;
+      aspect-ratio: 3 / 4;
+      object-fit: cover;
+      filter: sepia(0.08) contrast(1.02);
+    }
+
+    /* ===== DETAILS (Section 3) ===== */
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .info-card {
+      text-align: center;
+      padding: 2.5rem 1.5rem;
+      border: 1px solid rgba(45, 43, 37, 0.1);
+      background: rgba(250, 241, 225, 0.3);
+    }
+
+    .info-card__label {
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--color-dark);
+      opacity: 0.7;
+      margin-bottom: 1rem;
+    }
+
+    .info-card__title {
+      font-family: var(--font-serif);
+      font-size: 1.4rem;
+      font-weight: 400;
+      color: var(--color-dark);
+      margin-bottom: 0.75rem;
+    }
+
+    .info-card__text {
+      font-size: 0.92rem;
+      color: var(--color-dark);
+      line-height: 1.8;
+      opacity: 0.7;
+    }
+
+    .info-card__time {
+      font-family: var(--font-serif);
+      font-size: 1.4rem;
+      font-weight: 500;
+      color: var(--color-dark);
+      margin-top: 1.25rem;
+      opacity: 1;
+      background: rgba(45, 43, 37, 0.06);
+      display: inline-block;
+      padding: 0.4rem 1.2rem;
+      border: 1px solid rgba(45, 43, 37, 0.12);
+    }
+
+    /* ===== QUOTE (Section 4) ===== */
+    .quote-section {
+      text-align: center;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 0;
+    }
+
+    .quote__text {
+      font-family: var(--font-serif);
+      font-size: clamp(1.3rem, 2.8vw, 1.9rem);
+      font-weight: 300;
+      font-style: italic;
+      color: var(--color-dark);
+      line-height: 1.9;
+      margin-bottom: 1.5rem;
+    }
+
+    .quote__attribution {
+      font-family: var(--font-sans);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--color-dark);
+      opacity: 0.75;
+    }
+
+    /* ===== FEATURED PHOTO (Section 5) ===== */
+    .featured-photo {
+      text-align: center;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .featured-photo__img {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      filter: sepia(0.05) contrast(1.02);
+    }
+
+    .featured-photo__caption {
+      font-family: var(--font-script);
+      font-size: 1.3rem;
+      color: var(--color-dark);
+      margin-top: 1.5rem;
+      opacity: 0.75;
+    }
+
+    /* ===== LOVE LETTER (Section 6 — Dark) ===== */
+    .letter {
+      max-width: 650px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .letter__opening {
+      font-family: var(--font-script);
+      font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+      color: var(--color-cream);
+      margin-bottom: 2rem;
+    }
+
+    .letter__body {
+      font-family: var(--font-serif);
+      font-size: clamp(1rem, 1.8vw, 1.15rem);
+      font-weight: 300;
+      color: var(--color-tan);
+      line-height: 2.2;
+      margin-bottom: 1.5rem;
+    }
+
+    .letter__closing {
+      font-family: var(--font-script);
+      font-size: 1.6rem;
+      color: var(--color-cream);
+      margin-top: 2.5rem;
+    }
+
+    /* ===== SCHEDULE (Section 7) ===== */
+    .timeline {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .timeline__item {
+      display: grid;
+      grid-template-columns: 100px 1px 1fr;
+      gap: 2rem;
+      padding: 2rem 0;
+      position: relative;
+    }
+
+    .timeline__item + .timeline__item {
+      border-top: 1px solid rgba(45, 43, 37, 0.1);
+    }
+
+    .timeline__time {
+      text-align: right;
+      padding-top: 0.15rem;
+    }
+
+    .timeline__hour {
+      font-family: var(--font-serif);
+      font-size: 1.7rem;
+      font-weight: 500;
+      color: var(--color-dark);
+      line-height: 1;
+    }
+
+    .timeline__period {
+      font-family: var(--font-sans);
+      font-size: 0.76rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--color-dark);
+      opacity: 0.85;
+      margin-top: 0.35rem;
+    }
+
+    .timeline__line {
+      width: 1px;
+      background: var(--color-dark);
+      opacity: 0.15;
+      position: relative;
+    }
+
+    .timeline__line::before {
+      content: '';
+      position: absolute;
+      top: 0.35rem;
+      left: -3px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      border: 1px solid var(--color-dark);
+      background: var(--color-tan);
+      opacity: 0.7;
+    }
+
+    .timeline__details {
+      padding-top: 0;
+    }
+
+    .timeline__event {
+      font-family: var(--font-serif);
+      font-size: 1.2rem;
+      font-weight: 400;
+      color: var(--color-dark);
+      margin-bottom: 0.35rem;
+    }
+
+    .timeline__venue {
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      color: var(--color-dark);
+      opacity: 0.7;
+      margin-bottom: 0.5rem;
+    }
+
+    .timeline__desc {
+      font-size: 0.92rem;
+      color: var(--color-dark);
+      line-height: 1.8;
+      opacity: 0.75;
+    }
+
+    /* ===== GALLERY (Section 8) ===== */
+    .gallery {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-rows: auto auto;
+      gap: 1rem;
+    }
+
+    .gallery__hero {
+      grid-column: 1 / -1;
+      aspect-ratio: 16 / 7;
+      object-fit: cover;
+      width: 100%;
+      filter: sepia(0.06) contrast(1.02);
+    }
+
+    .gallery__thumb {
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      width: 100%;
+      filter: sepia(0.06) contrast(1.02);
+      transition: transform 0.4s ease;
+    }
+
+    .gallery__thumb:hover {
+      transform: scale(1.02);
+    }
+
+    /* ===== RSVP (Section 9) ===== */
+    .rsvp-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(3rem, 6vw, 5rem);
+      align-items: center;
+    }
+
+    .rsvp__img {
+      width: 100%;
+      aspect-ratio: 4 / 5;
+      object-fit: cover;
+      filter: sepia(0.08) contrast(1.02);
+    }
+
+    .rsvp__form-wrap {
+      max-width: 440px;
+    }
+
+    .rsvp__heading {
+      font-family: var(--font-script);
+      font-size: clamp(1.8rem, 3vw, 2.3rem);
+      color: var(--color-dark);
+      margin-bottom: 0.5rem;
+    }
+
+    .rsvp__subheading {
+      font-family: var(--font-serif);
+      font-size: 1rem;
+      font-weight: 300;
+      font-style: italic;
+      color: var(--color-dark);
+      opacity: 0.75;
+      margin-bottom: 2.5rem;
+    }
+
+    .form__group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form__label {
+      display: block;
+      font-size: 0.74rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--color-dark);
+      opacity: 0.7;
+      margin-bottom: 0.5rem;
+    }
+
+    .form__input,
+    .form__textarea,
+    .form__select {
+      width: 100%;
+      padding: 0.85rem 1rem;
+      background: transparent;
+      border: 1px solid rgba(45, 43, 37, 0.18);
+      color: var(--color-dark);
+      font-family: var(--font-sans);
+      font-size: 0.95rem;
+      font-weight: 300;
+      transition: border-color 0.3s ease;
+      outline: none;
+    }
+
+    .form__input::placeholder,
+    .form__textarea::placeholder {
+      color: rgba(45, 43, 37, 0.3);
+    }
+
+    .form__input:focus,
+    .form__textarea:focus,
+    .form__select:focus {
+      border-color: var(--color-dark);
+    }
+
+    .form__textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    .form__select {
+      appearance: none;
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%232d2b25' stroke-width='1' fill='none' opacity='0.4'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+    }
+
+    .form__radio-group {
+      display: flex;
+      gap: 2rem;
+    }
+
+    .form__radio {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      cursor: pointer;
+      font-size: 0.95rem;
+      color: var(--color-dark);
+      font-weight: 300;
+    }
+
+    .form__radio input {
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border: 1px solid rgba(45, 43, 37, 0.25);
+      border-radius: 50%;
+      cursor: pointer;
+      position: relative;
+      transition: border-color 0.3s ease;
+    }
+
+    .form__radio input:checked {
+      border-color: var(--color-dark);
+    }
+
+    .form__radio input:checked::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--color-dark);
+    }
+
+    .form__row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .form__submit {
+      width: 100%;
+      padding: 0.9rem 2rem;
+      margin-top: 0.5rem;
+      background: var(--color-dark);
+      border: 1px solid var(--color-dark);
+      color: var(--color-cream);
+      font-family: var(--font-sans);
+      font-size: 0.76rem;
+      font-weight: 500;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.4s ease;
+    }
+
+    .form__submit:hover {
+      background: transparent;
+      color: var(--color-dark);
+    }
+
+    .form__submit:active {
+      transform: scale(0.98);
+    }
+
+    .form__note {
+      text-align: center;
+      margin-top: 1.25rem;
+      font-size: 0.75rem;
+      color: var(--color-dark);
+      opacity: 0.75;
+      font-style: italic;
+    }
+
+    /* ===== VENUE INFO (two-column details) ===== */
+    .details-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(3rem, 6vw, 5rem);
+      max-width: 960px;
+      margin: 3rem auto 0;
+    }
+
+    .venue-info__heading {
+      font-family: var(--font-serif);
+      font-size: 1.3rem;
+      font-weight: 400;
+      color: var(--color-dark);
+      margin-bottom: 0.75rem;
+    }
+
+    .venue-info__subheading {
+      font-family: var(--font-sans);
+      font-size: 0.76rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--color-dark);
+      opacity: 0.7;
+      margin-bottom: 0.5rem;
+      margin-top: 1.75rem;
+    }
+
+    .venue-info__subheading:first-child {
+      margin-top: 0;
+    }
+
+    .venue-info__text {
+      font-size: 0.94rem;
+      color: var(--color-dark);
+      line-height: 1.9;
+      opacity: 0.7;
+    }
+
+    .venue-info__address {
+      font-family: var(--font-sans);
+      font-size: 0.78rem;
+      color: var(--color-dark);
+      opacity: 0.7;
+      margin-top: 0.25rem;
+      font-style: italic;
+    }
+
+    /* ===== DAY 2 ===== */
+    .day2 {
+      text-align: center;
+      max-width: 620px;
+      margin: 0 auto;
+    }
+
+    .day2__heading {
+      font-family: var(--font-script);
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      color: var(--color-dark);
+      margin-bottom: 1rem;
+    }
+
+    .day2__time {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      font-weight: 500;
+      color: var(--color-dark);
+      opacity: 1;
+      margin-bottom: 1rem;
+      background: rgba(45, 43, 37, 0.06);
+      display: inline-block;
+      padding: 0.4rem 1.2rem;
+      border: 1px solid rgba(45, 43, 37, 0.12);
+    }
+
+    .day2__address {
+      font-size: 0.95rem;
+      color: var(--color-dark);
+      line-height: 1.8;
+      opacity: 0.75;
+    }
+
+    .day2__note {
+      font-family: var(--font-serif);
+      font-size: 0.95rem;
+      font-style: italic;
+      color: var(--color-dark);
+      opacity: 0.7;
+      margin-top: 2rem;
+    }
+
+    /* ===== MENU ===== */
+    .menu-section {
+      max-width: 700px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .menu__heading {
+      font-family: var(--font-script);
+      font-size: clamp(2.2rem, 5vw, 3.2rem);
+      color: var(--color-cream);
+      margin-bottom: clamp(2rem, 4vw, 3rem);
+    }
+
+    .menu__item {
+      margin-bottom: 2rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid rgba(205, 193, 171, 0.15);
+    }
+
+    .menu__item:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .menu__item-name {
+      font-family: var(--font-sans);
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--color-cream);
+      margin-bottom: 0.6rem;
+    }
+
+    .menu__item-desc {
+      font-family: var(--font-serif);
+      font-size: 1rem;
+      font-weight: 300;
+      color: var(--color-tan);
+      line-height: 1.8;
+      opacity: 0.8;
+    }
+
+    .menu__note {
+      margin-top: 2.5rem;
+      font-family: var(--font-serif);
+      font-size: 0.95rem;
+      font-style: italic;
+      color: var(--color-tan);
+      opacity: 0.7;
+    }
+
+    /* ===== THINGS TO DO ===== */
+    .explore-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .explore-col__heading {
+      font-family: var(--font-serif);
+      font-size: 1.3rem;
+      font-weight: 400;
+      color: var(--color-dark);
+      margin-bottom: 1.25rem;
+    }
+
+    .explore-col__list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .explore-col__list li {
+      font-size: 0.95rem;
+      color: var(--color-dark);
+      line-height: 1.7;
+      opacity: 0.7;
+      padding: 0.4rem 0;
+      padding-left: 1.25rem;
+      position: relative;
+    }
+
+    .explore-col__list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--color-dark);
+      opacity: 0.25;
+      transform: translateY(-50%);
+    }
+
+    .explore-col__list a {
+      color: var(--color-dark);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      text-decoration-color: rgba(45, 43, 37, 0.3);
+      transition: text-decoration-color 0.3s ease;
+    }
+
+    .explore-col__list a:hover {
+      text-decoration-color: var(--color-dark);
+      opacity: 1;
+    }
+
+    .explore-col__subheading {
+      font-family: var(--font-sans);
+      font-size: 0.74rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--color-dark);
+      opacity: 0.75;
+      margin-top: 2rem;
+      margin-bottom: 0.75rem;
+    }
+
+    /* ===== GALLERY (dark with floral overlay) ===== */
+    .gallery-dark {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .gallery-dark__bg {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(45, 43, 37, 0.85) 0%, rgba(45, 43, 37, 0.9) 100%),
+        url('images/photo-3.jpg') center/cover no-repeat;
+    }
+
+    .gallery-dark .container {
+      position: relative;
+      z-index: 2;
+    }
+
+    .gallery-float {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .gallery-float__img {
+      width: 280px;
+      aspect-ratio: 3 / 4;
+      object-fit: cover;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+      transition: transform 0.5s ease;
+    }
+
+    .gallery-float__img:nth-child(2) {
+      transform: translateY(2rem);
+    }
+
+    .gallery-float__img:hover {
+      transform: scale(1.03);
+    }
+
+    .gallery-float__img:nth-child(2):hover {
+      transform: translateY(2rem) scale(1.03);
+    }
+
+    /* ===== MAP EMBEDS ===== */
+    .info-card__map {
+      width: 100%;
+      height: 200px;
+      border: 0;
+      margin-top: 1.25rem;
+      filter: grayscale(0.6);
+      transition: filter 0.4s ease;
+    }
+
+    .info-card__map:hover {
+      filter: grayscale(0);
+    }
+
+    /* ===== ACCOMMODATIONS ===== */
+    .hotels-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .hotel-card {
+      padding: 2.25rem 2rem;
+      border: 1px solid rgba(205, 193, 171, 0.2);
+      background: rgba(250, 241, 225, 0.06);
+      position: relative;
+    }
+
+    .hotel-card__badge {
+      display: inline-block;
+      font-family: var(--font-sans);
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--color-cream);
+      background: rgba(205, 193, 171, 0.2);
+      padding: 0.3rem 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .hotel-card__name {
+      font-family: var(--font-serif);
+      font-size: 1.3rem;
+      font-weight: 400;
+      color: var(--color-cream);
+      margin-bottom: 0.4rem;
+    }
+
+    .hotel-card__distance {
+      font-family: var(--font-sans);
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      color: var(--color-tan);
+      opacity: 0.75;
+      margin-bottom: 1rem;
+    }
+
+    .hotel-card__desc {
+      font-size: 0.94rem;
+      color: var(--color-tan);
+      line-height: 1.8;
+      opacity: 0.7;
+      margin-bottom: 1.5rem;
+    }
+
+    .hotel-card__link {
+      display: inline-block;
+      font-family: var(--font-sans);
+      font-size: 0.74rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--color-cream);
+      border: 1px solid rgba(250, 241, 225, 0.3);
+      padding: 0.65rem 1.5rem;
+      transition: all 0.4s ease;
+    }
+
+    .hotel-card__link:hover {
+      background: var(--color-cream);
+      color: var(--color-dark);
+      opacity: 1;
+    }
+
+    /* ===== RSVP LOADING & ERROR ===== */
+    .form__submit--loading {
+      pointer-events: none;
+      opacity: 0.75;
+      position: relative;
+    }
+
+    .form__submit--loading::after {
+      content: '';
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid transparent;
+      border-top-color: var(--color-cream);
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      margin-left: 0.75rem;
+      vertical-align: middle;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .form__error {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 0.8rem;
+      color: #b04040;
+      display: none;
+    }
+
+    .form__error.show {
+      display: block;
+    }
+
+    /* ===== RSVP SUCCESS ===== */
+    .rsvp__success {
+      display: none;
+      text-align: center;
+      padding: 2rem 0;
+    }
+
+    .rsvp__success.show {
+      display: block;
+    }
+
+    .rsvp__success-icon {
+      width: 50px;
+      height: 50px;
+      margin: 0 auto 1.25rem;
+      border: 1px solid var(--color-dark);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-dark);
+    }
+
+    .rsvp__success-title {
+      font-family: var(--font-script);
+      font-size: 1.8rem;
+      color: var(--color-dark);
+      margin-bottom: 0.75rem;
+    }
+
+    .rsvp__success-text {
+      font-size: 0.95rem;
+      color: var(--color-dark);
+      opacity: 0.75;
+      line-height: 1.8;
+    }
+
+    /* ===== GIFT (Section 11) ===== */
+    .gift-section {
+      text-align: center;
+      max-width: 620px;
+      margin: 0 auto;
+    }
+
+    .gift__heading {
+      font-family: var(--font-script);
+      font-size: clamp(2.2rem, 5vw, 3rem);
+      color: var(--color-dark);
+      margin-bottom: 0.5rem;
+    }
+
+    .gift__subheading {
+      font-family: var(--font-serif);
+      font-size: clamp(1rem, 2vw, 1.15rem);
+      font-weight: 300;
+      color: var(--color-dark);
+      opacity: 0.7;
+      margin-bottom: 2.5rem;
+      line-height: 1.8;
+    }
+
+    .gift__paypal-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1rem 2.5rem;
+      background: var(--color-dark);
+      color: var(--color-cream);
+      font-family: var(--font-sans);
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    .gift__paypal-btn:hover {
+      background: #1a1812;
+      transform: scale(1.02);
+    }
+
+    .gift__paypal-btn:active {
+      transform: scale(0.98);
+    }
+
+    .gift__paypal-btn svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    .gift__note {
+      margin-top: 1.5rem;
+      font-family: var(--font-serif);
+      font-size: 0.95rem;
+      font-style: italic;
+      color: var(--color-dark);
+      opacity: 0.7;
+    }
+
+    /* ===== FOOTER (Section 10) ===== */
+    .footer {
+      text-align: center;
+      padding: 5rem 2rem 3rem;
+      background: var(--color-tan);
+    }
+
+    .footer__names {
+      font-family: var(--font-script);
+      font-size: clamp(2rem, 5vw, 3rem);
+      color: var(--color-dark);
+      margin-bottom: 0.75rem;
+    }
+
+    .footer__date {
+      font-family: var(--font-serif);
+      font-size: 0.95rem;
+      font-weight: 300;
+      letter-spacing: 0.12em;
+      color: var(--color-dark);
+      opacity: 0.7;
+      margin-bottom: 2rem;
+    }
+
+    .footer__line {
+      width: 30px;
+      height: 1px;
+      background: var(--color-dark);
+      margin: 0 auto 2rem;
+      opacity: 0.2;
+    }
+
+    .footer__contact {
+      font-size: 0.78rem;
+      color: var(--color-dark);
+      opacity: 0.75;
+      margin-bottom: 0.5rem;
+    }
+
+    .footer__contact a {
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .footer__copy {
+      font-size: 0.76rem;
+      color: var(--color-dark);
+      opacity: 0.25;
+      letter-spacing: 0.1em;
+      margin-top: 2rem;
+    }
+
+    .footer__dev {
+      font-size: 0.58rem;
+      color: var(--color-dark);
+      opacity: 0.28;
+      margin-top: 1.25rem;
+      line-height: 1.7;
+    }
+
+    .footer__dev strong {
+      font-weight: 500;
+    }
+
+    .footer__dev a {
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .nav__links {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 75%;
+        max-width: 300px;
+        height: 100vh;
+        background: var(--color-cream);
+        flex-direction: column;
+        justify-content: center;
+        gap: 1.75rem;
+        padding: 2rem;
+        transition: right 0.4s ease;
+        box-shadow: -10px 0 40px rgba(0,0,0,0.08);
+      }
+
+      .nav__links .nav__link {
+        color: var(--color-dark);
+      }
+
+      .nav__links.open {
+        right: 0;
+      }
+
+      .nav__toggle {
+        display: block;
+        position: absolute;
+        right: 1.5rem;
+      }
+
+      .nav__brand {
+        position: absolute;
+        left: 1.5rem;
+      }
+
+      .story {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+      }
+
+      .story__img {
+        aspect-ratio: 4 / 3;
+        order: -1;
+      }
+
+      .info-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+
+      .gallery {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+      }
+
+      .gallery__hero {
+        aspect-ratio: 16 / 9;
+      }
+
+      .gallery__thumb {
+        aspect-ratio: 16 / 9;
+      }
+
+      .details-split {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+      }
+
+      .explore-grid {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+      }
+
+      .gallery-float__img {
+        width: 100%;
+        max-width: 320px;
+      }
+
+      .gallery-float__img:nth-child(2) {
+        transform: none;
+      }
+
+      .gallery-float__img:nth-child(2):hover {
+        transform: scale(1.03);
+      }
+
+      .hotels-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .rsvp-section {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+      }
+
+      .rsvp__img {
+        aspect-ratio: 16 / 9;
+        order: -1;
+      }
+
+      .timeline__item {
+        grid-template-columns: 75px 1px 1fr;
+        gap: 1.25rem;
+      }
+
+      .form__row {
+        grid-template-columns: 1fr;
+      }
+
+      .hero__countdown {
+        gap: 1.25rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero__countdown {
+        gap: 0.75rem;
+      }
+
+      .countdown__number {
+        font-size: 1.4rem;
+      }
+
+      .nav__links {
+        width: 100%;
+        max-width: none;
+      }
+    }
+
+    /* ===== LIGHTBOX ===== */
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: rgba(0, 0, 0, 0.92);
+      justify-content: center;
+      align-items: center;
+      cursor: zoom-out;
+      padding: 2rem;
+    }
+
+    .lightbox.open {
+      display: flex;
+    }
+
+    .lightbox__img {
+      max-width: 90vw;
+      max-height: 90vh;
+      object-fit: contain;
+      animation: lightboxIn 0.3s ease;
+    }
+
+    @keyframes lightboxIn {
+      from { opacity: 0; transform: scale(0.92); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .lightbox__close {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      width: 40px;
+      height: 40px;
+      background: none;
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      color: white;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.3s ease;
+    }
+
+    .lightbox__close:hover {
+      border-color: white;
+    }
+
+    img[data-zoomable] {
+      cursor: zoom-in;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox">
+    <button class="lightbox__close" aria-label="Close">&times;</button>
+    <img class="lightbox__img" id="lightbox-img" src="" alt="">
+  </div>
+
+  <!-- Navigation -->
+  <nav class="nav" role="navigation" aria-label="Main navigation">
+    <a href="#hero" class="nav__brand">K & M</a>
+    <button class="nav__toggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav__links">
+      <li><a href="#details" class="nav__link">Details</a></li>
+      <li><a href="#menu" class="nav__link">Menu</a></li>
+      <li><a href="#accommodations" class="nav__link">Stay</a></li>
+      <li><a href="#explore" class="nav__link">Explore</a></li>
+      <li><a href="#gallery" class="nav__link">Gallery</a></li>
+      <li><a href="#rsvp" class="nav__link">RSVP</a></li>
+    </ul>
+  </nav>
+
+  <!-- Section 1: Hero -->
+  <section class="hero" id="hero">
+    <div class="hero__bg"></div>
+    <div class="hero__content">
+      <p class="hero__pretext">Together with their families</p>
+      <h1 class="hero__names">
+        Kifle <span class="hero__ampersand">&</span> Milka
+      </h1>
+      <div class="hero__line"></div>
+      <p class="hero__tagline">are getting married</p>
+      <a href="#rsvp" class="hero__btn">RSVP Here</a>
+      <p class="hero__date-line">1st & 2nd August 2026 &bull; Winnipeg, Manitoba</p>
+      <div class="hero__countdown" aria-label="Countdown to wedding">
+        <div class="countdown__item">
+          <div class="countdown__number" id="countdown-days">---</div>
+          <div class="countdown__label">Days</div>
+        </div>
+        <div class="countdown__item">
+          <div class="countdown__number" id="countdown-hours">--</div>
+          <div class="countdown__label">Hours</div>
+        </div>
+        <div class="countdown__item">
+          <div class="countdown__number" id="countdown-mins">--</div>
+          <div class="countdown__label">Minutes</div>
+        </div>
+        <div class="countdown__item">
+          <div class="countdown__number" id="countdown-secs">--</div>
+          <div class="countdown__label">Seconds</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 2: Our Story -->
+  <section class="section section--tan" id="story">
+    <div class="container">
+      <div class="section__header reveal">
+        <p class="section__subtitle">How It Began</p>
+        <h2 class="section__title">Our Story</h2>
+        <div class="section__line"></div>
+      </div>
+      <div class="story">
+        <div class="story__text-block reveal">
+          <p class="story__lead">
+            "Some love stories are written in the stars, but ours was written over
+            late-night conversations, shared laughter, and a quiet knowing that
+            we had found something extraordinary."
+          </p>
+          <p class="story__text">
+            What started as a chance meeting between two people from worlds apart became a
+            love story neither of us could have predicted. From the very first conversation,
+            there was a warmth, an ease, a sense of coming home that neither of us had
+            felt before.
+          </p>
+          <p class="story__text">
+            Through every season, every challenge, and every joy, we've grown together in
+            ways that continue to amaze us. Now, surrounded by the people we love most,
+            we're ready to begin the next chapter of our journey &mdash; together, forever.
+          </p>
+        </div>
+        <img
+          class="story__img reveal reveal-delay-1"
+          src="images/photo-2.jpg"
+          alt="Kifle and Milka on steps"
+          data-zoomable
+          loading="lazy"
+        >
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 3: Wedding Details -->
+  <section class="section section--tan" id="details" style="padding-top: 0;">
+    <div class="container">
+      <div class="section__header reveal">
+        <p class="section__subtitle">The Celebration</p>
+        <h2 class="section__title">Wedding Details</h2>
+        <div class="section__line"></div>
+      </div>
+      <div class="info-grid">
+        <div class="info-card reveal">
+          <div class="info-card__label">Ceremony</div>
+          <h3 class="info-card__title">Canadian Museum for Human Rights</h3>
+          <p class="info-card__text">
+            85 Israel Asper Way<br>
+            Winnipeg, MB R3C 0L5
+          </p>
+          <p class="info-card__time">2:00 PM</p>
+          <iframe
+            class="info-card__map"
+            src="https://maps.google.com/maps?q=Canadian+Museum+for+Human+Rights,+85+Israel+Asper+Way,+Winnipeg,+MB&t=&z=15&ie=UTF8&iwloc=&output=embed"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            title="Ceremony venue map"
+          ></iframe>
+        </div>
+        <div class="info-card reveal reveal-delay-1">
+          <div class="info-card__label">Reception</div>
+          <h3 class="info-card__title">The Fort Garry Hotel</h3>
+          <p class="info-card__text">
+            222 Broadway<br>
+            Winnipeg, MB R3C 0R3
+          </p>
+          <p class="info-card__time">6:00 PM</p>
+          <iframe
+            class="info-card__map"
+            src="https://maps.google.com/maps?q=Fort+Garry+Hotel,+222+Broadway,+Winnipeg,+MB&t=&z=15&ie=UTF8&iwloc=&output=embed"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            title="Reception venue map"
+          ></iframe>
+        </div>
+      </div>
+      <div class="details-split reveal">
+        <div class="venue-info">
+          <h3 class="venue-info__heading">Reception Venue</h3>
+          <p class="venue-info__text">
+            Our reception will take place at The Gates on Roblin in
+            Winnipeg, a beautiful venue set along the Assiniboine
+            River and surrounded by gardens and green space.
+          </p>
+          <p class="venue-info__address">The Gates on Roblin &mdash; 3440 Roblin Blvd, Headingley, MB R4H 1A1</p>
+        </div>
+        <div class="venue-info">
+          <div class="venue-info__subheading">Shuttle Service</div>
+          <p class="venue-info__text">
+            For guests staying downtown, we are planning to provide a
+            shuttle service from one of the downtown hotels to the
+            venue and back. Shuttle details will be confirmed closer
+            to the date.
+          </p>
+          <div class="venue-info__subheading">Parking & Directions</div>
+          <p class="venue-info__text">
+            Free parking is available on-site, with designated areas
+            for PMRs and senior guests. If you need special assistance
+            or a drop-off closer to the garden entrance, let us know.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Day 2 Celebration -->
+  <section class="section section--cream" id="day2">
+    <div class="container">
+      <div class="day2 reveal">
+        <h2 class="day2__heading">Day Two Celebration</h2>
+        <p class="day2__time">Starting from 5:30 PM</p>
+        <p class="day2__address">
+          181 Austin St N<br>
+          Winnipeg, MB R2W 3M5, Canada
+        </p>
+        <p class="day2__note">Join us for an evening of food, music, and celebration as we continue the festivities.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 4: Quote -->
+  <section class="section section--cream">
+    <div class="container">
+      <div class="quote-section reveal">
+        <p class="quote__text">
+          "And now these three remain: faith, hope and love. But the greatest
+          of these is love."
+        </p>
+        <p class="quote__attribution">1 Corinthians 13:13</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 5: Featured Photo -->
+  <section class="section section--cream" style="padding-top: 0;">
+    <div class="container">
+      <div class="featured-photo reveal">
+        <img
+          class="featured-photo__img"
+          src="images/photo-4.jpg"
+          alt="Kifle and Milka"
+          data-zoomable
+          loading="lazy"
+        >
+        <p class="featured-photo__caption">Forever starts here</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 6: Love Letter (Dark) -->
+  <section class="section section--dark">
+    <div class="container">
+      <div class="letter reveal">
+        <p class="letter__opening">To Our Dearest Family & Friends</p>
+        <p class="letter__body">
+          From the moment we met, we knew our lives would never be the same. What began
+          as two separate journeys has become one beautiful path. We have been blessed
+          beyond measure by your love, your support, and your presence in our lives.
+        </p>
+        <p class="letter__body">
+          As we prepare to say "I do," we are filled with gratitude for each of you.
+          You have shaped who we are, individually and together. This celebration is as
+          much yours as it is ours, because without you, our story would be incomplete.
+        </p>
+        <p class="letter__body">
+          We cannot wait to share this day with you &mdash; to laugh, to cry happy tears,
+          to dance until our feet ache, and to begin this new chapter surrounded by
+          the people who matter most.
+        </p>
+        <p class="letter__closing">With all our love, Kifle & Milka</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 7: Schedule -->
+  <section class="section section--tan" id="schedule">
+    <div class="container">
+      <div class="section__header reveal">
+        <p class="section__subtitle">The Day</p>
+        <h2 class="section__title">Schedule</h2>
+        <div class="section__line"></div>
+      </div>
+      <div class="timeline">
+        <div class="timeline__item reveal">
+          <div class="timeline__time">
+            <div class="timeline__hour">2:00</div>
+            <div class="timeline__period">PM</div>
+          </div>
+          <div class="timeline__line"></div>
+          <div class="timeline__details">
+            <h3 class="timeline__event">The Ceremony</h3>
+            <p class="timeline__venue">Canadian Museum for Human Rights</p>
+            <p class="timeline__desc">
+              Join us as we exchange vows. Please arrive 15 minutes early to be seated.
+            </p>
+          </div>
+        </div>
+        <div class="timeline__item reveal">
+          <div class="timeline__time">
+            <div class="timeline__hour">4:00</div>
+            <div class="timeline__period">PM</div>
+          </div>
+          <div class="timeline__line"></div>
+          <div class="timeline__details">
+            <h3 class="timeline__event">Cocktail Hour</h3>
+            <p class="timeline__venue">The Fort Garry Hotel &mdash; Crystal Ballroom Foyer</p>
+            <p class="timeline__desc">
+              Enjoy handcrafted cocktails, hors d'oeuvres, and live music.
+            </p>
+          </div>
+        </div>
+        <div class="timeline__item reveal">
+          <div class="timeline__time">
+            <div class="timeline__hour">6:00</div>
+            <div class="timeline__period">PM</div>
+          </div>
+          <div class="timeline__line"></div>
+          <div class="timeline__details">
+            <h3 class="timeline__event">Dinner & Reception</h3>
+            <p class="timeline__venue">The Fort Garry Hotel &mdash; Crystal Ballroom</p>
+            <p class="timeline__desc">
+              An evening of dining, toasts, and dancing until 1:00 AM.
+            </p>
+          </div>
+        </div>
+        <div class="timeline__item reveal">
+          <div class="timeline__time">
+            <div class="timeline__hour">9:00</div>
+            <div class="timeline__period">PM</div>
+          </div>
+          <div class="timeline__line"></div>
+          <div class="timeline__details">
+            <h3 class="timeline__event">Dance Floor Opens</h3>
+            <p class="timeline__venue">Crystal Ballroom</p>
+            <p class="timeline__desc">
+              Kick off your shoes and celebrate with us on the dance floor.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Menu -->
+  <section class="section section--dark" id="menu">
+    <div class="container">
+      <div class="menu-section reveal">
+        <h2 class="menu__heading">Menu</h2>
+        <div class="menu__item">
+          <div class="menu__item-name">Beef</div>
+          <p class="menu__item-desc">
+            Charred beef filet with a bordelaise sauce;<br>
+            Served with roasted green beans
+          </p>
+        </div>
+        <div class="menu__item">
+          <div class="menu__item-name">Chicken</div>
+          <p class="menu__item-desc">
+            Pesto and fontina cheese stuffed chicken breast with a basil tomato sauce;<br>
+            Served with roasted peppers and zucchini medley
+          </p>
+        </div>
+        <div class="menu__item">
+          <div class="menu__item-name">Vegetarian</div>
+          <p class="menu__item-desc">
+            Creamy pesto gnocchi with wilted greens and grilled portobello 'steak'; topped with parmesan
+          </p>
+        </div>
+        <div class="menu__item">
+          <div class="menu__item-name">Fish</div>
+          <p class="menu__item-desc">
+            Herb crusted salmon with a lemon caper cream sauce; served on sauteed swiss chard
+          </p>
+        </div>
+        <p class="menu__note">Your meal will also include soup, salad, sides and dessert</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Photo Gallery (Dark with floral overlay) -->
+  <section class="section section--dark gallery-dark" id="gallery">
+    <div class="gallery-dark__bg"></div>
+    <div class="container">
+      <div class="section__header reveal">
+        <p class="section__subtitle">Moments</p>
+        <h2 class="section__title">Our Gallery</h2>
+        <div class="section__line"></div>
+      </div>
+      <div class="gallery-float reveal">
+        <img
+          class="gallery-float__img"
+          src="images/photo-5.jpg"
+          alt="Ring detail"
+          data-zoomable
+          loading="lazy"
+        >
+        <img
+          class="gallery-float__img"
+          src="images/photo-4.jpg"
+          alt="Kifle and Milka together"
+          data-zoomable
+          loading="lazy"
+        >
+        <img
+          class="gallery-float__img"
+          src="images/photo-6.jpg"
+          alt="Kifle and Milka walking"
+          data-zoomable
+          loading="lazy"
+        >
+      </div>
+    </div>
+  </section>
+
+  <!-- Things to Do -->
+  <section class="section section--tan" id="explore">
+    <div class="container">
+      <div class="section__header reveal">
+        <p class="section__subtitle">While You're Here</p>
+        <h2 class="section__title">Things to Do</h2>
+        <div class="section__line"></div>
+      </div>
+      <div class="explore-grid">
+        <div class="reveal">
+          <h3 class="explore-col__heading">Things to Do in Winnipeg</h3>
+          <ul class="explore-col__list">
+            <li><a href="https://www.thermea.ca" target="_blank" rel="noopener">Thermia</a></li>
+            <li><a href="https://humanrights.ca" target="_blank" rel="noopener">Human Rights Museum</a></li>
+            <li><a href="https://www.assiniboinepark.ca/the-leaf" target="_blank" rel="noopener">The Leaf</a></li>
+            <li><a href="https://manitobamuseum.ca" target="_blank" rel="noopener">Manitoba Museum</a></li>
+            <li><a href="https://www.theforks.com" target="_blank" rel="noopener">The Forks Market</a></li>
+            <li><a href="https://www.wag.ca" target="_blank" rel="noopener">Winnipeg Art Gallery</a></li>
+          </ul>
+        </div>
+        <div class="reveal reveal-delay-1">
+          <h3 class="explore-col__heading">If Flying in from Calgary</h3>
+          <ul class="explore-col__list">
+            <li><a href="https://www.banfflakelouise.com" target="_blank" rel="noopener">Visit Banff</a></li>
+            <li><a href="https://www.pc.gc.ca/en/pn-np/ab/banff/activ/randonee-hiking/johnston" target="_blank" rel="noopener">Johnston Canyon</a></li>
+          </ul>
+          <div class="explore-col__subheading">Places to Eat</div>
+          <ul class="explore-col__list">
+            <li><a href="https://www.clementinecalgary.com" target="_blank" rel="noopener">Clementine</a></li>
+            <li><a href="https://www.harthrestaurant.com" target="_blank" rel="noopener">Harth</a></li>
+            <li><a href="https://www.parcelpizza.com" target="_blank" rel="noopener">Parcel Pizza</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 9: Accommodations -->
+  <section class="section section--dark" id="accommodations">
+    <div class="container">
+      <div class="section__header reveal">
+        <p class="section__subtitle">Where to Stay</p>
+        <h2 class="section__title">Accommodations</h2>
+        <div class="section__line"></div>
+      </div>
+      <div class="hotels-grid">
+        <div class="hotel-card reveal">
+          <h3 class="hotel-card__name">Viscount Gort Hotel</h3>
+          <p class="hotel-card__distance">10 min drive to venues</p>
+          <p class="hotel-card__desc">
+            A comfortable and affordable option with easy access to
+            both wedding venues. Complimentary parking included.
+          </p>
+          <a href="https://www.viscountgort.com" target="_blank" rel="noopener" class="hotel-card__link">Book Your Stay</a>
+        </div>
+        <div class="hotel-card reveal reveal-delay-1">
+          <h3 class="hotel-card__name">Inn at The Forks</h3>
+          <p class="hotel-card__distance">3 min walk to ceremony</p>
+          <p class="hotel-card__desc">
+            A boutique hotel at The Forks, steps from the ceremony venue.
+            Rooftop spa and river views for a perfect wedding weekend.
+          </p>
+          <a href="https://www.innforks.com" target="_blank" rel="noopener" class="hotel-card__link">Book Your Stay</a>
+        </div>
+        <div class="hotel-card reveal reveal-delay-2">
+          <span class="hotel-card__badge">Reception Venue</span>
+          <h3 class="hotel-card__name">The Fort Garry Hotel</h3>
+          <p class="hotel-card__distance">0 min walk to reception</p>
+          <p class="hotel-card__desc">
+            A Winnipeg landmark since 1913. Stay where the celebration
+            happens, just steps from the ballroom.
+          </p>
+          <a href="https://www.fortgarryhotel.com" target="_blank" rel="noopener" class="hotel-card__link">Book Your Stay</a>
+        </div>
+        <div class="hotel-card reveal reveal-delay-3">
+          <h3 class="hotel-card__name">Birchwood Hotel</h3>
+          <p class="hotel-card__distance">15 min drive</p>
+          <p class="hotel-card__desc">
+            A great value option in south Winnipeg with spacious rooms,
+            free parking, and easy highway access to all venues.
+          </p>
+          <a href="https://www.birchwoodhotel.ca" target="_blank" rel="noopener" class="hotel-card__link">Book Your Stay</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 10: RSVP -->
+  <section class="section section--tan" id="rsvp">
+    <div class="container">
+      <div class="rsvp__form-wrap reveal" style="max-width: 700px; margin: 0 auto; text-align: center;">
+        <h2 class="rsvp__heading">Join Our Celebration</h2>
+        <p class="rsvp__subheading" style="margin-bottom: 2rem;">Kindly respond by July 1st, 2026</p>
+
+        <!-- Tally Embed -->
+        <iframe
+          data-tally-src="https://tally.so/embed/Gx10Jk?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
+          loading="lazy"
+          width="100%"
+          height="500"
+          frameborder="0"
+          marginheight="0"
+          marginwidth="0"
+          title="Wedding RSVP"
+          style="min-height: 500px;">
+        </iframe>
+        <script>
+          var d=document,w="https://tally.so/widgets/embed.js",v=function(){"undefined"!=typeof Tally?Tally.loadEmbeds():d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach((function(e){e.src=e.dataset.tallySrc}))};if("undefined"!=typeof Tally)v();else if(d.querySelector('script[src="'+w+'"]'))v();else{var s=d.createElement("script");s.src=w,s.onload=v,s.onerror=v,d.body.appendChild(s);}
+        </script>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 11: Gift -->
+  <section class="section section--cream" id="gift">
+    <div class="container">
+      <div class="gift-section reveal">
+        <h2 class="gift__heading">Your Presence is Our Gift</h2>
+        <p class="gift__subheading">
+          Your love and support mean the world to us. If you wish to honour us with a gift, a contribution towards our future together would be deeply appreciated.
+        </p>
+        <a href="https://paypal.me/KifleTekle" target="_blank" rel="noopener noreferrer" class="gift__paypal-btn">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797H9.603c-.564 0-1.04.408-1.13.964L7.076 21.337zm7.874-15.09c-.256 0-.51.02-.758.06-.876.14-1.594.673-1.955 1.456a3.12 3.12 0 0 0-.263 1.282c0 1.14.706 1.906 2.052 1.906h.882c2.582 0 4.263-1.063 4.87-3.842.044-.2.073-.39.09-.57.1-1.06-.587-2.292-4.918-2.292z"/></svg>
+          Send Gift via PayPal
+        </a>
+        <p class="gift__note">You will be redirected to PayPal</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 10: Footer -->
+  <footer class="footer">
+    <p class="footer__names">Kifle & Milka</p>
+    <p class="footer__date">August 1 & 2, 2026 &bull; Winnipeg, Manitoba</p>
+    <div class="footer__line"></div>
+    <p class="footer__contact">
+      Questions? Reach out to us<br>
+      <a href="mailto:kifletekle76@gmail.com">kifletekle76@gmail.com</a> &bull;
+      <a href="tel:+447961014933">+44 7961 014933</a><br>
+      <a href="mailto:yaelhagheray@gmail.com">yaelhagheray@gmail.com</a> &bull;
+      <a href="tel:+447432781050">+44 7432 781050</a>
+    </p>
+    <p class="footer__copy">Made with love &bull; K & M 2026</p>
+    <p class="footer__dev">
+      Want a wedding website like this?<br>
+      Built by <strong>Abel Ghebrezadik</strong> &mdash;
+      <a href="mailto:abelghebz@gmail.com">abelghebz@gmail.com</a> &bull;
+      <a href="tel:+447527841324">+44 7527 841324</a>
+    </p>
+  </footer>
+
+  <script>
+    // ===== COUNTDOWN TIMER =====
+    (function countdown() {
+      const weddingDate = new Date('2026-08-01T14:00:00-05:00');
+      const els = {
+        days: document.getElementById('countdown-days'),
+        hours: document.getElementById('countdown-hours'),
+        mins: document.getElementById('countdown-mins'),
+        secs: document.getElementById('countdown-secs')
+      };
+
+      function update() {
+        const now = new Date();
+        const diff = weddingDate - now;
+
+        if (diff <= 0) {
+          els.days.textContent = '0';
+          els.hours.textContent = '0';
+          els.mins.textContent = '0';
+          els.secs.textContent = '0';
+          return;
+        }
+
+        const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+        els.days.textContent = d;
+        els.hours.textContent = String(h).padStart(2, '0');
+        els.mins.textContent = String(m).padStart(2, '0');
+        els.secs.textContent = String(s).padStart(2, '0');
+      }
+
+      update();
+      setInterval(update, 1000);
+    })();
+
+    // ===== SCROLL REVEAL =====
+    (function reveal() {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -30px 0px' });
+
+      document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    })();
+
+    // ===== NAVBAR SCROLL =====
+    (function navScroll() {
+      const nav = document.querySelector('.nav');
+      let ticking = false;
+
+      window.addEventListener('scroll', () => {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            nav.classList.toggle('scrolled', window.scrollY > 80);
+            ticking = false;
+          });
+          ticking = true;
+        }
+      });
+    })();
+
+    // ===== MOBILE MENU =====
+    (function mobileMenu() {
+      const toggle = document.querySelector('.nav__toggle');
+      const links = document.querySelector('.nav__links');
+
+      toggle.addEventListener('click', () => {
+        const isOpen = links.classList.toggle('open');
+        toggle.classList.toggle('active');
+        toggle.setAttribute('aria-expanded', isOpen);
+      });
+
+      links.querySelectorAll('.nav__link').forEach(link => {
+        link.addEventListener('click', () => {
+          links.classList.remove('open');
+          toggle.classList.remove('active');
+          toggle.setAttribute('aria-expanded', 'false');
+        });
+      });
+    })();
+
+    // ===== LIGHTBOX =====
+    (function lightbox() {
+      const lb = document.getElementById('lightbox');
+      const lbImg = document.getElementById('lightbox-img');
+
+      document.querySelectorAll('img[data-zoomable]').forEach(img => {
+        img.addEventListener('click', () => {
+          lbImg.src = img.src;
+          lbImg.alt = img.alt;
+          lb.classList.add('open');
+          document.body.style.overflow = 'hidden';
+        });
+      });
+
+      lb.addEventListener('click', () => {
+        lb.classList.remove('open');
+        document.body.style.overflow = '';
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && lb.classList.contains('open')) {
+          lb.classList.remove('open');
+          document.body.style.overflow = '';
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
