@@ -1,0 +1,61 @@
+{
+  "slug": "meronandadiam",
+  "isPublished": true,
+  "templateId": "elegant-cream",
+  "passwordHash": "$2b$10$5JvgovlkakoeamziHwAZEeSPsu9jf9uM2xWj4GVhQMph5/.LmUQCe",
+
+  "partner1Name": "Meron",
+  "partner2Name": "Adiam",
+  "weddingDate": "2026-09-01T14:00:00-05:00",
+  "dateDisplayText": "September 1, 2026",
+  "locationText": "City, Province",
+
+  "heroPretext": "Together with their families",
+  "heroTagline": "are getting married",
+  "heroCta": "RSVP Here",
+  "heroImageUrl": "/demo/images/photo-1.jpg",
+
+  "storySubtitle": "How It Began",
+  "storyTitle": "Our Story",
+  "storyLeadQuote": "Your love story here...",
+  "storyBody": [
+    "Tell your story here. You can edit everything from the dashboard."
+  ],
+  "storyImageUrl": "/demo/images/photo-2.jpg",
+
+  "quoteText": "",
+  "quoteAttribution": "",
+
+  "featuredPhotoUrl": "",
+  "featuredPhotoCaption": "",
+
+  "letterOpening": "",
+  "letterBody": [],
+  "letterClosing": "",
+
+  "rsvpHeading": "Join Our Celebration",
+  "rsvpDeadlineText": "Kindly respond by ...",
+  "rsvpEmbedUrl": "",
+
+  "giftHeading": "",
+  "giftSubheading": "",
+  "giftPaymentUrl": "",
+  "giftPaymentLabel": "",
+  "giftNote": "",
+
+  "footerNames": "Meron & Adiam",
+  "footerDateText": "September 1, 2026",
+  "footerCopyright": "Made with love • M & A 2026",
+
+  "venues": [],
+  "venueInfoBlocks": [],
+  "dayTwoEvent": null,
+  "scheduleItems": [],
+  "menuItems": [],
+  "menuNote": "",
+  "galleryImages": [],
+  "exploreGroups": [],
+  "accommodations": [],
+  "contactEntries": [],
+  "navBrand": "M & A"
+}

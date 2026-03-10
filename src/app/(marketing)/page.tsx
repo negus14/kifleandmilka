@@ -58,12 +58,20 @@ export default function LandingPage() {
               Demo
             </Link>
           </div>
-          <Link
-            href="/kifleandmilka"
-            className="text-[13px] font-['DM_Sans',sans-serif] font-medium tracking-[0.08em] uppercase border border-[#2d2b25] px-5 py-2 hover:bg-[#2d2b25] hover:text-[#faf1e1] transition-all duration-300"
-          >
-            Get Started
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/login"
+              className="text-[13px] font-['DM_Sans',sans-serif] font-medium tracking-[0.08em] uppercase text-[#2d2b25]/60 hover:text-[#2d2b25] transition-colors px-3 py-2"
+            >
+              Log In
+            </Link>
+            <Link
+              href="/login"
+              className="text-[13px] font-['DM_Sans',sans-serif] font-medium tracking-[0.08em] uppercase border border-[#2d2b25] px-5 py-2 hover:bg-[#2d2b25] hover:text-[#faf1e1] transition-all duration-300"
+            >
+              Get Started
+            </Link>
+          </div>
         </div>
       </nav>
 

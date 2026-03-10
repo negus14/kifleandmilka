@@ -4,7 +4,7 @@ import "./styles.css";
 
 export default function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
   return (
-    <>
+    <div className="wedding-site">
       <WeddingSiteClient weddingDate={site.weddingDate} tallyUrl={site.rsvpEmbedUrl} />
 
       {/* Fonts */}
@@ -405,6 +405,6 @@ export default function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
           <p className="footer__dev" dangerouslySetInnerHTML={{ __html: site.footerDevCredit }} />
         )}
       </footer>
-    </>
+    </div>
   );
 }

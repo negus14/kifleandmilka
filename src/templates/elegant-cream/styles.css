@@ -1,12 +1,7 @@
 /* ===== KIFLE & MILKA — ELEGANT CREAM TEMPLATE ===== */
+/* All styles scoped under .wedding-site to prevent global bleed */
 
-*, *::before, *::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-:root {
+.wedding-site {
   --color-dark: #2d2b25;
   --color-tan: #cdc1ab;
   --color-cream: #faf1e1;
@@ -22,14 +17,12 @@
 
   --section-padding: clamp(5rem, 12vw, 9rem);
   --container-width: min(88%, 1060px);
-}
 
-html {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
   scroll-behavior: smooth;
   font-size: 18px;
-}
-
-body {
   font-family: var(--font-sans);
   font-weight: 400;
   color: var(--color-dark);
@@ -39,18 +32,24 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-img {
+.wedding-site *, .wedding-site *::before, .wedding-site *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.wedding-site img {
   max-width: 100%;
   display: block;
 }
 
-a {
+.wedding-site a {
   color: var(--color-dark);
   text-decoration: none;
   transition: opacity 0.3s ease;
 }
 
-a:hover {
+.wedding-site a:hover {
   opacity: 0.7;
 }
 

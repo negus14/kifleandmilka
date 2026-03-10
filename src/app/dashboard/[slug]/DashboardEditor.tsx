@@ -143,6 +143,12 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
               className="bg-[#2d2b25] text-[#faf1e1] px-5 py-2 text-xs font-semibold tracking-[0.1em] uppercase disabled:opacity-60 hover:bg-[#1a1812] transition-colors">
               {saving ? "Saving..." : saved ? "Saved!" : "Save Changes"}
             </button>
+            <form action="/api/auth/logout" method="POST">
+              <button type="submit"
+                className="text-xs tracking-wide uppercase text-[#2d2b25]/40 hover:text-red-500 transition-colors">
+                Log Out
+              </button>
+            </form>
           </div>
         </div>
       </header>
