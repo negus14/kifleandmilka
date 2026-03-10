@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getSession, createSession } from "@/lib/auth";
+import { createSession } from "@/lib/auth";
 import { getSiteBySlug } from "@/lib/data/sites";
 import { compare } from "bcryptjs";
 import LoginForm from "./LoginForm";
@@ -25,8 +25,5 @@ async function loginAction(formData: FormData) {
 }
 
 export default async function LoginPage() {
-  const session = await getSession();
-  if (session) redirect(`/dashboard/${session.slug}`);
-
   return <LoginForm action={loginAction} />;
 }

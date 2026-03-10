@@ -1,19 +1,30 @@
 import type { WeddingSite } from "@/lib/types/wedding-site";
+import { getTheme } from "@/lib/themes";
 import WeddingSiteClient from "./WeddingSiteClient";
 import "./styles.css";
 
 export default function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
+  const theme = getTheme(site.templateId);
+  const themeVars = {
+    "--color-dark": theme.colors.dark,
+    "--color-tan": theme.colors.tan,
+    "--color-cream": theme.colors.cream,
+    "--color-tan-light": theme.colors.tanLight,
+    "--color-tan-dark": theme.colors.tanDark,
+    "--color-cream-dark": theme.colors.creamDark,
+    "--font-script": theme.fonts.script,
+    "--font-serif": theme.fonts.serif,
+    "--font-sans": theme.fonts.sans,
+  } as React.CSSProperties;
+
   return (
-    <div className="wedding-site">
+    <div className="wedding-site" style={themeVars}>
       <WeddingSiteClient weddingDate={site.weddingDate} tallyUrl={site.rsvpEmbedUrl} />
 
       {/* Fonts */}
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-      <link
-        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Pinyon+Script&family=Josefin+Sans:wght@300;400;500;600&display=swap"
-        rel="stylesheet"
-      />
+      <link href={theme.googleFontsUrl} rel="stylesheet" />
 
       {/* Lightbox */}
       <div className="lightbox" id="lightbox">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useId } from "react";
 import type {
   WeddingSite,
   VenueItem,
@@ -12,6 +12,23 @@ import type {
   ContactEntry,
   VenueInfoBlock,
 } from "@/lib/types/wedding-site";
+import { themes } from "@/lib/themes";
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  KeyboardSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  useSortable,
+  arrayMove,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 const TABS = [
   "Basics", "Hero", "Story", "Details", "Schedule",
@@ -78,6 +95,86 @@ function AddButton({ onClick, label }: { onClick: () => void; label: string }) {
 
 function SectionTitle({ children }: { children: React.ReactNode }) {
   return <h2 className="text-lg mb-6" style={{ fontFamily: "'Playfair Display', serif" }}>{children}</h2>;
+}
+
+// ─── Drag Handle ───
+
+function DragHandle({ listeners, attributes }: { listeners?: Record<string, Function>; attributes?: Record<string, any> }) {
+  return (
+    <button
+      type="button"
+      className="absolute top-3 left-3 cursor-grab active:cursor-grabbing text-[#2d2b25]/25 hover:text-[#2d2b25]/50 touch-none"
+      {...attributes}
+      {...listeners}
+    >
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+        <circle cx="5" cy="3" r="1.5" /><circle cx="11" cy="3" r="1.5" />
+        <circle cx="5" cy="8" r="1.5" /><circle cx="11" cy="8" r="1.5" />
+        <circle cx="5" cy="13" r="1.5" /><circle cx="11" cy="13" r="1.5" />
+      </svg>
+    </button>
+  );
+}
+
+// ─── Sortable Item ───
+
+function SortableCard({ id, children, onRemove, title }: {
+  id: string; children: React.ReactNode; onRemove?: () => void; title?: string;
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+    zIndex: isDragging ? 10 : undefined,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style}>
+      <div className="border border-[#2d2b25]/10 bg-white/40 p-4 pl-10 rounded-sm mb-3 relative">
+        <DragHandle listeners={listeners} attributes={attributes} />
+        {title && <p className="text-xs font-semibold tracking-wide uppercase text-[#2d2b25]/40 mb-3">{title}</p>}
+        {onRemove && (
+          <button onClick={onRemove} type="button"
+            className="absolute top-3 right-3 text-[#2d2b25]/30 hover:text-red-500 text-lg leading-none transition-colors"
+            title="Remove"
+          >&times;</button>
+        )}
+        {children}
+      </div>
+    </div>
+  );
+}
+
+// ─── Sortable List Wrapper ───
+
+function SortableList<T>({ items, prefix, onReorder, children }: {
+  items: T[];
+  prefix: string;
+  onReorder: (items: T[]) => void;
+  children: (item: T, index: number, id: string) => React.ReactNode;
+}) {
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor),
+  );
+  const ids = items.map((_, i) => `${prefix}-${i}`);
+
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const oldIndex = ids.indexOf(active.id as string);
+    const newIndex = ids.indexOf(over.id as string);
+    onReorder(arrayMove(items, oldIndex, newIndex));
+  }
+
+  return (
+    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+      <SortableContext items={ids} strategy={verticalListSortingStrategy}>
+        {items.map((item, i) => children(item, i, ids[i]))}
+      </SortableContext>
+    </DndContext>
+  );
 }
 
 // ─── Main Editor ───
@@ -178,6 +275,32 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
               <Field label="Display Date Text" value={site.dateDisplayText} onChange={(v) => set("dateDisplayText", v)} />
               <Field label="Location" value={site.locationText} onChange={(v) => set("locationText", v)} />
               <Field label="Nav Brand Text" value={site.navBrand} onChange={(v) => set("navBrand", v)} placeholder="K & M" />
+
+              <Label>Theme</Label>
+              <div className="grid grid-cols-2 gap-3 mt-2 mb-4">
+                {themes.map((theme) => (
+                  <button
+                    key={theme.id}
+                    type="button"
+                    onClick={() => set("templateId", theme.id)}
+                    className={`relative text-left p-3 rounded-sm border-2 transition-all ${
+                      site.templateId === theme.id
+                        ? "border-[#2d2b25] shadow-sm"
+                        : "border-[#2d2b25]/10 hover:border-[#2d2b25]/30"
+                    }`}
+                  >
+                    <div className="flex gap-1.5 mb-2">
+                      <span className="w-5 h-5 rounded-full border border-black/10" style={{ background: theme.colors.cream }} />
+                      <span className="w-5 h-5 rounded-full border border-black/10" style={{ background: theme.colors.tan }} />
+                      <span className="w-5 h-5 rounded-full border border-black/10" style={{ background: theme.colors.dark }} />
+                    </div>
+                    <p className="text-sm font-medium text-[#2d2b25]">{theme.name}</p>
+                    {site.templateId === theme.id && (
+                      <span className="absolute top-2 right-2 text-xs font-semibold tracking-wide uppercase text-[#2d2b25]/50">Active</span>
+                    )}
+                  </button>
+                ))}
+              </div>
             </div>
           )}
 
@@ -205,16 +328,16 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
               <Field label="Title" value={site.storyTitle} onChange={(v) => set("storyTitle", v)} />
               <Field label="Lead Quote" value={site.storyLeadQuote} onChange={(v) => set("storyLeadQuote", v)} multiline rows={3} />
               <Label>Story Paragraphs</Label>
-              {site.storyBody.map((p, i) => (
-                <div key={i} className="flex gap-2 mb-2">
-                  <textarea value={p} rows={3}
-                    onChange={(e) => set("storyBody", site.storyBody.map((x, j) => j === i ? e.target.value : x))}
-                    className="flex-1 px-3 py-2 border border-[#2d2b25]/15 bg-white/50 text-[#2d2b25] text-sm outline-none focus:border-[#2d2b25]/40 resize-y rounded-sm"
-                  />
-                  <button onClick={() => set("storyBody", removeFromArray(site.storyBody, i))} type="button"
-                    className="text-[#2d2b25]/30 hover:text-red-500 px-2 self-start mt-2">&times;</button>
-                </div>
-              ))}
+              <SortableList items={site.storyBody} prefix="story" onReorder={(items) => set("storyBody", items)}>
+                {(p, i, id) => (
+                  <SortableCard key={id} id={id} onRemove={() => set("storyBody", removeFromArray(site.storyBody, i))}>
+                    <textarea value={p} rows={3}
+                      onChange={(e) => set("storyBody", site.storyBody.map((x, j) => j === i ? e.target.value : x))}
+                      className="w-full px-3 py-2 border border-[#2d2b25]/15 bg-white/50 text-[#2d2b25] text-sm outline-none focus:border-[#2d2b25]/40 resize-y rounded-sm"
+                    />
+                  </SortableCard>
+                )}
+              </SortableList>
               <AddButton label="Add Paragraph" onClick={() => set("storyBody", [...site.storyBody, ""])} />
               <Field label="Story Image URL" value={site.storyImageUrl} onChange={(v) => set("storyImageUrl", v)} />
               {site.storyImageUrl && (
@@ -232,16 +355,16 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
               <SectionTitle>Love Letter</SectionTitle>
               <Field label="Opening" value={site.letterOpening} onChange={(v) => set("letterOpening", v)} />
               <Label>Body Paragraphs</Label>
-              {site.letterBody.map((p, i) => (
-                <div key={i} className="flex gap-2 mb-2">
-                  <textarea value={p} rows={3}
-                    onChange={(e) => set("letterBody", site.letterBody.map((x, j) => j === i ? e.target.value : x))}
-                    className="flex-1 px-3 py-2 border border-[#2d2b25]/15 bg-white/50 text-[#2d2b25] text-sm outline-none focus:border-[#2d2b25]/40 resize-y rounded-sm"
-                  />
-                  <button onClick={() => set("letterBody", removeFromArray(site.letterBody, i))} type="button"
-                    className="text-[#2d2b25]/30 hover:text-red-500 px-2 self-start mt-2">&times;</button>
-                </div>
-              ))}
+              <SortableList items={site.letterBody} prefix="letter" onReorder={(items) => set("letterBody", items)}>
+                {(p, i, id) => (
+                  <SortableCard key={id} id={id} onRemove={() => set("letterBody", removeFromArray(site.letterBody, i))}>
+                    <textarea value={p} rows={3}
+                      onChange={(e) => set("letterBody", site.letterBody.map((x, j) => j === i ? e.target.value : x))}
+                      className="w-full px-3 py-2 border border-[#2d2b25]/15 bg-white/50 text-[#2d2b25] text-sm outline-none focus:border-[#2d2b25]/40 resize-y rounded-sm"
+                    />
+                  </SortableCard>
+                )}
+              </SortableList>
               <AddButton label="Add Paragraph" onClick={() => set("letterBody", [...site.letterBody, ""])} />
               <Field label="Closing" value={site.letterClosing} onChange={(v) => set("letterClosing", v)} />
             </div>
@@ -251,25 +374,29 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
           {tab === "Details" && (
             <div>
               <SectionTitle>Venues</SectionTitle>
-              {site.venues.map((v, i) => (
-                <Card key={i} title={v.label || `Venue ${i + 1}`} onRemove={() => set("venues", removeFromArray(site.venues, i))}>
-                  <Field label="Label" value={v.label} onChange={(val) => set("venues", updateInArray(site.venues, i, { label: val }))} placeholder="Ceremony / Reception" />
-                  <Field label="Venue Name" value={v.name} onChange={(val) => set("venues", updateInArray(site.venues, i, { name: val }))} />
-                  <Field label="Address" value={v.address} onChange={(val) => set("venues", updateInArray(site.venues, i, { address: val }))} multiline rows={2} />
-                  <Field label="Time" value={v.time} onChange={(val) => set("venues", updateInArray(site.venues, i, { time: val }))} placeholder="2:00 PM" />
-                  <Field label="Google Maps Embed URL" value={v.mapsEmbedUrl || ""} onChange={(val) => set("venues", updateInArray(site.venues, i, { mapsEmbedUrl: val }))} />
-                </Card>
-              ))}
+              <SortableList items={site.venues} prefix="venues" onReorder={(items) => set("venues", items)}>
+                {(v, i, id) => (
+                  <SortableCard key={id} id={id} title={v.label || `Venue ${i + 1}`} onRemove={() => set("venues", removeFromArray(site.venues, i))}>
+                    <Field label="Label" value={v.label} onChange={(val) => set("venues", updateInArray(site.venues, i, { label: val }))} placeholder="Ceremony / Reception" />
+                    <Field label="Venue Name" value={v.name} onChange={(val) => set("venues", updateInArray(site.venues, i, { name: val }))} />
+                    <Field label="Address" value={v.address} onChange={(val) => set("venues", updateInArray(site.venues, i, { address: val }))} multiline rows={2} />
+                    <Field label="Time" value={v.time} onChange={(val) => set("venues", updateInArray(site.venues, i, { time: val }))} placeholder="2:00 PM" />
+                    <Field label="Google Maps Embed URL" value={v.mapsEmbedUrl || ""} onChange={(val) => set("venues", updateInArray(site.venues, i, { mapsEmbedUrl: val }))} />
+                  </SortableCard>
+                )}
+              </SortableList>
               <AddButton label="Add Venue" onClick={() => set("venues", [...site.venues, { label: "", name: "", address: "", time: "", mapsEmbedUrl: "" }])} />
 
               <SectionTitle>Additional Venue Info</SectionTitle>
-              {site.venueInfoBlocks.map((b, i) => (
-                <Card key={i} onRemove={() => set("venueInfoBlocks", removeFromArray(site.venueInfoBlocks, i))}>
-                  <Field label="Heading" value={b.heading || ""} onChange={(val) => set("venueInfoBlocks", updateInArray(site.venueInfoBlocks, i, { heading: val }))} />
-                  <Field label="Subheading" value={b.subheading || ""} onChange={(val) => set("venueInfoBlocks", updateInArray(site.venueInfoBlocks, i, { subheading: val }))} />
-                  <Field label="Text" value={b.text} onChange={(val) => set("venueInfoBlocks", updateInArray(site.venueInfoBlocks, i, { text: val }))} multiline rows={3} />
-                </Card>
-              ))}
+              <SortableList items={site.venueInfoBlocks} prefix="venueinfo" onReorder={(items) => set("venueInfoBlocks", items)}>
+                {(b, i, id) => (
+                  <SortableCard key={id} id={id} onRemove={() => set("venueInfoBlocks", removeFromArray(site.venueInfoBlocks, i))}>
+                    <Field label="Heading" value={b.heading || ""} onChange={(val) => set("venueInfoBlocks", updateInArray(site.venueInfoBlocks, i, { heading: val }))} />
+                    <Field label="Subheading" value={b.subheading || ""} onChange={(val) => set("venueInfoBlocks", updateInArray(site.venueInfoBlocks, i, { subheading: val }))} />
+                    <Field label="Text" value={b.text} onChange={(val) => set("venueInfoBlocks", updateInArray(site.venueInfoBlocks, i, { text: val }))} multiline rows={3} />
+                  </SortableCard>
+                )}
+              </SortableList>
               <AddButton label="Add Info Block" onClick={() => set("venueInfoBlocks", [...site.venueInfoBlocks, { text: "" }])} />
 
               <SectionTitle>Day Two Event</SectionTitle>
@@ -290,17 +417,19 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
           {tab === "Schedule" && (
             <div>
               <SectionTitle>Schedule</SectionTitle>
-              {site.scheduleItems.map((item, i) => (
-                <Card key={i} title={item.event || `Event ${i + 1}`} onRemove={() => set("scheduleItems", removeFromArray(site.scheduleItems, i))}>
-                  <div className="grid grid-cols-2 gap-3">
-                    <Field label="Time" value={item.hour} onChange={(v) => set("scheduleItems", updateInArray(site.scheduleItems, i, { hour: v }))} placeholder="2:00" />
-                    <Field label="AM/PM" value={item.period} onChange={(v) => set("scheduleItems", updateInArray(site.scheduleItems, i, { period: v }))} placeholder="PM" />
-                  </div>
-                  <Field label="Event Name" value={item.event} onChange={(v) => set("scheduleItems", updateInArray(site.scheduleItems, i, { event: v }))} />
-                  <Field label="Venue" value={item.venue} onChange={(v) => set("scheduleItems", updateInArray(site.scheduleItems, i, { venue: v }))} />
-                  <Field label="Description" value={item.description} onChange={(v) => set("scheduleItems", updateInArray(site.scheduleItems, i, { description: v }))} multiline rows={2} />
-                </Card>
-              ))}
+              <SortableList items={site.scheduleItems} prefix="schedule" onReorder={(items) => set("scheduleItems", items)}>
+                {(item, i, id) => (
+                  <SortableCard key={id} id={id} title={item.event || `Event ${i + 1}`} onRemove={() => set("scheduleItems", removeFromArray(site.scheduleItems, i))}>
+                    <div className="grid grid-cols-2 gap-3">
+                      <Field label="Time" value={item.hour} onChange={(v) => set("scheduleItems", updateInArray(site.scheduleItems, i, { hour: v }))} placeholder="2:00" />
+                      <Field label="AM/PM" value={item.period} onChange={(v) => set("scheduleItems", updateInArray(site.scheduleItems, i, { period: v }))} placeholder="PM" />
+                    </div>
+                    <Field label="Event Name" value={item.event} onChange={(v) => set("scheduleItems", updateInArray(site.scheduleItems, i, { event: v }))} />
+                    <Field label="Venue" value={item.venue} onChange={(v) => set("scheduleItems", updateInArray(site.scheduleItems, i, { venue: v }))} />
+                    <Field label="Description" value={item.description} onChange={(v) => set("scheduleItems", updateInArray(site.scheduleItems, i, { description: v }))} multiline rows={2} />
+                  </SortableCard>
+                )}
+              </SortableList>
               <AddButton label="Add Schedule Item" onClick={() => set("scheduleItems", [...site.scheduleItems, { hour: "", period: "PM", event: "", venue: "", description: "" }])} />
             </div>
           )}
@@ -309,12 +438,14 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
           {tab === "Menu" && (
             <div>
               <SectionTitle>Menu</SectionTitle>
-              {site.menuItems.map((item, i) => (
-                <Card key={i} title={item.name || `Item ${i + 1}`} onRemove={() => set("menuItems", removeFromArray(site.menuItems, i))}>
-                  <Field label="Dish Name" value={item.name} onChange={(v) => set("menuItems", updateInArray(site.menuItems, i, { name: v }))} />
-                  <Field label="Description" value={item.description} onChange={(v) => set("menuItems", updateInArray(site.menuItems, i, { description: v }))} multiline rows={2} />
-                </Card>
-              ))}
+              <SortableList items={site.menuItems} prefix="menu" onReorder={(items) => set("menuItems", items)}>
+                {(item, i, id) => (
+                  <SortableCard key={id} id={id} title={item.name || `Item ${i + 1}`} onRemove={() => set("menuItems", removeFromArray(site.menuItems, i))}>
+                    <Field label="Dish Name" value={item.name} onChange={(v) => set("menuItems", updateInArray(site.menuItems, i, { name: v }))} />
+                    <Field label="Description" value={item.description} onChange={(v) => set("menuItems", updateInArray(site.menuItems, i, { description: v }))} multiline rows={2} />
+                  </SortableCard>
+                )}
+              </SortableList>
               <AddButton label="Add Menu Item" onClick={() => set("menuItems", [...site.menuItems, { name: "", description: "" }])} />
               <Field label="Menu Note" value={site.menuNote} onChange={(v) => set("menuNote", v)} />
             </div>
@@ -324,17 +455,17 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
           {tab === "Gallery" && (
             <div>
               <SectionTitle>Gallery</SectionTitle>
-              <div className="grid grid-cols-2 gap-3 mb-4">
-                {site.galleryImages.map((img, i) => (
-                  <Card key={i} onRemove={() => set("galleryImages", removeFromArray(site.galleryImages, i))}>
+              <SortableList items={site.galleryImages} prefix="gallery" onReorder={(items) => set("galleryImages", items)}>
+                {(img, i, id) => (
+                  <SortableCard key={id} id={id} onRemove={() => set("galleryImages", removeFromArray(site.galleryImages, i))}>
                     {img.url && (
                       <img src={img.url} alt={img.alt} className="w-full h-32 object-cover rounded-sm mb-3 border border-[#2d2b25]/10" />
                     )}
                     <Field label="Image URL" value={img.url} onChange={(v) => set("galleryImages", updateInArray(site.galleryImages, i, { url: v }))} />
                     <Field label="Alt Text" value={img.alt} onChange={(v) => set("galleryImages", updateInArray(site.galleryImages, i, { alt: v }))} />
-                  </Card>
-                ))}
-              </div>
+                  </SortableCard>
+                )}
+              </SortableList>
               <AddButton label="Add Image" onClick={() => set("galleryImages", [...site.galleryImages, { url: "", alt: "" }])} />
             </div>
           )}
@@ -343,42 +474,44 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
           {tab === "Explore" && (
             <div>
               <SectionTitle>Things to Do</SectionTitle>
-              {site.exploreGroups.map((group, i) => (
-                <Card key={i} title={group.heading || `Group ${i + 1}`} onRemove={() => set("exploreGroups", removeFromArray(site.exploreGroups, i))}>
-                  <Field label="Group Heading" value={group.heading} onChange={(v) => set("exploreGroups", updateInArray(site.exploreGroups, i, { heading: v }))} />
-                  <Field label="Subheading (optional)" value={group.subheading || ""} onChange={(v) => set("exploreGroups", updateInArray(site.exploreGroups, i, { subheading: v || undefined }))} />
-                  <Label>Links</Label>
-                  {group.links.map((link, j) => (
-                    <div key={j} className="flex gap-2 mb-2">
-                      <input value={link.label} placeholder="Label"
-                        onChange={(e) => {
-                          const newLinks = [...group.links];
-                          newLinks[j] = { ...newLinks[j], label: e.target.value };
+              <SortableList items={site.exploreGroups} prefix="explore" onReorder={(items) => set("exploreGroups", items)}>
+                {(group, i, id) => (
+                  <SortableCard key={id} id={id} title={group.heading || `Group ${i + 1}`} onRemove={() => set("exploreGroups", removeFromArray(site.exploreGroups, i))}>
+                    <Field label="Group Heading" value={group.heading} onChange={(v) => set("exploreGroups", updateInArray(site.exploreGroups, i, { heading: v }))} />
+                    <Field label="Subheading (optional)" value={group.subheading || ""} onChange={(v) => set("exploreGroups", updateInArray(site.exploreGroups, i, { subheading: v || undefined }))} />
+                    <Label>Links</Label>
+                    {group.links.map((link, j) => (
+                      <div key={j} className="flex gap-2 mb-2">
+                        <input value={link.label} placeholder="Label"
+                          onChange={(e) => {
+                            const newLinks = [...group.links];
+                            newLinks[j] = { ...newLinks[j], label: e.target.value };
+                            set("exploreGroups", updateInArray(site.exploreGroups, i, { links: newLinks }));
+                          }}
+                          className="flex-1 px-3 py-2 border border-[#2d2b25]/15 bg-white/50 text-sm outline-none focus:border-[#2d2b25]/40 rounded-sm"
+                        />
+                        <input value={link.url} placeholder="URL"
+                          onChange={(e) => {
+                            const newLinks = [...group.links];
+                            newLinks[j] = { ...newLinks[j], url: e.target.value };
+                            set("exploreGroups", updateInArray(site.exploreGroups, i, { links: newLinks }));
+                          }}
+                          className="flex-1 px-3 py-2 border border-[#2d2b25]/15 bg-white/50 text-sm outline-none focus:border-[#2d2b25]/40 rounded-sm"
+                        />
+                        <button onClick={() => {
+                          const newLinks = group.links.filter((_, k) => k !== j);
                           set("exploreGroups", updateInArray(site.exploreGroups, i, { links: newLinks }));
-                        }}
-                        className="flex-1 px-3 py-2 border border-[#2d2b25]/15 bg-white/50 text-sm outline-none focus:border-[#2d2b25]/40 rounded-sm"
-                      />
-                      <input value={link.url} placeholder="URL"
-                        onChange={(e) => {
-                          const newLinks = [...group.links];
-                          newLinks[j] = { ...newLinks[j], url: e.target.value };
-                          set("exploreGroups", updateInArray(site.exploreGroups, i, { links: newLinks }));
-                        }}
-                        className="flex-1 px-3 py-2 border border-[#2d2b25]/15 bg-white/50 text-sm outline-none focus:border-[#2d2b25]/40 rounded-sm"
-                      />
-                      <button onClick={() => {
-                        const newLinks = group.links.filter((_, k) => k !== j);
-                        set("exploreGroups", updateInArray(site.exploreGroups, i, { links: newLinks }));
-                      }} type="button" className="text-[#2d2b25]/30 hover:text-red-500 px-1">&times;</button>
-                    </div>
-                  ))}
-                  <button onClick={() => {
-                    const newLinks = [...group.links, { label: "", url: "" }];
-                    set("exploreGroups", updateInArray(site.exploreGroups, i, { links: newLinks }));
-                  }} type="button"
-                    className="text-xs text-[#2d2b25]/40 hover:text-[#2d2b25] mt-1">+ Add Link</button>
-                </Card>
-              ))}
+                        }} type="button" className="text-[#2d2b25]/30 hover:text-red-500 px-1">&times;</button>
+                      </div>
+                    ))}
+                    <button onClick={() => {
+                      const newLinks = [...group.links, { label: "", url: "" }];
+                      set("exploreGroups", updateInArray(site.exploreGroups, i, { links: newLinks }));
+                    }} type="button"
+                      className="text-xs text-[#2d2b25]/40 hover:text-[#2d2b25] mt-1">+ Add Link</button>
+                  </SortableCard>
+                )}
+              </SortableList>
               <AddButton label="Add Group" onClick={() => set("exploreGroups", [...site.exploreGroups, { heading: "", links: [] }])} />
             </div>
           )}
@@ -387,15 +520,17 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
           {tab === "Stay" && (
             <div>
               <SectionTitle>Accommodations</SectionTitle>
-              {site.accommodations.map((hotel, i) => (
-                <Card key={i} title={hotel.name || `Hotel ${i + 1}`} onRemove={() => set("accommodations", removeFromArray(site.accommodations, i))}>
-                  <Field label="Hotel Name" value={hotel.name} onChange={(v) => set("accommodations", updateInArray(site.accommodations, i, { name: v }))} />
-                  <Field label="Distance" value={hotel.distance} onChange={(v) => set("accommodations", updateInArray(site.accommodations, i, { distance: v }))} placeholder="10 min drive" />
-                  <Field label="Description" value={hotel.description} onChange={(v) => set("accommodations", updateInArray(site.accommodations, i, { description: v }))} multiline rows={2} />
-                  <Field label="Booking URL" value={hotel.bookingUrl} onChange={(v) => set("accommodations", updateInArray(site.accommodations, i, { bookingUrl: v }))} />
-                  <Field label="Badge (optional)" value={hotel.badge || ""} onChange={(v) => set("accommodations", updateInArray(site.accommodations, i, { badge: v || undefined }))} placeholder="Reception Venue" />
-                </Card>
-              ))}
+              <SortableList items={site.accommodations} prefix="hotels" onReorder={(items) => set("accommodations", items)}>
+                {(hotel, i, id) => (
+                  <SortableCard key={id} id={id} title={hotel.name || `Hotel ${i + 1}`} onRemove={() => set("accommodations", removeFromArray(site.accommodations, i))}>
+                    <Field label="Hotel Name" value={hotel.name} onChange={(v) => set("accommodations", updateInArray(site.accommodations, i, { name: v }))} />
+                    <Field label="Distance" value={hotel.distance} onChange={(v) => set("accommodations", updateInArray(site.accommodations, i, { distance: v }))} placeholder="10 min drive" />
+                    <Field label="Description" value={hotel.description} onChange={(v) => set("accommodations", updateInArray(site.accommodations, i, { description: v }))} multiline rows={2} />
+                    <Field label="Booking URL" value={hotel.bookingUrl} onChange={(v) => set("accommodations", updateInArray(site.accommodations, i, { bookingUrl: v }))} />
+                    <Field label="Badge (optional)" value={hotel.badge || ""} onChange={(v) => set("accommodations", updateInArray(site.accommodations, i, { badge: v || undefined }))} placeholder="Reception Venue" />
+                  </SortableCard>
+                )}
+              </SortableList>
               <AddButton label="Add Hotel" onClick={() => set("accommodations", [...site.accommodations, { name: "", distance: "", description: "", bookingUrl: "" }])} />
             </div>
           )}
@@ -434,12 +569,14 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
               <Field label="Copyright" value={site.footerCopyright} onChange={(v) => set("footerCopyright", v)} />
 
               <SectionTitle>Contact Info</SectionTitle>
-              {site.contactEntries.map((c, i) => (
-                <Card key={i} onRemove={() => set("contactEntries", removeFromArray(site.contactEntries, i))}>
-                  <Field label="Email" value={c.email} onChange={(v) => set("contactEntries", updateInArray(site.contactEntries, i, { email: v }))} />
-                  <Field label="Phone" value={c.phone || ""} onChange={(v) => set("contactEntries", updateInArray(site.contactEntries, i, { phone: v }))} />
-                </Card>
-              ))}
+              <SortableList items={site.contactEntries} prefix="contacts" onReorder={(items) => set("contactEntries", items)}>
+                {(c, i, id) => (
+                  <SortableCard key={id} id={id} onRemove={() => set("contactEntries", removeFromArray(site.contactEntries, i))}>
+                    <Field label="Email" value={c.email} onChange={(v) => set("contactEntries", updateInArray(site.contactEntries, i, { email: v }))} />
+                    <Field label="Phone" value={c.phone || ""} onChange={(v) => set("contactEntries", updateInArray(site.contactEntries, i, { phone: v }))} />
+                  </SortableCard>
+                )}
+              </SortableList>
               <AddButton label="Add Contact" onClick={() => set("contactEntries", [...site.contactEntries, { email: "", phone: "" }])} />
             </div>
           )}

@@ -77,6 +77,7 @@ export default function LoginForm({
               name="slug"
               type="text"
               required
+              autoComplete="username"
               placeholder="e.g. kifleandmilka"
               style={{
                 width: "100%",
@@ -111,6 +112,7 @@ export default function LoginForm({
               name="password"
               type="password"
               required
+              autoComplete="current-password"
               style={{
                 width: "100%",
                 padding: "0.75rem 1rem",
