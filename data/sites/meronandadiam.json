@@ -17,45 +17,149 @@
 
   "storySubtitle": "How It Began",
   "storyTitle": "Our Story",
-  "storyLeadQuote": "Your love story here...",
+  "storyLeadQuote": "Replace this with a meaningful quote or the first words you said to each other.",
   "storyBody": [
-    "Tell your story here. You can edit everything from the dashboard."
+    "Tell the story of how you met — where it happened, what you noticed first, and what made you want to see each other again.",
+    "Describe the moment you knew this was something special. A favourite date, a trip together, or a quiet evening that changed everything.",
+    "Share what your journey has been like since then and what you're most looking forward to as you start this new chapter together."
   ],
   "storyImageUrl": "/demo/images/photo-2.jpg",
 
-  "quoteText": "",
-  "quoteAttribution": "",
+  "quoteText": "Add a favourite quote, Bible verse, song lyric, or something meaningful to both of you.",
+  "quoteAttribution": "— Author or Source",
 
-  "featuredPhotoUrl": "",
-  "featuredPhotoCaption": "",
+  "featuredPhotoUrl": "/demo/images/photo-1.jpg",
+  "featuredPhotoCaption": "Add a caption for your favourite photo together",
 
-  "letterOpening": "",
-  "letterBody": [],
-  "letterClosing": "",
+  "letterOpening": "Dear friends and family,",
+  "letterBody": [
+    "Write a personal note to your guests here. Thank them for being part of your lives and share how much it means to celebrate this day with them.",
+    "You can add as many paragraphs as you like — tell them what to expect, share your excitement, or simply express your gratitude."
+  ],
+  "letterClosing": "With all our love, Meron & Adiam",
 
   "rsvpHeading": "Join Our Celebration",
-  "rsvpDeadlineText": "Kindly respond by ...",
+  "rsvpDeadlineText": "Kindly respond by August 1, 2026",
   "rsvpEmbedUrl": "",
 
-  "giftHeading": "",
-  "giftSubheading": "",
+  "giftHeading": "Your Presence Is Our Gift",
+  "giftSubheading": "Your love and support mean the world to us. If you wish to honour us with a gift, a contribution to our future together would be greatly appreciated.",
   "giftPaymentUrl": "",
-  "giftPaymentLabel": "",
-  "giftNote": "",
+  "giftPaymentLabel": "Send a Gift",
+  "giftNote": "Replace with your e-transfer email or payment link details",
 
   "footerNames": "Meron & Adiam",
   "footerDateText": "September 1, 2026",
   "footerCopyright": "Made with love • M & A 2026",
 
-  "venues": [],
-  "venueInfoBlocks": [],
+  "venues": [
+    {
+      "label": "Ceremony",
+      "name": "Your Ceremony Venue Name",
+      "address": "123 Example Street\nCity, Province A1B 2C3",
+      "time": "2:00 PM",
+      "mapsEmbedUrl": ""
+    },
+    {
+      "label": "Reception",
+      "name": "Your Reception Venue Name",
+      "address": "456 Example Avenue\nCity, Province A1B 2C3",
+      "time": "5:00 PM",
+      "mapsEmbedUrl": ""
+    }
+  ],
+  "venueInfoBlocks": [
+    {
+      "heading": "Dress Code",
+      "subheading": "",
+      "text": "Cocktail attire — replace this with your preferred dress code and any helpful notes for guests."
+    },
+    {
+      "heading": "Parking",
+      "subheading": "",
+      "text": "Free parking is available at the venue. Add directions or details here."
+    }
+  ],
   "dayTwoEvent": null,
-  "scheduleItems": [],
-  "menuItems": [],
-  "menuNote": "",
-  "galleryImages": [],
-  "exploreGroups": [],
-  "accommodations": [],
-  "contactEntries": [],
+  "scheduleItems": [
+    {
+      "hour": "2:00",
+      "period": "PM",
+      "event": "Ceremony",
+      "venue": "Your Ceremony Venue",
+      "description": "Join us as we say 'I do'"
+    },
+    {
+      "hour": "3:00",
+      "period": "PM",
+      "event": "Cocktail Hour",
+      "venue": "Your Venue",
+      "description": "Drinks and appetizers while the couple takes photos"
+    },
+    {
+      "hour": "5:00",
+      "period": "PM",
+      "event": "Reception",
+      "venue": "Your Reception Venue",
+      "description": "Dinner, toasts, and dancing"
+    },
+    {
+      "hour": "10:00",
+      "period": "PM",
+      "event": "Last Dance",
+      "venue": "",
+      "description": "One final song before we say goodnight"
+    }
+  ],
+  "menuItems": [
+    {
+      "name": "Starter — Replace with your dish",
+      "description": "Describe the first course here"
+    },
+    {
+      "name": "Main — Replace with your dish",
+      "description": "Describe the main course here"
+    },
+    {
+      "name": "Dessert — Replace with your dish",
+      "description": "Describe the dessert here"
+    }
+  ],
+  "menuNote": "Please let us know about any dietary requirements when you RSVP",
+  "galleryImages": [
+    { "url": "/demo/images/photo-1.jpg", "alt": "Replace with your own photos" },
+    { "url": "/demo/images/photo-2.jpg", "alt": "Upload images in the dashboard" }
+  ],
+  "exploreGroups": [
+    {
+      "heading": "Where to Eat",
+      "subheading": "Our favourite spots nearby",
+      "links": [
+        { "label": "Restaurant Name — add a link", "url": "" },
+        { "label": "Another Restaurant — add a link", "url": "" }
+      ]
+    },
+    {
+      "heading": "Things to Do",
+      "subheading": "While you're in town",
+      "links": [
+        { "label": "Local Attraction — add a link", "url": "" },
+        { "label": "Another Activity — add a link", "url": "" }
+      ]
+    }
+  ],
+  "accommodations": [
+    {
+      "name": "Hotel Name",
+      "distance": "10 min from venue",
+      "description": "Add details about nearby hotels, group rates, or booking codes for your guests.",
+      "bookingUrl": "",
+      "badge": "Recommended"
+    }
+  ],
+  "contactEntries": [
+    { "email": "meron@example.com", "phone": "" },
+    { "email": "adiam@example.com", "phone": "" }
+  ],
   "navBrand": "M & A"
 }
