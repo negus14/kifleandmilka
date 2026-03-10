@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useId } from "react";
+import { useState, useRef, useId } from "react";
 import type {
   WeddingSite,
   VenueItem,
@@ -95,6 +95,84 @@ function AddButton({ onClick, label }: { onClick: () => void; label: string }) {
 
 function SectionTitle({ children }: { children: React.ReactNode }) {
   return <h2 className="text-lg mb-6" style={{ fontFamily: "'Playfair Display', serif" }}>{children}</h2>;
+}
+
+// ─── Image Upload ───
+
+async function uploadFile(file: File): Promise<string> {
+  const res = await fetch("/api/upload", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      fileName: file.name,
+      contentType: file.type,
+      fileSize: file.size,
+    }),
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.error || "Upload failed");
+  }
+  const { uploadUrl, publicUrl } = await res.json();
+
+  const upload = await fetch(uploadUrl, {
+    method: "PUT",
+    body: file,
+    headers: { "Content-Type": file.type },
+  });
+  if (!upload.ok) throw new Error("Upload to storage failed");
+
+  return publicUrl;
+}
+
+function ImageField({ label, value, onChange }: {
+  label: string; value: string; onChange: (url: string) => void;
+}) {
+  const [uploading, setUploading] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  async function handleFile(file: File) {
+    setUploading(true);
+    try {
+      const url = await uploadFile(file);
+      onChange(url);
+    } catch (err: any) {
+      alert(err.message || "Upload failed");
+    }
+    setUploading(false);
+  }
+
+  return (
+    <div className="mb-3">
+      <Label>{label}</Label>
+      <div className="flex gap-2">
+        <input
+          value={value} onChange={(e) => onChange(e.target.value)}
+          placeholder="https://... or upload below"
+          className="flex-1 px-3 py-2 border border-[#2d2b25]/15 bg-white/50 text-[#2d2b25] text-sm outline-none focus:border-[#2d2b25]/40 rounded-sm"
+        />
+        <button
+          type="button"
+          onClick={() => inputRef.current?.click()}
+          disabled={uploading}
+          className="px-3 py-2 text-xs font-semibold tracking-wide uppercase border border-[#2d2b25]/15 text-[#2d2b25]/60 hover:text-[#2d2b25] hover:border-[#2d2b25]/30 transition-colors rounded-sm disabled:opacity-50 whitespace-nowrap"
+        >
+          {uploading ? "Uploading..." : "Upload"}
+        </button>
+        <input
+          ref={inputRef} type="file" accept="image/*" className="hidden"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) handleFile(file);
+            e.target.value = "";
+          }}
+        />
+      </div>
+      {value && (
+        <img src={value} alt="Preview" className="w-full max-w-xs h-32 object-cover rounded-sm border border-[#2d2b25]/10 mt-2" />
+      )}
+    </div>
+  );
 }
 
 // ─── Drag Handle ───
@@ -202,14 +280,18 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
     setSaving(true);
     try {
       const { passwordHash, ...data } = site;
-      await fetch(`/api/sites/${site.slug}`, {
+      const res = await fetch(`/api/sites/${site.slug}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
+      if (!res.ok) {
+        const err = await res.json().catch(() => null);
+        throw new Error(err?.error || `Save failed (${res.status})`);
+      }
       setSaved(true);
     } catch (err) {
-      alert("Failed to save. Please try again.");
+      alert(err instanceof Error ? err.message : "Failed to save. Please try again.");
     }
     setSaving(false);
   }
@@ -277,7 +359,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
               <Field label="Nav Brand Text" value={site.navBrand} onChange={(v) => set("navBrand", v)} placeholder="K & M" />
 
               <Label>Theme</Label>
-              <div className="grid grid-cols-2 gap-3 mt-2 mb-4">
+              <div className="grid grid-cols-3 gap-3 mt-2 mb-4">
                 {themes.map((theme) => (
                   <button
                     key={theme.id}
@@ -311,12 +393,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
               <Field label="Pre-text" value={site.heroPretext} onChange={(v) => set("heroPretext", v)} />
               <Field label="Tagline" value={site.heroTagline} onChange={(v) => set("heroTagline", v)} />
               <Field label="CTA Button Text" value={site.heroCta} onChange={(v) => set("heroCta", v)} />
-              <Field label="Hero Image URL" value={site.heroImageUrl} onChange={(v) => set("heroImageUrl", v)} />
-              {site.heroImageUrl && (
-                <div className="mt-2 mb-4">
-                  <img src={site.heroImageUrl} alt="Hero preview" className="w-full max-w-xs h-32 object-cover rounded-sm border border-[#2d2b25]/10" />
-                </div>
-              )}
+              <ImageField label="Hero Image" value={site.heroImageUrl} onChange={(v) => set("heroImageUrl", v)} />
             </div>
           )}
 
@@ -339,17 +416,14 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                 )}
               </SortableList>
               <AddButton label="Add Paragraph" onClick={() => set("storyBody", [...site.storyBody, ""])} />
-              <Field label="Story Image URL" value={site.storyImageUrl} onChange={(v) => set("storyImageUrl", v)} />
-              {site.storyImageUrl && (
-                <img src={site.storyImageUrl} alt="Story preview" className="w-full max-w-xs h-32 object-cover rounded-sm border border-[#2d2b25]/10 mb-4" />
-              )}
+              <ImageField label="Story Image" value={site.storyImageUrl} onChange={(v) => set("storyImageUrl", v)} />
 
               <SectionTitle>Quote</SectionTitle>
               <Field label="Quote Text" value={site.quoteText} onChange={(v) => set("quoteText", v)} multiline rows={3} />
               <Field label="Attribution" value={site.quoteAttribution} onChange={(v) => set("quoteAttribution", v)} />
 
               <SectionTitle>Featured Photo</SectionTitle>
-              <Field label="Photo URL" value={site.featuredPhotoUrl} onChange={(v) => set("featuredPhotoUrl", v)} />
+              <ImageField label="Featured Photo" value={site.featuredPhotoUrl} onChange={(v) => set("featuredPhotoUrl", v)} />
               <Field label="Caption" value={site.featuredPhotoCaption} onChange={(v) => set("featuredPhotoCaption", v)} />
 
               <SectionTitle>Love Letter</SectionTitle>
@@ -458,10 +532,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
               <SortableList items={site.galleryImages} prefix="gallery" onReorder={(items) => set("galleryImages", items)}>
                 {(img, i, id) => (
                   <SortableCard key={id} id={id} onRemove={() => set("galleryImages", removeFromArray(site.galleryImages, i))}>
-                    {img.url && (
-                      <img src={img.url} alt={img.alt} className="w-full h-32 object-cover rounded-sm mb-3 border border-[#2d2b25]/10" />
-                    )}
-                    <Field label="Image URL" value={img.url} onChange={(v) => set("galleryImages", updateInArray(site.galleryImages, i, { url: v }))} />
+                    <ImageField label="Image" value={img.url} onChange={(v) => set("galleryImages", updateInArray(site.galleryImages, i, { url: v }))} />
                     <Field label="Alt Text" value={img.alt} onChange={(v) => set("galleryImages", updateInArray(site.galleryImages, i, { alt: v }))} />
                   </SortableCard>
                 )}
