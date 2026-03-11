@@ -4,10 +4,8 @@ import { useEffect } from "react";
 
 export default function WeddingSiteClient({
   weddingDate,
-  tallyUrl,
 }: {
   weddingDate: string;
-  tallyUrl: string;
 }) {
   useEffect(() => {
     const target = new Date(weddingDate);
@@ -106,23 +104,6 @@ export default function WeddingSiteClient({
     }
     document.addEventListener("keydown", onKey);
 
-    // Tally
-    if (tallyUrl) {
-      const script = document.createElement("script");
-      script.src = "https://tally.so/widgets/embed.js";
-      script.onload = script.onerror = () => {
-        const w = window as unknown as Record<string, { loadEmbeds?: () => void }>;
-        if (w.Tally?.loadEmbeds) {
-          w.Tally.loadEmbeds();
-        } else {
-          document.querySelectorAll("iframe[data-tally-src]:not([src])").forEach((el) => {
-            (el as HTMLIFrameElement).src = (el as HTMLIFrameElement).dataset.tallySrc || "";
-          });
-        }
-      };
-      document.body.appendChild(script);
-    }
-
     return () => {
       clearInterval(interval);
       observer.disconnect();
@@ -133,7 +114,7 @@ export default function WeddingSiteClient({
       lb?.removeEventListener("click", closeLb);
       document.removeEventListener("keydown", onKey);
     };
-  }, [weddingDate, tallyUrl]);
+  }, [weddingDate]);
 
   return null;
 }

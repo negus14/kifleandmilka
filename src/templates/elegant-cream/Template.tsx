@@ -2,6 +2,7 @@ import type { WeddingSite } from "@/lib/types/wedding-site";
 import { DEFAULT_SECTION_ORDER } from "@/lib/types/wedding-site";
 import { getTheme } from "@/lib/themes";
 import WeddingSiteClient from "./WeddingSiteClient";
+import RSVPForm from "./RSVPForm";
 import "./styles.css";
 
 function toEmbedUrl(url: string): string {
@@ -48,6 +49,7 @@ export default function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
     { id: "accommodations", label: "Stay" },
     { id: "explore", label: "Explore" },
     { id: "gallery", label: "Gallery" },
+    { id: "gift", label: "Gift" },
     { id: "rsvp", label: "RSVP" },
     { id: "contact", label: "Contact" },
   ].filter((item) => visibleSections.has(item.id));
@@ -57,7 +59,7 @@ export default function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
     hero: () => (
       <section className="hero" id="hero">
         <div className="hero__bg" style={{
-          background: `linear-gradient(180deg, rgba(45,43,37,0.25) 0%, rgba(45,43,37,0.4) 100%), url('${site.heroImageUrl}') center/cover no-repeat`,
+          background: `linear-gradient(180deg, color-mix(in srgb, var(--color-dark), transparent 75%) 0%, color-mix(in srgb, var(--color-dark), transparent 60%) 100%), url('${site.heroImageUrl}') center/cover no-repeat`,
         }}></div>
         <div className="hero__content">
           <p className="hero__pretext">{site.heroPretext}</p>
@@ -410,18 +412,8 @@ export default function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
         <div className="container">
           <div className="rsvp__form-wrap reveal" style={{ maxWidth: 700, margin: "0 auto", textAlign: "center" }}>
             <h2 className="rsvp__heading">{site.rsvpHeading}</h2>
-            <p className="rsvp__subheading" style={{ marginBottom: "2rem" }}>{site.rsvpDeadlineText}</p>
-            <iframe
-              data-tally-src={site.rsvpEmbedUrl}
-              loading="lazy"
-              width="100%"
-              height={500}
-              frameBorder={0}
-              marginHeight={0}
-              marginWidth={0}
-              title="Wedding RSVP"
-              style={{ minHeight: 500 }}
-            ></iframe>
+            <p className="rsvp__subheading">{site.rsvpDeadlineText}</p>
+            <RSVPForm slug={site.slug} />
           </div>
         </div>
       </section>
@@ -429,18 +421,60 @@ export default function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
 
     gift: () => {
       if (!site.giftHeading) return null;
+      const isPaypal = site.giftPaymentLabel?.toLowerCase().includes("paypal");
+      
       return (
         <section className="section section--cream" id="gift">
           <div className="container">
             <div className="gift-section reveal">
               <h2 className="gift__heading">{site.giftHeading}</h2>
               <p className="gift__subheading">{site.giftSubheading}</p>
-              <a href={site.giftPaymentUrl} target="_blank" rel="noopener noreferrer" className="gift__paypal-btn">
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797H9.603c-.564 0-1.04.408-1.13.964L7.076 21.337zm7.874-15.09c-.256 0-.51.02-.758.06-.876.14-1.594.673-1.955 1.456a3.12 3.12 0 0 0-.263 1.282c0 1.14.706 1.906 2.052 1.906h.882c2.582 0 4.263-1.063 4.87-3.842.044-.2.073-.39.09-.57.1-1.06-.587-2.292-4.918-2.292z" />
-                </svg>
-                {site.giftPaymentLabel}
-              </a>
+              
+              {site.giftPaymentUrl && (
+                <a href={site.giftPaymentUrl} target="_blank" rel="noopener noreferrer" className="gift__cta-btn">
+                  {isPaypal && (
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797H9.603c-.564 0-1.04.408-1.13.964L7.076 21.337zm7.874-15.09c-.256 0-.51.02-.758.06-.876.14-1.594.673-1.955 1.456a3.12 3.12 0 0 0-.263 1.282c0 1.14.706 1.906 2.052 1.906h.882c2.582 0 4.263-1.063 4.87-3.842.044-.2.073-.39.09-.57.1-1.06-.587-2.292-4.918-2.292z" />
+                    </svg>
+                  )}
+                  {site.giftPaymentLabel}
+                </a>
+              )}
+
+              {(site.giftBankName || site.giftAccountNumber) && (
+                <div className="gift__bank-wrap">
+                  <div className="gift__bank-card">
+                    <p className="gift__bank-label">Bank Transfer Details</p>
+                    <div className="gift__bank-grid">
+                      {site.giftBankName && (
+                        <div className="gift__bank-item">
+                          <span className="gift__bank-key">Bank</span>
+                          <span className="gift__bank-val">{site.giftBankName}</span>
+                        </div>
+                      )}
+                      {site.giftAccountHolder && (
+                        <div className="gift__bank-item">
+                          <span className="gift__bank-key">Account Holder</span>
+                          <span className="gift__bank-val">{site.giftAccountHolder}</span>
+                        </div>
+                      )}
+                      {site.giftAccountNumber && (
+                        <div className="gift__bank-item">
+                          <span className="gift__bank-key">Account Number</span>
+                          <span className="gift__bank-val">{site.giftAccountNumber}</span>
+                        </div>
+                      )}
+                      {site.giftSwiftCode && (
+                        <div className="gift__bank-item">
+                          <span className="gift__bank-key">SWIFT/BIC Code</span>
+                          <span className="gift__bank-val">{site.giftSwiftCode}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <p className="gift__note">{site.giftNote}</p>
             </div>
           </div>
@@ -485,7 +519,7 @@ export default function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
 
   return (
     <div className="wedding-site" style={themeVars}>
-      <WeddingSiteClient weddingDate={site.weddingDate} tallyUrl={site.rsvpEmbedUrl} />
+      <WeddingSiteClient weddingDate={site.weddingDate} />
 
       {/* Fonts */}
       <link rel="preconnect" href="https://fonts.googleapis.com" />

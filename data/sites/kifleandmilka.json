@@ -41,6 +41,27 @@
   "rsvpHeading": "Join Our Celebration",
   "rsvpDeadlineText": "Kindly respond by July 1st, 2026",
   "rsvpEmbedUrl": "https://tally.so/embed/Gx10Jk?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1",
+  "googleSheetId": "",
+  "googleSheetName": "Sheet1",
+
+  "sectionOrder": [
+    { "id": "hero", "visible": true },
+    { "id": "story", "visible": true },
+    { "id": "details", "visible": true },
+    { "id": "day2", "visible": true },
+    { "id": "quote", "visible": true },
+    { "id": "featuredPhoto", "visible": true },
+    { "id": "letter", "visible": true },
+    { "id": "schedule", "visible": true },
+    { "id": "menu", "visible": true },
+    { "id": "gallery", "visible": true },
+    { "id": "explore", "visible": true },
+    { "id": "accommodations", "visible": true },
+    { "id": "gift", "visible": true },
+    { "id": "rsvp", "visible": true },
+    { "id": "contact", "visible": true },
+    { "id": "footer", "visible": true }
+  ],
 
   "giftHeading": "Your Presence is Our Gift",
   "giftSubheading": "Your love and support mean the world to us. If you wish to honour us with a gift, a contribution towards our future together would be deeply appreciated.",

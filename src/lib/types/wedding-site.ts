@@ -151,6 +151,8 @@ export interface WeddingSite {
   rsvpHeading: string;
   rsvpDeadlineText: string;
   rsvpEmbedUrl: string;
+  googleSheetId?: string;
+  googleSheetName?: string;
 
   // Gift
   giftHeading: string;
@@ -158,6 +160,10 @@ export interface WeddingSite {
   giftPaymentUrl: string;
   giftPaymentLabel: string;
   giftNote: string;
+  giftBankName?: string;
+  giftAccountHolder?: string;
+  giftAccountNumber?: string;
+  giftSwiftCode?: string;
 
   // Footer
   footerNames: string;

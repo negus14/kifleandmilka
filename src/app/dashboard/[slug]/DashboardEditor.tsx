@@ -719,10 +719,33 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
               <SectionTitle>RSVP</SectionTitle>
               <Field label="Heading" value={site.rsvpHeading} onChange={(v) => set("rsvpHeading", v)} />
               <Field label="Deadline Text" value={site.rsvpDeadlineText} onChange={(v) => set("rsvpDeadlineText", v)} />
-              <Field label="Tally Form Embed URL" value={site.rsvpEmbedUrl} onChange={(v) => set("rsvpEmbedUrl", v)} />
-              <p className="text-xs text-[#2d2b25]/40 -mt-1 mb-4">
-                Paste your Tally.so embed URL here. Connect Tally to Google Sheets to track responses.
-              </p>
+              
+              <div className="mt-8 pt-8 border-t border-[#2d2b25]/10">
+                <SectionTitle>Google Sheets Integration</SectionTitle>
+                <p className="text-xs text-[#2d2b25]/60 mb-6 leading-relaxed">
+                  Link RSVPs directly to your Google Sheet.
+                  <br />
+                  1. Create a new Google Sheet.
+                  <br />
+                  2. Share it with <strong>edit</strong> access to the service account email.
+                  <br />
+                  3. Set up these columns: <strong>A: Timestamp, B: Submitter Email, C: Guest Name, D: Attending, E: Meal Choice, F: Halal, G: Message</strong>
+                  <br />
+                  4. Copy the ID from the URL (the long string between /d/ and /edit).
+                </p>                
+                <Field 
+                  label="Google Sheet ID" 
+                  value={site.googleSheetId || ""} 
+                  onChange={(v) => set("googleSheetId", v)} 
+                  placeholder="e.g. 1aBcDeFgHiJkLmNoPqRsTuVwXyZ"
+                />
+                <Field 
+                  label="Sheet Name" 
+                  value={site.googleSheetName || ""} 
+                  onChange={(v) => set("googleSheetName", v)} 
+                  placeholder="e.g. Sheet1"
+                />
+              </div>
             </div>
           )}
 
@@ -732,9 +755,24 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
               <SectionTitle>Gift</SectionTitle>
               <Field label="Heading" value={site.giftHeading} onChange={(v) => set("giftHeading", v)} />
               <Field label="Subheading" value={site.giftSubheading} onChange={(v) => set("giftSubheading", v)} multiline rows={3} />
-              <Field label="Payment URL" value={site.giftPaymentUrl} onChange={(v) => set("giftPaymentUrl", v)} />
-              <Field label="Button Label" value={site.giftPaymentLabel} onChange={(v) => set("giftPaymentLabel", v)} />
-              <Field label="Note" value={site.giftNote} onChange={(v) => set("giftNote", v)} />
+              
+              <div className="mt-8 pt-8 border-t border-[#2d2b25]/10">
+                <SectionTitle>Payment Link (e.g. PayPal, Venmo)</SectionTitle>
+                <Field label="Button Label" value={site.giftPaymentLabel} onChange={(v) => set("giftPaymentLabel", v)} placeholder="e.g. Pay with PayPal" />
+                <Field label="URL" value={site.giftPaymentUrl} onChange={(v) => set("giftPaymentUrl", v)} placeholder="https://paypal.me/yourname" />
+              </div>
+
+              <div className="mt-8 pt-8 border-t border-[#2d2b25]/10">
+                <SectionTitle>Bank Transfer (Optional)</SectionTitle>
+                <Field label="Bank Name" value={site.giftBankName || ""} onChange={(v) => set("giftBankName", v)} />
+                <Field label="Account Holder" value={site.giftAccountHolder || ""} onChange={(v) => set("giftAccountHolder", v)} />
+                <Field label="Account Number" value={site.giftAccountNumber || ""} onChange={(v) => set("giftAccountNumber", v)} />
+                <Field label="SWIFT/BIC Code" value={site.giftSwiftCode || ""} onChange={(v) => set("giftSwiftCode", v)} />
+              </div>
+
+              <div className="mt-8 pt-8 border-t border-[#2d2b25]/10">
+                <Field label="Footer Note" value={site.giftNote} onChange={(v) => set("giftNote", v)} />
+              </div>
             </div>
           )}
 
