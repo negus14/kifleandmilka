@@ -1,3 +1,6 @@
+import * as dotenv from "dotenv";
+dotenv.config({ path: ".env.local" });
+
 import pool from "../src/lib/db";
 import fs from "fs";
 import path from "path";
