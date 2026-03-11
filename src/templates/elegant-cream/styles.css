@@ -261,7 +261,8 @@
   font-weight: 500;
   letter-spacing: 0.25em;
   text-transform: uppercase;
-  color: var(--color-cream);
+  color: var(--color-dark);
+  background: var(--color-cream);
   border: 2px solid var(--color-cream);
   padding: 0.9rem 2.5rem;
   transition: all 0.3s ease;
@@ -271,9 +272,8 @@
 }
 
 .hero__btn:hover {
-  background: var(--color-cream);
-  color: var(--color-dark);
-  opacity: 1;
+  background: transparent;
+  color: var(--color-cream);
 }
 
 .hero__date-line {
