@@ -510,7 +510,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                     <Field label="Venue Name" value={v.name} onChange={(val) => set("venues", updateInArray(site.venues, i, { name: val }))} />
                     <Field label="Address" value={v.address} onChange={(val) => set("venues", updateInArray(site.venues, i, { address: val }))} multiline rows={2} />
                     <Field label="Time" value={v.time} onChange={(val) => set("venues", updateInArray(site.venues, i, { time: val }))} placeholder="2:00 PM" />
-                    <Field label="Google Maps Embed URL" value={v.mapsEmbedUrl || ""} onChange={(val) => set("venues", updateInArray(site.venues, i, { mapsEmbedUrl: val }))} />
+                    <Field label="Google Maps Link" value={v.mapsEmbedUrl || ""} onChange={(val) => set("venues", updateInArray(site.venues, i, { mapsEmbedUrl: val }))} placeholder="Paste Google Maps link for this venue" />
                   </SortableCard>
                 )}
               </SortableList>

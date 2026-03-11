@@ -4,6 +4,24 @@ import { getTheme } from "@/lib/themes";
 import WeddingSiteClient from "./WeddingSiteClient";
 import "./styles.css";
 
+function toEmbedUrl(url: string): string {
+  if (!url) return "";
+  // Already an embed URL
+  if (url.includes("/maps/embed") || url.includes("maps?output=embed")) return url;
+  // Extract place name from Google Maps place URL and use simple embed
+  const placeMatch = url.match(/\/place\/([^/@]+)/);
+  if (placeMatch) {
+    const query = decodeURIComponent(placeMatch[1].replace(/\+/g, " "));
+    return `https://maps.google.com/maps?q=${encodeURIComponent(query)}&output=embed`;
+  }
+  // Extract coordinates as fallback
+  const coordMatch = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+  if (coordMatch) {
+    return `https://maps.google.com/maps?q=${coordMatch[1]},${coordMatch[2]}&output=embed`;
+  }
+  return url;
+}
+
 export default function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
   const theme = getTheme(site.templateId);
   const themeVars = {
@@ -123,7 +141,7 @@ export default function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
                 {venue.mapsEmbedUrl && (
                   <iframe
                     className="info-card__map"
-                    src={venue.mapsEmbedUrl}
+                    src={toEmbedUrl(venue.mapsEmbedUrl)}
                     allowFullScreen
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
