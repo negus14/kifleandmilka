@@ -1,4 +1,5 @@
 import type { WeddingSite } from "@/lib/types/wedding-site";
+import { DEFAULT_SECTION_ORDER } from "@/lib/types/wedding-site";
 import { getTheme } from "@/lib/themes";
 import WeddingSiteClient from "./WeddingSiteClient";
 import "./styles.css";
@@ -17,38 +18,25 @@ export default function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
     "--font-sans": theme.fonts.sans,
   } as React.CSSProperties;
 
-  return (
-    <div className="wedding-site" style={themeVars}>
-      <WeddingSiteClient weddingDate={site.weddingDate} tallyUrl={site.rsvpEmbedUrl} />
+  const order = site.sectionOrder ?? DEFAULT_SECTION_ORDER;
 
-      {/* Fonts */}
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-      <link href={theme.googleFontsUrl} rel="stylesheet" />
+  // Build a map of section ID -> visible nav links
+  const visibleSections = new Set(order.filter((s) => s.visible).map((s) => s.id));
 
-      {/* Lightbox */}
-      <div className="lightbox" id="lightbox">
-        <button className="lightbox__close" aria-label="Close">&times;</button>
-        <img className="lightbox__img" id="lightbox-img" alt="" />
-      </div>
+  const navItems = [
+    { id: "details", label: "Details" },
+    { id: "schedule", label: "Schedule" },
+    { id: "menu", label: "Menu" },
+    { id: "accommodations", label: "Stay" },
+    { id: "explore", label: "Explore" },
+    { id: "gallery", label: "Gallery" },
+    { id: "rsvp", label: "RSVP" },
+    { id: "contact", label: "Contact" },
+  ].filter((item) => visibleSections.has(item.id));
 
-      {/* Navigation */}
-      <nav className="nav" role="navigation" aria-label="Main navigation">
-        <a href="#hero" className="nav__brand">{site.navBrand}</a>
-        <button className="nav__toggle" aria-label="Toggle menu" aria-expanded="false">
-          <span></span><span></span><span></span>
-        </button>
-        <ul className="nav__links">
-          <li><a href="#details" className="nav__link">Details</a></li>
-          <li><a href="#menu" className="nav__link">Menu</a></li>
-          <li><a href="#accommodations" className="nav__link">Stay</a></li>
-          <li><a href="#explore" className="nav__link">Explore</a></li>
-          <li><a href="#gallery" className="nav__link">Gallery</a></li>
-          <li><a href="#rsvp" className="nav__link">RSVP</a></li>
-        </ul>
-      </nav>
-
-      {/* Hero */}
+  // Section renderers
+  const sections: Record<string, () => React.ReactNode> = {
+    hero: () => (
       <section className="hero" id="hero">
         <div className="hero__bg" style={{
           background: `linear-gradient(180deg, rgba(45,43,37,0.25) 0%, rgba(45,43,37,0.4) 100%), url('${site.heroImageUrl}') center/cover no-repeat`,
@@ -84,8 +72,9 @@ export default function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
           </div>
         </div>
       </section>
+    ),
 
-      {/* Story */}
+    story: () => (
       <section className="section section--tan" id="story">
         <div className="container">
           <div className="section__header reveal">
@@ -110,9 +99,10 @@ export default function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
           </div>
         </div>
       </section>
+    ),
 
-      {/* Wedding Details */}
-      <section className="section section--tan" id="details" style={{ paddingTop: 0 }}>
+    details: () => (
+      <section className="section section--tan" id="details">
         <div className="container">
           <div className="section__header reveal">
             <p className="section__subtitle">The Celebration</p>
@@ -159,9 +149,11 @@ export default function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
           )}
         </div>
       </section>
+    ),
 
-      {/* Day 2 */}
-      {site.dayTwoEvent && (
+    day2: () => {
+      if (!site.dayTwoEvent) return null;
+      return (
         <section className="section section--cream" id="day2">
           <div className="container">
             <div className="day2 reveal">
@@ -176,10 +168,12 @@ export default function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
             </div>
           </div>
         </section>
-      )}
+      );
+    },
 
-      {/* Quote */}
-      {site.quoteText && (
+    quote: () => {
+      if (!site.quoteText) return null;
+      return (
         <section className="section section--cream">
           <div className="container">
             <div className="quote-section reveal">
@@ -188,11 +182,13 @@ export default function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
             </div>
           </div>
         </section>
-      )}
+      );
+    },
 
-      {/* Featured Photo */}
-      {site.featuredPhotoUrl && (
-        <section className="section section--cream" style={{ paddingTop: 0 }}>
+    featuredPhoto: () => {
+      if (!site.featuredPhotoUrl) return null;
+      return (
+        <section className="section section--cream">
           <div className="container">
             <div className="featured-photo reveal">
               <img
@@ -206,10 +202,12 @@ export default function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
             </div>
           </div>
         </section>
-      )}
+      );
+    },
 
-      {/* Love Letter */}
-      {site.letterOpening && (
+    letter: () => {
+      if (!site.letterOpening) return null;
+      return (
         <section className="section section--dark">
           <div className="container">
             <div className="letter reveal">
@@ -221,39 +219,59 @@ export default function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
             </div>
           </div>
         </section>
-      )}
+      );
+    },
 
-      {/* Schedule */}
-      {site.scheduleItems.length > 0 && (
+    schedule: () => {
+      // Support both legacy scheduleItems and new weddingDays
+      const days = site.weddingDays?.filter((d) => !d.isPrivate) ?? (
+        site.scheduleItems.length > 0
+          ? [{ label: "", date: "", isPrivate: false, items: site.scheduleItems }]
+          : []
+      );
+      if (days.length === 0) return null;
+
+      const renderTimeline = (items: typeof site.scheduleItems) => (
+        <div className="timeline">
+          {items.map((item, i) => (
+            <div key={i} className="timeline__item reveal">
+              <div className="timeline__time">
+                <div className="timeline__hour">{item.hour}</div>
+                <div className="timeline__period">{item.period}</div>
+              </div>
+              <div className="timeline__details">
+                <h3 className="timeline__event">{item.event}</h3>
+                {item.venue && <p className="timeline__venue">{item.venue}</p>}
+                {item.description && <p className="timeline__desc">{item.description}</p>}
+              </div>
+            </div>
+          ))}
+        </div>
+      );
+
+      return (
         <section className="section section--tan" id="schedule">
           <div className="container">
             <div className="section__header reveal">
-              <p className="section__subtitle">The Day</p>
+              <p className="section__subtitle">The Day{days.length > 1 ? "s" : ""}</p>
               <h2 className="section__title">Schedule</h2>
               <div className="section__line"></div>
             </div>
-            <div className="timeline">
-              {site.scheduleItems.map((item, i) => (
-                <div key={i} className="timeline__item reveal">
-                  <div className="timeline__time">
-                    <div className="timeline__hour">{item.hour}</div>
-                    <div className="timeline__period">{item.period}</div>
-                  </div>
-                  <div className="timeline__line"></div>
-                  <div className="timeline__details">
-                    <h3 className="timeline__event">{item.event}</h3>
-                    <p className="timeline__venue">{item.venue}</p>
-                    <p className="timeline__desc">{item.description}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
+            {days.map((day, di) => (
+              <div key={di} className="schedule-day">
+                {day.label && <h3 className="schedule-day__label">{day.label}</h3>}
+                {day.date && <p className="schedule-day__date">{day.date}</p>}
+                {renderTimeline(day.items)}
+              </div>
+            ))}
           </div>
         </section>
-      )}
+      );
+    },
 
-      {/* Menu */}
-      {site.menuItems.length > 0 && (
+    menu: () => {
+      if (site.menuItems.length === 0) return null;
+      return (
         <section className="section section--dark" id="menu">
           <div className="container">
             <div className="menu-section reveal">
@@ -272,10 +290,12 @@ export default function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
             </div>
           </div>
         </section>
-      )}
+      );
+    },
 
-      {/* Gallery */}
-      {site.galleryImages.length > 0 && (
+    gallery: () => {
+      if (site.galleryImages.length === 0) return null;
+      return (
         <section className="section section--dark gallery-dark" id="gallery">
           <div className="gallery-dark__bg"></div>
           <div className="container">
@@ -298,10 +318,12 @@ export default function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
             </div>
           </div>
         </section>
-      )}
+      );
+    },
 
-      {/* Things to Do */}
-      {site.exploreGroups.length > 0 && (
+    explore: () => {
+      if (site.exploreGroups.length === 0) return null;
+      return (
         <section className="section section--tan" id="explore">
           <div className="container">
             <div className="section__header reveal">
@@ -328,10 +350,12 @@ export default function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
             </div>
           </div>
         </section>
-      )}
+      );
+    },
 
-      {/* Accommodations */}
-      {site.accommodations.length > 0 && (
+    accommodations: () => {
+      if (site.accommodations.length === 0) return null;
+      return (
         <section className="section section--dark" id="accommodations">
           <div className="container">
             <div className="section__header reveal">
@@ -346,6 +370,12 @@ export default function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
                   <h3 className="hotel-card__name">{hotel.name}</h3>
                   <p className="hotel-card__distance">{hotel.distance}</p>
                   <p className="hotel-card__desc">{hotel.description}</p>
+                  {hotel.discountCode && (
+                    <div className="hotel-card__discount">
+                      <span className="hotel-card__discount-label">Discount Code</span>
+                      <span className="hotel-card__discount-code">{hotel.discountCode}</span>
+                    </div>
+                  )}
                   <a href={hotel.bookingUrl} target="_blank" rel="noopener" className="hotel-card__link">
                     Book Your Stay
                   </a>
@@ -354,9 +384,10 @@ export default function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
             </div>
           </div>
         </section>
-      )}
+      );
+    },
 
-      {/* RSVP */}
+    rsvp: () => (
       <section className="section section--tan" id="rsvp">
         <div className="container">
           <div className="rsvp__form-wrap reveal" style={{ maxWidth: 700, margin: "0 auto", textAlign: "center" }}>
@@ -376,9 +407,11 @@ export default function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
           </div>
         </div>
       </section>
+    ),
 
-      {/* Gift */}
-      {site.giftHeading && (
+    gift: () => {
+      if (!site.giftHeading) return null;
+      return (
         <section className="section section--cream" id="gift">
           <div className="container">
             <div className="gift-section reveal">
@@ -394,28 +427,79 @@ export default function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
             </div>
           </div>
         </section>
-      )}
+      );
+    },
 
-      {/* Footer */}
+    contact: () => {
+      if (site.contactEntries.length === 0) return null;
+      return (
+        <section className="section section--cream" id="contact">
+          <div className="container">
+            <div className="contact-section reveal">
+              <h2 className="contact__heading">{site.contactHeading || "Get in Touch"}</h2>
+              <p className="contact__subheading">Questions? We&rsquo;d love to hear from you</p>
+              <div className="contact__entries">
+                {site.contactEntries.map((c, i) => (
+                  <div key={i} className="contact__entry">
+                    <a href={`mailto:${c.email}`}>{c.email}</a>
+                    {c.phone && <><br /><a href={`tel:${c.phone.replace(/\s/g, "")}`}>{c.phone}</a></>}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      );
+    },
+
+    footer: () => (
       <footer className="footer">
         <p className="footer__names">{site.footerNames}</p>
         <p className="footer__date">{site.footerDateText}</p>
         <div className="footer__line"></div>
-        <p className="footer__contact">
-          Questions? Reach out to us<br />
-          {site.contactEntries.map((c, i) => (
-            <span key={i}>
-              <a href={`mailto:${c.email}`}>{c.email}</a>
-              {c.phone && <> &bull; <a href={`tel:${c.phone.replace(/\s/g, "")}`}>{c.phone}</a></>}
-              {i < site.contactEntries.length - 1 && <br />}
-            </span>
-          ))}
-        </p>
         <p className="footer__copy">{site.footerCopyright}</p>
         {site.footerDevCredit && (
           <p className="footer__dev" dangerouslySetInnerHTML={{ __html: site.footerDevCredit }} />
         )}
       </footer>
+    ),
+  };
+
+  return (
+    <div className="wedding-site" style={themeVars}>
+      <WeddingSiteClient weddingDate={site.weddingDate} tallyUrl={site.rsvpEmbedUrl} />
+
+      {/* Fonts */}
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      <link href={theme.googleFontsUrl} rel="stylesheet" />
+
+      {/* Lightbox */}
+      <div className="lightbox" id="lightbox">
+        <button className="lightbox__close" aria-label="Close">&times;</button>
+        <img className="lightbox__img" id="lightbox-img" alt="" />
+      </div>
+
+      {/* Navigation */}
+      <nav className="nav" role="navigation" aria-label="Main navigation">
+        <a href="#hero" className="nav__brand">{site.navBrand}</a>
+        <button className="nav__toggle" aria-label="Toggle menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+        <ul className="nav__links">
+          {navItems.map((item) => (
+            <li key={item.id}><a href={`#${item.id}`} className="nav__link">{item.label}</a></li>
+          ))}
+        </ul>
+      </nav>
+
+      {/* Render sections in order */}
+      {order.map((section) => {
+        if (!section.visible) return null;
+        const render = sections[section.id];
+        if (!render) return null;
+        return <div key={section.id}>{render()}</div>;
+      })}
     </div>
   );
 }

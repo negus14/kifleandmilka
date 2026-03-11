@@ -3,6 +3,7 @@
 import { useState, useRef, useId } from "react";
 import type {
   WeddingSite,
+  WeddingDay,
   VenueItem,
   ScheduleItem,
   MenuItem,
@@ -12,6 +13,7 @@ import type {
   ContactEntry,
   VenueInfoBlock,
 } from "@/lib/types/wedding-site";
+import { DEFAULT_SECTION_ORDER, SECTION_LABELS, type SectionConfig } from "@/lib/types/wedding-site";
 import { themes } from "@/lib/themes";
 import {
   DndContext,
@@ -31,7 +33,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 
 const TABS = [
-  "Basics", "Hero", "Story", "Details", "Schedule",
+  "Basics", "Layout", "Hero", "Story", "Details", "Schedule",
   "Menu", "Gallery", "Explore", "Stay", "RSVP", "Gift", "Footer",
 ] as const;
 type Tab = (typeof TABS)[number];
@@ -386,6 +388,59 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
             </div>
           )}
 
+          {/* ─── LAYOUT ─── */}
+          {tab === "Layout" && (
+            <div>
+              <SectionTitle>Section Order & Visibility</SectionTitle>
+              <p className="text-xs text-[#2d2b25]/50 mb-4">
+                Drag to reorder sections. Toggle visibility with the eye icon.
+              </p>
+              <SortableList
+                items={site.sectionOrder ?? DEFAULT_SECTION_ORDER}
+                prefix="layout"
+                onReorder={(items) => set("sectionOrder", items)}
+              >
+                {(section, i, id) => (
+                  <SortableCard key={id} id={id}>
+                    <div className="flex items-center justify-between">
+                      <span className={`text-sm font-medium ${section.visible ? "text-[#2d2b25]" : "text-[#2d2b25]/30 line-through"}`}>
+                        {SECTION_LABELS[section.id] || section.id}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const order = site.sectionOrder ?? DEFAULT_SECTION_ORDER;
+                          const updated = order.map((s, j) =>
+                            j === i ? { ...s, visible: !s.visible } : s
+                          );
+                          set("sectionOrder", updated);
+                        }}
+                        className={`text-lg px-2 transition-colors ${
+                          section.visible
+                            ? "text-[#2d2b25]/60 hover:text-[#2d2b25]"
+                            : "text-[#2d2b25]/20 hover:text-[#2d2b25]/40"
+                        }`}
+                        title={section.visible ? "Hide section" : "Show section"}
+                      >
+                        {section.visible ? (
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                            <circle cx="12" cy="12" r="3" />
+                          </svg>
+                        ) : (
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                            <line x1="1" y1="1" x2="23" y2="23" />
+                          </svg>
+                        )}
+                      </button>
+                    </div>
+                  </SortableCard>
+                )}
+              </SortableList>
+            </div>
+          )}
+
           {/* ─── HERO ─── */}
           {tab === "Hero" && (
             <div>
@@ -490,21 +545,72 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
           {/* ─── SCHEDULE ─── */}
           {tab === "Schedule" && (
             <div>
-              <SectionTitle>Schedule</SectionTitle>
-              <SortableList items={site.scheduleItems} prefix="schedule" onReorder={(items) => set("scheduleItems", items)}>
-                {(item, i, id) => (
-                  <SortableCard key={id} id={id} title={item.event || `Event ${i + 1}`} onRemove={() => set("scheduleItems", removeFromArray(site.scheduleItems, i))}>
-                    <div className="grid grid-cols-2 gap-3">
-                      <Field label="Time" value={item.hour} onChange={(v) => set("scheduleItems", updateInArray(site.scheduleItems, i, { hour: v }))} placeholder="2:00" />
-                      <Field label="AM/PM" value={item.period} onChange={(v) => set("scheduleItems", updateInArray(site.scheduleItems, i, { period: v }))} placeholder="PM" />
-                    </div>
-                    <Field label="Event Name" value={item.event} onChange={(v) => set("scheduleItems", updateInArray(site.scheduleItems, i, { event: v }))} />
-                    <Field label="Venue" value={item.venue} onChange={(v) => set("scheduleItems", updateInArray(site.scheduleItems, i, { venue: v }))} />
-                    <Field label="Description" value={item.description} onChange={(v) => set("scheduleItems", updateInArray(site.scheduleItems, i, { description: v }))} multiline rows={2} />
-                  </SortableCard>
-                )}
-              </SortableList>
-              <AddButton label="Add Schedule Item" onClick={() => set("scheduleItems", [...site.scheduleItems, { hour: "", period: "PM", event: "", venue: "", description: "" }])} />
+              <SectionTitle>Wedding Days</SectionTitle>
+              <p className="text-xs text-[#2d2b25]/50 mb-4">
+                Add multiple days (wedding day, day two, bridal party, etc.). Private days are only visible to you.
+              </p>
+              {(site.weddingDays ?? []).map((day, di) => (
+                <div key={di} className="border-2 border-[#2d2b25]/10 rounded-sm p-4 mb-6 relative">
+                  <button onClick={() => set("weddingDays", removeFromArray(site.weddingDays ?? [], di))} type="button"
+                    className="absolute top-3 right-3 text-[#2d2b25]/30 hover:text-red-500 text-lg leading-none transition-colors"
+                    title="Remove Day"
+                  >&times;</button>
+                  <div className="grid grid-cols-2 gap-3">
+                    <Field label="Day Label" value={day.label} onChange={(v) => set("weddingDays", updateInArray(site.weddingDays ?? [], di, { label: v }))} placeholder="Wedding Day" />
+                    <Field label="Date" value={day.date || ""} onChange={(v) => set("weddingDays", updateInArray(site.weddingDays ?? [], di, { date: v }))} placeholder="Saturday, August 1st" />
+                  </div>
+                  <div className="flex items-center gap-2 mb-4">
+                    <input
+                      type="checkbox"
+                      id={`private-${di}`}
+                      checked={day.isPrivate}
+                      onChange={(e) => set("weddingDays", updateInArray(site.weddingDays ?? [], di, { isPrivate: e.target.checked }))}
+                      className="accent-[#2d2b25]"
+                    />
+                    <label htmlFor={`private-${di}`} className="text-xs text-[#2d2b25]/60">
+                      Private (hidden from public site — for bridal/groom party only)
+                    </label>
+                  </div>
+
+                  <Label>Events</Label>
+                  <SortableList items={day.items} prefix={`day-${di}`} onReorder={(items) => set("weddingDays", updateInArray(site.weddingDays ?? [], di, { items }))}>
+                    {(item, i, id) => (
+                      <SortableCard key={id} id={id} title={item.event || `Event ${i + 1}`} onRemove={() => {
+                        const updated = { ...day, items: removeFromArray(day.items, i) };
+                        set("weddingDays", updateInArray(site.weddingDays ?? [], di, updated));
+                      }}>
+                        <div className="grid grid-cols-2 gap-3">
+                          <Field label="Time" value={item.hour} onChange={(v) => {
+                            const updated = { ...day, items: updateInArray(day.items, i, { hour: v }) };
+                            set("weddingDays", updateInArray(site.weddingDays ?? [], di, updated));
+                          }} placeholder="2:00" />
+                          <Field label="AM/PM" value={item.period} onChange={(v) => {
+                            const updated = { ...day, items: updateInArray(day.items, i, { period: v }) };
+                            set("weddingDays", updateInArray(site.weddingDays ?? [], di, updated));
+                          }} placeholder="PM" />
+                        </div>
+                        <Field label="Event Name" value={item.event} onChange={(v) => {
+                          const updated = { ...day, items: updateInArray(day.items, i, { event: v }) };
+                          set("weddingDays", updateInArray(site.weddingDays ?? [], di, updated));
+                        }} />
+                        <Field label="Venue" value={item.venue} onChange={(v) => {
+                          const updated = { ...day, items: updateInArray(day.items, i, { venue: v }) };
+                          set("weddingDays", updateInArray(site.weddingDays ?? [], di, updated));
+                        }} />
+                        <Field label="Description" value={item.description} onChange={(v) => {
+                          const updated = { ...day, items: updateInArray(day.items, i, { description: v }) };
+                          set("weddingDays", updateInArray(site.weddingDays ?? [], di, updated));
+                        }} multiline rows={2} />
+                      </SortableCard>
+                    )}
+                  </SortableList>
+                  <AddButton label="Add Event" onClick={() => {
+                    const updated = { ...day, items: [...day.items, { hour: "", period: "PM", event: "", venue: "", description: "" }] };
+                    set("weddingDays", updateInArray(site.weddingDays ?? [], di, updated));
+                  }} />
+                </div>
+              ))}
+              <AddButton label="Add Day" onClick={() => set("weddingDays", [...(site.weddingDays ?? []), { label: "", date: "", isPrivate: false, items: [] }])} />
             </div>
           )}
 
@@ -599,6 +705,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                     <Field label="Description" value={hotel.description} onChange={(v) => set("accommodations", updateInArray(site.accommodations, i, { description: v }))} multiline rows={2} />
                     <Field label="Booking URL" value={hotel.bookingUrl} onChange={(v) => set("accommodations", updateInArray(site.accommodations, i, { bookingUrl: v }))} />
                     <Field label="Badge (optional)" value={hotel.badge || ""} onChange={(v) => set("accommodations", updateInArray(site.accommodations, i, { badge: v || undefined }))} placeholder="Reception Venue" />
+                    <Field label="Discount Code (optional)" value={hotel.discountCode || ""} onChange={(v) => set("accommodations", updateInArray(site.accommodations, i, { discountCode: v || undefined }))} placeholder="WEDDING2026" />
                   </SortableCard>
                 )}
               </SortableList>
@@ -640,6 +747,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
               <Field label="Copyright" value={site.footerCopyright} onChange={(v) => set("footerCopyright", v)} />
 
               <SectionTitle>Contact Info</SectionTitle>
+              <Field label="Contact Section Heading" value={site.contactHeading || ""} onChange={(v) => set("contactHeading", v || undefined)} placeholder="Get in Touch" />
               <SortableList items={site.contactEntries} prefix="contacts" onReorder={(items) => set("contactEntries", items)}>
                 {(c, i, id) => (
                   <SortableCard key={id} id={id} onRemove={() => set("contactEntries", removeFromArray(site.contactEntries, i))}>
