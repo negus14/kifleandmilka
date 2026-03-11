@@ -187,4 +187,5 @@ export interface WeddingSite {
   accommodations: AccommodationItem[];
   contactEntries: ContactEntry[];
   navBrand: string;
+  sectionBackgrounds?: Record<string, string>;
 }

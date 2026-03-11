@@ -731,13 +731,13 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                   <br />
                   3. Set up these columns: <strong>A: Timestamp, B: Submitter Email, C: Guest Name, D: Attending, E: Meal Choice, F: Halal, G: Message</strong>
                   <br />
-                  4. Copy the ID from the URL (the long string between /d/ and /edit).
+                  4. Paste the <strong>entire URL</strong> of your Google Sheet below.
                 </p>                
                 <Field 
-                  label="Google Sheet ID" 
-                  value={site.googleSheetId || ""} 
-                  onChange={(v) => set("googleSheetId", v)} 
-                  placeholder="e.g. 1aBcDeFgHiJkLmNoPqRsTuVwXyZ"
+                  label="Google Sheets Link" 
+                  value={site.rsvpEmbedUrl || ""} 
+                  onChange={(v) => set("rsvpEmbedUrl", v)} 
+                  placeholder="Paste your full Google Sheets URL here"
                 />
                 <Field 
                   label="Sheet Name" 

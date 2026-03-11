@@ -16,6 +16,11 @@ interface RSVPPayload {
   guests: GuestInput[];
 }
 
+function extractSheetId(url: string) {
+  const match = url.match(/\/d\/([a-zA-Z0-9-_]+)/);
+  return match ? match[1] : url;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = (await request.json()) as RSVPPayload;
@@ -26,7 +31,9 @@ export async function POST(request: NextRequest) {
     }
 
     const site = await getSiteBySlug(slug);
-    if (!site || !site.googleSheetId) {
+    const googleSheetId = site?.googleSheetId || (site?.rsvpEmbedUrl ? extractSheetId(site.rsvpEmbedUrl) : null);
+
+    if (!site || !googleSheetId) {
       console.warn(`Site or Google Sheet ID not found for slug: ${slug}`);
       return NextResponse.json({ error: "Google Sheets integration not configured for this site" }, { status: 400 });
     }
@@ -58,7 +65,7 @@ export async function POST(request: NextRequest) {
     ]);
 
     await sheets.spreadsheets.values.append({
-      spreadsheetId: site.googleSheetId,
+      spreadsheetId: googleSheetId,
       range,
       valueInputOption: "RAW",
       requestBody: {
