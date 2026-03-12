@@ -256,8 +256,48 @@
 .modern-section--dark .modern-letter__opening,
 .modern-section--dark .modern-letter__body,
 .modern-section--dark .modern-letter__closing,
-.modern-section--dark .modern-quote {
+.modern-section--dark .modern-quote,
+.modern-section--dark .modern-card__title,
+.modern-section--dark .modern-details-minimal__name,
+.modern-section--dark .modern-schedule__time,
+.modern-section--dark .modern-schedule__event,
+.modern-section--dark .modern-timeline-minimal__event,
+.modern-section--dark .modern-timeline-card__event,
+.modern-section--dark .modern-footer__names,
+.modern-section--dark .modern-footer__copy {
   color: var(--color-cream) !important;
+}
+
+.modern-section--dark .modern-text--small,
+.modern-section--dark .modern-card__label,
+.modern-section--dark .modern-card__text,
+.modern-section--dark .modern-card__time,
+.modern-section--dark .modern-details-minimal__label,
+.modern-section--dark .modern-details-minimal__time,
+.modern-section--dark .modern-details-minimal__address,
+.modern-section--dark .modern-schedule__venue,
+.modern-section--dark .modern-schedule__desc,
+.modern-section--dark .modern-schedule-day-date,
+.modern-section--dark .modern-timeline-minimal__time,
+.modern-section--dark .modern-timeline-minimal__venue,
+.modern-section--dark .modern-timeline-card__time,
+.modern-section--dark .modern-timeline-card__venue,
+.modern-section--dark .modern-timeline-card__desc,
+.modern-section--dark .modern-link,
+.modern-section--dark .modern-contact-item a {
+  color: var(--color-tan) !important;
+  opacity: 0.9;
+}
+
+.modern-section--dark .modern-card {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(212, 189, 172, 0.2);
+}
+
+.modern-section--dark .modern-details-minimal__item,
+.modern-section--dark .modern-schedule__item,
+.modern-section--dark .modern-timeline-minimal__item {
+  border-color: rgba(212, 189, 172, 0.15);
 }
 
 .modern-section--dark .modern-btn--primary,

@@ -359,14 +359,63 @@
 }
 
 /* Contextual overrides for Dark sections */
-.section--dark .section__subtitle { color: var(--color-tan); }
-.section--dark .section__title { color: var(--color-cream); }
-.section--dark .section__line { background: var(--color-tan); opacity: 0.3; }
+.section--dark .story__lead,
+.section--dark .quote__text,
+.section--dark .featured-photo__caption,
+.section--dark .schedule-day__label,
+.section--dark .timeline__hour,
+.section--dark .timeline__event,
+.section--dark .timeline-minimal__event,
+.section--dark .timeline-card__event,
+.section--dark .gallery__title,
+.section--dark .explore-group__heading,
+.section--dark .hotel-card__name,
+.section--dark .gift__heading,
+.section--dark .contact__label,
+.section--dark .footer__names { color: var(--color-cream); }
+
 .section--dark .story__text, 
 .section--dark .info-card__text,
+.section--dark .info-card__label,
+.section--dark .info-card__title,
 .section--dark .info-card__time,
-.section--dark .modern-text,
+.section--dark .quote__attribution,
+.section--dark .schedule-day__date,
+.section--dark .timeline__period,
+.section--dark .timeline__venue,
+.section--dark .timeline__desc,
+.section--dark .timeline-minimal__time,
+.section--dark .timeline-minimal__venue,
+.section--dark .timeline-card__time,
+.section--dark .timeline-card__venue,
+.section--dark .timeline-card__desc,
+.section--dark .explore-link,
+.section--dark .hotel-card__distance,
+.section--dark .hotel-card__desc,
+.section--dark .gift__subheading,
+.section--dark .gift__note,
+.section--dark .contact__link,
+.section--dark .footer__date,
+.section--dark .footer__contact,
+.section--dark .footer__contact a,
+.section--dark .footer__copy,
 .section--dark p { color: var(--color-tan); }
+
+.section--dark .section__line,
+.section--dark .footer__line,
+.section--dark .timeline::before,
+.section--dark .timeline-minimal__dot { background: var(--color-tan); }
+
+.section--dark .timeline__item::before {
+  border-color: var(--color-tan);
+  background: var(--color-dark);
+}
+
+.section--dark .info-card,
+.section--dark .timeline-card {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(212, 189, 172, 0.2);
+}
 
 .section--dark .rsvp__button,
 .section--dark .hotel-card__link,
