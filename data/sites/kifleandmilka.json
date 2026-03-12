@@ -1,158 +1,26 @@
 {
   "slug": "kifleandmilka",
-  "isPublished": true,
-  "templateId": "elegant-cream",
-  "passwordHash": "$2b$10$f3wG.CvlD9u4fyosIUBFOe0spS80yiBgTSUKjvbylwUSJbFjXJYaC",
-
-  "partner1Name": "Kifle",
-  "partner2Name": "Milka",
-  "weddingDate": "2026-08-01T14:00:00-05:00",
-  "dateDisplayText": "1st & 2nd August 2026",
-  "locationText": "Winnipeg, Manitoba",
-
-  "heroPretext": "Together with their families",
-  "heroTagline": "are getting married",
-  "heroCta": "RSVP Here",
-  "heroImageUrl": "/demo/images/photo-1.jpg",
-
-  "storySubtitle": "How It Began",
-  "storyTitle": "Our Story",
-  "storyLeadQuote": "Some love stories are written in the stars, but ours was written over late-night conversations, shared laughter, and a quiet knowing that we had found something extraordinary.",
-  "storyBody": [
-    "What started as a chance meeting between two people from worlds apart became a love story neither of us could have predicted. From the very first conversation, there was a warmth, an ease, a sense of coming home that neither of us had felt before.",
-    "Through every season, every challenge, and every joy, we've grown together in ways that continue to amaze us. Now, surrounded by the people we love most, we're ready to begin the next chapter of our journey — together, forever."
-  ],
-  "storyImageUrl": "/demo/images/photo-2.jpg",
-
-  "quoteText": "And now these three remain: faith, hope and love. But the greatest of these is love.",
-  "quoteAttribution": "1 Corinthians 13:13",
-
-  "featuredPhotoUrl": "/demo/images/photo-4.jpg",
-  "featuredPhotoCaption": "Forever starts here",
-
-  "letterOpening": "To Our Dearest Family & Friends",
-  "letterBody": [
-    "From the moment we met, we knew our lives would never be the same. What began as two separate journeys has become one beautiful path. We have been blessed beyond measure by your love, your support, and your presence in our lives.",
-    "As we prepare to say \"I do,\" we are filled with gratitude for each of you. You have shaped who we are, individually and together. This celebration is as much yours as it is ours, because without you, our story would be incomplete.",
-    "We cannot wait to share this day with you — to laugh, to cry happy tears, to dance until our feet ache, and to begin this new chapter surrounded by the people who matter most."
-  ],
-  "letterClosing": "With all our love, Kifle & Milka",
-
-  "rsvpHeading": "Join Our Celebration",
-  "rsvpDeadlineText": "Kindly respond by July 1st, 2026",
-  "rsvpEmbedUrl": "https://tally.so/embed/Gx10Jk?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1",
-  "rsvpMealOptions": ["Chicken", "Beef", "Fish", "Vegetarian"],
-  "googleSheetId": "1ZLvdGJhHxvOU0QMiJZSfsL_9zJ-5G6Nkhmop7wPBIW8",
-  "googleSheetName": "Sheet1",
-
-  "sectionOrder": [
-    { "id": "hero", "visible": true },
-    { "id": "story", "visible": true },
-    { "id": "details", "visible": true },
-    { "id": "day2", "visible": true },
-    { "id": "quote", "visible": true },
-    { "id": "featuredPhoto", "visible": true },
-    { "id": "letter", "visible": true },
-    { "id": "schedule", "visible": true },
-    { "id": "menu", "visible": true },
-    { "id": "gallery", "visible": true },
-    { "id": "explore", "visible": true },
-    { "id": "accommodations", "visible": true },
-    { "id": "gift", "visible": true },
-    { "id": "rsvp", "visible": true },
-    { "id": "contact", "visible": true },
-    { "id": "footer", "visible": true }
-  ],
-
-  "giftHeading": "Your Presence is Our Gift",
-  "giftSubheading": "Your love and support mean the world to us. If you wish to honour us with a gift, a contribution towards our future together would be deeply appreciated.",
-  "giftPaymentUrl": "https://paypal.me/KifleTekle",
-  "giftPaymentLabel": "Contribute here",
-  "giftPaymentLinks": [
-    { "label": "PayPal", "url": "https://paypal.me/KifleTekle" },
-    { "label": "Venmo", "url": "https://venmo.com/KifleTekle" },
-    { "label": "CashApp", "url": "https://cash.app/$KifleTekle" }
-  ],
-  "giftNote": "You will be redirected to the payment provider",
-  "giftBankName": "Scotiabank",
-  "giftAccountHolder": "Kifle Tekle & Milka ...",
-  "giftAccountNumber": "12345-67890",
-  "giftSwiftCode": "NOSCCXXXX",
-
-  "footerNames": "Kifle & Milka",
-  "footerDateText": "August 1 & 2, 2026 • Winnipeg, Manitoba",
-  "footerCopyright": "Made with love • K & M 2026",
-  "footerDevCredit": "Want a wedding website like this?<br/>Built by <strong>Abel Ghebrezadik</strong> — <a href=\"mailto:abelghebz@gmail.com\">abelghebz@gmail.com</a> • <a href=\"tel:+447527841324\">+44 7527 841324</a><div class=\"contact__phone-actions contact__phone-actions--footer\"><a href=\"sms:+447527841324\" title=\"Text Message\" class=\"contact__phone-action\">SMS</a> <a href=\"https://wa.me/447527841324\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"WhatsApp\" class=\"contact__phone-action\">WhatsApp</a> <a href=\"https://buymeacoffee.com/abelghebz\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"Buy Me a Coffee\" class=\"contact__phone-action\">☕ Buy Me a Coffee</a></div>",
-
   "venues": [
     {
-      "label": "Ceremony",
       "name": "Canadian Museum for Human Rights",
-      "address": "85 Israel Asper Way\nWinnipeg, MB R3C 0L5",
       "time": "2:00 PM",
+      "label": "Ceremony",
+      "address": "85 Israel Asper Way\nWinnipeg, MB R3C 0L5",
       "mapsEmbedUrl": "https://maps.google.com/maps?q=Canadian+Museum+for+Human+Rights,+85+Israel+Asper+Way,+Winnipeg,+MB&t=&z=15&ie=UTF8&iwloc=&output=embed"
     },
     {
-      "label": "Reception",
       "name": "The Fort Garry Hotel",
-      "address": "222 Broadway\nWinnipeg, MB R3C 0R3",
       "time": "6:00 PM",
+      "label": "Reception",
+      "address": "222 Broadway\nWinnipeg, MB R3C 0R3",
       "mapsEmbedUrl": "https://maps.google.com/maps?q=Fort+Garry+Hotel,+222+Broadway,+Winnipeg,+MB&t=&z=15&ie=UTF8&iwloc=&output=embed"
     }
   ],
-  "venueInfoBlocks": [
-    {
-      "heading": "Reception Venue",
-      "text": "Our reception will take place at The Gates on Roblin in Winnipeg, a beautiful venue set along the Assiniboine River and surrounded by gardens and green space.\nThe Gates on Roblin — 3440 Roblin Blvd, Headingley, MB R4H 1A1"
-    },
-    {
-      "subheading": "Shuttle Service",
-      "text": "For guests staying downtown, we are planning to provide a shuttle service from one of the downtown hotels to the venue and back. Shuttle details will be confirmed closer to the date."
-    },
-    {
-      "subheading": "Parking & Directions",
-      "text": "Free parking is available on-site, with designated areas for PMRs and senior guests. If you need special assistance or a drop-off closer to the garden entrance, let us know."
-    }
-  ],
-
-  "dayTwoEvent": {
-    "heading": "Day Two Celebration",
-    "time": "Starting from 5:30 PM",
-    "address": "181 Austin St N\nWinnipeg, MB R2W 3M5, Canada",
-    "note": "Join us for an evening of food, music, and celebration as we continue the festivities."
-  },
-
-  "scheduleItems": [
-    {
-      "hour": "2:00",
-      "period": "PM",
-      "event": "The Ceremony",
-      "venue": "Canadian Museum for Human Rights",
-      "description": "Join us as we exchange vows. Please arrive 15 minutes early to be seated."
-    },
-    {
-      "hour": "4:00",
-      "period": "PM",
-      "event": "Cocktail Hour",
-      "venue": "The Fort Garry Hotel — Crystal Ballroom Foyer",
-      "description": "Enjoy handcrafted cocktails, hors d'oeuvres, and live music."
-    },
-    {
-      "hour": "6:00",
-      "period": "PM",
-      "event": "Dinner & Reception",
-      "venue": "The Fort Garry Hotel — Crystal Ballroom",
-      "description": "An evening of dining, toasts, and dancing until 1:00 AM."
-    },
-    {
-      "hour": "9:00",
-      "period": "PM",
-      "event": "Dance Floor Opens",
-      "venue": "Crystal Ballroom",
-      "description": "Kick off your shoes and celebrate with us on the dance floor."
-    }
-  ],
-
+  "heroCta": "RSVP Here",
+  "giftNote": "You will be redirected to the payment provider",
+  "layoutId": "classic",
+  "menuNote": "Your meal will also include soup, salad, sides and dessert",
+  "navBrand": "K & M",
   "menuItems": [
     {
       "name": "Beef",
@@ -171,76 +39,343 @@
       "description": "Herb crusted salmon with a lemon caper cream sauce; served on sauteed swiss chard"
     }
   ],
-  "menuNote": "Your meal will also include soup, salad, sides and dessert",
-
-  "galleryImages": [
-    { "url": "/demo/images/photo-5.jpg", "alt": "Ring detail" },
-    { "url": "/demo/images/photo-4.jpg", "alt": "Kifle and Milka together" },
-    { "url": "/demo/images/photo-6.jpg", "alt": "Kifle and Milka walking" }
+  "quoteText": "And now these three remain: faith, hope and love. But the greatest of these is love.",
+  "storyBody": [
+    "What started as a chance meeting between two people from worlds apart became a love story neither of us could have predicted. From the very first conversation, there was a warmth, an ease, a sense of coming home that neither of us had felt before.",
+    "Through every season, every challenge, and every joy, we've grown together in ways that continue to amaze us. Now, surrounded by the people we love most, we're ready to begin the next chapter of our journey — together, forever."
   ],
-
-  "exploreGroups": [
+  "letterBody": [
+    "From the moment we met, we knew our lives would never be the same. What began as two separate journeys has become one beautiful path. We have been blessed beyond measure by your love, your support, and your presence in our lives.",
+    "As we prepare to say \"I do,\" we are filled with gratitude for each of you. You have shaped who we are, individually and together. This celebration is as much yours as it is ours, because without you, our story would be incomplete.",
+    "We cannot wait to share this day with you — to laugh, to cry happy tears, to dance until our feet ache, and to begin this new chapter surrounded by the people who matter most."
+  ],
+  "storyTitle": "Our Story",
+  "templateId": "elegant-cream",
+  "dayTwoEvent": {
+    "note": "Join us for an evening of food, music, and celebration as we continue the festivities.",
+    "time": "Starting from 5:30 PM",
+    "address": "181 Austin St N\nWinnipeg, MB R2W 3M5, Canada",
+    "heading": "Day Two Celebration"
+  },
+  "footerNames": "Kifle & Milka",
+  "giftHeading": "Your Presence is Our Gift",
+  "heroPretext": "Together with their families",
+  "heroTagline": "are getting married",
+  "isPublished": true,
+  "rsvpHeading": "Join Our Celebration",
+  "weddingDate": "2026-08-01T14:00:00-05:00",
+  "weddingDays": [
     {
-      "heading": "Things to Do in Winnipeg",
-      "links": [
-        { "label": "Thermia", "url": "https://www.thermea.ca" },
-        { "label": "Human Rights Museum", "url": "https://humanrights.ca" },
-        { "label": "The Leaf", "url": "https://www.assiniboinepark.ca/the-leaf" },
-        { "label": "Manitoba Museum", "url": "https://manitobamuseum.ca" },
-        { "label": "The Forks Market", "url": "https://www.theforks.com" },
-        { "label": "Winnipeg Art Gallery", "url": "https://www.wag.ca" }
-      ]
+      "date": "1st & 2nd August 2026",
+      "items": [
+        {
+          "hour": "2:00",
+          "event": "The Ceremony",
+          "venue": "Canadian Museum for Human Rights",
+          "period": "PM",
+          "description": "Join us as we exchange vows. Please arrive 15 minutes early to be seated."
+        },
+        {
+          "hour": "4:00",
+          "event": "Cocktail Hour",
+          "venue": "The Fort Garry Hotel — Crystal Ballroom Foyer",
+          "period": "PM",
+          "description": "Enjoy handcrafted cocktails, hors d'oeuvres, and live music."
+        },
+        {
+          "hour": "6:00",
+          "event": "Dinner & Reception",
+          "venue": "The Fort Garry Hotel — Crystal Ballroom",
+          "period": "PM",
+          "description": "An evening of dining, toasts, and dancing until 1:00 AM."
+        },
+        {
+          "hour": "9:00",
+          "event": "Dance Floor Opens",
+          "venue": "Crystal Ballroom",
+          "period": "PM",
+          "description": "Kick off your shoes and celebrate with us on the dance floor."
+        }
+      ],
+      "label": "Wedding Day",
+      "isPrivate": false
+    }
+  ],
+  "giftBankName": "",
+  "heroImageUrl": "/demo/images/photo-1.jpg",
+  "locationText": "Winnipeg, Manitoba",
+  "partner1Name": "Kifle",
+  "partner2Name": "Milka",
+  "passwordHash": "$2b$10$f3wG.CvlD9u4fyosIUBFOe0spS80yiBgTSUKjvbylwUSJbFjXJYaC",
+  "rsvpEmbedUrl": "https://tally.so/embed/Gx10Jk?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1",
+  "sectionOrder": [
+    {
+      "id": "hero",
+      "visible": true
     },
     {
-      "heading": "If Flying in from Calgary",
+      "id": "story",
+      "visible": true
+    },
+    {
+      "id": "details",
+      "visible": true
+    },
+    {
+      "id": "day2",
+      "visible": true
+    },
+    {
+      "id": "quote",
+      "visible": true
+    },
+    {
+      "id": "featuredPhoto",
+      "visible": true
+    },
+    {
+      "id": "letter",
+      "visible": true
+    },
+    {
+      "id": "schedule",
+      "visible": true
+    },
+    {
+      "id": "menu",
+      "visible": true
+    },
+    {
+      "id": "gallery",
+      "visible": true
+    },
+    {
+      "id": "explore",
+      "visible": true
+    },
+    {
+      "id": "accommodations",
+      "visible": true
+    },
+    {
+      "id": "gift",
+      "visible": true
+    },
+    {
+      "id": "rsvp",
+      "visible": true
+    },
+    {
+      "id": "contact",
+      "visible": true
+    },
+    {
+      "id": "footer",
+      "visible": true
+    }
+  ],
+  "exploreGroups": [
+    {
       "links": [
-        { "label": "Visit Banff", "url": "https://www.banfflakelouise.com" },
-        { "label": "Johnston Canyon", "url": "https://www.pc.gc.ca/en/pn-np/ab/banff/activ/randonee-hiking/johnston" }
+        {
+          "url": "https://www.thermea.ca",
+          "label": "Thermia"
+        },
+        {
+          "url": "https://humanrights.ca",
+          "label": "Human Rights Museum"
+        },
+        {
+          "url": "https://www.assiniboinepark.ca/the-leaf",
+          "label": "The Leaf"
+        },
+        {
+          "url": "https://manitobamuseum.ca",
+          "label": "Manitoba Museum"
+        },
+        {
+          "url": "https://www.theforks.com",
+          "label": "The Forks Market"
+        },
+        {
+          "url": "https://www.wag.ca",
+          "label": "Winnipeg Art Gallery"
+        }
       ],
+      "heading": "Things to Do in Winnipeg"
+    },
+    {
+      "links": [
+        {
+          "url": "https://www.banfflakelouise.com",
+          "label": "Visit Banff"
+        },
+        {
+          "url": "https://www.pc.gc.ca/en/pn-np/ab/banff/activ/randonee-hiking/johnston",
+          "label": "Johnston Canyon"
+        }
+      ],
+      "heading": "If Flying in from Calgary",
       "subheading": "Places to Eat"
     },
     {
-      "heading": "Places to Eat",
       "links": [
-        { "label": "Clementine", "url": "https://www.clementinecalgary.com" },
-        { "label": "Harth", "url": "https://www.harthrestaurant.com" },
-        { "label": "Parcel Pizza", "url": "https://www.parcelpizza.com" }
-      ]
+        {
+          "url": "https://www.clementinecalgary.com",
+          "label": "Clementine"
+        },
+        {
+          "url": "https://www.harthrestaurant.com",
+          "label": "Harth"
+        },
+        {
+          "url": "https://www.parcelpizza.com",
+          "label": "Parcel Pizza"
+        }
+      ],
+      "heading": "Places to Eat"
     }
   ],
-
+  "galleryImages": [
+    {
+      "alt": "Ring detail",
+      "url": "/demo/images/photo-5.jpg"
+    },
+    {
+      "alt": "Kifle and Milka together",
+      "url": "/demo/images/photo-4.jpg"
+    },
+    {
+      "alt": "Kifle and Milka walking",
+      "url": "/demo/images/photo-6.jpg"
+    }
+  ],
+  "giftSwiftCode": "",
+  "googleSheetId": "1ZLvdGJhHxvOU0QMiJZSfsL_9zJ-5G6Nkhmop7wPBIW8",
+  "letterClosing": "With all our love, Kifle & Milka",
+  "letterOpening": "To Our Dearest Family & Friends",
+  "scheduleItems": [
+    {
+      "hour": "2:00",
+      "event": "The Ceremony",
+      "venue": "Canadian Museum for Human Rights",
+      "period": "PM",
+      "description": "Join us as we exchange vows. Please arrive 15 minutes early to be seated."
+    },
+    {
+      "hour": "4:00",
+      "event": "Cocktail Hour",
+      "venue": "The Fort Garry Hotel — Crystal Ballroom Foyer",
+      "period": "PM",
+      "description": "Enjoy handcrafted cocktails, hors d'oeuvres, and live music."
+    },
+    {
+      "hour": "6:00",
+      "event": "Dinner & Reception",
+      "venue": "The Fort Garry Hotel — Crystal Ballroom",
+      "period": "PM",
+      "description": "An evening of dining, toasts, and dancing until 1:00 AM."
+    },
+    {
+      "hour": "9:00",
+      "event": "Dance Floor Opens",
+      "venue": "Crystal Ballroom",
+      "period": "PM",
+      "description": "Kick off your shoes and celebrate with us on the dance floor."
+    }
+  ],
+  "storyImageUrl": "/demo/images/photo-2.jpg",
+  "storySubtitle": "How It Began",
   "accommodations": [
     {
       "name": "Viscount Gort Hotel",
       "distance": "10 min drive to venues",
-      "description": "A comfortable and affordable option with easy access to both wedding venues. Complimentary parking included.",
-      "bookingUrl": "https://www.viscountgort.com"
+      "bookingUrl": "https://www.viscountgort.com",
+      "description": "A comfortable and affordable option with easy access to both wedding venues. Complimentary parking included."
     },
     {
       "name": "Inn at The Forks",
       "distance": "3 min walk to ceremony",
-      "description": "A boutique hotel at The Forks, steps from the ceremony venue. Rooftop spa and river views for a perfect wedding weekend.",
-      "bookingUrl": "https://www.innforks.com"
+      "bookingUrl": "https://www.innforks.com",
+      "description": "A boutique hotel at The Forks, steps from the ceremony venue. Rooftop spa and river views for a perfect wedding weekend."
     },
     {
       "name": "The Fort Garry Hotel",
+      "badge": "Reception Venue",
       "distance": "0 min walk to reception",
-      "description": "A Winnipeg landmark since 1913. Stay where the celebration happens, just steps from the ballroom.",
       "bookingUrl": "https://www.fortgarryhotel.com",
-      "badge": "Reception Venue"
+      "description": "A Winnipeg landmark since 1913. Stay where the celebration happens, just steps from the ballroom."
     },
     {
       "name": "Birchwood Hotel",
       "distance": "15 min drive",
-      "description": "A great value option in south Winnipeg with spacious rooms, free parking, and easy highway access to all venues.",
-      "bookingUrl": "https://www.birchwoodhotel.ca"
+      "bookingUrl": "https://www.birchwoodhotel.ca",
+      "description": "A great value option in south Winnipeg with spacious rooms, free parking, and easy highway access to all venues."
     }
   ],
-
   "contactEntries": [
-    { "email": "kifletekle76@gmail.com", "phone": "+44 7961 014933" },
-    { "email": "yaelhagheray@gmail.com", "phone": "+44 7432 781050" }
+    {
+      "email": "kifletekle76@gmail.com",
+      "phone": "+44 7961 014933"
+    },
+    {
+      "email": "yaelhagheray@gmail.com",
+      "phone": "+44 7432 781050"
+    }
   ],
-
-  "navBrand": "K & M"
+  "footerDateText": "August 1 & 2, 2026 • Winnipeg, Manitoba",
+  "giftPaymentUrl": "https://paypal.me/KifleTekle",
+  "giftSubheading": "Your love and support mean the world to us. If you wish to honour us with a gift, a contribution towards our future together would be deeply appreciated.",
+  "storyLeadQuote": "Some love stories are written in the stars, but ours was written over late-night conversations, shared laughter, and a quiet knowing that we had found something extraordinary.",
+  "dateDisplayText": "1st & 2nd August 2026",
+  "footerCopyright": "Made with love • K & M 2026",
+  "footerDevCredit": "Want a wedding website like this?<br/>Built by <strong>Abel Ghebrezadik</strong> — <a href=\"mailto:abelghebz@gmail.com\">abelghebz@gmail.com</a> • <a href=\"tel:+447527841324\">+44 7527 841324</a><div class=\"contact__phone-actions contact__phone-actions--footer\"><a href=\"sms:+447527841324\" title=\"Text Message\" class=\"contact__phone-action\">SMS</a> <a href=\"https://wa.me/447527841324\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"WhatsApp\" class=\"contact__phone-action\">WhatsApp</a> <a href=\"https://ko-fi.com/abeallin\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"Support me on Ko-fi\" class=\"contact__phone-action\">☕ Ko-fi</a></div>",
+  "giftBankDetails": [
+    {
+      "email": "",
+      "label": "Canada (Interac e-Transfer)",
+      "accountHolder": "Milka"
+    },
+    {
+      "label": "UK (Bank Transfer)",
+      "bankName": "Lloyds",
+      "sortCode": "30-98-97",
+      "accountHolder": "Kifle Tekle",
+      "accountNumber": "74336260"
+    }
+  ],
+  "googleSheetName": "Sheet1",
+  "rsvpMealOptions": [
+    "Chicken",
+    "Beef",
+    "Fish",
+    "Vegetarian"
+  ],
+  "venueInfoBlocks": [
+    {
+      "text": "Our reception will take place at The Gates on Roblin in Winnipeg, a beautiful venue set along the Assiniboine River and surrounded by gardens and green space.\nThe Gates on Roblin — 3440 Roblin Blvd, Headingley, MB R4H 1A1",
+      "heading": "Reception Venue"
+    },
+    {
+      "text": "For guests staying downtown, we are planning to provide a shuttle service from one of the downtown hotels to the venue and back. Shuttle details will be confirmed closer to the date.",
+      "subheading": "Shuttle Service"
+    },
+    {
+      "text": "Free parking is available on-site, with designated areas for PMRs and senior guests. If you need special assistance or a drop-off closer to the garden entrance, let us know.",
+      "subheading": "Parking & Directions"
+    }
+  ],
+  "featuredPhotoUrl": "/demo/images/photo-4.jpg",
+  "giftPaymentLabel": "Contribute here",
+  "giftPaymentLinks": [
+    {
+      "url": "https://paypal.me/KifleTekle",
+      "label": "PayPal"
+    }
+  ],
+  "quoteAttribution": "1 Corinthians 13:13",
+  "rsvpDeadlineText": "Kindly respond by July 1st, 2026",
+  "giftAccountHolder": "",
+  "giftAccountNumber": "",
+  "featuredPhotoCaption": "Forever starts here"
 }

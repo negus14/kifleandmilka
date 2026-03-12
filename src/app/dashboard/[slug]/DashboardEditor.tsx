@@ -32,7 +32,8 @@ import {
   arrayMove,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import ElegantCreamTemplate from "@/templates/elegant-cream/Template";
+import ClassicTemplate from "@/templates/classic/Template";
+import ModernTemplate from "@/templates/modern/Template";
 
 const TABS = [
   "Basics", "Layout", "Hero", "Story", "Details", "Schedule",
@@ -291,15 +292,72 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
   }
 
   const [site, setSite] = useState(migratedInitial);
+  
+  // History stacks
+  const [past, setPast] = useState<WeddingSite[]>([]);
+  const [future, setFuture] = useState<WeddingSite[]>([]);
+
   const [tab, setTab] = useState<Tab>("Basics");
   const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
+  const [saved, setSaved] = useState(true); // Start as saved
   const [isPreview, setIsPreview] = useState(true);
   const [previewDevice, setPreviewDevice] = useState<"desktop" | "mobile">("desktop");
   const [editorWidth, setEditorWidth] = useState(40); // percentage
   const [isDragging, setIsDragging] = useState(false);
   const isResizing = useRef(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const autoSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Undo/Redo logic
+  function undo() {
+    if (past.length === 0) return;
+    const previous = past[past.length - 1];
+    const newPast = past.slice(0, past.length - 1);
+    
+    setPast(newPast);
+    setFuture([site, ...future]);
+    setSite(previous);
+    setSaved(false);
+  }
+
+  function redo() {
+    if (future.length === 0) return;
+    const next = future[0];
+    const newFuture = future.slice(1);
+    
+    setPast([...past, site]);
+    setFuture(newFuture);
+    setSite(next);
+    setSaved(false);
+  }
+
+  // Keyboard Shortcuts
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if ((e.ctrlKey || e.metaKey) && e.key === "z") {
+        if (e.shiftKey) redo();
+        else undo();
+      } else if ((e.ctrlKey || e.metaKey) && e.key === "y") {
+        redo();
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [past, future, site]);
+
+  // Auto-save logic
+  useEffect(() => {
+    if (saved || saving) return;
+
+    if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current);
+    autoSaveTimerRef.current = setTimeout(() => {
+      handleSave();
+    }, 1500);
+
+    return () => {
+      if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current);
+    };
+  }, [site, saved, saving]);
 
   // Send updates to preview iframe
   useEffect(() => {
@@ -364,6 +422,8 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
   }
 
   function set<K extends keyof WeddingSite>(key: K, value: WeddingSite[K]) {
+    setPast((p) => [...p.slice(-49), site]); // Keep last 50 states
+    setFuture([]); // Clear redo on new change
     setSite((s) => ({ ...s, [key]: value }));
     setSaved(false);
   }
@@ -430,6 +490,32 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
             <span className="text-sm text-[#2d2b25]/60">{site.partner1Name} & {site.partner2Name}</span>
           </div>
           <div className="flex items-center gap-4">
+            <div className="flex items-center gap-1 bg-[#2d2b25]/5 p-1 rounded-sm">
+              <button
+                onClick={undo}
+                disabled={past.length === 0}
+                className="p-1.5 rounded-sm hover:bg-white disabled:opacity-30 transition-all text-[#2d2b25]"
+                title="Undo (Ctrl+Z)"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>
+              </button>
+              <button
+                onClick={redo}
+                disabled={future.length === 0}
+                className="p-1.5 rounded-sm hover:bg-white disabled:opacity-30 transition-all text-[#2d2b25]"
+                title="Redo (Ctrl+Y)"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3l3 2.7"/></svg>
+              </button>
+            </div>
+
+            <div className="flex items-center gap-2 px-3">
+              <div className={`w-1.5 h-1.5 rounded-full transition-colors ${saving ? "bg-amber-400 animate-pulse" : saved ? "bg-green-500" : "bg-amber-400"}`} />
+              <span className="text-[10px] font-bold uppercase tracking-widest text-[#2d2b25]/40">
+                {saving ? "Saving..." : saved ? "Changes Saved" : "Unsaved Changes"}
+              </span>
+            </div>
+
             <a href={`/${site.slug}`} target="_blank"
               className="text-xs tracking-wide uppercase text-[#2d2b25]/50 hover:text-[#2d2b25] transition-colors">
               View Live
@@ -471,13 +557,9 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
               </div>
             )}
 
-            <button onClick={handleSave} disabled={saving}
-              className="bg-[#2d2b25] text-[#faf1e1] px-5 py-2 text-xs font-semibold tracking-[0.1em] uppercase disabled:opacity-60 hover:bg-[#1a1812] transition-colors">
-              {saving ? "Saving..." : saved ? "Saved!" : "Save Changes"}
-            </button>
             <form action="/api/auth/logout" method="POST">
               <button type="submit"
-                className="text-xs tracking-wide uppercase text-[#2d2b25]/40 hover:text-red-500 transition-colors">
+                className="text-xs tracking-wide uppercase text-[#2d2b25]/40 hover:text-red-500 transition-colors ml-2">
                 Log Out
               </button>
             </form>
@@ -558,8 +640,29 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                 <Field label="Location" value={site.locationText} onChange={(v) => set("locationText", v)} />
                 <Field label="Nav Brand Text" value={site.navBrand} onChange={(v) => set("navBrand", v)} placeholder="K & M" />
 
-                <Label>Theme</Label>
-                <div className="grid grid-cols-3 gap-3 mt-2 mb-4">
+                <Label>Layout Style</Label>
+                <div className="grid grid-cols-2 gap-3 mt-2 mb-6">
+                  {[
+                    { id: "classic", name: "Classic", desc: "Elegant, centered layout with script fonts." },
+                    { id: "modern", name: "Modern", desc: "Minimalist, bold typography and high contrast." },
+                  ].map((layout) => (
+                    <button
+                      key={layout.id}
+                      type="button"
+                      onClick={() => set("layoutId", layout.id)}
+                      className={`text-left p-4 rounded-sm border-2 transition-all ${
+                        (site.layoutId || "classic") === layout.id
+                          ? "border-[#2d2b25] bg-[#2d2b25]/[0.02]"
+                          : "border-[#2d2b25]/10 hover:border-[#2d2b25]/30"
+                      }`}
+                    >
+                      <p className="text-sm font-bold text-[#2d2b25] uppercase tracking-tight">{layout.name}</p>
+                      <p className="text-[10px] text-[#2d2b25]/50 mt-1 leading-tight">{layout.desc}</p>
+                    </button>
+                  ))}
+                </div>
+
+                <Label>Color Palette</Label>                <div className="grid grid-cols-3 gap-3 mt-2 mb-4">
                   {themes.map((theme) => (
                     <button
                       key={theme.id}
@@ -1235,7 +1338,32 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                 </div>
 
                 <div className="mt-8 pt-8 border-t border-[#2d2b25]/10">
-                  <SectionTitle>Bank Transfer (Optional)</SectionTitle>
+                  <SectionTitle>International Bank Details (Optional)</SectionTitle>
+                  <p className="text-[10px] text-[#2d2b25]/40 mb-4 uppercase tracking-wider">
+                    Add multiple bank options (e.g. Canada Interac, UK Bank Transfer).
+                  </p>
+                  <SortableList items={site.giftBankDetails || []} prefix="bankDetails" onReorder={(items) => set("giftBankDetails", items)}>
+                    {(bank, i, id) => (
+                      <SortableCard key={id} id={id} onRemove={() => set("giftBankDetails", removeFromArray(site.giftBankDetails || [], i))}>
+                        <Field label="Label (e.g. Canada Interac)" value={bank.label} onChange={(v) => set("giftBankDetails", updateInArray(site.giftBankDetails || [], i, { label: v }))} />
+                        <Field label="Account Holder" value={bank.accountHolder || ""} onChange={(v) => set("giftBankDetails", updateInArray(site.giftBankDetails || [], i, { accountHolder: v }))} />
+                        <div className="grid grid-cols-2 gap-4">
+                          <Field label="Email (for Interac)" value={bank.email || ""} onChange={(v) => set("giftBankDetails", updateInArray(site.giftBankDetails || [], i, { email: v }))} />
+                          <Field label="Bank Name" value={bank.bankName || ""} onChange={(v) => set("giftBankDetails", updateInArray(site.giftBankDetails || [], i, { bankName: v }))} />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <Field label="Sort Code" value={bank.sortCode || ""} onChange={(v) => set("giftBankDetails", updateInArray(site.giftBankDetails || [], i, { sortCode: v }))} />
+                          <Field label="Account Number" value={bank.accountNumber || ""} onChange={(v) => set("giftBankDetails", updateInArray(site.giftBankDetails || [], i, { accountNumber: v }))} />
+                        </div>
+                        <Field label="SWIFT/BIC Code" value={bank.swiftCode || ""} onChange={(v) => set("giftBankDetails", updateInArray(site.giftBankDetails || [], i, { swiftCode: v }))} />
+                      </SortableCard>
+                    )}
+                  </SortableList>
+                  <AddButton label="Add Bank Option" onClick={() => set("giftBankDetails", [...(site.giftBankDetails || []), { label: "New Bank Option" }])} />
+                </div>
+
+                <div className="mt-8 pt-8 border-t border-[#2d2b25]/10">
+                  <SectionTitle>Simple Bank Transfer (Legacy)</SectionTitle>
                   <Field label="Bank Name" value={site.giftBankName || ""} onChange={(v) => set("giftBankName", v)} />
                   <Field label="Account Holder" value={site.giftAccountHolder || ""} onChange={(v) => set("giftAccountHolder", v)} />
                   <Field label="Account Number" value={site.giftAccountNumber || ""} onChange={(v) => set("giftAccountNumber", v)} />

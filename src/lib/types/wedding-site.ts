@@ -59,6 +59,16 @@ export interface AccommodationItem {
   discountCode?: string;
 }
 
+export interface BankDetail {
+  label: string; // e.g. "Canada (Interac e-Transfer)", "UK (Bank Transfer)"
+  bankName?: string;
+  accountHolder?: string;
+  accountNumber?: string;
+  sortCode?: string;
+  swiftCode?: string;
+  email?: string;
+}
+
 export interface ContactEntry {
   email: string;
   phone?: string;
@@ -111,6 +121,7 @@ export interface WeddingSite {
   slug: string;
   isPublished: boolean;
   templateId: string;
+  layoutId?: "classic" | "modern";
   passwordHash?: string;
   sectionOrder?: SectionConfig[];
 
@@ -168,6 +179,7 @@ export interface WeddingSite {
   giftAccountHolder?: string;
   giftAccountNumber?: string;
   giftSwiftCode?: string;
+  giftBankDetails?: BankDetail[];
 
   // Footer
   footerNames: string;

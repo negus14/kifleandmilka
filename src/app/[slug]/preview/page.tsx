@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import ElegantCreamTemplate from "@/templates/elegant-cream/Template";
+import ClassicTemplate from "@/templates/classic/Template";
+import ModernTemplate from "@/templates/modern/Template";
 import type { WeddingSite } from "@/lib/types/wedding-site";
 
 export default function PreviewPage() {
@@ -29,5 +30,9 @@ export default function PreviewPage() {
     );
   }
 
-  return <ElegantCreamTemplate site={site} />;
+  if (site.layoutId === "modern") {
+    return <ModernTemplate site={site} />;
+  }
+
+  return <ClassicTemplate site={site} />;
 }

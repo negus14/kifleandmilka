@@ -2,7 +2,7 @@ import type { WeddingSite } from "@/lib/types/wedding-site";
 import { DEFAULT_SECTION_ORDER } from "@/lib/types/wedding-site";
 import { getTheme } from "@/lib/themes";
 import WeddingSiteClient from "./WeddingSiteClient";
-import RSVPForm from "./RSVPForm";
+import RSVPForm from "@/components/RSVPForm";
 import "./styles.css";
 
 function toEmbedUrl(url: string): string {
@@ -23,7 +23,7 @@ function toEmbedUrl(url: string): string {
   return url;
 }
 
-export function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
+export function ClassicTemplate({ site }: { site: WeddingSite }) {
   const theme = getTheme(site.templateId);
   const themeVars = {
     "--color-dark": theme.colors.dark,
@@ -525,11 +525,15 @@ export function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
       if (!site.giftHeading) return null;
 
       const paymentLinks = [...(site.giftPaymentLinks || [])];
-      // Fallback for legacy single link if array is empty
       if (paymentLinks.length === 0 && site.giftPaymentUrl && site.giftPaymentLabel) {
         paymentLinks.push({ label: site.giftPaymentLabel, url: site.giftPaymentUrl });
       }
-      
+
+      const hasBankDetails = (site.giftBankDetails?.length ?? 0) > 0 || site.giftBankName || site.giftAccountNumber;
+      const hasAnyGifts = paymentLinks.length > 0 || hasBankDetails;
+
+      if (!hasAnyGifts) return null;
+
       return (
         <section className={`section ${cls || "section--cream"}`} id="gift" style={style}>
           <div className="container">
@@ -537,59 +541,69 @@ export function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
               <h2 className="gift__heading">{site.giftHeading}</h2>
               <p className="gift__subheading">{site.giftSubheading}</p>
               
-              <div className="gift__btns-wrap">
-                {paymentLinks.map((link, i) => {
-                  const isPaypal = link.label?.toLowerCase().includes("paypal");
-                  return (
-                    <a key={i} href={link.url} target="_blank" rel="noopener noreferrer" className="gift__cta-btn">
-                      {isPaypal && (
-                        <svg viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797H9.603c-.564 0-1.04.408-1.13.964L7.076 21.337zm7.874-15.09c-.256 0-.51.02-.758.06-.876.14-1.594.673-1.955 1.456a3.12 3.12 0 0 0-.263 1.282c0 1.14.706 1.906 2.052 1.906h.882c2.582 0 4.263-1.063 4.87-3.842.044-.2.073-.39.09-.57.1-1.06-.587-2.292-4.918-2.292z" />
-                        </svg>
-                      )}
-                      {link.label}
-                    </a>
-                  );
-                })}
-              </div>
+              <div className="gift__dropdown-wrap">
+                <div className="gift__dropdown">
+                  <button className="gift__dropdown-toggle" aria-haspopup="true" aria-expanded="false">
+                    Choose a Gift Method
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="6 9 12 15 18 9"/></svg>
+                  </button>
+                  
+                  <div className="gift__dropdown-menu">
+                    {/* Payment Links (Stripe, PayPal, etc.) */}
+                    {paymentLinks.map((link, i) => (
+                      <a key={`link-${i}`} href={link.url} target="_blank" rel="noopener noreferrer" className="gift__dropdown-item gift__dropdown-item--link">
+                        <span className="gift__item-icon">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                        </span>
+                        {link.label}
+                      </a>
+                    ))}
 
-              {paymentLinks.length > 0 && (site.giftBankName || site.giftAccountNumber) && (
-                <div className="gift__divider">OR</div>
-              )}
-
-              {(site.giftBankName || site.giftAccountNumber) && (
-                <div className="gift__bank-wrap">
-                  <div className="gift__bank-card">
-                    <p className="gift__bank-label">Bank Transfer Details</p>
-                    <div className="gift__bank-grid">
-                      {site.giftBankName && (
-                        <div className="gift__bank-item">
-                          <span className="gift__bank-key">Bank</span>
-                          <span className="gift__bank-val">{site.giftBankName}</span>
+                    {/* Bank Transfer Options */}
+                    {site.giftBankDetails?.map((bank, i) => (
+                      <div key={`bank-${i}`} className="gift__dropdown-item gift__dropdown-item--bank">
+                        <div className="gift__bank-header">
+                          <span className="gift__item-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                          </span>
+                          {bank.label}
                         </div>
-                      )}
-                      {site.giftAccountHolder && (
-                        <div className="gift__bank-item">
-                          <span className="gift__bank-key">Account Holder</span>
-                          <span className="gift__bank-val">{site.giftAccountHolder}</span>
+                        <div className="gift__bank-details-mini">
+                          {bank.accountHolder && <div className="gift__mini-row"><span>Holder:</span> <strong>{bank.accountHolder}</strong></div>}
+                          {bank.email && (
+                            <div className="gift__mini-row">
+                              <span>Email:</span> 
+                              <strong>{bank.email}</strong>
+                              <button className="bank-copy-btn" data-copy={bank.email} title="Copy Email">Copy</button>
+                            </div>
+                          )}
+                          {bank.sortCode && (
+                            <div className="gift__mini-row">
+                              <span>Sort:</span> 
+                              <strong>{bank.sortCode}</strong>
+                              <button className="bank-copy-btn" data-copy={bank.sortCode} title="Copy Sort Code">Copy</button>
+                            </div>
+                          )}
+                          {bank.accountNumber && (
+                            <div className="gift__mini-row">
+                              <span>Account:</span> 
+                              <strong>{bank.accountNumber}</strong>
+                              <button className="bank-copy-btn" data-copy={bank.accountNumber} title="Copy Account Number">Copy</button>
+                            </div>
+                          )}
+                          {bank.swiftCode && (
+                            <div className="gift__mini-row">
+                              <span>SWIFT:</span> 
+                              <strong>{bank.swiftCode}</strong>
+                              <button className="bank-copy-btn" data-copy={bank.swiftCode} title="Copy SWIFT">Copy</button>
+                            </div>
+                          )}
                         </div>
-                      )}
-                      {site.giftAccountNumber && (
-                        <div className="gift__bank-item">
-                          <span className="gift__bank-key">Account Number</span>
-                          <span className="gift__bank-val">{site.giftAccountNumber}</span>
-                        </div>
-                      )}
-                      {site.giftSwiftCode && (
-                        <div className="gift__bank-item">
-                          <span className="gift__bank-key">SWIFT/BIC Code</span>
-                          <span className="gift__bank-val">{site.giftSwiftCode}</span>
-                        </div>
-                      )}
-                    </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
-              )}
+              </div>
 
               <p className="gift__note">{site.giftNote}</p>
             </div>
@@ -639,7 +653,7 @@ export function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
         <div className="footer__line"></div>
         <p className="footer__copy">{site.footerCopyright}</p>
         {site.footerDevCredit && (
-          <p className="footer__dev" dangerouslySetInnerHTML={{ __html: site.footerDevCredit }} />
+          <div className="footer__dev" dangerouslySetInnerHTML={{ __html: site.footerDevCredit }} />
         )}
       </footer>
     ),
@@ -689,4 +703,4 @@ export function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
   );
 }
 
-export default ElegantCreamTemplate;
+export default ClassicTemplate;

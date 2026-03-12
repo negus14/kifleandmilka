@@ -104,7 +104,84 @@ export default function WeddingSiteClient({
     }
     document.addEventListener("keydown", onKey);
 
+    // Gift dropdown logic
+    function setupGiftDropdowns() {
+      const toggles = document.querySelectorAll(".gift__dropdown-toggle");
+      
+      toggles.forEach((toggle) => {
+        // Remove existing listener to prevent duplicates
+        const newToggle = toggle.cloneNode(true) as HTMLElement;
+        toggle.parentNode?.replaceChild(newToggle, toggle);
+
+        newToggle.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          
+          const parent = newToggle.closest(".gift__dropdown");
+          const menu = parent?.querySelector(".gift__dropdown-menu");
+          const isExpanded = newToggle.getAttribute("aria-expanded") === "true";
+          
+          // Close all other dropdowns
+          document.querySelectorAll(".gift__dropdown-menu").forEach(m => {
+            if (m !== menu) m.classList.remove("show");
+          });
+          document.querySelectorAll(".gift__dropdown-toggle").forEach(t => {
+            if (t !== newToggle) t.setAttribute("aria-expanded", "false");
+          });
+
+          // Toggle current
+          if (menu) {
+            const willShow = !menu.classList.contains("show");
+            menu.classList.toggle("show", willShow);
+            newToggle.setAttribute("aria-expanded", String(willShow));
+          }
+        });
+      });
+
+      // Global click to close
+      document.addEventListener("click", () => {
+        document.querySelectorAll(".gift__dropdown-menu").forEach(m => m.classList.remove("show"));
+        document.querySelectorAll(".gift__dropdown-toggle").forEach(t => t.setAttribute("aria-expanded", "false"));
+      });
+    }
+
+    // Run setup with a small delay to ensure DOM is ready
+    const timeout = setTimeout(() => {
+      setupGiftDropdowns();
+      setupClipboard();
+    }, 100);
+
+    // Clipboard Copy logic
+    function setupClipboard() {
+      const copyBtns = document.querySelectorAll(".bank-copy-btn");
+      copyBtns.forEach((btn) => {
+        const newBtn = btn.cloneNode(true) as HTMLElement;
+        btn.parentNode?.replaceChild(newBtn, btn);
+
+        newBtn.addEventListener("click", async (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const text = newBtn.getAttribute("data-copy");
+          if (!text) return;
+
+          try {
+            await navigator.clipboard.writeText(text);
+            const originalText = newBtn.innerHTML;
+            newBtn.innerHTML = "Copied!";
+            newBtn.style.color = "#4ade80";
+            setTimeout(() => {
+              newBtn.innerHTML = originalText;
+              newBtn.style.color = "";
+            }, 2000);
+          } catch (err) {
+            console.error("Failed to copy:", err);
+          }
+        });
+      });
+    }
+
     return () => {
+      clearTimeout(timeout);
       clearInterval(interval);
       observer.disconnect();
       window.removeEventListener("scroll", onScroll);

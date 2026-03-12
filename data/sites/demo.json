@@ -1,109 +1,26 @@
 {
   "slug": "demo",
-  "isPublished": true,
-  "templateId": "elegant-cream",
-  "passwordHash": "$2b$10$5JvgovlkakoeamziHwAZEeSPsu9jf9uM2xWj4GVhQMph5/.LmUQCe",
-
-  "partner1Name": "Eve",
-  "partner2Name": "Adam",
-  "weddingDate": "2026-09-01T14:00:00-05:00",
-  "dateDisplayText": "September 1, 2026",
-  "locationText": "Garden of Eden",
-
-  "heroPretext": "In the beginning...",
-  "heroTagline": "were created for each other",
-  "heroCta": "RSVP Here",
-  "heroImageUrl": "/demo/images/photo-1.jpg",
-
-  "storySubtitle": "The First Story",
-  "storyTitle": "Our Eden",
-  "storyLeadQuote": "'This is now bone of my bones and flesh of my flesh; she shall be called Woman, for she was taken out of man.'",
-  "storyBody": [
-    "In a garden of grace, two souls were brought together by divine purpose. What began as a moment of creation became a journey of companionship and love.",
-    "Walking side by side, we have discovered that every step taken together is a reflection of a greater promise. Now, we invite you to witness the start of our forever."
-  ],
-  "storyImageUrl": "/demo/images/photo-2.jpg",
-
-  "quoteText": "So they are no longer two, but one flesh. Therefore what God has joined together, let no one separate.",
-  "quoteAttribution": "Matthew 19:6",
-
-  "featuredPhotoUrl": "/demo/images/photo-1.jpg",
-  "featuredPhotoCaption": "The Beginning of Forever",
-
-  "letterOpening": "Beloved friends and family,",
-  "letterBody": [
-    "We are honored to share this sacred day with you. As we enter into the covenant of marriage, we look back at the path that led us here with gratitude.",
-    "Your presence is a blessing to us as we begin our life together, rooted in faith and blooming in love."
-  ],
-  "letterClosing": "With grace and love, Eve & Adam",
-
-  "rsvpHeading": "Join Our Celebration",
-  "rsvpDeadlineText": "Kindly respond by August 1, 2026",
-  "rsvpEmbedUrl": "",
-
-  "giftHeading": "Your Presence Is Our Gift",
-  "giftSubheading": "Your love and support mean the world to us. If you wish to honour us with a gift, a contribution to our future together would be greatly appreciated.",
-  "giftPaymentUrl": "",
-  "giftPaymentLabel": "Send a Gift",
-  "giftNote": "Placeholder for your donation or gift details",
-
-  "footerNames": "Eve & Adam",
-  "footerDateText": "September 1, 2026",
-  "footerCopyright": "Made with love • E & A 2026",
-  "footerDevCredit": "Want a wedding website like this?<br/>Built by <strong>Abel Ghebrezadik</strong> — <a href=\"mailto:abelghebz@gmail.com\">abelghebz@gmail.com</a> • <a href=\"tel:+447527841324\">+44 7527 841324</a><div class=\"contact__phone-actions contact__phone-actions--footer\"><a href=\"sms:+447527841324\" title=\"Text Message\" class=\"contact__phone-action\">SMS</a> <a href=\"https://wa.me/447527841324\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"WhatsApp\" class=\"contact__phone-action\">WhatsApp</a> <a href=\"https://buymeacoffee.com/abelghebz\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"Buy Me a Coffee\" class=\"contact__phone-action\">☕ Buy Me a Coffee</a></div>",
-
   "venues": [
     {
-      "label": "Ceremony",
       "name": "The Great Tabernacle",
-      "address": "123 Faith Avenue\nEden Valley, A1B 2C3",
       "time": "2:00 PM",
+      "label": "Ceremony",
+      "address": "123 Faith Avenue\nEden Valley, A1B 2C3",
       "mapsEmbedUrl": ""
     },
     {
-      "label": "Reception",
       "name": "Eden Gardens",
-      "address": "456 Paradise Road\nEden Valley, A1B 2C3",
       "time": "5:00 PM",
+      "label": "Reception",
+      "address": "456 Paradise Road\nEden Valley, A1B 2C3",
       "mapsEmbedUrl": ""
     }
   ],
-  "venueInfoBlocks": [
-    {
-      "heading": "Covenant Dress Code",
-      "subheading": "",
-      "text": "Formal attire is requested as we celebrate this sacred union."
-    },
-    {
-      "heading": "Parking",
-      "subheading": "",
-      "text": "Valet parking will be available at the entrance of the gardens."
-    }
-  ],
-  "dayTwoEvent": null,
-  "scheduleItems": [
-    {
-      "hour": "2:00",
-      "period": "PM",
-      "event": "Sacred Union",
-      "venue": "The Tabernacle",
-      "description": "Witness the exchange of vows under the grace of God."
-    },
-    {
-      "hour": "3:30",
-      "period": "PM",
-      "event": "Fellowship Hour",
-      "venue": "The Courtyard",
-      "description": "Gather for refreshments and joyful fellowship."
-    },
-    {
-      "hour": "5:30",
-      "period": "PM",
-      "event": "Grand Feast",
-      "venue": "The Great Hall",
-      "description": "Celebrate the union with a banquet and songs of praise."
-    }
-  ],
+  "heroCta": "RSVP Here",
+  "giftNote": "Placeholder for your donation or gift details",
+  "layoutId": "classic",
+  "menuNote": "Please notify us of any dietary requirements when you RSVP.",
+  "navBrand": "A & E",
   "menuItems": [
     {
       "name": "The Harvest Starter",
@@ -118,33 +35,148 @@
       "description": "Wild honey and nut pastries served with nectar."
     }
   ],
-  "menuNote": "Please notify us of any dietary requirements when you RSVP.",
-  "galleryImages": [
-    { "url": "/demo/images/photo-1.jpg", "alt": "A garden setting" },
-    { "url": "/demo/images/photo-2.jpg", "alt": "A peaceful landscape" }
+  "quoteText": "So they are no longer two, but one flesh. Therefore what God has joined together, let no one separate.",
+  "storyBody": [
+    "In a garden of grace, two souls were brought together by divine purpose. What began as a moment of creation became a journey of companionship and love.",
+    "Walking side by side, we have discovered that every step taken together is a reflection of a greater promise. Now, we invite you to witness the start of our forever."
   ],
+  "letterBody": [
+    "We are honored to share this sacred day with you. As we enter into the covenant of marriage, we look back at the path that led us here with gratitude.",
+    "Your presence is a blessing to us as we begin our life together, rooted in faith and blooming in love."
+  ],
+  "storyTitle": "Our Eden",
+  "templateId": "elegant-cream",
+  "dayTwoEvent": null,
+  "footerNames": "Adam & Eve",
+  "giftHeading": "Your Presence Is Our Gift",
+  "heroPretext": "In the beginning...",
+  "heroTagline": "were created for each other",
+  "isPublished": true,
+  "rsvpHeading": "Join Our Celebration",
+  "weddingDate": "2026-09-01T14:00:00-05:00",
+  "heroImageUrl": "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2560&auto=format&fit=crop",
+  "locationText": "Garden of Eden",
+  "partner1Name": "Adam",
+  "partner2Name": "Eve",
+  "passwordHash": "$2b$10$5JvgovlkakoeamziHwAZEeSPsu9jf9uM2xWj4GVhQMph5/.LmUQCe",
+  "rsvpEmbedUrl": "",
   "exploreGroups": [
     {
-      "heading": "Places of Peace",
-      "subheading": "Nearby retreats",
       "links": [
-        { "label": "Eden Valley Overlook", "url": "" },
-        { "label": "Silent Springs", "url": "" }
-      ]
+        {
+          "url": "",
+          "label": "Eden Valley Overlook"
+        },
+        {
+          "url": "",
+          "label": "Silent Springs"
+        }
+      ],
+      "heading": "Places of Peace",
+      "subheading": "Nearby retreats"
     }
   ],
+  "galleryImages": [
+    {
+      "alt": "Lush garden pathways",
+      "url": "https://images.unsplash.com/photo-1518131359073-372f444bc89c?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+      "alt": "Serene sunlight through trees",
+      "url": "https://images.unsplash.com/photo-1523438885200-e635ba2c371e?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+      "alt": "A peaceful landscape",
+      "url": "https://images.unsplash.com/photo-1464618663641-bbdd760ae84a?q=80&w=1200&auto=format&fit=crop"
+    }
+  ],
+  "letterClosing": "With grace and love, Adam & Eve",
+  "letterOpening": "Beloved friends and family,",
+  "scheduleItems": [
+    {
+      "hour": "2:00",
+      "event": "Sacred Union",
+      "venue": "The Tabernacle",
+      "period": "PM",
+      "description": "Witness the exchange of vows under the grace of God."
+    },
+    {
+      "hour": "3:30",
+      "event": "Fellowship Hour",
+      "venue": "The Courtyard",
+      "period": "PM",
+      "description": "Gather for refreshments and joyful fellowship."
+    },
+    {
+      "hour": "5:30",
+      "event": "Grand Feast",
+      "venue": "The Great Hall",
+      "period": "PM",
+      "description": "Celebrate the union with a banquet and songs of praise."
+    }
+  ],
+  "storyImageUrl": "https://images.unsplash.com/photo-1516589174422-8fedd0197b67?q=80&w=1200&auto=format&fit=crop",
+  "storySubtitle": "The First Story",
   "accommodations": [
     {
       "name": "The Sanctuary Hotel",
+      "badge": "Recommended",
       "distance": "5 min from gardens",
-      "description": "A peaceful place to rest during the wedding weekend.",
       "bookingUrl": "",
-      "badge": "Recommended"
+      "description": "A peaceful place to rest during the wedding weekend."
     }
   ],
   "contactEntries": [
-    { "email": "eve@eden.com", "phone": "" },
-    { "email": "adam@eden.com", "phone": "" }
+    {
+      "email": "eve@eden.com",
+      "phone": ""
+    },
+    {
+      "email": "adam@eden.com",
+      "phone": ""
+    }
   ],
-  "navBrand": "E & A"
+  "footerDateText": "September 1, 2026",
+  "giftPaymentUrl": "",
+  "giftSubheading": "Your love and support mean the world to us. If you wish to honour us with a gift, a contribution to our future together would be greatly appreciated.",
+  "storyLeadQuote": "'This is now bone of my bones and flesh of my flesh; she shall be called Woman, for she was taken out of man.'",
+  "dateDisplayText": "September 1, 2026",
+  "footerCopyright": "Made with love • A & E 2026",
+  "footerDevCredit": "Want a wedding website like this?<br/>Built by <strong>Abel Ghebrezadik</strong> — <a href=\"mailto:abelghebz@gmail.com\">abelghebz@gmail.com</a> • <a href=\"tel:+447527841324\">+44 7527 841324</a><div class=\"contact__phone-actions contact__phone-actions--footer\"><a href=\"sms:+447527841324\" title=\"Text Message\" class=\"contact__phone-action\">SMS</a> <a href=\"https://wa.me/447527841324\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"WhatsApp\" class=\"contact__phone-action\">WhatsApp</a> <a href=\"https://ko-fi.com/abeallin\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"Support me on Ko-fi\" class=\"contact__phone-action\">☕ Ko-fi</a></div>",
+  "giftBankDetails": [
+    {
+      "email": "eve@eden.com",
+      "label": "Canada (Interac e-Transfer)",
+      "accountHolder": "Adam & Eve"
+    },
+    {
+      "label": "UK (Bank Transfer)",
+      "bankName": "Eden Bank",
+      "sortCode": "00-00-00",
+      "accountHolder": "Adam & Eve",
+      "accountNumber": "12345678"
+    }
+  ],
+  "venueInfoBlocks": [
+    {
+      "text": "Formal attire is requested as we celebrate this sacred union.",
+      "heading": "Covenant Dress Code",
+      "subheading": ""
+    },
+    {
+      "text": "Valet parking will be available at the entrance of the gardens.",
+      "heading": "Parking",
+      "subheading": ""
+    }
+  ],
+  "featuredPhotoUrl": "https://images.unsplash.com/photo-1522673607200-164883214c98?q=80&w=1200&auto=format&fit=crop",
+  "giftPaymentLabel": "Send a Gift",
+  "quoteAttribution": "Matthew 19:6",
+  "rsvpDeadlineText": "Kindly respond by August 1, 2026",
+  "sectionBackgrounds": {
+    "gift": "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2560&auto=format&fit=crop",
+    "explore": "https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?q=80&w=2560&auto=format&fit=crop",
+    "gallery": "https://images.unsplash.com/photo-1501004318641-739e828a1751?q=80&w=2560&auto=format&fit=crop"
+  },
+  "featuredPhotoCaption": "The Beginning of Forever"
 }

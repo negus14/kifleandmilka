@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getSiteBySlug } from "@/lib/data/sites";
-import ElegantCreamTemplate from "@/templates/elegant-cream/Template";
+import ClassicTemplate from "@/templates/classic/Template";
+import ModernTemplate from "@/templates/modern/Template";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -25,5 +26,9 @@ export default async function WeddingSitePage({ params }: Props) {
   const site = await getSiteBySlug(slug);
   if (!site || !site.isPublished) return notFound();
 
-  return <ElegantCreamTemplate site={site} />;
+  if (site.layoutId === "modern") {
+    return <ModernTemplate site={site} />;
+  }
+
+  return <ClassicTemplate site={site} />;
 }
