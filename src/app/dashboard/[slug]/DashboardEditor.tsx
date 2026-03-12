@@ -269,6 +269,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
   const [isPreview, setIsPreview] = useState(true);
   const [previewDevice, setPreviewDevice] = useState<"desktop" | "mobile">("desktop");
   const [editorWidth, setEditorWidth] = useState(40); // percentage
+  const [isDragging, setIsDragging] = useState(false);
   const isResizing = useRef(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
@@ -298,6 +299,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
 
   function startResizing(e: React.MouseEvent | React.TouchEvent) {
     isResizing.current = true;
+    setIsDragging(true);
     document.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("mouseup", stopResizing);
     document.addEventListener("touchmove", handleTouchMove);
@@ -308,6 +310,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
 
   function stopResizing() {
     isResizing.current = false;
+    setIsDragging(false);
     document.removeEventListener("mousemove", handleMouseMove);
     document.removeEventListener("mouseup", stopResizing);
     document.removeEventListener("touchmove", handleTouchMove);
@@ -1197,16 +1200,16 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                 <span className="text-[10px] font-bold uppercase tracking-wider text-[#2d2b25]/40">Real-time Preview</span>
                 <span className="text-[10px] text-[#2d2b25]/30">{previewDevice === "desktop" ? "Desktop Mode" : "Mobile View"} &bull; Auto-syncing</span>
               </div>
-              <div className="flex-1 bg-[#f0f0f0] overflow-auto flex justify-center p-4">
+              <div className="flex-1 bg-[#f0f0f0] overflow-hidden flex justify-center">
                 <div 
-                  className={`bg-white shadow-2xl transition-all h-fit origin-top ${
-                    previewDevice === "mobile" ? "w-[375px] min-h-[667px]" : "w-full h-full"
-                  }`}
+                  className={`bg-white shadow-2xl transition-all h-full origin-top ${
+                    previewDevice === "mobile" ? "w-[375px]" : "w-full"
+                  } ${isDragging ? "pointer-events-none" : ""}`}
                 >
                   <iframe
                     ref={iframeRef}
                     src={`/${site.slug}/preview`}
-                    className={`w-full h-full border-none transition-all ${isResizing.current ? "pointer-events-none" : ""}`}
+                    className="w-full h-full border-none"
                     title="Site Preview"
                   />
                 </div>
