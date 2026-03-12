@@ -8,6 +8,7 @@
     "start": "next start -p ${PORT:-3000}",
     "lint": "next lint",
     "db:sync": "npx tsx db/sync_json_to_db.ts",
+    "backup": "python db/backup.py",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "e2e": "playwright test"
