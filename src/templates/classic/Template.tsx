@@ -484,17 +484,22 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
       );
     },
 
-    rsvp: (id, cls = "", style = {}) => (
-      <section className={`section ${cls}`} id={id} style={style}>
-        <div className="container">
-          <div className="rsvp__form-wrap reveal" style={{ maxWidth: 700, margin: "0 auto", textAlign: "center" }}>
-            <h2 className="rsvp__heading">{site.rsvpHeading}</h2>
-            <p className="rsvp__subheading">{site.rsvpDeadlineText}</p>
-            <RSVPForm slug={site.slug} mealOptions={site.rsvpMealOptions} showHalalOption={site.showHalalOption ?? true} />
+    rsvp: (id, cls = "", style = {}) => {
+      const menuMeals = site.menuItems?.map(m => m.name) || [];
+      const mealOptions = menuMeals.length > 0 ? menuMeals : site.rsvpMealOptions;
+      
+      return (
+        <section className={`section ${cls}`} id={id} style={style}>
+          <div className="container">
+            <div className="rsvp__form-wrap reveal" style={{ maxWidth: 700, margin: "0 auto", textAlign: "center" }}>
+              <h2 className="rsvp__heading">{site.rsvpHeading}</h2>
+              <p className="rsvp__subheading">{site.rsvpDeadlineText}</p>
+              <RSVPForm slug={site.slug} mealOptions={mealOptions} showHalalOption={site.showHalalOption ?? true} />
+            </div>
           </div>
-        </div>
-      </section>
-    ),
+        </section>
+      );
+    },
 
     gift: (id, cls = "", style = {}) => {
       if (!site.giftHeading) return null;
