@@ -5,7 +5,17 @@ import fs from "fs";
 import path from "path";
 
 async function sync() {
-  console.log("Starting sync of JSON to local database...");
+  const isProduction = process.env.DATABASE_URL?.includes("railway.app") || process.env.NODE_ENV === "production";
+  
+  if (isProduction && !process.argv.includes("--force")) {
+    console.error("\n❌ SAFETY ERROR: You are attempting to sync LOCAL JSON files TO a PRODUCTION database.");
+    console.error("This will OVERWRITE any changes made by users in the Dashboard.");
+    console.error("\nIf you ARE sure, run this with the --force flag:");
+    console.error("npm run db:sync -- --force\n");
+    process.exit(1);
+  }
+
+  console.log("Starting sync of JSON to database...");
   
   // Dynamically import pool AFTER dotenv has been configured
   const poolModule = await import("../src/lib/db");
