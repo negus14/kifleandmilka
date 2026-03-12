@@ -2007,7 +2007,6 @@
 .footer {
   text-align: center;
   padding: 5rem 2rem 3rem;
-  background: var(--color-tan);
 }
 
 .footer__names {
@@ -2054,6 +2053,28 @@
   letter-spacing: 0.1em;
   margin-top: 2rem;
 }
+
+/* Footer contextual palette overrides */
+.section--dark .footer__names { color: var(--color-cream); }
+.section--dark .footer__date,
+.section--dark .footer__contact,
+.section--dark .footer__contact a,
+.section--dark .footer__copy { color: var(--color-tan); }
+.section--dark .footer__line { background: var(--color-tan); }
+
+.section--tan .footer__names,
+.section--tan .footer__date,
+.section--tan .footer__contact,
+.section--tan .footer__contact a,
+.section--tan .footer__copy { color: var(--color-dark); }
+.section--tan .footer__line { background: var(--color-dark); }
+
+.section--has-bg.section--light-text .footer__names { color: #fff; }
+.section--has-bg.section--light-text .footer__date,
+.section--has-bg.section--light-text .footer__contact,
+.section--has-bg.section--light-text .footer__contact a,
+.section--has-bg.section--light-text .footer__copy { color: rgba(255, 255, 255, 0.8); }
+.section--has-bg.section--light-text .footer__line { background: #fff; }
 
 .footer__dev {
   font-size: 0.58rem;

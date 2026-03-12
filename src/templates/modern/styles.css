@@ -776,8 +776,6 @@
 /* Footer */
 .modern-footer {
   padding: 6rem 0;
-  background: var(--color-dark);
-  color: var(--color-cream);
   text-align: center;
 }
 
@@ -793,6 +791,16 @@
   text-transform: uppercase;
   letter-spacing: 0.1em;
 }
+
+/* Modern Footer contextual palette overrides */
+.modern-section--dark .modern-footer__names,
+.modern-section--dark .modern-footer__copy { color: var(--color-cream); }
+
+.modern-section--tan .modern-footer__names,
+.modern-section--tan .modern-footer__copy { color: var(--color-dark); }
+
+.modern-section--has-bg .modern-footer__names,
+.modern-section--has-bg .modern-footer__copy { color: #fff; }
 
 .modern-footer__dev {
   margin-top: 2rem;
