@@ -358,6 +358,27 @@
   color: var(--color-tan);
 }
 
+.section--tanLight {
+  background: var(--color-tanLight);
+}
+
+.section--tanDark {
+  background: var(--color-tanDark);
+}
+
+.section--creamDark {
+  background: var(--color-creamDark);
+}
+
+/* Base colors for light palette sections */
+.section--tanLight,
+.section--tanDark,
+.section--creamDark,
+.section--tan,
+.section--cream {
+  color: var(--color-dark);
+}
+
 /* Contextual overrides for Dark sections */
 .section--dark .section__subtitle,
 .section--dark .story__lead,

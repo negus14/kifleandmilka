@@ -31,7 +31,9 @@ export async function POST(request: NextRequest) {
     }
 
     const site = await getSiteBySlug(slug);
-    const googleSheetId = site?.googleSheetId || (site?.rsvpEmbedUrl ? extractSheetId(site.rsvpEmbedUrl) : null);
+    
+    // Prioritize the URL edited in the Dashboard (rsvpEmbedUrl)
+    const googleSheetId = (site?.rsvpEmbedUrl ? extractSheetId(site.rsvpEmbedUrl) : null) || site?.googleSheetId;
 
     if (!site || !googleSheetId) {
       console.warn(`Site or Google Sheet ID not found for slug: ${slug}`);

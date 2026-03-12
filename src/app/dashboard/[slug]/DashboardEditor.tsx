@@ -52,19 +52,20 @@ function Field({ label, value, onChange, placeholder, multiline, rows, type = "t
   label: string; value: string; onChange: (v: string) => void;
   placeholder?: string; multiline?: boolean; rows?: number; type?: string;
 }) {
+  const val = value ?? "";
   return (
     <div className="mb-3">
       <Label>{label}</Label>
       {multiline ? (
         <textarea
-          value={value} onChange={(e) => onChange(e.target.value)}
+          value={val} onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder} rows={rows || 4}
           className="w-full px-3 py-2 border border-[#2d2b25]/15 bg-white/50 text-[#2d2b25] text-sm outline-none focus:border-[#2d2b25]/40 resize-y rounded-sm"
         />
       ) : (
         <input
           type={type}
-          value={value} onChange={(e) => onChange(e.target.value)}
+          value={val} onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           className="w-full px-3 py-2 border border-[#2d2b25]/15 bg-white/50 text-[#2d2b25] text-sm outline-none focus:border-[#2d2b25]/40 rounded-sm"
         />
@@ -103,13 +104,16 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
 function ColorPicker({ label, value, onChange }: { 
   label: string; 
   value: string; 
-  onChange: (v: "cream" | "tan" | "dark" | "transparent") => void 
+  onChange: (v: "cream" | "tan" | "dark" | "tanLight" | "tanDark" | "creamDark" | "transparent") => void 
 }) {
   const options = [
     { id: "transparent", name: "Default", color: "transparent", border: "border-dashed" },
     { id: "cream", name: "Cream", color: "var(--color-cream)", border: "border-solid" },
     { id: "tan", name: "Tan", color: "var(--color-tan)", border: "border-solid" },
     { id: "dark", name: "Dark", color: "var(--color-dark)", border: "border-solid" },
+    { id: "tanLight", name: "Tan Light", color: "var(--color-tanLight)", border: "border-solid" },
+    { id: "tanDark", name: "Tan Dark", color: "var(--color-tanDark)", border: "border-solid" },
+    { id: "creamDark", name: "Cream Dark", color: "var(--color-creamDark)", border: "border-solid" },
   ] as const;
 
   return (
@@ -1265,7 +1269,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
               };
 
               const bgColor = site.sectionBackgroundColors?.[id] || "transparent";
-              const setBgColor = (v: "cream" | "tan" | "dark" | "transparent") => {
+              const setBgColor = (v: "cream" | "tan" | "dark" | "tanLight" | "tanDark" | "creamDark" | "transparent") => {
                 const bgs = { ...(site.sectionBackgroundColors || {}) };
                 if (v && v !== "transparent") bgs[id] = v; else delete bgs[id];
                 set("sectionBackgroundColors", bgs);
@@ -1622,6 +1626,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                   <Field label="Heading" value={d("heading", site.rsvpHeading)} onChange={(v) => update({ heading: v })} />
                   <Field label="Deadline Text" value={d("deadline", site.rsvpDeadlineText)} onChange={(v) => update({ deadline: v })} />
                   <Field label="Google Sheets Link" value={site.rsvpEmbedUrl} onChange={(v) => set("rsvpEmbedUrl", v)} placeholder="Paste full Google Sheets URL here" />
+                  <Field label="Google Sheet Tab Name" value={site.googleSheetName || "Sheet1"} onChange={(v) => set("googleSheetName", v)} placeholder="e.g. Sheet1 or RSVPs" />
                 </div>
               );
 

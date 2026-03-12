@@ -226,21 +226,46 @@
   background: var(--color-tan);
 }
 
+.modern-section--tanLight { background: var(--color-tanLight); }
+.modern-section--tanDark { background: var(--color-tanDark); }
+.modern-section--creamDark { background: var(--color-creamDark); }
+
 .modern-section--tan .modern-title,
 .modern-section--tan .modern-text,
-.modern-section--tan .modern-subtitle {
+.modern-section--tan .modern-subtitle,
+.modern-section--tanLight .modern-title,
+.modern-section--tanLight .modern-text,
+.modern-section--tanLight .modern-subtitle,
+.modern-section--tanDark .modern-title,
+.modern-section--tanDark .modern-text,
+.modern-section--tanDark .modern-subtitle,
+.modern-section--creamDark .modern-title,
+.modern-section--creamDark .modern-text,
+.modern-section--creamDark .modern-subtitle {
   color: var(--color-dark);
 }
 
 .modern-section--tan .modern-btn--primary,
-.modern-section--tan .gift__dropdown-toggle {
+.modern-section--tanLight .modern-btn--primary,
+.modern-section--tanDark .modern-btn--primary,
+.modern-section--creamDark .modern-btn--primary,
+.modern-section--tan .gift__dropdown-toggle,
+.modern-section--tanLight .gift__dropdown-toggle,
+.modern-section--tanDark .gift__dropdown-toggle,
+.modern-section--creamDark .gift__dropdown-toggle {
   background: var(--color-dark);
   color: var(--color-cream);
   border-color: var(--color-dark);
 }
 
 .modern-section--tan .modern-btn--primary:hover,
-.modern-section--tan .gift__dropdown-toggle:hover {
+.modern-section--tanLight .modern-btn--primary:hover,
+.modern-section--tanDark .modern-btn--primary:hover,
+.modern-section--creamDark .modern-btn--primary:hover,
+.modern-section--tan .gift__dropdown-toggle:hover,
+.modern-section--tanLight .gift__dropdown-toggle:hover,
+.modern-section--tanDark .gift__dropdown-toggle:hover,
+.modern-section--creamDark .gift__dropdown-toggle:hover {
   background: transparent;
   color: var(--color-dark);
 }

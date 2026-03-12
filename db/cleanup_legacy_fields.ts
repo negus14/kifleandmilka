@@ -10,8 +10,7 @@ const FIELDS_TO_REMOVE = [
   "giftBankName",
   "giftAccountHolder",
   "giftAccountNumber",
-  "giftSwiftCode",
-  "rsvpEmbedUrl"
+  "giftSwiftCode"
 ];
 
 console.log("Starting JSON cleanup of legacy fields...");
