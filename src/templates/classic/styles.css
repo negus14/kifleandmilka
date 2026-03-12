@@ -359,6 +359,7 @@
 }
 
 /* Contextual overrides for Dark sections */
+.section--dark .section__subtitle,
 .section--dark .story__lead,
 .section--dark .quote__text,
 .section--dark .featured-photo__caption,
@@ -378,8 +379,11 @@
 .section--dark .hero__tagline,
 .section--dark .hero__date-line,
 .section--dark .contact__label,
+.section--dark .letter__opening,
+.section--dark .letter__closing,
 .section--dark .footer__names { color: var(--color-cream); }
 
+.section--dark .section__title,
 .section--dark .story__text, 
 .section--dark .info-card__text,
 .section--dark .info-card__label,
@@ -405,6 +409,7 @@
 .section--dark .contact__entry a,
 .section--dark .contact__phone-number,
 .section--dark .contact__link,
+.section--dark .letter__body,
 .section--dark .menu__item { border-color: rgba(212, 189, 172, 0.15); }
 .section--dark .menu__item-desc,
 .section--dark .menu__note,
@@ -823,7 +828,7 @@
 .letter__opening {
   font-family: var(--font-script);
   font-size: clamp(1.8rem, 3.5vw, 2.5rem);
-  color: var(--color-cream);
+  color: var(--color-dark);
   margin-bottom: 2rem;
 }
 
@@ -831,16 +836,28 @@
   font-family: var(--font-serif);
   font-size: clamp(1rem, 1.8vw, 1.15rem);
   font-weight: 300;
-  color: var(--color-tan);
+  color: var(--color-dark);
   line-height: 2.2;
   margin-bottom: 1.5rem;
+  opacity: 0.8;
 }
 
 .letter__closing {
   font-family: var(--font-script);
   font-size: 1.6rem;
-  color: var(--color-cream);
+  color: var(--color-dark);
   margin-top: 2.5rem;
+}
+
+/* Info Card Contrast Overrides */
+.section--tan .info-card {
+  background: var(--color-cream);
+  border-color: rgba(0, 0, 0, 0.05);
+}
+
+.section--cream .info-card {
+  background: var(--color-tan-light);
+  border-color: rgba(0, 0, 0, 0.05);
 }
 
 /* ===== SCHEDULE (Section 7) ===== */

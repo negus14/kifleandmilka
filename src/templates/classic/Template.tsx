@@ -124,10 +124,10 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
             
             let finalCls = `section ${cleanCls} `;
             if (bgUrl) {
-              finalCls += "section--has-bg section--light-text";
+              finalCls += "section--has-bg section--dark";
             } else if (dayBgColor && dayBgColor !== "transparent") {
               finalCls += `section--${dayBgColor}`;
-              if (dayBgColor === "dark") finalCls += " section--light-text";
+              if (dayBgColor === "dark") finalCls += " section--dark";
             } else {
               finalCls += (di % 2 === 0 ? "section--tan" : "section--cream");
             }
@@ -387,9 +387,14 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
     gallery: (id, cls = "", style = {}) => {
       if (site.galleryImages.length === 0) return null;
       const isCustomBg = !!site.sectionBackgrounds?.[id];
+      // Only use gallery-dark default if no explicit palette or image is set
+      const isPaletteBg = cls.includes('section--tan') || cls.includes('section--cream') || cls.includes('section--dark');
+      const finalCls = (!isCustomBg && !isPaletteBg) ? `${cls} gallery-dark section--dark` : cls;
+      const showDarkBg = (!isCustomBg && !isPaletteBg);
+
       return (
-        <section className={`section ${cls} gallery-dark`} id={id} style={style}>
-          {!isCustomBg && <div className="gallery-dark__bg"></div>}
+        <section className={`section ${finalCls}`} id={id} style={style}>
+          {showDarkBg && <div className="gallery-dark__bg"></div>}
           <div className="container">
             <div className="section__header reveal">
               <p className="section__subtitle">Moments</p>
@@ -684,10 +689,10 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
         
         let extraClass = "";
         if (bgUrl) {
-          extraClass = "section--has-bg section--light-text";
+          extraClass = "section--has-bg section--dark";
         } else if (bgColor && bgColor !== "transparent") {
           extraClass = `section--${bgColor}`;
-          if (bgColor === "dark") extraClass += " section--light-text";
+          if (bgColor === "dark") extraClass += " section--dark";
         } else if (isContent && !isSelfStyling) {
           extraClass = (i % 2 === 0) ? "section--tan" : "section--cream";
         }
