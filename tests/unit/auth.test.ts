@@ -33,8 +33,9 @@ describe('Auth Library', () => {
         expect.objectContaining({
           httpOnly: true,
           sameSite: 'lax',
-          maxAge: 604800, // 7 days
+          maxAge: 2592000, // 30 days
           path: '/',
+          secure: false,
         })
       );
     });

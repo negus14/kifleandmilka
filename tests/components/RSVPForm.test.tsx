@@ -1,7 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import RSVPForm from '@/templates/elegant-cream/RSVPForm';
+import RSVPForm from '@/components/RSVPForm';
 
 // Mock fetch
 const mockFetch = vi.fn();
