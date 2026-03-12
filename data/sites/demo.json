@@ -175,5 +175,147 @@
     "explore": "https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?q=80&w=2560&auto=format&fit=crop",
     "gallery": "https://images.unsplash.com/photo-1501004318641-739e828a1751?q=80&w=2560&auto=format&fit=crop"
   },
-  "featuredPhotoCaption": "The Beginning of Forever"
+  "featuredPhotoCaption": "The Beginning of Forever",
+  "weddingDays": [
+    {
+      "label": "Wedding Day",
+      "date": "September 1, 2026",
+      "isPrivate": false,
+      "items": [
+        {
+          "hour": "2:00",
+          "event": "Sacred Union",
+          "venue": "The Tabernacle",
+          "period": "PM",
+          "description": "Witness the exchange of vows under the grace of God."
+        },
+        {
+          "hour": "3:30",
+          "event": "Fellowship Hour",
+          "venue": "The Courtyard",
+          "period": "PM",
+          "description": "Gather for refreshments and joyful fellowship."
+        },
+        {
+          "hour": "5:30",
+          "event": "Grand Feast",
+          "venue": "The Great Hall",
+          "period": "PM",
+          "description": "Celebrate the union with a banquet and songs of praise."
+        }
+      ]
+    }
+  ],
+  "eventDays": [
+    {
+      "id": "day-1",
+      "label": "Day One",
+      "venues": [
+        {
+          "name": "The Great Tabernacle",
+          "time": "2:00 PM",
+          "label": "Ceremony",
+          "address": "123 Faith Avenue\nEden Valley, A1B 2C3",
+          "mapsEmbedUrl": ""
+        },
+        {
+          "name": "Eden Gardens",
+          "time": "5:00 PM",
+          "label": "Reception",
+          "address": "456 Paradise Road\nEden Valley, A1B 2C3",
+          "mapsEmbedUrl": ""
+        }
+      ],
+      "infoBlocks": [
+        {
+          "text": "Formal attire is requested as we celebrate this sacred union.",
+          "heading": "Covenant Dress Code",
+          "subheading": ""
+        },
+        {
+          "text": "Valet parking will be available at the entrance of the gardens.",
+          "heading": "Parking",
+          "subheading": ""
+        }
+      ],
+      "detailsStyle": "grid"
+    }
+  ],
+  "sectionOrder": [
+    {
+      "id": "hero",
+      "type": "hero",
+      "visible": true
+    },
+    {
+      "id": "story",
+      "type": "story",
+      "visible": true
+    },
+    {
+      "id": "details",
+      "type": "details",
+      "visible": true
+    },
+    {
+      "id": "quote",
+      "type": "quote",
+      "visible": true
+    },
+    {
+      "id": "featuredPhoto",
+      "type": "featuredPhoto",
+      "visible": true
+    },
+    {
+      "id": "letter",
+      "type": "letter",
+      "visible": true
+    },
+    {
+      "id": "schedule",
+      "type": "schedule",
+      "visible": true
+    },
+    {
+      "id": "menu",
+      "type": "menu",
+      "visible": true
+    },
+    {
+      "id": "gallery",
+      "type": "gallery",
+      "visible": true
+    },
+    {
+      "id": "explore",
+      "type": "explore",
+      "visible": true
+    },
+    {
+      "id": "accommodations",
+      "type": "accommodations",
+      "visible": true
+    },
+    {
+      "id": "rsvp",
+      "type": "rsvp",
+      "visible": true
+    },
+    {
+      "id": "gift",
+      "type": "gift",
+      "visible": true
+    },
+    {
+      "id": "contact",
+      "type": "contact",
+      "visible": true
+    },
+    {
+      "id": "footer",
+      "type": "footer",
+      "visible": true
+    }
+  ]
 }

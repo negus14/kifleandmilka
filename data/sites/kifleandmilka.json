@@ -19,7 +19,6 @@
   "heroCta": "RSVP Here",
   "giftNote": "You will be redirected to the payment provider",
   "layoutId": "modern",
-  "scheduleStyle": "minimal",
   "menuNote": "Your meal will also include soup, salad, sides and dessert",
   "navBrand": "K & M",
   "menuItems": [
@@ -110,67 +109,83 @@
   "sectionOrder": [
     {
       "id": "hero",
-      "visible": true
+      "visible": true,
+      "type": "hero"
     },
     {
       "id": "story",
-      "visible": false
+      "visible": false,
+      "type": "story"
     },
     {
       "id": "details",
-      "visible": true
+      "visible": true,
+      "type": "details"
     },
     {
       "id": "day2",
-      "visible": true
+      "visible": true,
+      "type": "day2"
     },
     {
       "id": "quote",
-      "visible": true
+      "visible": true,
+      "type": "quote"
     },
     {
       "id": "featuredPhoto",
-      "visible": true
+      "visible": true,
+      "type": "featuredPhoto"
     },
     {
       "id": "letter",
-      "visible": true
+      "visible": true,
+      "type": "letter"
     },
     {
       "id": "schedule",
-      "visible": true
+      "visible": true,
+      "type": "schedule"
     },
     {
       "id": "menu",
-      "visible": true
+      "visible": true,
+      "type": "menu"
     },
     {
       "id": "gallery",
-      "visible": true
+      "visible": true,
+      "type": "gallery"
     },
     {
       "id": "explore",
-      "visible": true
+      "visible": true,
+      "type": "explore"
     },
     {
       "id": "accommodations",
-      "visible": true
+      "visible": true,
+      "type": "accommodations"
     },
     {
       "id": "gift",
-      "visible": true
+      "visible": true,
+      "type": "gift"
     },
     {
       "id": "rsvp",
-      "visible": true
+      "visible": true,
+      "type": "rsvp"
     },
     {
       "id": "contact",
-      "visible": true
+      "visible": true,
+      "type": "contact"
     },
     {
       "id": "footer",
-      "visible": true
+      "visible": true,
+      "type": "footer"
     }
   ],
   "exploreGroups": [
@@ -282,6 +297,7 @@
       "description": "Kick off your shoes and celebrate with us on the dance floor."
     }
   ],
+  "scheduleStyle": "minimal",
   "storyImageUrl": "/demo/images/photo-2.jpg",
   "storySubtitle": "How It Began",
   "accommodations": [
@@ -371,5 +387,57 @@
   ],
   "quoteAttribution": "1 Corinthians 13:13",
   "rsvpDeadlineText": "Kindly respond by July 1st, 2026",
-  "featuredPhotoCaption": "Forever starts here"
+  "featuredPhotoCaption": "Forever starts here",
+  "eventDays": [
+    {
+      "id": "day-1",
+      "label": "Day One",
+      "venues": [
+        {
+          "name": "Canadian Museum for Human Rights",
+          "time": "2:00 PM",
+          "label": "Ceremony",
+          "address": "85 Israel Asper Way\nWinnipeg, MB R3C 0L5",
+          "mapsEmbedUrl": "https://maps.google.com/maps?q=Canadian+Museum+for+Human+Rights,+85+Israel+Asper+Way,+Winnipeg,+MB&t=&z=15&ie=UTF8&iwloc=&output=embed"
+        },
+        {
+          "name": "The Fort Garry Hotel",
+          "time": "6:00 PM",
+          "label": "Reception",
+          "address": "222 Broadway\nWinnipeg, MB R3C 0R3",
+          "mapsEmbedUrl": "https://maps.google.com/maps?q=Fort+Garry+Hotel,+222+Broadway,+Winnipeg,+MB&t=&z=15&ie=UTF8&iwloc=&output=embed"
+        }
+      ],
+      "infoBlocks": [
+        {
+          "text": "Our reception will take place at The Gates on Roblin in Winnipeg, a beautiful venue set along the Assiniboine River and surrounded by gardens and green space.\nThe Gates on Roblin — 3440 Roblin Blvd, Headingley, MB R4H 1A1",
+          "heading": "Reception Venue"
+        },
+        {
+          "text": "For guests staying downtown, we are planning to provide a shuttle service from one of the downtown hotels to the venue and back. Shuttle details will be confirmed closer to the date.",
+          "subheading": "Shuttle Service"
+        },
+        {
+          "text": "Free parking is available on-site, with designated areas for PMRs and senior guests. If you need special assistance or a drop-off closer to the garden entrance, let us know.",
+          "subheading": "Parking & Directions"
+        }
+      ],
+      "detailsStyle": "grid"
+    },
+    {
+      "id": "day-2",
+      "label": "Day Two",
+      "venues": [
+        {
+          "label": "Day Two Celebration",
+          "name": "",
+          "address": "181 Austin St N\nWinnipeg, MB R2W 3M5, Canada",
+          "time": "Starting from 5:30 PM"
+        }
+      ],
+      "infoBlocks": [],
+      "note": "Join us for an evening of food, music, and celebration as we continue the festivities.",
+      "detailsStyle": "minimal"
+    }
+  ]
 }

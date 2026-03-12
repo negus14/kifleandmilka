@@ -188,5 +188,154 @@
   "featuredPhotoUrl": "/demo/images/photo-1.jpg",
   "quoteAttribution": "— Author or Source",
   "rsvpDeadlineText": "Kindly respond by August 1, 2026",
-  "featuredPhotoCaption": "Add a caption for your favourite photo together"
+  "featuredPhotoCaption": "Add a caption for your favourite photo together",
+  "weddingDays": [
+    {
+      "label": "Wedding Day",
+      "date": "September 1, 2026",
+      "isPrivate": false,
+      "items": [
+        {
+          "hour": "2:00",
+          "event": "Ceremony",
+          "venue": "Your Ceremony Venue",
+          "period": "PM",
+          "description": "Join us as we say 'I do'"
+        },
+        {
+          "hour": "3:00",
+          "event": "Cocktail Hour",
+          "venue": "Your Venue",
+          "period": "PM",
+          "description": "Drinks and appetizers while the couple takes photos"
+        },
+        {
+          "hour": "5:00",
+          "event": "Reception",
+          "venue": "Your Reception Venue",
+          "period": "PM",
+          "description": "Dinner, toasts, and dancing"
+        },
+        {
+          "hour": "10:00",
+          "event": "Last Dance",
+          "venue": "",
+          "period": "PM",
+          "description": "One final song before we say goodnight"
+        }
+      ]
+    }
+  ],
+  "eventDays": [
+    {
+      "id": "day-1",
+      "label": "Day One",
+      "venues": [
+        {
+          "name": "Your Ceremony Venue Name",
+          "time": "2:00 PM",
+          "label": "Ceremony",
+          "address": "123 Example Street\nCity, Province A1B 2C3",
+          "mapsEmbedUrl": ""
+        },
+        {
+          "name": "Your Reception Venue Name",
+          "time": "5:00 PM",
+          "label": "Reception",
+          "address": "456 Example Avenue\nCity, Province A1B 2C3",
+          "mapsEmbedUrl": ""
+        }
+      ],
+      "infoBlocks": [
+        {
+          "text": "Cocktail attire — replace this with your preferred dress code and any helpful notes for guests.",
+          "heading": "Dress Code",
+          "subheading": ""
+        },
+        {
+          "text": "Free parking is available at the venue. Add directions or details here.",
+          "heading": "Parking",
+          "subheading": ""
+        }
+      ],
+      "detailsStyle": "grid"
+    }
+  ],
+  "sectionOrder": [
+    {
+      "id": "hero",
+      "type": "hero",
+      "visible": true
+    },
+    {
+      "id": "story",
+      "type": "story",
+      "visible": true
+    },
+    {
+      "id": "details",
+      "type": "details",
+      "visible": true
+    },
+    {
+      "id": "quote",
+      "type": "quote",
+      "visible": true
+    },
+    {
+      "id": "featuredPhoto",
+      "type": "featuredPhoto",
+      "visible": true
+    },
+    {
+      "id": "letter",
+      "type": "letter",
+      "visible": true
+    },
+    {
+      "id": "schedule",
+      "type": "schedule",
+      "visible": true
+    },
+    {
+      "id": "menu",
+      "type": "menu",
+      "visible": true
+    },
+    {
+      "id": "gallery",
+      "type": "gallery",
+      "visible": true
+    },
+    {
+      "id": "explore",
+      "type": "explore",
+      "visible": true
+    },
+    {
+      "id": "accommodations",
+      "type": "accommodations",
+      "visible": true
+    },
+    {
+      "id": "rsvp",
+      "type": "rsvp",
+      "visible": true
+    },
+    {
+      "id": "gift",
+      "type": "gift",
+      "visible": true
+    },
+    {
+      "id": "contact",
+      "type": "contact",
+      "visible": true
+    },
+    {
+      "id": "footer",
+      "type": "footer",
+      "visible": true
+    }
+  ]
 }
