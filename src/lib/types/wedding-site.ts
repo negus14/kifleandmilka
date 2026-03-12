@@ -189,9 +189,11 @@ export interface WeddingSite {
   // Structured sections
   venues: VenueItem[];
   venueInfoBlocks: VenueInfoBlock[];
+  detailsStyle?: "grid" | "split" | "minimal";
   dayTwoEvent: DayTwoEvent | null;
   scheduleItems: ScheduleItem[];
   weddingDays?: WeddingDay[];
+  scheduleStyle?: "classic" | "minimal" | "cards";
   menuItems: MenuItem[];
   menuNote: string;
   galleryImages: GalleryImage[];
