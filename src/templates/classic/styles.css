@@ -358,6 +358,74 @@
   color: var(--color-tan);
 }
 
+/* Contextual overrides for Dark sections */
+.section--dark .section__subtitle { color: var(--color-tan); }
+.section--dark .section__title { color: var(--color-cream); }
+.section--dark .section__line { background: var(--color-tan); opacity: 0.3; }
+.section--dark .story__text, 
+.section--dark .info-card__text,
+.section--dark .info-card__time,
+.section--dark .modern-text,
+.section--dark p { color: var(--color-tan); }
+
+.section--dark .rsvp__button,
+.section--dark .hotel-card__link,
+.section--dark .gift__dropdown-toggle {
+  background: var(--color-tan);
+  color: var(--color-dark);
+  border-color: var(--color-tan);
+}
+
+.section--dark .rsvp__button:hover,
+.section--dark .hotel-card__link:hover,
+.section--dark .gift__dropdown-toggle:hover {
+  background: transparent;
+  color: var(--color-tan);
+}
+
+.section--dark .rsvp__label { color: var(--color-tan); }
+.section--dark .rsvp__input,
+.section--dark .rsvp__select,
+.section--dark .rsvp__textarea {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(212, 189, 172, 0.2);
+  color: var(--color-cream);
+}
+
+.section--dark .rsvp__input:focus { border-color: var(--color-tan); }
+
+/* Contextual overrides for Tan sections */
+.section--tan .rsvp__button,
+.section--tan .hotel-card__link,
+.section--tan .gift__dropdown-toggle {
+  background: var(--color-dark);
+  color: var(--color-cream);
+  border-color: var(--color-dark);
+}
+
+.section--tan .rsvp__button:hover,
+.section--tan .hotel-card__link:hover,
+.section--tan .gift__dropdown-toggle:hover {
+  background: transparent;
+  color: var(--color-dark);
+}
+
+/* Contextual overrides for Cream sections */
+.section--cream .rsvp__button,
+.section--cream .hotel-card__link,
+.section--cream .gift__dropdown-toggle {
+  background: var(--color-dark);
+  color: var(--color-cream);
+  border-color: var(--color-dark);
+}
+
+.section--cream .rsvp__button:hover,
+.section--cream .hotel-card__link:hover,
+.section--cream .gift__dropdown-toggle:hover {
+  background: transparent;
+  color: var(--color-dark);
+}
+
 .section--has-bg {
   position: relative;
   background-attachment: fixed;
@@ -463,10 +531,6 @@
   margin-bottom: 0.5rem;
 }
 
-.section--dark .section__subtitle {
-  color: var(--color-tan);
-}
-
 .section__title {
   font-family: var(--font-serif);
   font-size: clamp(1.6rem, 3.5vw, 2.5rem);
@@ -476,21 +540,12 @@
   text-transform: uppercase;
 }
 
-.section--dark .section__title {
-  color: var(--color-cream);
-}
-
 .section__line {
   width: 40px;
   height: 1px;
   background: var(--color-dark);
   margin: 1.25rem auto 0;
   opacity: 0.25;
-}
-
-.section--dark .section__line {
-  background: var(--color-tan);
-  opacity: 0.3;
 }
 
 /* ===== REVEAL ANIMATIONS ===== */
