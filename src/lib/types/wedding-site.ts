@@ -117,7 +117,8 @@ export interface WeddingSite {
   // Core
   partner1Name: string;
   partner2Name: string;
-  weddingDate: string; // ISO string
+  weddingDate: string; // ISO string (Start Date)
+  weddingEndDate?: string; // ISO string (End Date)
   dateDisplayText: string;
   locationText: string;
 
@@ -159,6 +160,7 @@ export interface WeddingSite {
   giftSubheading: string;
   giftPaymentUrl: string;
   giftPaymentLabel: string;
+  giftPaymentLinks?: { label: string; url: string }[];
   giftNote: string;
   giftBankName?: string;
   giftAccountHolder?: string;
