@@ -12,7 +12,7 @@ export function ModernTemplate({ site }: { site: WeddingSite }) {
 
   const sections: Record<string, (cls?: string, style?: React.CSSProperties) => React.ReactNode> = {
     hero: (cls = "", style = {}) => (
-      <header className={`modern-hero ${cls}`} style={style}>
+      <header className={`modern-hero ${cls}`} id="hero" style={style}>
         <div className="modern-hero__bg"></div>
         <div className="modern-container">
           <div className="modern-hero__content reveal">
@@ -280,7 +280,7 @@ export function ModernTemplate({ site }: { site: WeddingSite }) {
     },
 
     contact: (cls = "", style = {}) => (
-      <section className={`modern-section ${cls}`} id="contact" style={style}>
+      <section className={`modern-section ${cls}`} id="footer" style={style}>
         <div className="modern-container reveal text-center">
           <h2 className="modern-title">{site.contactHeading || "Contact"}</h2>
           <div className="modern-contact-grid">
@@ -296,7 +296,7 @@ export function ModernTemplate({ site }: { site: WeddingSite }) {
     ),
 
     footer: (cls = "", style = {}) => (
-      <footer className={`modern-footer ${cls}`} style={style}>
+      <footer className={`modern-footer ${cls}`} id="footer" style={style}>
         <div className="modern-container">
           <div className="modern-footer__content">
             <p className="modern-footer__names">{site.footerNames}</p>

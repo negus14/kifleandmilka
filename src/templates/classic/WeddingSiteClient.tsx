@@ -51,10 +51,39 @@ export default function WeddingSiteClient({
     );
     document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
 
-    // Nav scroll
+    // Section Observer for Sidebar Sync
+    const sectionObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && entry.intersectionRatio > 0.3) {
+            window.parent.postMessage({
+              type: "SECTION_IN_VIEW",
+              sectionId: entry.target.id
+            }, "*");
+          }
+        });
+      },
+      { 
+        threshold: [0.3, 0.5, 0.8], 
+        rootMargin: "-20% 0px -20% 0px" 
+      }
+    );
+    document.querySelectorAll("section[id], header[id], footer[id]").forEach((el) => {
+      sectionObserver.observe(el);
+    });
+
+    // Handle messages from parent (Dashboard)
     const nav = document.querySelector(".nav");
     let ticking = false;
     function onScroll() {
+      // If at the very top, ensure Hero is selected
+      if (window.scrollY < 50) {
+        window.parent.postMessage({
+          type: "SECTION_IN_VIEW",
+          sectionId: "hero"
+        }, "*");
+      }
+
       if (!ticking) {
         requestAnimationFrame(() => {
           nav?.classList.toggle("scrolled", window.scrollY > 80);

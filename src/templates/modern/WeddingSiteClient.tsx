@@ -57,8 +57,39 @@ export default function WeddingSiteClient({
     const nav = document.querySelector(".modern-nav");
     function onScroll() {
       nav?.classList.toggle("scrolled", window.scrollY > 80);
+      
+      // If at the very top, ensure Hero is selected
+      if (window.scrollY < 50) {
+        window.parent.postMessage({
+          type: "SECTION_IN_VIEW",
+          sectionId: "hero"
+        }, "*");
+      }
     }
     window.addEventListener("scroll", onScroll);
+
+    // Section Observer for Sidebar Sync
+    const sectionObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          // When a section takes up a significant portion of the viewport,
+          // or if it's smaller than the viewport but centered.
+          if (entry.isIntersecting && entry.intersectionRatio > 0.3) {
+            window.parent.postMessage({
+              type: "SECTION_IN_VIEW",
+              sectionId: entry.target.id
+            }, "*");
+          }
+        });
+      },
+      { 
+        threshold: [0.3, 0.5, 0.8], 
+        rootMargin: "-20% 0px -20% 0px" 
+      }
+    );
+    document.querySelectorAll("section[id], header[id], footer[id]").forEach((el) => {
+      sectionObserver.observe(el);
+    });
 
     // Handle messages from parent (Dashboard)
     function handleMessage(event: MessageEvent) {

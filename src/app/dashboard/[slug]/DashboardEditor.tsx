@@ -564,20 +564,44 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
     }
   }, [site, isPreview]);
 
-  // Handle ready message from iframe
+  // Handle messages from iframe
   useEffect(() => {
     function handleMessage(event: MessageEvent) {
       if (event.data?.type === "PREVIEW_READY") {
-        iframeRef.current?.contentWindow?.postMessage({ 
-          type: "UPDATE_SITE", 
-          site 
+        iframeRef.current?.contentWindow?.postMessage({
+          type: "UPDATE_SITE",
+          site
         }, "*");
+      }
+
+      if (event.data?.type === "SECTION_IN_VIEW") {
+        const sectionId = event.data.sectionId;
+        const sectionToTab: Record<string, Tab> = {
+          "hero": "Hero",
+          "story": "Story",
+          "details": "Details",
+          "schedule": "Schedule",
+          "menu": "Menu",
+          "gallery": "Gallery",
+          "explore": "Explore",
+          "accommodations": "Stay",
+          "rsvp": "RSVP",
+          "gift": "Gift",
+          "footer": "Footer"
+        };
+        const targetTab = sectionToTab[sectionId];
+
+        // We only update the tab if it's different AND if we aren't currently scrolling from a sidebar click
+        // To keep it simple, we just check if it's different. 
+        // If it causes loops, we'll add a ref to track manual scroll vs auto scroll.
+        if (targetTab && targetTab !== tab) {
+          setTab(targetTab);
+        }
       }
     }
     window.addEventListener("message", handleMessage);
     return () => window.removeEventListener("message", handleMessage);
-  }, [site]);
-
+  }, [site, tab]);
   function startResizing(e: React.MouseEvent | React.TouchEvent) {
     isResizing.current = true;
     setIsDragging(true);
