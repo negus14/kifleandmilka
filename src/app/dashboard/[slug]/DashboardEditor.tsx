@@ -640,6 +640,10 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
         if (isInitialMount.current) return;
         if (Date.now() - lastManualTabClick.current < 1000) return;
 
+        // NEW: If we're on a static tab (Basics, Layout), don't allow scroll-sync to change it.
+        const isStatic = (STATIC_TABS as readonly string[]).includes(tab);
+        if (isStatic) return;
+
         const sectionId = event.data.sectionId;
         // In the standardized system, the sectionId IS the tab ID
         if (sectionId && sectionId !== tab) {
