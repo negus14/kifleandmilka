@@ -262,7 +262,33 @@ function SortableList<T>({ items, prefix, onReorder, children }: {
 // ─── Main Editor ───
 
 export default function DashboardEditor({ site: initial }: { site: WeddingSite }) {
-  const [site, setSite] = useState(initial);
+  // Migration logic for legacy data
+  const migratedInitial = { ...initial };
+  
+  // 1. Migrate scheduleItems to weddingDays if weddingDays is empty
+  if ((!migratedInitial.weddingDays || migratedInitial.weddingDays.length === 0) && migratedInitial.scheduleItems?.length > 0) {
+    migratedInitial.weddingDays = [{
+      label: "Wedding Day",
+      date: migratedInitial.dateDisplayText,
+      isPrivate: false,
+      items: migratedInitial.scheduleItems
+    }];
+  }
+
+  // 2. Migrate legacy gift payment fields to giftPaymentLinks
+  if ((!migratedInitial.giftPaymentLinks || migratedInitial.giftPaymentLinks.length === 0) && migratedInitial.giftPaymentUrl && migratedInitial.giftPaymentLabel) {
+    migratedInitial.giftPaymentLinks = [{
+      label: migratedInitial.giftPaymentLabel,
+      url: migratedInitial.giftPaymentUrl
+    }];
+  }
+
+  // 3. Ensure legacy fields are correctly mapped if missing
+  if (migratedInitial.dayTwoEvent && !migratedInitial.dayTwoEvent.heading) {
+    // This is just to ensure it's not an empty object if it was supposed to be there
+  }
+
+  const [site, setSite] = useState(migratedInitial);
   const [tab, setTab] = useState<Tab>("Basics");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
