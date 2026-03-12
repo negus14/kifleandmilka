@@ -27,6 +27,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "File too large (max 10MB)" }, { status: 400 });
   }
 
+  if (!R2_BUCKET || !process.env.R2_ACCOUNT_ID || !process.env.R2_ACCESS_KEY_ID || !process.env.R2_SECRET_ACCESS_KEY) {
+    console.error("R2 is not configured for upload. Missing environment variables.");
+    return NextResponse.json({ 
+      error: "Upload not configured. Please set R2 environment variables.",
+    }, { status: 500 });
+  }
+
   // Key: sites/{slug}/{timestamp}-{filename}
   const ext = fileName.split(".").pop() || "jpg";
   const key = `sites/${session.slug}/${Date.now()}.${ext}`;
