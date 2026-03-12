@@ -207,6 +207,13 @@ export default function WeddingSiteClient({
             if (parent) {
               (parent as HTMLElement).style.zIndex = willShow ? "9999" : "";
               (parent as HTMLElement).style.position = willShow ? "relative" : "";
+              
+              // NEW: Promote the entire section container too
+              const section = parent.closest("section");
+              if (section) {
+                section.style.zIndex = willShow ? "9999" : "";
+                section.style.position = willShow ? "relative" : "";
+              }
             }
           }
         });
@@ -217,6 +224,9 @@ export default function WeddingSiteClient({
         document.querySelectorAll(".gift__dropdown-menu").forEach(m => m.classList.remove("show"));
         document.querySelectorAll(".gift__dropdown-toggle").forEach(t => t.setAttribute("aria-expanded", "false"));
         document.querySelectorAll(".gift__dropdown").forEach(d => (d as HTMLElement).style.zIndex = "");
+        document.querySelectorAll("section").forEach(s => {
+          if (s.style.zIndex === "9999") s.style.zIndex = "";
+        });
       });
     }
 
