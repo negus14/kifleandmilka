@@ -800,6 +800,123 @@
   opacity: 0.65;
 }
 
+/* Minimal Timeline */
+.timeline-minimal {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.timeline-minimal__item {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-dark), transparent 94%);
+}
+
+.timeline-minimal__item:last-child {
+  border-bottom: none;
+}
+
+.timeline-minimal__time {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-dark);
+  opacity: 0.5;
+  width: 70px;
+  flex-shrink: 0;
+}
+
+.timeline-minimal__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-dark);
+  opacity: 0.2;
+}
+
+.timeline-minimal__details {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.timeline-minimal__event {
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  font-weight: 400;
+  color: var(--color-dark);
+}
+
+.timeline-minimal__venue {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  color: var(--color-dark);
+  opacity: 0.4;
+  font-style: italic;
+}
+
+/* Cards Timeline */
+.timeline-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.timeline-card {
+  padding: 2rem;
+  background: color-mix(in srgb, var(--color-cream), transparent 60%);
+  border: 1px solid color-mix(in srgb, var(--color-dark), transparent 92%);
+  text-align: center;
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.timeline-card:hover {
+  transform: translateY(-5px);
+  border-color: color-mix(in srgb, var(--color-dark), transparent 80%);
+}
+
+.timeline-card__time {
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-dark);
+  opacity: 0.5;
+  margin-bottom: 1rem;
+}
+
+.timeline-card__event {
+  font-family: var(--font-serif);
+  font-size: 1.3rem;
+  font-weight: 400;
+  color: var(--color-dark);
+  margin-bottom: 0.5rem;
+}
+
+.timeline-card__venue {
+  font-family: var(--font-sans);
+  font-size: 0.74rem;
+  font-weight: 500;
+  color: var(--color-dark);
+  opacity: 0.6;
+  margin-bottom: 1rem;
+}
+
+.timeline-card__desc {
+  font-size: 0.88rem;
+  color: var(--color-dark);
+  line-height: 1.7;
+  opacity: 0.7;
+}
+
 /* ===== GALLERY ===== */
 .gallery {
   display: grid;
@@ -958,6 +1075,93 @@
   gap: clamp(3rem, 6vw, 5rem);
   max-width: 960px;
   margin: 3rem auto 0;
+}
+
+/* Split Details Layout */
+.details-split-layout {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 4rem;
+  align-items: start;
+}
+
+.details-split__venues {
+  display: grid;
+  gap: 2rem;
+}
+
+.details-split__venues .info-card {
+  text-align: left;
+}
+
+.details-split__venues .info-card__map {
+  height: 150px;
+}
+
+/* Minimal Details Layout */
+.details-minimal {
+  max-width: 700px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.details-minimal__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding-bottom: 2.5rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-dark), transparent 94%);
+}
+
+.details-minimal__item:last-child {
+  border-bottom: none;
+}
+
+.details-minimal__label {
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-dark);
+  opacity: 0.5;
+  margin-bottom: 0.75rem;
+}
+
+.details-minimal__main {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.details-minimal__name {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  font-weight: 400;
+}
+
+.details-minimal__time {
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  font-style: italic;
+  opacity: 0.6;
+}
+
+.details-minimal__address {
+  font-size: 0.95rem;
+  opacity: 0.7;
+}
+
+.details-minimal__info {
+  margin-top: 4rem;
+  text-align: center;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .venue-info__heading {
@@ -1534,6 +1738,89 @@
 .contact__entry a:hover {
   border-color: var(--color-dark);
   opacity: 1;
+}
+
+.contact__phone-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 0.5rem;
+}
+
+.contact__phone-number {
+  border-bottom: 1px solid color-mix(in srgb, var(--color-dark), transparent 80%);
+}
+
+.contact__phone-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.6rem;
+}
+
+.contact__phone-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--color-dark), transparent 94%);
+  color: var(--color-dark) !important;
+  border: 1px solid color-mix(in srgb, var(--color-dark), transparent 85%) !important;
+  transition: all 0.3s ease;
+  padding: 0 !important;
+}
+
+.contact__phone-action:hover {
+  background: var(--color-dark);
+  color: var(--color-cream) !important;
+  opacity: 1 !important;
+}
+
+.section--has-bg.section--light-text .contact__phone-action {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.section--has-bg.section--light-text .contact__phone-action:hover {
+  background: #fff;
+  color: var(--color-dark) !important;
+}
+
+.contact__phone-actions--footer {
+  justify-content: center;
+  margin-top: 0.75rem;
+  gap: 0.5rem;
+}
+
+.contact__phone-actions--footer .contact__phone-action {
+  width: auto;
+  height: auto;
+  padding: 0.25rem 0.6rem !important;
+  border-radius: 2px;
+  font-size: 0.55rem;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  background: color-mix(in srgb, var(--color-dark), transparent 96%);
+  border: 1px solid color-mix(in srgb, var(--color-dark), transparent 90%) !important;
+}
+
+.contact__phone-actions--footer .contact__phone-action:hover {
+  background: var(--color-dark);
+  color: var(--color-tan) !important;
+}
+
+.section--has-bg.section--light-text .contact__phone-actions--footer .contact__phone-action {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+.section--has-bg.section--light-text .contact__phone-actions--footer .contact__phone-action:hover {
+  background: #fff;
+  color: var(--color-dark) !important;
 }
 
 /* ===== FOOTER ===== */

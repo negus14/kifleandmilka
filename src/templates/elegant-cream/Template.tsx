@@ -121,55 +121,117 @@ export function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
       </section>
     ),
 
-    details: (cls = "", style = {}) => (
-      <section className={`section ${cls || "section--tan"}`} id="details" style={style}>
-        <div className="container">
-          <div className="section__header reveal">
-            <p className="section__subtitle">The Celebration</p>
-            <h2 className="section__title">Wedding Details</h2>
-            <div className="section__line"></div>
-          </div>
-          <div className="info-grid">
-            {site.venues.map((venue, i) => (
-              <div key={i} className={`info-card reveal${i > 0 ? ` reveal-delay-${i}` : ""}`}>
-                <div className="info-card__label">{venue.label}</div>
-                <h3 className="info-card__title">{venue.name}</h3>
-                <p className="info-card__text">
-                  {venue.address.split("\n").map((line, j) => (
-                    <span key={j}>{line}{j < venue.address.split("\n").length - 1 && <br />}</span>
-                  ))}
-                </p>
-                <p className="info-card__time">{venue.time}</p>
-                {venue.mapsEmbedUrl && (
-                  <iframe
-                    className="info-card__map"
-                    src={toEmbedUrl(venue.mapsEmbedUrl)}
-                    allowFullScreen
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                    title={`${venue.label} venue map`}
-                  ></iframe>
-                )}
-              </div>
+    details: (cls = "", style = {}) => {
+      const detailsStyle = site.detailsStyle || "grid";
+
+      const renderVenueCard = (venue: typeof site.venues[0], i: number) => (
+        <div key={i} className={`info-card reveal${i > 0 ? ` reveal-delay-${i}` : ""}`}>
+          <div className="info-card__label">{venue.label}</div>
+          <h3 className="info-card__title">{venue.name}</h3>
+          <p className="info-card__text">
+            {venue.address.split("\n").map((line, j) => (
+              <span key={j}>{line}{j < venue.address.split("\n").length - 1 && <br />}</span>
             ))}
-          </div>
-          {site.venueInfoBlocks.length > 0 && (
-            <div className="details-split reveal">
-              {site.venueInfoBlocks.map((block, i) => (
-                <div key={i} className="venue-info">
-                  {block.heading && <h3 className="venue-info__heading">{block.heading}</h3>}
-                  {block.subheading && <div className="venue-info__subheading">{block.subheading}</div>}
-                  {block.text.split("\n").map((line, j) => {
-                    if (j === 0) return <p key={j} className="venue-info__text">{line}</p>;
-                    return <p key={j} className="venue-info__address">{line}</p>;
-                  })}
-                </div>
-              ))}
-            </div>
+          </p>
+          <p className="info-card__time">{venue.time}</p>
+          {venue.mapsEmbedUrl && (
+            <iframe
+              className="info-card__map"
+              src={toEmbedUrl(venue.mapsEmbedUrl)}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title={`${venue.label} venue map`}
+            ></iframe>
           )}
         </div>
-      </section>
-    ),
+      );
+
+      const renderInfoBlock = (block: typeof site.venueInfoBlocks[0], i: number) => (
+        <div key={i} className="venue-info">
+          {block.heading && <h3 className="venue-info__heading">{block.heading}</h3>}
+          {block.subheading && <div className="venue-info__subheading">{block.subheading}</div>}
+          {block.text.split("\n").map((line, j) => {
+            if (j === 0) return <p key={j} className="venue-info__text">{line}</p>;
+            return <p key={j} className="venue-info__address">{line}</p>;
+          })}
+        </div>
+      );
+
+      if (detailsStyle === "split") {
+        return (
+          <section className={`section ${cls || "section--tan"}`} id="details" style={style}>
+            <div className="container">
+              <div className="details-split-layout">
+                <div className="details-split__venues">
+                  {site.venues.map(renderVenueCard)}
+                </div>
+                <div className="details-split__info">
+                  <div className="section__header reveal" style={{ textAlign: "left", marginBottom: "2rem" }}>
+                    <p className="section__subtitle">The Celebration</p>
+                    <h2 className="section__title">Essential Info</h2>
+                    <div className="section__line" style={{ margin: "1.25rem 0 0" }}></div>
+                  </div>
+                  {site.venueInfoBlocks.map(renderInfoBlock)}
+                </div>
+              </div>
+            </div>
+          </section>
+        );
+      }
+
+      if (detailsStyle === "minimal") {
+        return (
+          <section className={`section ${cls || "section--tan"}`} id="details" style={style}>
+            <div className="container">
+              <div className="section__header reveal">
+                <p className="section__subtitle">The Celebration</p>
+                <h2 className="section__title">Wedding Details</h2>
+                <div className="section__line"></div>
+              </div>
+              <div className="details-minimal">
+                {site.venues.map((v, i) => (
+                  <div key={i} className="details-minimal__item reveal">
+                    <div className="details-minimal__label">{v.label}</div>
+                    <div className="details-minimal__main">
+                      <h3 className="details-minimal__name">{v.name}</h3>
+                      <p className="details-minimal__time">{v.time}</p>
+                    </div>
+                    <p className="details-minimal__address">{v.address.replace("\n", ", ")}</p>
+                  </div>
+                ))}
+              </div>
+              {site.venueInfoBlocks.length > 0 && (
+                <div className="details-minimal__info reveal">
+                  {site.venueInfoBlocks.map(renderInfoBlock)}
+                </div>
+              )}
+            </div>
+          </section>
+        );
+      }
+
+      // Default: Grid
+      return (
+        <section className={`section ${cls || "section--tan"}`} id="details" style={style}>
+          <div className="container">
+            <div className="section__header reveal">
+              <p className="section__subtitle">The Celebration</p>
+              <h2 className="section__title">Wedding Details</h2>
+              <div className="section__line"></div>
+            </div>
+            <div className="info-grid">
+              {site.venues.map(renderVenueCard)}
+            </div>
+            {site.venueInfoBlocks.length > 0 && (
+              <div className="details-split reveal">
+                {site.venueInfoBlocks.map(renderInfoBlock)}
+              </div>
+            )}
+          </div>
+        </section>
+      );
+    },
 
     day2: (cls = "", style = {}) => {
       if (!site.dayTwoEvent) return null;
@@ -251,23 +313,62 @@ export function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
       );
       if (days.length === 0) return null;
 
-      const renderTimeline = (items: typeof site.scheduleItems) => (
-        <div className="timeline">
-          {items.map((item, i) => (
-            <div key={i} className="timeline__item reveal">
-              <div className="timeline__time">
-                <div className="timeline__hour">{item.hour}</div>
-                <div className="timeline__period">{item.period}</div>
-              </div>
-              <div className="timeline__details">
-                <h3 className="timeline__event">{item.event}</h3>
-                {item.venue && <p className="timeline__venue">{item.venue}</p>}
-                {item.description && <p className="timeline__desc">{item.description}</p>}
-              </div>
+      const renderTimeline = (items: typeof site.scheduleItems) => {
+        const scheduleStyle = site.scheduleStyle || "classic";
+
+        if (scheduleStyle === "minimal") {
+          return (
+            <div className="timeline-minimal">
+              {items.map((item, i) => (
+                <div key={i} className="timeline-minimal__item reveal">
+                  <div className="timeline-minimal__time">
+                    {item.hour} {item.period}
+                  </div>
+                  <div className="timeline-minimal__dot"></div>
+                  <div className="timeline-minimal__details">
+                    <h3 className="timeline-minimal__event">{item.event}</h3>
+                    {item.venue && <span className="timeline-minimal__venue">at {item.venue}</span>}
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      );
+          );
+        }
+
+        if (scheduleStyle === "cards") {
+          return (
+            <div className="timeline-cards">
+              {items.map((item, i) => (
+                <div key={i} className="timeline-card reveal">
+                  <div className="timeline-card__time">{item.hour} {item.period}</div>
+                  <h3 className="timeline-card__event">{item.event}</h3>
+                  {item.venue && <p className="timeline-card__venue">{item.venue}</p>}
+                  {item.description && <p className="timeline-card__desc">{item.description}</p>}
+                </div>
+              ))}
+            </div>
+          );
+        }
+
+        // Default: Classic
+        return (
+          <div className="timeline">
+            {items.map((item, i) => (
+              <div key={i} className="timeline__item reveal">
+                <div className="timeline__time">
+                  <div className="timeline__hour">{item.hour}</div>
+                  <div className="timeline__period">{item.period}</div>
+                </div>
+                <div className="timeline__details">
+                  <h3 className="timeline__event">{item.event}</h3>
+                  {item.venue && <p className="timeline__venue">{item.venue}</p>}
+                  {item.description && <p className="timeline__desc">{item.description}</p>}
+                </div>
+              </div>
+            ))}
+          </div>
+        );
+      };
 
       return (
         <section className={`section ${cls || "section--tan"}`} id="schedule" style={style}>
@@ -509,7 +610,19 @@ export function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
                 {site.contactEntries.map((c, i) => (
                   <div key={i} className="contact__entry">
                     <a href={`mailto:${c.email}`}>{c.email}</a>
-                    {c.phone && <><br /><a href={`tel:${c.phone.replace(/\s/g, "")}`}>{c.phone}</a></>}
+                    {c.phone && (
+                      <div className="contact__phone-wrap">
+                        <a href={`tel:${c.phone.replace(/\s/g, "")}`} className="contact__phone-number">{c.phone}</a>
+                        <div className="contact__phone-actions">
+                          <a href={`sms:${c.phone.replace(/\s/g, "")}`} title="Text Message" className="contact__phone-action">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                          </a>
+                          <a href={`https://wa.me/${c.phone.replace(/\D/g, "")}`} target="_blank" rel="noopener noreferrer" title="WhatsApp" className="contact__phone-action">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-10.6 8.38 8.38 0 0 1 3.8.9L21 3z"/></svg>
+                          </a>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
