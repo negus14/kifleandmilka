@@ -101,16 +101,17 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
   return <h2 className="text-lg mb-6" style={{ fontFamily: "'Playfair Display', serif" }}>{children}</h2>;
 }
 
-function ColorPicker({ label, value, onChange }: { 
+function ColorPicker({ label, value, onChange, themeColors }: { 
   label: string; 
   value: string; 
-  onChange: (v: "cream" | "tan" | "dark" | "transparent") => void 
+  onChange: (v: "cream" | "tan" | "dark" | "transparent") => void;
+  themeColors: { cream: string; tan: string; dark: string };
 }) {
   const options = [
     { id: "transparent", name: "Default", color: "transparent", border: "border-dashed" },
-    { id: "cream", name: "Cream", color: "var(--color-cream)", border: "border-solid" },
-    { id: "tan", name: "Tan", color: "var(--color-tan)", border: "border-solid" },
-    { id: "dark", name: "Dark", color: "var(--color-dark)", border: "border-solid" },
+    { id: "cream", name: "Light", color: themeColors.cream, border: "border-solid" },
+    { id: "tan", name: "Accent", color: themeColors.tan, border: "border-solid" },
+    { id: "dark", name: "Dark", color: themeColors.dark, border: "border-solid" },
   ] as const;
 
   return (
@@ -1253,6 +1254,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
               );
 
               const { id, type } = section;
+              const activeTheme = themes.find(t => t.id === site.templateId) || themes[0];
               
               // Helpers for dynamic data
               const d = <T,>(key: string, fallback: T): T => (site.sectionData?.[id]?.[key] as T) ?? fallback;
@@ -1266,7 +1268,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
               };
 
               const bgColor = site.sectionBackgroundColors?.[id] || "transparent";
-              const setBgColor = (v: "cream" | "tan" | "dark" | "tanLight" | "tanDark" | "creamDark" | "transparent") => {
+              const setBgColor = (v: "cream" | "tan" | "dark" | "transparent") => {
                 const bgs = { ...(site.sectionBackgroundColors || {}) };
                 if (v && v !== "transparent") bgs[id] = v; else delete bgs[id];
                 set("sectionBackgroundColors", bgs);
@@ -1278,6 +1280,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                     label="Background Color" 
                     value={bgColor} 
                     onChange={setBgColor as any} 
+                    themeColors={activeTheme.colors}
                   />
                   <div className="h-px bg-[#2d2b25]/5 my-6" />
                   <ImageField 
@@ -1427,6 +1430,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                             label="Section Background Color" 
                             value={day.sectionBackgroundColor || "transparent"} 
                             onChange={(v) => set("eventDays", updateInArray(site.eventDays, di, { sectionBackgroundColor: v }))} 
+                            themeColors={activeTheme.colors}
                           />
 
                           <ImageField 
