@@ -472,40 +472,60 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
                     </a>
                   ))}
 
-                  {site.giftBankDetails?.map((bank, i) => (
-                    <div key={`bank-${i}`} className="gift__dropdown-item gift__dropdown-item--bank text-left">
-                      <div className="gift__bank-header">
-                        <span className="gift__item-icon">
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-                        </span>
-                        {bank.label}
+                  {site.giftBankDetails?.map((bank, i) => {
+                    const allDetails = [
+                      bank.accountHolder ? `Account Holder: ${bank.accountHolder}` : null,
+                      bank.email ? `Email: ${bank.email}` : null,
+                      bank.sortCode ? `Sort Code: ${bank.sortCode}` : null,
+                      bank.accountNumber ? `Account Number: ${bank.accountNumber}` : null,
+                      bank.swiftCode ? `SWIFT Code: ${bank.swiftCode}` : null,
+                    ].filter(Boolean).join('\n');
+
+                    return (
+                      <div key={`bank-${i}`} className="gift__dropdown-item gift__dropdown-item--bank text-left">
+                        <div className="gift__bank-header">
+                          <span className="gift__item-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                          </span>
+                          {bank.label}
+                          <button 
+                            className="bank-copy-btn bank-copy-btn--all" 
+                            data-copy={allDetails} 
+                            title="Copy all details"
+                          >
+                            Copy All
+                          </button>
+                        </div>
+                        <div className="gift__bank-details-mini">
+                          {bank.accountHolder && <div className="gift__mini-row"><span>Holder:</span> <strong>{bank.accountHolder}</strong></div>}
+                          {bank.email && (
+                            <div className="gift__mini-row">
+                              <span>Email:</span> 
+                              <strong>{bank.email}</strong>
+                            </div>
+                          )}
+                          {bank.sortCode && (
+                            <div className="gift__mini-row">
+                              <span>Sort:</span> 
+                              <strong>{bank.sortCode}</strong>
+                            </div>
+                          )}
+                          {bank.accountNumber && (
+                            <div className="gift__mini-row">
+                              <span>Account:</span> 
+                              <strong>{bank.accountNumber}</strong>
+                            </div>
+                          )}
+                          {bank.swiftCode && (
+                            <div className="gift__mini-row">
+                              <span>SWIFT:</span> 
+                              <strong>{bank.swiftCode}</strong>
+                            </div>
+                          )}
+                        </div>
                       </div>
-                      <div className="gift__bank-details-mini">
-                        {bank.accountHolder && <div className="gift__mini-row"><span>Holder:</span> <strong>{bank.accountHolder}</strong></div>}
-                        {bank.email && (
-                          <div className="gift__mini-row">
-                            <span>Email:</span> 
-                            <strong>{bank.email}</strong>
-                            <button className="bank-copy-btn" data-copy={bank.email} title="Copy Email">Copy</button>
-                          </div>
-                        )}
-                        {bank.sortCode && (
-                          <div className="gift__mini-row">
-                            <span>Sort:</span> 
-                            <strong>{bank.sortCode}</strong>
-                            <button className="bank-copy-btn" data-copy={bank.sortCode} title="Copy Sort Code">Copy</button>
-                          </div>
-                        )}
-                        {bank.accountNumber && (
-                          <div className="gift__mini-row">
-                            <span>Account:</span> 
-                            <strong>{bank.accountNumber}</strong>
-                            <button className="bank-copy-btn" data-copy={bank.accountNumber} title="Copy Account Number">Copy</button>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             </div>
