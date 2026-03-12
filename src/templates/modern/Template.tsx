@@ -1,36 +1,14 @@
 import type { WeddingSite } from "@/lib/types/wedding-site";
-import { DEFAULT_SECTION_ORDER } from "@/lib/types/wedding-site";
 import { getTheme } from "@/lib/themes";
+import { toEmbedUrl, generateThemeVars, getSectionData } from "@/lib/template-utils";
 import WeddingSiteClient from "./WeddingSiteClient";
 import RSVPForm from "@/components/RSVPForm";
 import "./styles.css";
 
-function toEmbedUrl(url: string): string {
-  if (!url) return "";
-  if (url.includes("/maps/embed") || url.includes("maps?output=embed")) return url;
-  const placeMatch = url.match(/\/place\/([^/@]+)/);
-  if (placeMatch) {
-    const query = decodeURIComponent(placeMatch[1].replace(/\+/g, " "));
-    return `https://maps.google.com/maps?q=${encodeURIComponent(query)}&output=embed`;
-  }
-  return url;
-}
-
 export function ModernTemplate({ site }: { site: WeddingSite }) {
   const theme = getTheme(site.templateId);
-  const themeVars = {
-    "--color-dark": theme.colors.dark,
-    "--color-tan": theme.colors.tan,
-    "--color-cream": theme.colors.cream,
-    "--color-tan-light": theme.colors.tanLight,
-    "--color-tan-dark": theme.colors.tanDark,
-    "--color-cream-dark": theme.colors.creamDark,
-    "--font-script": theme.fonts.script,
-    "--font-serif": theme.fonts.serif,
-    "--font-sans": theme.fonts.sans,
-  } as React.CSSProperties;
-
-  const order = site.sectionOrder ?? DEFAULT_SECTION_ORDER;
+  const themeVars = generateThemeVars(site.templateId);
+  const { order, visibleSections, navItems } = getSectionData(site);
 
   const sections: Record<string, (cls?: string, style?: React.CSSProperties) => React.ReactNode> = {
     hero: (cls = "", style = {}) => (
@@ -269,14 +247,6 @@ export function ModernTemplate({ site }: { site: WeddingSite }) {
       </footer>
     ),
   };
-
-  const navItems = [
-    { id: "story", label: "Story" },
-    { id: "details", label: "Details" },
-    { id: "schedule", label: "Schedule" },
-    { id: "gallery", label: "Gallery" },
-    { id: "rsvp", label: "RSVP" },
-  ];
 
   return (
     <div className="modern-site" style={themeVars}>

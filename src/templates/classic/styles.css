@@ -410,10 +410,15 @@
 }
 
 .section--has-bg.section--light-text .info-card,
-.section--has-bg.section--light-text .gift__bank-card {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border-color: rgba(255, 255, 255, 0.2);
+.section--has-bg.section--light-text .gift__dropdown-menu {
+  background: var(--color-cream);
+  color: var(--color-dark);
+  backdrop-filter: none;
+  border-color: var(--color-dark);
+}
+
+.section--has-bg.section--light-text .gift__dropdown-item {
+  color: var(--color-dark);
 }
 
 .section--has-bg.section--light-text .info-card__time,
@@ -1619,10 +1624,10 @@
   right: 0;
   margin-top: 0.5rem;
   background: var(--color-cream);
-  border: 1px solid color-mix(in srgb, var(--color-dark), transparent 90%);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  border: 1px solid var(--color-dark);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.3);
   border-radius: 4px;
-  z-index: 100;
+  z-index: 1000;
   opacity: 0;
   visibility: hidden;
   transform: translateY(-10px);

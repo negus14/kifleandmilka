@@ -60,7 +60,6 @@
   "partner1Name": "Meron",
   "partner2Name": "Adiam",
   "passwordHash": "$2b$10$5JvgovlkakoeamziHwAZEeSPsu9jf9uM2xWj4GVhQMph5/.LmUQCe",
-  "rsvpEmbedUrl": "",
   "exploreGroups": [
     {
       "links": [
@@ -155,7 +154,6 @@
     }
   ],
   "footerDateText": "September 1, 2026",
-  "giftPaymentUrl": "",
   "giftSubheading": "Your love and support mean the world to us. If you wish to honour us with a gift, a contribution to our future together would be greatly appreciated.",
   "storyLeadQuote": "Replace this with a meaningful quote or the first words you said to each other.",
   "dateDisplayText": "September 1, 2026",
@@ -188,7 +186,6 @@
     }
   ],
   "featuredPhotoUrl": "/demo/images/photo-1.jpg",
-  "giftPaymentLabel": "Send a Gift",
   "quoteAttribution": "— Author or Source",
   "rsvpDeadlineText": "Kindly respond by August 1, 2026",
   "featuredPhotoCaption": "Add a caption for your favourite photo together"

@@ -59,7 +59,6 @@
   "partner1Name": "Adam",
   "partner2Name": "Eve",
   "passwordHash": "$2b$10$5JvgovlkakoeamziHwAZEeSPsu9jf9uM2xWj4GVhQMph5/.LmUQCe",
-  "rsvpEmbedUrl": "",
   "exploreGroups": [
     {
       "links": [
@@ -137,7 +136,6 @@
     }
   ],
   "footerDateText": "September 1, 2026",
-  "giftPaymentUrl": "",
   "giftSubheading": "Your love and support mean the world to us. If you wish to honour us with a gift, a contribution to our future together would be greatly appreciated.",
   "storyLeadQuote": "'This is now bone of my bones and flesh of my flesh; she shall be called Woman, for she was taken out of man.'",
   "dateDisplayText": "September 1, 2026",
@@ -170,7 +168,6 @@
     }
   ],
   "featuredPhotoUrl": "https://images.unsplash.com/photo-1522673607200-164883214c98?q=80&w=1200&auto=format&fit=crop",
-  "giftPaymentLabel": "Send a Gift",
   "quoteAttribution": "Matthew 19:6",
   "rsvpDeadlineText": "Kindly respond by August 1, 2026",
   "sectionBackgrounds": {

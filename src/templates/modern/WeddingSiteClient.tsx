@@ -58,6 +58,18 @@ export default function WeddingSiteClient({
     }
     window.addEventListener("scroll", onScroll);
 
+    // Handle messages from parent (Dashboard)
+    function handleMessage(event: MessageEvent) {
+      if (event.data?.type === "SCROLL_TO_SECTION") {
+        const sectionId = event.data.sectionId;
+        const el = document.getElementById(sectionId);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }
+    }
+    window.addEventListener("message", handleMessage);
+
     // Gift dropdown logic
     function setupGiftDropdowns() {
       const toggles = document.querySelectorAll(".gift__dropdown-toggle");

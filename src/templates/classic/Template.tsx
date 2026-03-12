@@ -1,58 +1,14 @@
 import type { WeddingSite } from "@/lib/types/wedding-site";
-import { DEFAULT_SECTION_ORDER } from "@/lib/types/wedding-site";
 import { getTheme } from "@/lib/themes";
+import { toEmbedUrl, generateThemeVars, getSectionData } from "@/lib/template-utils";
 import WeddingSiteClient from "./WeddingSiteClient";
 import RSVPForm from "@/components/RSVPForm";
 import "./styles.css";
 
-function toEmbedUrl(url: string): string {
-  if (!url) return "";
-  // Already an embed URL
-  if (url.includes("/maps/embed") || url.includes("maps?output=embed")) return url;
-  // Extract place name from Google Maps place URL and use simple embed
-  const placeMatch = url.match(/\/place\/([^/@]+)/);
-  if (placeMatch) {
-    const query = decodeURIComponent(placeMatch[1].replace(/\+/g, " "));
-    return `https://maps.google.com/maps?q=${encodeURIComponent(query)}&output=embed`;
-  }
-  // Extract coordinates as fallback
-  const coordMatch = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
-  if (coordMatch) {
-    return `https://maps.google.com/maps?q=${coordMatch[1]},${coordMatch[2]}&output=embed`;
-  }
-  return url;
-}
-
 export function ClassicTemplate({ site }: { site: WeddingSite }) {
   const theme = getTheme(site.templateId);
-  const themeVars = {
-    "--color-dark": theme.colors.dark,
-    "--color-tan": theme.colors.tan,
-    "--color-cream": theme.colors.cream,
-    "--color-tan-light": theme.colors.tanLight,
-    "--color-tan-dark": theme.colors.tanDark,
-    "--color-cream-dark": theme.colors.creamDark,
-    "--font-script": theme.fonts.script,
-    "--font-serif": theme.fonts.serif,
-    "--font-sans": theme.fonts.sans,
-  } as React.CSSProperties;
-
-  const order = site.sectionOrder ?? DEFAULT_SECTION_ORDER;
-
-  // Build a map of section ID -> visible nav links
-  const visibleSections = new Set(order.filter((s) => s.visible).map((s) => s.id));
-
-  const navItems = [
-    { id: "details", label: "Details" },
-    { id: "schedule", label: "Schedule" },
-    { id: "menu", label: "Menu" },
-    { id: "accommodations", label: "Stay" },
-    { id: "explore", label: "Explore" },
-    { id: "gallery", label: "Gallery" },
-    { id: "gift", label: "Gift" },
-    { id: "rsvp", label: "RSVP" },
-    { id: "contact", label: "Contact" },
-  ].filter((item) => visibleSections.has(item.id));
+  const themeVars = generateThemeVars(site.templateId);
+  const { order, visibleSections, navItems } = getSectionData(site);
 
   // Section renderers
   const sections: Record<string, (cls?: string, style?: React.CSSProperties) => React.ReactNode> = {

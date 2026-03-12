@@ -101,13 +101,11 @@
       "isPrivate": false
     }
   ],
-  "giftBankName": "",
   "heroImageUrl": "/demo/images/photo-1.jpg",
   "locationText": "Winnipeg, Manitoba",
   "partner1Name": "Kifle",
   "partner2Name": "Milka",
   "passwordHash": "$2b$10$f3wG.CvlD9u4fyosIUBFOe0spS80yiBgTSUKjvbylwUSJbFjXJYaC",
-  "rsvpEmbedUrl": "https://tally.so/embed/Gx10Jk?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1",
   "sectionOrder": [
     {
       "id": "hero",
@@ -115,7 +113,7 @@
     },
     {
       "id": "story",
-      "visible": true
+      "visible": false
     },
     {
       "id": "details",
@@ -250,7 +248,6 @@
       "url": "/demo/images/photo-6.jpg"
     }
   ],
-  "giftSwiftCode": "",
   "googleSheetId": "1ZLvdGJhHxvOU0QMiJZSfsL_9zJ-5G6Nkhmop7wPBIW8",
   "letterClosing": "With all our love, Kifle & Milka",
   "letterOpening": "To Our Dearest Family & Friends",
@@ -324,7 +321,6 @@
     }
   ],
   "footerDateText": "August 1 & 2, 2026 • Winnipeg, Manitoba",
-  "giftPaymentUrl": "https://paypal.me/KifleTekle",
   "giftSubheading": "Your love and support mean the world to us. If you wish to honour us with a gift, a contribution towards our future together would be deeply appreciated.",
   "storyLeadQuote": "Some love stories are written in the stars, but ours was written over late-night conversations, shared laughter, and a quiet knowing that we had found something extraordinary.",
   "dateDisplayText": "1st & 2nd August 2026",
@@ -366,7 +362,6 @@
     }
   ],
   "featuredPhotoUrl": "/demo/images/photo-4.jpg",
-  "giftPaymentLabel": "Contribute here",
   "giftPaymentLinks": [
     {
       "url": "https://paypal.me/KifleTekle",
@@ -375,7 +370,5 @@
   ],
   "quoteAttribution": "1 Corinthians 13:13",
   "rsvpDeadlineText": "Kindly respond by July 1st, 2026",
-  "giftAccountHolder": "",
-  "giftAccountNumber": "",
   "featuredPhotoCaption": "Forever starts here"
 }
