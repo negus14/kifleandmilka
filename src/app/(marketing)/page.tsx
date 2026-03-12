@@ -52,7 +52,7 @@ export default function LandingPage() {
               Features
             </a>
             <Link
-              href="/kifleandmilka"
+              href="/demo"
               className="text-[13px] font-['DM_Sans',sans-serif] font-medium tracking-[0.08em] uppercase text-[#2d2b25]/60 hover:text-[#2d2b25] transition-colors"
             >
               Demo
@@ -119,7 +119,7 @@ export default function LandingPage() {
                   <ArrowIcon className="transition-transform duration-300 group-hover:translate-x-1" />
                 </button>
                 <Link
-                  href="/kifleandmilka"
+                  href="/demo"
                   className="group inline-flex items-center gap-2 font-['DM_Sans',sans-serif] text-[13px] font-medium tracking-[0.08em] uppercase text-[#2d2b25]/60 hover:text-[#2d2b25] transition-colors px-2 py-4"
                 >
                   See a Live Demo
@@ -383,16 +383,16 @@ export default function LandingPage() {
               <div className="flex-1 mx-8">
                 <div className="bg-[#faf1e1]/10 rounded-sm px-3 py-1 text-center">
                   <span className="font-['DM_Sans',sans-serif] text-[11px] text-[#faf1e1]/40">
-                    ithinkshewifey.com/kifleandmilka
+                    ithinkshewifey.com/demo
                   </span>
                 </div>
               </div>
             </div>
-            <Link href="/kifleandmilka" className="block group relative">
+            <Link href="/demo" className="block group relative">
               <div className="relative overflow-hidden border border-t-0 border-[#2d2b25]/10">
                 <img
                   src="/demo/images/photo-1.jpg"
-                  alt="Kifle & Milka wedding website demo"
+                  alt="Jane & John wedding website demo"
                   className="w-full aspect-[16/9] object-cover object-top transition-transform duration-700 group-hover:scale-[1.02]"
                 />
                 {/* Overlay on hover */}
@@ -432,7 +432,7 @@ export default function LandingPage() {
               <ArrowIcon className="transition-transform duration-300 group-hover:translate-x-1" />
             </button>
             <Link
-              href="/kifleandmilka"
+              href="/demo"
               className="font-['DM_Sans',sans-serif] text-[13px] font-medium tracking-[0.08em] uppercase text-[#faf1e1]/50 hover:text-[#faf1e1] transition-colors px-4 py-4"
             >
               See the Demo
@@ -455,7 +455,7 @@ export default function LandingPage() {
             </div>
             <div className="flex items-center gap-8">
               {[
-                { label: "Demo", href: "/kifleandmilka" },
+                { label: "Demo", href: "/demo" },
                 { label: "Contact", href: "mailto:abelghebz@gmail.com" },
               ].map((link) => (
                 <Link
