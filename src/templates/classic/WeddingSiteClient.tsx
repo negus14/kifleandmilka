@@ -4,8 +4,14 @@ import { useEffect } from "react";
 
 export default function WeddingSiteClient({
   weddingDate,
+  scheduleStyle,
+  detailsStyle,
+  sectionOrder,
 }: {
   weddingDate: string;
+  scheduleStyle?: string;
+  detailsStyle?: string;
+  sectionOrder?: any[];
 }) {
   useEffect(() => {
     const target = new Date(weddingDate);
@@ -51,15 +57,28 @@ export default function WeddingSiteClient({
     );
     document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
 
-    // Section Observer for Sidebar Sync
+    // Section Observer for Sidebar Sync and Nav Highlighting
     const sectionObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting && entry.intersectionRatio > 0.3) {
+            const sectionId = entry.target.id;
+
+            // Notify Dashboard Sidebar
             window.parent.postMessage({
               type: "SECTION_IN_VIEW",
-              sectionId: entry.target.id
+              sectionId
             }, "*");
+
+            // Update local Nav highlighting
+            document.querySelectorAll(".nav__link").forEach((link) => {
+              const href = link.getAttribute("href");
+              if (href === `#${sectionId}`) {
+                link.classList.add("active");
+              } else {
+                link.classList.remove("active");
+              }
+            });
           }
         });
       },
@@ -81,6 +100,14 @@ export default function WeddingSiteClient({
         window.parent.postMessage({
           type: "SECTION_IN_VIEW",
           sectionId: "hero"
+        }, "*");
+      }
+
+      // If at the very bottom, ensure Footer is selected
+      if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 50) {
+        window.parent.postMessage({
+          type: "SECTION_IN_VIEW",
+          sectionId: "footer"
         }, "*");
       }
 
@@ -231,8 +258,10 @@ export default function WeddingSiteClient({
       zoomables.forEach((img) => img.removeEventListener("click", openLb));
       lb?.removeEventListener("click", closeLb);
       document.removeEventListener("keydown", onKey);
+      sectionObserver.disconnect();
+      window.removeEventListener("message", handleMessage);
     };
-  }, [weddingDate]);
+  }, [weddingDate, scheduleStyle, detailsStyle, sectionOrder]);
 
   return null;
 }

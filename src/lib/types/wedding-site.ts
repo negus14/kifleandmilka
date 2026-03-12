@@ -115,8 +115,8 @@ export const SECTION_LABELS: Record<string, string> = {
   details: "Wedding Details",
   day2: "Day Two Event",
   quote: "Quote",
-  featuredPhoto: "Featured Photo",
-  letter: "Love Letter",
+  featuredPhoto: "Photo",
+  letter: "Letter",
   schedule: "Schedule",
   menu: "Menu",
   gallery: "Gallery",
@@ -161,11 +161,11 @@ export interface WeddingSite {
   quoteText: string;
   quoteAttribution: string;
 
-  // Featured Photo
+  // Photo
   featuredPhotoUrl: string;
   featuredPhotoCaption: string;
 
-  // Love Letter
+  // Letter
   letterOpening: string;
   letterBody: string[];
   letterClosing: string;

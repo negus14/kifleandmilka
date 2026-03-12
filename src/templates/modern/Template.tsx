@@ -1,4 +1,4 @@
-import type { WeddingSite } from "@/lib/types/wedding-site";
+import type { WeddingSite, VenueItem, VenueInfoBlock } from "@/lib/types/wedding-site";
 import { getTheme } from "@/lib/themes";
 import { toEmbedUrl, generateThemeVars, getSectionData } from "@/lib/template-utils";
 import WeddingSiteClient from "./WeddingSiteClient";
@@ -10,7 +10,7 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
   const themeVars = generateThemeVars(site.templateId);
   const { order, visibleSections, navItems } = getSectionData(site);
 
-  const d = (id: string, key: string, fallback: any) => site.sectionData?.[id]?.[key] ?? fallback;
+  const d = <T,>(id: string, key: string, fallback: T): T => (site.sectionData?.[id]?.[key] as T) ?? fallback;
 
   const sections: Record<string, (id: string, cls?: string, style?: React.CSSProperties) => React.ReactNode> = {
     hero: (id, cls = "", style = {}) => (
@@ -109,7 +109,7 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
       if (!site.eventDays || site.eventDays.length === 0) return null;
       const isPrv = cls.includes("preview");
 
-      const renderVenueCard = (venue: typeof site.venues[0], i: number) => (
+      const renderVenueCard = (venue: VenueItem, i: number) => (
         <div key={i} className={`modern-card reveal ${isPrv ? "visible" : ""}`}>
           <p className="modern-card__label">{venue.label}</p>
           <h3 className="modern-card__title">{venue.name}</h3>
@@ -126,7 +126,7 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
         </div>
       );
 
-      const renderInfoBlock = (block: typeof site.venueInfoBlocks[0], i: number) => (
+      const renderInfoBlock = (block: VenueInfoBlock, i: number) => (
         <div key={i} className={`modern-card reveal ${isPrv ? "visible" : ""}`}>
           {block.heading && <h3 className="modern-card__title">{block.heading}</h3>}
           <p className="modern-card__text">{block.text}</p>
@@ -134,16 +134,19 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
       );
 
       return (
-        <div id="details">
+        <>
           {site.eventDays.map((day, di) => {
             const dayStyle = day.detailsStyle || "grid";
             const bgUrl = day.sectionBackground;
-            const finalCls = `modern-section ${cls} ${bgUrl ? "modern-section--has-bg" : ""}`;
+
+            // Alternating backgrounds if no custom BG is set
+            const defaultBgClass = di % 2 === 0 ? "modern-section--tan" : "";
+            const finalCls = `modern-section ${cls} ${bgUrl ? "modern-section--has-bg" : defaultBgClass}`;
             const finalStyle = { ...style, ...(bgUrl ? { backgroundImage: `url('${bgUrl}')` } : {}) };
 
             if (dayStyle === "split") {
               return (
-                <section key={day.id} className={finalCls} style={finalStyle}>
+                <section key={day.id} id={id} className={finalCls} style={finalStyle}>
                   <div className="modern-container">
                     <p className={`modern-subtitle modern-subtitle--center reveal ${isPrv ? "visible" : ""}`}>{day.label}</p>
                     {day.date && <p className={`modern-text modern-text--small text-center mb-10 reveal ${isPrv ? "visible" : ""}`}>{day.date}</p>}
@@ -165,7 +168,7 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
 
             if (dayStyle === "minimal") {
               return (
-                <section key={day.id} className={finalCls} style={finalStyle}>
+                <section key={day.id} id={id} className={finalCls} style={finalStyle}>
                   <div className="modern-container modern-container--narrow">
                     <p className={`modern-subtitle modern-subtitle--center reveal ${isPrv ? "visible" : ""}`}>{day.label}</p>
                     {day.date && <p className={`modern-text modern-text--small text-center mb-6 reveal ${isPrv ? "visible" : ""}`}>{day.date}</p>}
@@ -195,7 +198,7 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
 
             // Default: Grid
             return (
-              <section key={day.id} className={finalCls} style={finalStyle}>
+              <section key={day.id} id={id} className={finalCls} style={finalStyle}>
                 <div className="modern-container">
                   <p className={`modern-subtitle modern-subtitle--center reveal ${isPrv ? "visible" : ""}`}>{day.label}</p>
                   {day.date && <p className={`modern-text modern-text--small text-center mb-6 reveal ${isPrv ? "visible" : ""}`}>{day.date}</p>}
@@ -209,7 +212,7 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
               </section>
             );
           })}
-        </div>
+        </>
       );
     },
 
@@ -521,13 +524,14 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
         </div>
       </nav>
 
-      {order.map((section) => {
-        if (!section.visible) return null;
+      {order.filter(s => s.visible).map((section, i) => {
         const render = sections[section.type] || sections[section.id];
         if (!render) return null;
 
         const bgUrl = site.sectionBackgrounds?.[section.id];
-        let extraClass = bgUrl ? "modern-section--has-bg" : "";
+        // Use global index for alternating background classes if no custom BG is set
+        const defaultBgClass = i % 2 === 0 ? "modern-section--tan" : "";
+        let extraClass = bgUrl ? "modern-section--has-bg" : defaultBgClass;
         if (isPreview) extraClass += " preview";
         const extraStyle = bgUrl ? { backgroundImage: `url('${bgUrl}')` } : {};
 

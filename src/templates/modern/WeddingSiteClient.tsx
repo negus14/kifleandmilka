@@ -5,12 +5,17 @@ import { useEffect } from "react";
 export default function WeddingSiteClient({
   weddingDate,
   scheduleStyle,
+  detailsStyle,
+  sectionOrder,
 }: {
   weddingDate: string;
   scheduleStyle?: string;
+  detailsStyle?: string;
+  sectionOrder?: any[];
 }) {
   useEffect(() => {
     const target = new Date(weddingDate);
+    // ... rest of countdown logic ...
     const els = {
       days: document.getElementById("countdown-days"),
       hours: document.getElementById("countdown-hours"),
@@ -65,20 +70,39 @@ export default function WeddingSiteClient({
           sectionId: "hero"
         }, "*");
       }
+
+      // If at the very bottom, ensure Footer is selected
+      if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 50) {
+        window.parent.postMessage({
+          type: "SECTION_IN_VIEW",
+          sectionId: "footer"
+        }, "*");
+      }
     }
     window.addEventListener("scroll", onScroll);
 
-    // Section Observer for Sidebar Sync
+    // Section Observer for Sidebar Sync and Nav Highlighting
     const sectionObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          // When a section takes up a significant portion of the viewport,
-          // or if it's smaller than the viewport but centered.
           if (entry.isIntersecting && entry.intersectionRatio > 0.3) {
+            const sectionId = entry.target.id;
+            
+            // Notify Dashboard Sidebar
             window.parent.postMessage({
               type: "SECTION_IN_VIEW",
-              sectionId: entry.target.id
+              sectionId
             }, "*");
+
+            // Update local Nav highlighting
+            document.querySelectorAll(".modern-nav__link").forEach((link) => {
+              const href = link.getAttribute("href");
+              if (href === `#${sectionId}`) {
+                link.classList.add("active");
+              } else {
+                link.classList.remove("active");
+              }
+            });
           }
         });
       },
@@ -87,7 +111,7 @@ export default function WeddingSiteClient({
         rootMargin: "-20% 0px -20% 0px" 
       }
     );
-    document.querySelectorAll("section[id], header[id], footer[id]").forEach((el) => {
+    document.querySelectorAll("section[id], header[id], footer[id], div[id='details'] > section[id]").forEach((el) => {
       sectionObserver.observe(el);
     });
 
@@ -179,9 +203,11 @@ export default function WeddingSiteClient({
       clearTimeout(timeout);
       clearInterval(interval);
       observer.disconnect();
+      sectionObserver.disconnect();
       window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("message", handleMessage);
     };
-  }, [weddingDate, scheduleStyle]);
+  }, [weddingDate, scheduleStyle, detailsStyle, sectionOrder]);
 
   return null;
 }

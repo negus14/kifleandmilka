@@ -84,6 +84,24 @@
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
 }
 
+.nav__link:hover,
+.nav__link.active {
+  opacity: 1;
+}
+
+.nav__link.active::after {
+  width: 100%;
+}
+
+.nav.scrolled .nav__link.active {
+  color: var(--color-dark);
+  opacity: 1;
+}
+
+.nav.scrolled .nav__link.active::after {
+  background: var(--color-dark);
+}
+
 .nav.scrolled .nav__link {
   color: var(--color-dark);
   text-shadow: none;

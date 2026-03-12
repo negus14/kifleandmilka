@@ -31,8 +31,8 @@ export default function PreviewPage() {
   }
 
   if (site.layoutId === "modern") {
-    return <ModernTemplate site={site} />;
+    return <ModernTemplate site={site} isPreview />;
   }
 
-  return <ClassicTemplate site={site} />;
+  return <ClassicTemplate site={site} isPreview />;
 }

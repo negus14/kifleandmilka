@@ -1,4 +1,4 @@
-import type { WeddingSite } from "@/lib/types/wedding-site";
+import type { WeddingSite, VenueItem, VenueInfoBlock } from "@/lib/types/wedding-site";
 import { getTheme } from "@/lib/themes";
 import { toEmbedUrl, generateThemeVars, getSectionData } from "@/lib/template-utils";
 import WeddingSiteClient from "./WeddingSiteClient";
@@ -11,7 +11,7 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
   const { order, visibleSections, navItems } = getSectionData(site);
 
   // Section renderers
-  const d = (id: string, key: string, fallback: any) => site.sectionData?.[id]?.[key] ?? fallback;
+  const d = <T,>(id: string, key: string, fallback: T): T => (site.sectionData?.[id]?.[key] as T) ?? fallback;
 
   const sections: Record<string, (id: string, cls?: string, style?: React.CSSProperties) => React.ReactNode> = {
     hero: (id, cls = "", style = {}) => (
@@ -82,7 +82,7 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
     details: (id, cls = "", style = {}) => {
       if (!site.eventDays || site.eventDays.length === 0) return null;
 
-      const renderVenueCard = (venue: typeof site.venues[0], i: number) => (
+      const renderVenueCard = (venue: VenueItem, i: number) => (
         <div key={i} className="info-card reveal">
           <p className="info-card__label">{venue.label}</p>
           <h3 className="info-card__name">{venue.name}</h3>
@@ -99,25 +99,28 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
         </div>
       );
 
-      const renderInfoBlock = (block: typeof site.venueInfoBlocks[0], i: number) => (
-        <div key={i} className="info-block">
-          {block.heading && <h3 className="info-block__heading">{block.heading}</h3>}
-          {block.subheading && <h4 className="info-block__subheading">{block.subheading}</h4>}
-          <p className="info-block__text">{block.text}</p>
+      const renderInfoBlock = (block: VenueInfoBlock, i: number) => (
+        <div key={i} className="info-card reveal">
+          {block.heading && <h3 className="info-card__title">{block.heading}</h3>}
+          {block.subheading && <h4 className="info-card__label">{block.subheading}</h4>}
+          <p className="info-card__text">{block.text}</p>
         </div>
       );
 
       return (
-        <div id="details">
-          {site.eventDays.map((day) => {
+        <>
+          {site.eventDays.map((day, di) => {
             const dayStyle = day.detailsStyle || "grid";
             const bgUrl = day.sectionBackground;
-            const finalCls = `section ${cls} ${bgUrl ? "section--has-bg" : "section--tan"}`;
+            
+            // Alternating backgrounds if no custom BG is set
+            const defaultBgClass = di % 2 === 0 ? "section--tan" : "section--cream";
+            const finalCls = `section ${cls} ${bgUrl ? "section--has-bg" : defaultBgClass}`;
             const finalStyle = { ...style, ...(bgUrl ? { backgroundImage: `url('${bgUrl}')` } : {}) };
 
             if (dayStyle === "split") {
               return (
-                <section key={day.id} className={finalCls} style={finalStyle}>
+                <section key={day.id} id={id} className={finalCls} style={finalStyle}>
                   <div className="container">
                     <div className="details-split-layout">
                       <div className="details-split__venues">
@@ -141,7 +144,7 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
 
             if (dayStyle === "minimal") {
               return (
-                <section key={day.id} className={finalCls} style={finalStyle}>
+                <section key={day.id} id={id} className={finalCls} style={finalStyle}>
                   <div className="container">
                     <div className="section__header reveal">
                       <p className="section__subtitle">{day.label}</p>
@@ -174,7 +177,7 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
 
             // Default: Grid
             return (
-              <section key={day.id} className={finalCls} style={finalStyle}>
+              <section key={day.id} id={id} className={finalCls} style={finalStyle}>
                 <div className="container">
                   <div className="section__header reveal">
                     <p className="section__subtitle">{day.label}</p>
@@ -195,7 +198,7 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
               </section>
             );
           })}
-        </div>
+        </>
       );
     },
 
@@ -205,7 +208,7 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
       const text = d(id, 'text', site.quoteText);
       if (!text) return null;
       return (
-        <section className={`section ${cls || "section--cream"}`} style={style}>
+        <section className={`section ${cls || "section--cream"}`} id={id} style={style}>
           <div className="container">
             <div className="quote-section reveal">
               <p className="quote__text">&ldquo;{text}&rdquo;</p>
@@ -220,7 +223,7 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
       const url = d(id, 'url', site.featuredPhotoUrl);
       if (!url) return null;
       return (
-        <section className={`section ${cls || "section--cream"}`} style={style}>
+        <section className={`section ${cls || "section--cream"}`} id={id} style={style}>
           <div className="container">
             <div className="featured-photo reveal">
               <img
@@ -241,7 +244,7 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
       const opening = d(id, 'opening', site.letterOpening);
       if (!opening) return null;
       return (
-        <section className={`section ${cls || "section--dark"}`} style={style}>
+        <section className={`section ${cls || "section--dark"}`} id={id} style={style}>
           <div className="container">
             <div className="letter reveal">
               <p className="letter__opening">{opening}</p>
@@ -367,9 +370,9 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
 
     gallery: (id, cls = "", style = {}) => {
       if (site.galleryImages.length === 0) return null;
-      const isCustomBg = !!site.sectionBackgrounds?.gallery;
+      const isCustomBg = !!site.sectionBackgrounds?.[id];
       return (
-        <section className={`section ${cls || "section--dark"} gallery-dark`} id="gallery" style={style}>
+        <section className={`section ${cls} gallery-dark`} id={id} style={style}>
           {!isCustomBg && <div className="gallery-dark__bg"></div>}
           <div className="container">
             <div className="section__header reveal">
@@ -397,7 +400,7 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
     explore: (id, cls = "", style = {}) => {
       if (site.exploreGroups.length === 0) return null;
       return (
-        <section className={`section ${cls || "section--tan"}`} id="explore" style={style}>
+        <section className={`section ${cls}`} id={id} style={style}>
           <div className="container">
             <div className="section__header reveal">
               <p className="section__subtitle">While You&rsquo;re Here</p>
@@ -429,7 +432,7 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
     accommodations: (id, cls = "", style = {}) => {
       if (site.accommodations.length === 0) return null;
       return (
-        <section className={`section ${cls || "section--dark"}`} id="accommodations" style={style}>
+        <section className={`section ${cls}`} id={id} style={style}>
           <div className="container">
             <div className="section__header reveal">
               <p className="section__subtitle">Where to Stay</p>
@@ -461,7 +464,7 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
     },
 
     rsvp: (id, cls = "", style = {}) => (
-      <section className={`section ${cls || "section--tan"}`} id="rsvp" style={style}>
+      <section className={`section ${cls}`} id={id} style={style}>
         <div className="container">
           <div className="rsvp__form-wrap reveal" style={{ maxWidth: 700, margin: "0 auto", textAlign: "center" }}>
             <h2 className="rsvp__heading">{site.rsvpHeading}</h2>
@@ -486,7 +489,7 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
       if (!hasAnyGifts) return null;
 
       return (
-        <section className={`section ${cls || "section--cream"}`} id="gift" style={style}>
+        <section className={`section ${cls}`} id={id} style={style}>
           <div className="container">
             <div className="gift-section reveal">
               <h2 className="gift__heading">{site.giftHeading}</h2>
@@ -566,7 +569,7 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
     contact: (id, cls = "", style = {}) => {
       if (site.contactEntries.length === 0) return null;
       return (
-        <section className={`section ${cls || "section--cream"}`} id="contact" style={style}>
+        <section className={`section ${cls}`} id={id} style={style}>
           <div className="container">
             <div className="contact-section reveal">
               <h2 className="contact__heading">{site.contactHeading || "Get in Touch"}</h2>
@@ -644,13 +647,14 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
       </nav>
 
       {/* Render sections in order */}
-      {order.map((section) => {
-        if (!section.visible) return null;
+      {order.filter(s => s.visible).map((section, i) => {
         const render = sections[section.type] || sections[section.id];
         if (!render) return null;
 
         const bgUrl = site.sectionBackgrounds?.[section.id];
-        let extraClass = bgUrl ? "section--has-bg light-text" : "";
+        // Use global index for alternating background classes if no custom BG is set
+        const defaultBgClass = i % 2 === 0 ? "section--tan" : "section--cream";
+        let extraClass = bgUrl ? "section--has-bg section--light-text" : defaultBgClass;
         if (isPreview) extraClass += " preview";
         const extraStyle = bgUrl ? { backgroundImage: `url('${bgUrl}')` } : {};
 

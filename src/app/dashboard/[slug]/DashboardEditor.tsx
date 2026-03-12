@@ -512,10 +512,15 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
   // Persist and restore tab state safely
   useEffect(() => {
     const saved = localStorage.getItem(`itsw_active_tab_${site.slug}`);
-    if (saved && (TABS as readonly string[]).includes(saved)) {
-      setTab(saved as Tab);
+    if (saved) {
+      // Basic validation: must be a static tab or exist in sectionOrder
+      const order = site.sectionOrder ?? DEFAULT_SECTION_ORDER;
+      const isValid = (STATIC_TABS as readonly string[]).includes(saved) || order.some(s => s.id === saved);
+      if (isValid) {
+        setTab(saved as Tab);
+      }
     }
-  }, [site.slug]);
+  }, [site.slug, site.sectionOrder]);
 
   useEffect(() => {
     localStorage.setItem(`itsw_active_tab_${site.slug}`, tab);
@@ -1196,7 +1201,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
               const { id, type } = section;
               
               // Helpers for dynamic data
-              const d = (key: string, fallback: any) => site.sectionData?.[id]?.[key] ?? fallback;
+              const d = <T,>(key: string, fallback: T): T => (site.sectionData?.[id]?.[key] as T) ?? fallback;
               const update = (patch: any) => setSectionData(id, patch);
               
               const bg = site.sectionBackgrounds?.[id] || "";
@@ -1280,12 +1285,12 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
 
               if (type === "featuredPhoto" || type === "photo") return (
                 <div>
-                  <SectionTitle>Photo Showcase</SectionTitle>
+                  <SectionTitle>Photo</SectionTitle>
                   {renderBg("Photo Section Background")}
-                  <ImageField 
-                    label="Photo URL" 
-                    value={d("url", site.featuredPhotoUrl)} 
-                    onChange={(v) => update({ url: v })} 
+                  <ImageField
+                    label="Photo URL"
+                    value={d("url", site.featuredPhotoUrl)}
+                    onChange={(v) => update({ url: v })}
                     recentLinks={site.recentlyUsedLinks || []}
                     onAddRecentLink={addRecentLink}
                   />
@@ -1295,10 +1300,9 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
 
               if (type === "letter") return (
                 <div>
-                  <SectionTitle>Letter / Note</SectionTitle>
+                  <SectionTitle>Letter</SectionTitle>
                   {renderBg("Letter Background Image")}
-                  <Field label="Opening" value={d("opening", site.letterOpening)} onChange={(v) => update({ opening: v })} />
-                  <Label>Body Paragraphs</Label>
+                  <Field label="Opening" value={d("opening", site.letterOpening)} onChange={(v) => update({ opening: v })} />                  <Label>Body Paragraphs</Label>
                   <SortableList items={d("body", site.letterBody)} prefix={`letter-${id}`} onReorder={(items) => update({ body: items })}>
                     {(p, i, sid) => (
                       <SortableCard key={sid} id={sid} onRemove={() => update({ body: removeFromArray(d("body", site.letterBody), i) })}>
@@ -1539,8 +1543,8 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                 <div>
                   <SectionTitle>RSVP Settings</SectionTitle>
                   {renderBg("RSVP Background Image")}
-                  <Field label="Heading" value={data("heading", site.rsvpHeading)} onChange={(v) => update({ heading: v })} />
-                  <Field label="Deadline Text" value={data("deadline", site.rsvpDeadlineText)} onChange={(v) => update({ deadline: v })} />
+                  <Field label="Heading" value={d("heading", site.rsvpHeading)} onChange={(v) => update({ heading: v })} />
+                  <Field label="Deadline Text" value={d("deadline", site.rsvpDeadlineText)} onChange={(v) => update({ deadline: v })} />
                   <Field label="Google Sheets Link" value={site.rsvpEmbedUrl} onChange={(v) => set("rsvpEmbedUrl", v)} placeholder="Paste full Google Sheets URL here" />
                 </div>
               );
@@ -1549,8 +1553,8 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                 <div>
                   <SectionTitle>Gift Registry</SectionTitle>
                   {renderBg("Gift Background Image")}
-                  <Field label="Heading" value={data("heading", site.giftHeading)} onChange={(v) => update({ heading: v })} />
-                  <Field label="Subheading" value={data("subheading", site.giftSubheading)} onChange={(v) => update({ subheading: v })} multiline rows={3} />
+                  <Field label="Heading" value={d("heading", site.giftHeading)} onChange={(v) => update({ heading: v })} />
+                  <Field label="Subheading" value={d("subheading", site.giftSubheading)} onChange={(v) => update({ subheading: v })} multiline rows={3} />
                 </div>
               );
 
@@ -1558,7 +1562,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                 <div>
                   <SectionTitle>Contact Info</SectionTitle>
                   {renderBg("Contact Background Image")}
-                  <Field label="Contact Heading" value={data("heading", site.contactHeading || "")} onChange={(v) => update({ heading: v })} />
+                  <Field label="Contact Heading" value={d("heading", site.contactHeading || "")} onChange={(v) => update({ heading: v })} />
                   <SortableList items={site.contactEntries} prefix={`contacts-${id}`} onReorder={(items) => set("contactEntries", items)}>
                     {(c, i, sid) => (
                       <SortableCard key={sid} id={sid} onRemove={() => set("contactEntries", removeFromArray(site.contactEntries, i))}>
@@ -1574,15 +1578,16 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
               if (type === "footer") return (
                 <div>
                   <SectionTitle>Footer</SectionTitle>
-                  {renderBg("Footer Background")}
-                  <Field label="Names" value={data("names", site.footerNames)} onChange={(v) => update({ names: v })} />
-                  <Field label="Date Text" value={data("date", site.footerDateText)} onChange={(v) => update({ date: v })} />
-                  <Field label="Copyright" value={data("copy", site.footerCopyright)} onChange={(v) => update({ copy: v })} />
+                  <Field label="Names" value={d("names", site.footerNames)} onChange={(v) => update({ names: v })} />
+                  <Field label="Date Text" value={d("date", site.footerDateText)} onChange={(v) => update({ date: v })} />
+                  <Field label="Copyright" value={d("copy", site.footerCopyright)} onChange={(v) => update({ copy: v })} />
                 </div>
               );
 
               return null;
             })()}
+          </div>
+
           {/* Draggable Divider */}
           {isPreview && (
             <div 

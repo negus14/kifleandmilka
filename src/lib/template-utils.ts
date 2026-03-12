@@ -48,22 +48,32 @@ export function generateThemeVars(templateId: string): React.CSSProperties {
  */
 export function getSectionData(site: WeddingSite) {
   const order = site.sectionOrder ?? DEFAULT_SECTION_ORDER;
-  const visibleSections = new Set(order.filter((s) => s.visible).map((s) => s.id));
+  const visibleSections = order.filter((s) => s.visible);
 
-  const allPossibleNavItems = [
-    { id: "story", label: "Story" },
-    { id: "details", label: "Details" },
-    { id: "schedule", label: "Schedule" },
-    { id: "menu", label: "Menu" },
-    { id: "accommodations", label: "Stay" },
-    { id: "explore", label: "Explore" },
-    { id: "gallery", label: "Gallery" },
-    { id: "gift", label: "Gift" },
-    { id: "rsvp", label: "RSVP" },
-    { id: "contact", label: "Contact" },
-  ];
+  const typeToLabel: Record<string, string> = {
+    hero: "Hero",
+    story: "Story",
+    quote: "Quote",
+    featuredPhoto: "Photo",
+    letter: "Letter",
+    details: "Details",
+    schedule: "Schedule",
+    menu: "Menu",
+    accommodations: "Stay",
+    explore: "Explore",
+    gallery: "Gallery",
+    gift: "Gift",
+    rsvp: "RSVP",
+    contact: "Contact",
+    footer: "Footer"
+  };
 
-  const navItems = allPossibleNavItems.filter((item) => visibleSections.has(item.id));
+  const navItems = visibleSections
+    .filter(s => s.type !== 'hero' && s.type !== 'footer')
+    .map(s => ({
+      id: s.id,
+      label: typeToLabel[s.type] || s.type
+    }));
 
-  return { order, visibleSections, navItems };
+  return { order, visibleSections: new Set(visibleSections.map(s => s.id)), navItems };
 }
