@@ -617,7 +617,7 @@ export function ClassicTemplate({ site }: { site: WeddingSite }) {
 
   return (
     <div className="wedding-site" style={themeVars}>
-      <WeddingSiteClient weddingDate={site.weddingDate} />
+      <WeddingSiteClient weddingDate={site.weddingDate} scheduleStyle={site.scheduleStyle} />
 
       {/* Fonts */}
       <link rel="preconnect" href="https://fonts.googleapis.com" />

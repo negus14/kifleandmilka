@@ -4,8 +4,10 @@ import { useEffect } from "react";
 
 export default function WeddingSiteClient({
   weddingDate,
+  scheduleStyle,
 }: {
   weddingDate: string;
+  scheduleStyle?: string;
 }) {
   useEffect(() => {
     const target = new Date(weddingDate);
@@ -148,7 +150,7 @@ export default function WeddingSiteClient({
       observer.disconnect();
       window.removeEventListener("scroll", onScroll);
     };
-  }, [weddingDate]);
+  }, [weddingDate, scheduleStyle]);
 
   return null;
 }

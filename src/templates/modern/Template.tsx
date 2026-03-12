@@ -312,7 +312,7 @@ export function ModernTemplate({ site }: { site: WeddingSite }) {
 
   return (
     <div className="modern-site" style={themeVars}>
-      <WeddingSiteClient weddingDate={site.weddingDate} />
+      <WeddingSiteClient weddingDate={site.weddingDate} scheduleStyle={site.scheduleStyle} />
       
       <nav className="modern-nav">
         <div className="modern-container modern-nav__inner">
