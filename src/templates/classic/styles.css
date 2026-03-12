@@ -358,25 +358,33 @@
   color: var(--color-tan);
 }
 
-.section--tanLight {
-  background: var(--color-tanLight);
-}
-
-.section--tanDark {
-  background: var(--color-tanDark);
-}
-
-.section--creamDark {
-  background: var(--color-creamDark);
-}
-
 /* Base colors for light palette sections */
-.section--tanLight,
-.section--tanDark,
-.section--creamDark,
 .section--tan,
 .section--cream {
   color: var(--color-dark);
+}
+
+.section--tan .section__title,
+.section--cream .section__title,
+.section--tan .info-card__title,
+.section--cream .info-card__title {
+  color: var(--color-dark);
+}
+
+.section--tan .section__subtitle,
+.section--cream .section__subtitle,
+.section--tan .info-card__label,
+.section--cream .info-card__label {
+  color: var(--color-dark);
+  opacity: 0.8;
+}
+
+.section--tan p,
+.section--cream p,
+.section--tan .info-card__text,
+.section--cream .info-card__text {
+  color: var(--color-dark);
+  opacity: 0.7;
 }
 
 /* Contextual overrides for Dark sections */

@@ -606,7 +606,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
     if (!isStatic && isPreview && iframeRef.current) {
       iframeRef.current.contentWindow?.postMessage({
         type: "SCROLL_TO_SECTION",
-        sectionId: newTab === "Hero" ? "hero" : newTab // Basics/Hero might both use "hero"
+        sectionId: newTab
       }, "*");
     }
   }
@@ -680,6 +680,18 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
           type: "UPDATE_SITE",
           site
         }, "*");
+
+        // NEW: Scroll to current tab on load if it's a dynamic section
+        const isStatic = (STATIC_TABS as readonly string[]).includes(tab);
+        if (!isStatic && isPreview) {
+          // Add a small delay to ensure iframe layout is fully settled
+          setTimeout(() => {
+            iframeRef.current?.contentWindow?.postMessage({
+              type: "SCROLL_TO_SECTION",
+              sectionId: tab.toLowerCase() === "hero" ? "hero" : tab
+            }, "*");
+          }, 100);
+        }
       }
 
       if (event.data?.type === "SECTION_IN_VIEW") {
@@ -1626,7 +1638,28 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                   {renderBg("RSVP Background Image")}
                   <Field label="Heading" value={d("heading", site.rsvpHeading)} onChange={(v) => update({ heading: v })} />
                   <Field label="Deadline Text" value={d("deadline", site.rsvpDeadlineText)} onChange={(v) => update({ deadline: v })} />
-                  <Field label="Google Sheets Link" value={site.rsvpEmbedUrl} onChange={(v) => set("rsvpEmbedUrl", v)} placeholder="Paste full Google Sheets URL here" />
+                  <Field 
+                    label="Google Sheets Link" 
+                    value={site.rsvpEmbedUrl || (site.googleSheetId ? `https://docs.google.com/spreadsheets/d/${site.googleSheetId}` : "")} 
+                    onChange={(v) => {
+                      set("rsvpEmbedUrl", v);
+                      // Try to extract and save the ID automatically
+                      const match = v.match(/\/d\/([a-zA-Z0-9-_]+)/);
+                      if (match && match[1]) set("googleSheetId", match[1]);
+                    }} 
+                    placeholder="Paste full Google Sheets URL here" 
+                  />
+                  {(site.rsvpEmbedUrl || site.googleSheetId) && (
+                    <a 
+                      href={site.rsvpEmbedUrl || `https://docs.google.com/spreadsheets/d/${site.googleSheetId}`} 
+                      target="_blank" 
+                      rel="noopener"
+                      className="inline-flex items-center gap-2 px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-[#2d2b25]/60 hover:text-[#2d2b25] border border-[#2d2b25]/10 hover:border-[#2d2b25]/30 rounded-sm transition-all mb-6"
+                    >
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                      Open Google Sheet
+                    </a>
+                  )}
                   <Field label="Google Sheet Tab Name" value={site.googleSheetName || "Sheet1"} onChange={(v) => set("googleSheetName", v)} placeholder="e.g. Sheet1 or RSVPs" />
                 </div>
               );

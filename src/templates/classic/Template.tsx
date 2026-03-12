@@ -114,20 +114,21 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
             const bgUrl = day.sectionBackground;
             const dayBgColor = day.sectionBackgroundColor;
             
-            // Clean up cls from parent to avoid conflicts with our own backgrounds
-            const cleanCls = cls.replace(/section--tan|section--cream/g, "").trim();
-            
             // Background color logic:
             // 1. Image background (overrides everything)
-            // 2. Explicitly selected background color
-            // 3. Alternating background (tan/cream)
+            // 2. Explicitly selected background color for this DAY
+            // 3. Fallback to the color selected for the main SECTION (from sidebar)
+            // 4. Alternating background (tan/cream)
             
-            let finalCls = `section ${cleanCls} `;
+            let finalCls = `section `;
             if (bgUrl) {
               finalCls += "section--has-bg section--dark";
             } else if (dayBgColor && dayBgColor !== "transparent") {
               finalCls += `section--${dayBgColor}`;
               if (dayBgColor === "dark") finalCls += " section--dark";
+            } else if (cls.includes('section--')) {
+              // Use the class passed down from the main loop (user's sidebar selection)
+              finalCls += cls;
             } else {
               finalCls += (di % 2 === 0 ? "section--tan" : "section--cream");
             }
@@ -698,6 +699,7 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
 
         const bgUrl = site.sectionBackgrounds?.[section.id];
         const bgColor = site.sectionBackgroundColors?.[section.id];
+        const sectionId = section.id.toLowerCase();
         
         // Only apply alternating backgrounds to content sections (not hero)
         const isContent = section.type !== 'hero';

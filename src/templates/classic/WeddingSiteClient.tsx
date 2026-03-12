@@ -172,6 +172,13 @@ export default function WeddingSiteClient({
     }
     window.addEventListener("message", handleMessage);
 
+    // Initial scroll check for cases where the message arrived before listener was ready
+    const initialSectionId = new URLSearchParams(window.location.search).get("scrollTo");
+    if (initialSectionId) {
+      const el = document.getElementById(initialSectionId);
+      if (el) setTimeout(() => el.scrollIntoView({ behavior: "smooth", block: "start" }), 500);
+    }
+
     // Gift dropdown logic
     function setupGiftDropdowns() {
       const toggles = document.querySelectorAll(".gift__dropdown-toggle");

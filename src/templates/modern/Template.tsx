@@ -168,19 +168,20 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
             const bgUrl = day.sectionBackground;
             const dayBgColor = day.sectionBackgroundColor;
 
-            // Clean up cls from parent to avoid conflicts with our own backgrounds
-            const cleanCls = cls.replace(/modern-section--tan/g, "").trim();
-
             // Background color logic:
             // 1. Image background (overrides everything)
-            // 2. Explicitly selected background color
-            // 3. Alternating background (tan/default)
+            // 2. Explicitly selected background color for this DAY
+            // 3. Fallback to the color selected for the main SECTION (from sidebar)
+            // 4. Alternating background (tan/default)
             
-            let finalCls = `modern-section ${cleanCls} `;
+            let finalCls = `modern-section `;
             if (bgUrl) {
               finalCls += "modern-section--has-bg";
             } else if (dayBgColor && dayBgColor !== "transparent") {
               finalCls += `modern-section--${dayBgColor}`;
+            } else if (cls.includes('modern-section--')) {
+              // Use the class passed down from the main loop (user's sidebar selection)
+              finalCls += cls;
             } else {
               finalCls += (di % 2 === 0 ? "modern-section--tan" : "");
             }
@@ -605,6 +606,7 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
 
         const bgUrl = site.sectionBackgrounds?.[section.id];
         const bgColor = site.sectionBackgroundColors?.[section.id];
+        const sectionId = section.id.toLowerCase();
         
         // Only apply alternating backgrounds to content sections (not hero)
         const isContent = section.type !== 'hero';
