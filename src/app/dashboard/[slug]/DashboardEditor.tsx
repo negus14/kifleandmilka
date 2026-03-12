@@ -879,6 +879,42 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
               <Field label="Deadline Text" value={site.rsvpDeadlineText} onChange={(v) => set("rsvpDeadlineText", v)} />
               
               <div className="mt-8 pt-8 border-t border-[#2d2b25]/10">
+                <SectionTitle>Meal Options</SectionTitle>
+                <p className="text-xs text-[#2d2b25]/50 mb-4">
+                  Define the meal choices that guests can select from during RSVP.
+                </p>
+                <SortableList 
+                  items={site.rsvpMealOptions || ["Chicken", "Beef", "Fish", "Vegetarian"]} 
+                  prefix="meals" 
+                  onReorder={(items) => set("rsvpMealOptions", items)}
+                >
+                  {(option, i, id) => (
+                    <SortableCard key={id} id={id} onRemove={() => {
+                      const current = site.rsvpMealOptions || ["Chicken", "Beef", "Fish", "Vegetarian"];
+                      set("rsvpMealOptions", removeFromArray(current, i));
+                    }}>
+                      <input 
+                        value={option} 
+                        onChange={(e) => {
+                           const current = site.rsvpMealOptions || ["Chicken", "Beef", "Fish", "Vegetarian"];
+                           set("rsvpMealOptions", current.map((x, j) => j === i ? e.target.value : x));
+                        }}
+                        placeholder="e.g. Chicken"
+                        className="w-full px-3 py-2 border border-[#2d2b25]/15 bg-white/50 text-[#2d2b25] text-sm outline-none focus:border-[#2d2b25]/40 rounded-sm"
+                      />
+                    </SortableCard>
+                  )}
+                </SortableList>
+                <AddButton 
+                  label="Add Meal Option" 
+                  onClick={() => {
+                    const current = site.rsvpMealOptions || ["Chicken", "Beef", "Fish", "Vegetarian"];
+                    set("rsvpMealOptions", [...current, ""]);
+                  }} 
+                />
+              </div>
+
+              <div className="mt-8 pt-8 border-t border-[#2d2b25]/10">
                 <SectionTitle>Google Sheets Integration</SectionTitle>
                 <p className="text-xs text-[#2d2b25]/60 mb-6 leading-relaxed">
                   Link RSVPs directly to your Google Sheet.
@@ -887,7 +923,20 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                   <br />
                   2. Share it with <strong>edit</strong> access to the service account email.
                   <br />
-                  3. Set up these columns: <strong>A: Timestamp, B: Submitter Email, C: Guest Name, D: Attending, E: Meal Choice, F: Halal, G: Message</strong>
+                  3. Copy and paste these headers into the first row (Cell A1):
+                  <div 
+                    className="mt-2 mb-3 p-3 bg-white border border-[#2d2b25]/20 font-mono text-[11px] select-all cursor-pointer hover:bg-gray-50 rounded-sm transition-colors group relative"
+                    onClick={() => {
+                      const headers = "Timestamp\tSubmitter Email\tGuest Name\tAttending\tMeal Choice\tHalal\tMessage";
+                      navigator.clipboard.writeText(headers);
+                    }}
+                    title="Click to copy all headers"
+                  >
+                    <span className="block overflow-x-auto whitespace-nowrap">
+                      Timestamp{"\t"}Submitter Email{"\t"}Guest Name{"\t"}Attending{"\t"}Meal Choice{"\t"}Halal{"\t"}Message
+                    </span>
+                    <span className="absolute top-1 right-2 text-[9px] uppercase tracking-tighter text-[#2d2b25]/40 group-hover:text-[#2d2b25]/80">Click to copy</span>
+                  </div>
                   <br />
                   4. Paste the <strong>entire URL</strong> of your Google Sheet below.
                 </p>                

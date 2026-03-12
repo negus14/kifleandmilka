@@ -414,7 +414,7 @@ export default function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
           <div className="rsvp__form-wrap reveal" style={{ maxWidth: 700, margin: "0 auto", textAlign: "center" }}>
             <h2 className="rsvp__heading">{site.rsvpHeading}</h2>
             <p className="rsvp__subheading">{site.rsvpDeadlineText}</p>
-            <RSVPForm slug={site.slug} />
+            <RSVPForm slug={site.slug} mealOptions={site.rsvpMealOptions} />
           </div>
         </div>
       </section>

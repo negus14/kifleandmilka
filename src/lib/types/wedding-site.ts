@@ -152,6 +152,7 @@ export interface WeddingSite {
   rsvpHeading: string;
   rsvpDeadlineText: string;
   rsvpEmbedUrl: string;
+  rsvpMealOptions?: string[];
   googleSheetId?: string;
   googleSheetName?: string;
 

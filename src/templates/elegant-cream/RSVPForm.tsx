@@ -12,11 +12,16 @@ interface Guest {
 
 interface RSVPFormProps {
   slug: string;
+  mealOptions?: string[];
 }
 
-export default function RSVPForm({ slug }: RSVPFormProps) {
+export default function RSVPForm({ slug, mealOptions }: RSVPFormProps) {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
+  
+  const options = (mealOptions && mealOptions.length > 0) 
+    ? mealOptions 
+    : ["Chicken", "Beef", "Fish", "Vegetarian"];
   
   const createEmptyGuest = (): Guest => ({
     id: crypto.randomUUID(),
@@ -191,10 +196,9 @@ export default function RSVPForm({ slug }: RSVPFormProps) {
                   required={guest.attending === "yes"}
                 >
                   <option value="" disabled>Select a meal...</option>
-                  <option value="Chicken">Chicken</option>
-                  <option value="Beef">Beef</option>
-                  <option value="Fish">Fish</option>
-                  <option value="Vegetarian">Vegetarian</option>
+                  {options.map((opt) => (
+                    <option key={opt} value={opt}>{opt}</option>
+                  ))}
                 </select>
               </div>
             )}

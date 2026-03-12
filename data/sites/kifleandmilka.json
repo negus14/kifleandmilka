@@ -41,7 +41,8 @@
   "rsvpHeading": "Join Our Celebration",
   "rsvpDeadlineText": "Kindly respond by July 1st, 2026",
   "rsvpEmbedUrl": "https://tally.so/embed/Gx10Jk?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1",
-  "googleSheetId": "",
+  "rsvpMealOptions": ["Chicken", "Beef", "Fish", "Vegetarian"],
+  "googleSheetId": "1ZLvdGJhHxvOU0QMiJZSfsL_9zJ-5G6Nkhmop7wPBIW8",
   "googleSheetName": "Sheet1",
 
   "sectionOrder": [

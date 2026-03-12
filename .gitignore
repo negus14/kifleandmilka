@@ -4,5 +4,6 @@ node_modules/
 .DS_Store
 *.local.json
 .next/
+.env
 .env*.local
 next-env.d.ts

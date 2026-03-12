@@ -38,17 +38,37 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Google Sheets integration not configured for this site" }, { status: 400 });
     }
 
-    // Google Auth
+    // Google Auth validation
+    const clientEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
+    const privateKey = process.env.GOOGLE_PRIVATE_KEY;
+
+    if (!clientEmail || !privateKey) {
+      console.error("RSVP Error: Missing Google Service Account credentials", {
+        hasEmail: !!clientEmail,
+        hasKey: !!privateKey,
+      });
+      return NextResponse.json({ 
+        error: "Server configuration error: Google Sheets credentials are missing." 
+      }, { status: 500 });
+    }
+
     const auth = new google.auth.GoogleAuth({
       credentials: {
-        client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-        private_key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
+        client_email: clientEmail,
+        private_key: privateKey.replace(/\\n/g, "\n"),
       },
       scopes: ["https://www.googleapis.com/auth/spreadsheets"],
     });
 
     const sheets = google.sheets({ version: "v4", auth });
-    const range = `${site.googleSheetName || "Sheet1"}!A:G`;
+    const sheetName = site.googleSheetName || "Sheet1";
+    const range = `'${sheetName}'!A:G`;
+
+    console.log("RSVP Submission:", {
+      spreadsheetId: googleSheetId,
+      range,
+      siteSlug: slug
+    });
 
     const timestamp = new Date().toISOString();
     
