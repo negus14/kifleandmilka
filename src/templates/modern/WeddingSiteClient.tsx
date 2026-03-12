@@ -154,6 +154,12 @@ export default function WeddingSiteClient({
             const willShow = !menu.classList.contains("show");
             menu.classList.toggle("show", willShow);
             newToggle.setAttribute("aria-expanded", String(willShow));
+
+            // Ensure parent doesn't clip dropdown and stays above other sections
+            if (parent) {
+              (parent as HTMLElement).style.zIndex = willShow ? "9999" : "";
+              (parent as HTMLElement).style.position = willShow ? "relative" : "";
+            }
           }
         });
       });
@@ -161,6 +167,7 @@ export default function WeddingSiteClient({
       document.addEventListener("click", () => {
         document.querySelectorAll(".gift__dropdown-menu").forEach(m => m.classList.remove("show"));
         document.querySelectorAll(".gift__dropdown-toggle").forEach(t => t.setAttribute("aria-expanded", "false"));
+        document.querySelectorAll(".gift__dropdown").forEach(d => (d as HTMLElement).style.zIndex = "");
       });
     }
 
