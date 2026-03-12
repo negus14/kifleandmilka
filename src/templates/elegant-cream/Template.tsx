@@ -55,7 +55,7 @@ export default function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
   ].filter((item) => visibleSections.has(item.id));
 
   // Section renderers
-  const sections: Record<string, () => React.ReactNode> = {
+  const sections: Record<string, (cls?: string, style?: React.CSSProperties) => React.ReactNode> = {
     hero: () => (
       <section className="hero" id="hero">
         <div className="hero__bg" style={{
@@ -94,8 +94,8 @@ export default function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
       </section>
     ),
 
-    story: () => (
-      <section className="section section--tan" id="story">
+    story: (cls = "", style = {}) => (
+      <section className={`section ${cls || "section--tan"}`} id="story" style={style}>
         <div className="container">
           <div className="section__header reveal">
             <p className="section__subtitle">{site.storySubtitle}</p>
@@ -121,8 +121,8 @@ export default function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
       </section>
     ),
 
-    details: () => (
-      <section className="section section--tan" id="details">
+    details: (cls = "", style = {}) => (
+      <section className={`section ${cls || "section--tan"}`} id="details" style={style}>
         <div className="container">
           <div className="section__header reveal">
             <p className="section__subtitle">The Celebration</p>
@@ -171,10 +171,10 @@ export default function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
       </section>
     ),
 
-    day2: () => {
+    day2: (cls = "", style = {}) => {
       if (!site.dayTwoEvent) return null;
       return (
-        <section className="section section--cream" id="day2">
+        <section className={`section ${cls || "section--cream"}`} id="day2" style={style}>
           <div className="container">
             <div className="day2 reveal">
               <h2 className="day2__heading">{site.dayTwoEvent.heading}</h2>
@@ -191,10 +191,10 @@ export default function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
       );
     },
 
-    quote: () => {
+    quote: (cls = "", style = {}) => {
       if (!site.quoteText) return null;
       return (
-        <section className="section section--cream">
+        <section className={`section ${cls || "section--cream"}`} style={style}>
           <div className="container">
             <div className="quote-section reveal">
               <p className="quote__text">&ldquo;{site.quoteText}&rdquo;</p>
@@ -205,10 +205,10 @@ export default function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
       );
     },
 
-    featuredPhoto: () => {
+    featuredPhoto: (cls = "", style = {}) => {
       if (!site.featuredPhotoUrl) return null;
       return (
-        <section className="section section--cream">
+        <section className={`section ${cls || "section--cream"}`} style={style}>
           <div className="container">
             <div className="featured-photo reveal">
               <img
@@ -225,10 +225,10 @@ export default function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
       );
     },
 
-    letter: () => {
+    letter: (cls = "", style = {}) => {
       if (!site.letterOpening) return null;
       return (
-        <section className="section section--dark">
+        <section className={`section ${cls || "section--dark"}`} style={style}>
           <div className="container">
             <div className="letter reveal">
               <p className="letter__opening">{site.letterOpening}</p>
@@ -242,7 +242,7 @@ export default function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
       );
     },
 
-    schedule: () => {
+    schedule: (cls = "", style = {}) => {
       // Support both legacy scheduleItems and new weddingDays
       const days = site.weddingDays?.filter((d) => !d.isPrivate) ?? (
         site.scheduleItems.length > 0
@@ -270,7 +270,7 @@ export default function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
       );
 
       return (
-        <section className="section section--tan" id="schedule">
+        <section className={`section ${cls || "section--tan"}`} id="schedule" style={style}>
           <div className="container">
             <div className="section__header reveal">
               <p className="section__subtitle">The Day{days.length > 1 ? "s" : ""}</p>
@@ -289,10 +289,10 @@ export default function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
       );
     },
 
-    menu: () => {
+    menu: (cls = "", style = {}) => {
       if (site.menuItems.length === 0) return null;
       return (
-        <section className="section section--dark" id="menu">
+        <section className={`section ${cls || "section--dark"}`} id="menu" style={style}>
           <div className="container">
             <div className="menu-section reveal">
               <h2 className="menu__heading">Menu</h2>
@@ -313,11 +313,12 @@ export default function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
       );
     },
 
-    gallery: () => {
+    gallery: (cls = "", style = {}) => {
       if (site.galleryImages.length === 0) return null;
+      const isCustomBg = !!site.sectionBackgrounds?.gallery;
       return (
-        <section className="section section--dark gallery-dark" id="gallery">
-          <div className="gallery-dark__bg"></div>
+        <section className={`section ${cls || "section--dark"} gallery-dark`} id="gallery" style={style}>
+          {!isCustomBg && <div className="gallery-dark__bg"></div>}
           <div className="container">
             <div className="section__header reveal">
               <p className="section__subtitle">Moments</p>
@@ -341,10 +342,10 @@ export default function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
       );
     },
 
-    explore: () => {
+    explore: (cls = "", style = {}) => {
       if (site.exploreGroups.length === 0) return null;
       return (
-        <section className="section section--tan" id="explore">
+        <section className={`section ${cls || "section--tan"}`} id="explore" style={style}>
           <div className="container">
             <div className="section__header reveal">
               <p className="section__subtitle">While You&rsquo;re Here</p>
@@ -373,10 +374,10 @@ export default function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
       );
     },
 
-    accommodations: () => {
+    accommodations: (cls = "", style = {}) => {
       if (site.accommodations.length === 0) return null;
       return (
-        <section className="section section--dark" id="accommodations">
+        <section className={`section ${cls || "section--dark"}`} id="accommodations" style={style}>
           <div className="container">
             <div className="section__header reveal">
               <p className="section__subtitle">Where to Stay</p>
@@ -407,8 +408,8 @@ export default function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
       );
     },
 
-    rsvp: () => (
-      <section className="section section--tan" id="rsvp">
+    rsvp: (cls = "", style = {}) => (
+      <section className={`section ${cls || "section--tan"}`} id="rsvp" style={style}>
         <div className="container">
           <div className="rsvp__form-wrap reveal" style={{ maxWidth: 700, margin: "0 auto", textAlign: "center" }}>
             <h2 className="rsvp__heading">{site.rsvpHeading}</h2>
@@ -419,26 +420,40 @@ export default function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
       </section>
     ),
 
-    gift: () => {
+    gift: (cls = "", style = {}) => {
       if (!site.giftHeading) return null;
-      const isPaypal = site.giftPaymentLabel?.toLowerCase().includes("paypal");
+
+      const paymentLinks = [...(site.giftPaymentLinks || [])];
+      // Fallback for legacy single link if array is empty
+      if (paymentLinks.length === 0 && site.giftPaymentUrl && site.giftPaymentLabel) {
+        paymentLinks.push({ label: site.giftPaymentLabel, url: site.giftPaymentUrl });
+      }
       
       return (
-        <section className="section section--cream" id="gift">
+        <section className={`section ${cls || "section--cream"}`} id="gift" style={style}>
           <div className="container">
             <div className="gift-section reveal">
               <h2 className="gift__heading">{site.giftHeading}</h2>
               <p className="gift__subheading">{site.giftSubheading}</p>
               
-              {site.giftPaymentUrl && (
-                <a href={site.giftPaymentUrl} target="_blank" rel="noopener noreferrer" className="gift__cta-btn">
-                  {isPaypal && (
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797H9.603c-.564 0-1.04.408-1.13.964L7.076 21.337zm7.874-15.09c-.256 0-.51.02-.758.06-.876.14-1.594.673-1.955 1.456a3.12 3.12 0 0 0-.263 1.282c0 1.14.706 1.906 2.052 1.906h.882c2.582 0 4.263-1.063 4.87-3.842.044-.2.073-.39.09-.57.1-1.06-.587-2.292-4.918-2.292z" />
-                    </svg>
-                  )}
-                  {site.giftPaymentLabel}
-                </a>
+              <div className="gift__btns-wrap">
+                {paymentLinks.map((link, i) => {
+                  const isPaypal = link.label?.toLowerCase().includes("paypal");
+                  return (
+                    <a key={i} href={link.url} target="_blank" rel="noopener noreferrer" className="gift__cta-btn">
+                      {isPaypal && (
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797H9.603c-.564 0-1.04.408-1.13.964L7.076 21.337zm7.874-15.09c-.256 0-.51.02-.758.06-.876.14-1.594.673-1.955 1.456a3.12 3.12 0 0 0-.263 1.282c0 1.14.706 1.906 2.052 1.906h.882c2.582 0 4.263-1.063 4.87-3.842.044-.2.073-.39.09-.57.1-1.06-.587-2.292-4.918-2.292z" />
+                        </svg>
+                      )}
+                      {link.label}
+                    </a>
+                  );
+                })}
+              </div>
+
+              {paymentLinks.length > 0 && (site.giftBankName || site.giftAccountNumber) && (
+                <div className="gift__divider">OR</div>
               )}
 
               {(site.giftBankName || site.giftAccountNumber) && (
@@ -482,10 +497,10 @@ export default function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
       );
     },
 
-    contact: () => {
+    contact: (cls = "", style = {}) => {
       if (site.contactEntries.length === 0) return null;
       return (
-        <section className="section section--cream" id="contact">
+        <section className={`section ${cls || "section--cream"}`} id="contact" style={style}>
           <div className="container">
             <div className="contact-section reveal">
               <h2 className="contact__heading">{site.contactHeading || "Get in Touch"}</h2>
@@ -504,8 +519,8 @@ export default function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
       );
     },
 
-    footer: () => (
-      <footer className="footer">
+    footer: (cls = "", style = {}) => (
+      <footer className={`footer ${cls}`} style={style}>
         <p className="footer__names">{site.footerNames}</p>
         <p className="footer__date">{site.footerDateText}</p>
         <div className="footer__line"></div>
@@ -550,7 +565,12 @@ export default function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
         if (!section.visible) return null;
         const render = sections[section.id];
         if (!render) return null;
-        return <div key={section.id}>{render()}</div>;
+
+        const bgUrl = site.sectionBackgrounds?.[section.id];
+        const extraClass = bgUrl ? "section--has-bg section--light-text" : "";
+        const extraStyle = bgUrl ? { backgroundImage: `url('${bgUrl}')` } : {};
+
+        return <div key={section.id}>{render(extraClass, extraStyle)}</div>;
       })}
     </div>
   );

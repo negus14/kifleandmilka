@@ -339,6 +339,89 @@
   color: var(--color-tan);
 }
 
+.section--has-bg {
+  position: relative;
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+}
+
+.section--has-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 1;
+}
+
+.section--has-bg > * {
+  position: relative;
+  z-index: 2;
+}
+
+.section--has-bg.section--light-text,
+.section--has-bg.section--light-text .section__title,
+.section--has-bg.section--light-text .section__subtitle,
+.section--has-bg.section--light-text .story__lead,
+.section--has-bg.section--light-text .story__text,
+.section--has-bg.section--light-text .info-card__title,
+.section--has-bg.section--light-text .info-card__text,
+.section--has-bg.section--light-text .info-card__label,
+.section--has-bg.section--light-text .venue-info__heading,
+.section--has-bg.section--light-text .venue-info__subheading,
+.section--has-bg.section--light-text .venue-info__text,
+.section--has-bg.section--light-text .venue-info__address,
+.section--has-bg.section--light-text .day2__heading,
+.section--has-bg.section--light-text .day2__address,
+.section--has-bg.section--light-text .day2__note,
+.section--has-bg.section--light-text .quote__text,
+.section--has-bg.section--light-text .quote__attribution,
+.section--has-bg.section--light-text .featured-photo__caption,
+.section--has-bg.section--light-text .timeline__hour,
+.section--has-bg.section--light-text .timeline__event,
+.section--has-bg.section--light-text .timeline__venue,
+.section--has-bg.section--light-text .timeline__desc,
+.section--has-bg.section--light-text .schedule-day__label,
+.section--has-bg.section--light-text .rsvp__heading,
+.section--has-bg.section--light-text .rsvp__subheading,
+.section--has-bg.section--light-text .gift__heading,
+.section--has-bg.section--light-text .gift__subheading,
+.section--has-bg.section--light-text .gift__note,
+.section--has-bg.section--light-text .contact__heading,
+.section--has-bg.section--light-text .contact__subheading,
+.section--has-bg.section--light-text .contact__entry,
+.section--has-bg.section--light-text .contact__entry a,
+.section--has-bg.section--light-text .footer__names,
+.section--has-bg.section--light-text .footer__date,
+.section--has-bg.section--light-text .footer__copy,
+.section--has-bg.section--light-text .footer__dev {
+  color: #fff !important;
+}
+
+.section--has-bg.section--light-text .footer__line {
+  background: #fff !important;
+  opacity: 0.3;
+}
+
+.section--has-bg.section--light-text .section__line {
+  background: #fff !important;
+  opacity: 0.4;
+}
+
+.section--has-bg.section--light-text .info-card,
+.section--has-bg.section--light-text .gift__bank-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.section--has-bg.section--light-text .info-card__time,
+.section--has-bg.section--light-text .day2__time {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #fff;
+}
+
 .container {
   width: var(--container-width);
   margin: 0 auto;
@@ -1271,13 +1354,21 @@
   line-height: 1.8;
 }
 
+.gift__btns-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
 .gift__cta-btn {
   display: inline-flex;
   align-items: center;
   gap: 0.75rem;
   padding: 1rem 2.5rem;
-  background: var(--color-dark);
-  color: var(--color-cream);
+  background: var(--color-cream);
+  color: var(--color-dark);
   font-family: var(--font-sans);
   font-size: 0.8rem;
   font-weight: 500;
@@ -1290,8 +1381,8 @@
 }
 
 .gift__cta-btn:hover {
-  background: transparent;
-  color: var(--color-dark);
+  background: var(--color-dark);
+  color: var(--color-cream);
 }
 
 .gift__cta-btn:active {
@@ -1303,8 +1394,31 @@
   height: 22px;
 }
 
+.gift__divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 3rem 0;
+  color: var(--color-dark);
+  opacity: 0.3;
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.gift__divider::before,
+.gift__divider::after {
+  content: '';
+  height: 1px;
+  flex: 1;
+  background: var(--color-dark);
+  margin: 0 1.5rem;
+  max-width: 100px;
+}
+
 .gift__bank-wrap {
-  margin-top: 3rem;
   display: flex;
   justify-content: center;
 }
