@@ -714,6 +714,26 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                   }} 
                 />
                 <div className="h-px bg-[#2d2b25]/10 my-6" />
+
+                <SectionTitle>Details Layout Style</SectionTitle>
+                <div className="grid grid-cols-3 gap-3 mb-8">
+                  {(["grid", "split", "minimal"] as const).map((style) => (
+                    <button
+                      key={style}
+                      type="button"
+                      onClick={() => set("detailsStyle", style)}
+                      className={`p-3 rounded-sm border-2 transition-all text-center ${
+                        (site.detailsStyle || "grid") === style
+                          ? "border-[#2d2b25] bg-[#2d2b25]/5"
+                          : "border-[#2d2b25]/10 hover:border-[#2d2b25]/30"
+                      }`}
+                    >
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-[#2d2b25]">
+                        {style}
+                      </p>
+                    </button>
+                  ))}
+                </div>
                 
                 <SectionTitle>Venues</SectionTitle>
                 <SortableList items={site.venues} prefix="venues" onReorder={(items) => set("venues", items)}>
@@ -780,6 +800,26 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                 />
                 <div className="h-px bg-[#2d2b25]/10 my-6" />
                 
+                <SectionTitle>Schedule Visualization Style</SectionTitle>
+                <div className="grid grid-cols-3 gap-3 mb-8">
+                  {(["classic", "minimal", "cards"] as const).map((style) => (
+                    <button
+                      key={style}
+                      type="button"
+                      onClick={() => set("scheduleStyle", style)}
+                      className={`p-3 rounded-sm border-2 transition-all text-center ${
+                        (site.scheduleStyle || "classic") === style
+                          ? "border-[#2d2b25] bg-[#2d2b25]/5"
+                          : "border-[#2d2b25]/10 hover:border-[#2d2b25]/30"
+                      }`}
+                    >
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-[#2d2b25]">
+                        {style}
+                      </p>
+                    </button>
+                  ))}
+                </div>
+
                 <SectionTitle>Wedding Days</SectionTitle>
                 <p className="text-xs text-[#2d2b25]/50 mb-4">
                   Add multiple days (wedding day, day two, bridal party, etc.). Private days are only visible to you.
