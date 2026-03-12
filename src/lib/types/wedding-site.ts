@@ -19,6 +19,17 @@ export interface DayTwoEvent {
   note: string;
 }
 
+export interface EventDay {
+  id: string;
+  label: string;         // e.g. "Day One", "Farewell Brunch"
+  date?: string;
+  venues: VenueItem[];
+  infoBlocks: VenueInfoBlock[];
+  note?: string;
+  detailsStyle?: "grid" | "split" | "minimal";
+  sectionBackground?: string;
+}
+
 export interface ScheduleItem {
   hour: string;
   period: string;
@@ -75,27 +86,27 @@ export interface ContactEntry {
 }
 
 export interface SectionConfig {
-  id: string;
+  id: string;   // Unique instance ID, e.g. "quote-1710264000"
+  type: string; // Section type, e.g. "quote", "story", "featuredPhoto"
   visible: boolean;
 }
 
 export const DEFAULT_SECTION_ORDER: SectionConfig[] = [
-  { id: "hero", visible: true },
-  { id: "story", visible: true },
-  { id: "details", visible: true },
-  { id: "day2", visible: true },
-  { id: "quote", visible: true },
-  { id: "featuredPhoto", visible: true },
-  { id: "letter", visible: true },
-  { id: "schedule", visible: true },
-  { id: "menu", visible: true },
-  { id: "gallery", visible: true },
-  { id: "explore", visible: true },
-  { id: "accommodations", visible: true },
-  { id: "rsvp", visible: true },
-  { id: "gift", visible: true },
-  { id: "contact", visible: true },
-  { id: "footer", visible: true },
+  { id: "hero", type: "hero", visible: true },
+  { id: "story", type: "story", visible: true },
+  { id: "details", type: "details", visible: true },
+  { id: "quote", type: "quote", visible: true },
+  { id: "featuredPhoto", type: "featuredPhoto", visible: true },
+  { id: "letter", type: "letter", visible: true },
+  { id: "schedule", type: "schedule", visible: true },
+  { id: "menu", type: "menu", visible: true },
+  { id: "gallery", type: "gallery", visible: true },
+  { id: "explore", type: "explore", visible: true },
+  { id: "accommodations", type: "accommodations", visible: true },
+  { id: "rsvp", type: "rsvp", visible: true },
+  { id: "gift", type: "gift", visible: true },
+  { id: "contact", type: "contact", visible: true },
+  { id: "footer", type: "footer", visible: true },
 ];
 
 export const SECTION_LABELS: Record<string, string> = {
@@ -191,10 +202,16 @@ export interface WeddingSite {
   contactHeading?: string;
 
   // Structured sections
-  venues: VenueItem[];
-  venueInfoBlocks: VenueInfoBlock[];
+  eventDays: EventDay[];
+  
+  // Legacy fields (to be migrated)
+  venues?: VenueItem[];
+  venueInfoBlocks?: VenueInfoBlock[];
   detailsStyle?: "grid" | "split" | "minimal";
-  dayTwoEvent: DayTwoEvent | null;
+  detailsDayLabel?: string;
+  dayTwoEvent?: DayTwoEvent | null;
+  dayTwoDayLabel?: string;
+
   scheduleItems: ScheduleItem[];
   weddingDays?: WeddingDay[];
   scheduleStyle?: "classic" | "minimal" | "cards";
@@ -206,5 +223,6 @@ export interface WeddingSite {
   contactEntries: ContactEntry[];
   navBrand: string;
   sectionBackgrounds?: Record<string, string>;
+  sectionData?: Record<string, any>; // Instance-specific data for duplicate sections
   recentlyUsedLinks?: string[];
 }

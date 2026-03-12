@@ -5,46 +5,48 @@ import WeddingSiteClient from "./WeddingSiteClient";
 import RSVPForm from "@/components/RSVPForm";
 import "./styles.css";
 
-export function ModernTemplate({ site }: { site: WeddingSite }) {
+export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPreview?: boolean }) {
   const theme = getTheme(site.templateId);
   const themeVars = generateThemeVars(site.templateId);
   const { order, visibleSections, navItems } = getSectionData(site);
 
-  const sections: Record<string, (cls?: string, style?: React.CSSProperties) => React.ReactNode> = {
-    hero: (cls = "", style = {}) => (
-      <header className={`modern-hero ${cls}`} id="hero" style={style}>
+  const d = (id: string, key: string, fallback: any) => site.sectionData?.[id]?.[key] ?? fallback;
+
+  const sections: Record<string, (id: string, cls?: string, style?: React.CSSProperties) => React.ReactNode> = {
+    hero: (id, cls = "", style = {}) => (
+      <header className={`modern-hero ${cls}`} id={id} style={style}>
         <div className="modern-hero__bg"></div>
         <div className="modern-container">
           <div className="modern-hero__content reveal">
-            <p className="modern-hero__pretext">{site.heroPretext}</p>
+            <p className="modern-hero__pretext">{d(id, 'pretext', site.heroPretext)}</p>
             <h1 className="modern-hero__names">
               {site.partner1Name} <span className="modern-amp">&</span> {site.partner2Name}
             </h1>
-            <p className="modern-hero__tagline">{site.heroTagline}</p>
+            <p className="modern-hero__tagline">{d(id, 'tagline', site.heroTagline)}</p>
             <div className="modern-hero__date-loc">
               <span className="modern-hero__date">{site.dateDisplayText}</span>
               <span className="modern-hero__sep">|</span>
               <span className="modern-hero__loc">{site.locationText}</span>
             </div>
-            <a href="#rsvp" className="modern-btn modern-btn--primary">{site.heroCta}</a>
+            <a href="#rsvp" className="modern-btn modern-btn--primary">{d(id, 'cta', site.heroCta)}</a>
           </div>
         </div>
       </header>
     ),
 
-    story: (cls = "", style = {}) => (
-      <section className={`modern-section ${cls}`} id="story" style={style}>
+    story: (id, cls = "", style = {}) => (
+      <section className={`modern-section ${cls}`} id={id} style={style}>
         <div className="modern-container">
           <div className="modern-grid modern-grid--2col">
             <div className="modern-story__img-wrap reveal">
-              <img src={site.storyImageUrl} alt={site.storyTitle} className="modern-story__img" />
+              <img src={d(id, 'imageUrl', site.storyImageUrl)} alt={d(id, 'title', site.storyTitle)} className="modern-story__img" />
             </div>
             <div className="modern-story__content reveal">
-              <p className="modern-subtitle">{site.storySubtitle}</p>
-              <h2 className="modern-title">{site.storyTitle}</h2>
-              <blockquote className="modern-quote">{site.storyLeadQuote}</blockquote>
+              <p className="modern-subtitle">{d(id, 'subtitle', site.storySubtitle)}</p>
+              <h2 className="modern-title">{d(id, 'title', site.storyTitle)}</h2>
+              <blockquote className="modern-quote">{d(id, 'leadQuote', site.storyLeadQuote)}</blockquote>
               <div className="modern-text">
-                {site.storyBody.map((p, i) => <p key={i}>{p}</p>)}
+                {d(id, 'body', site.storyBody).map((p: string, i: number) => <p key={i}>{p}</p>)}
               </div>
             </div>
           </div>
@@ -52,39 +54,168 @@ export function ModernTemplate({ site }: { site: WeddingSite }) {
       </section>
     ),
 
-    details: (cls = "", style = {}) => (
-      <section className={`modern-section ${cls}`} id="details" style={style}>
-        <div className="modern-container">
-          <h2 className="modern-title modern-title--center reveal">The Details</h2>
-          <div className="modern-grid modern-grid--3col reveal">
-            {site.venues.map((venue, i) => (
-              <div key={i} className="modern-card">
-                <p className="modern-card__label">{venue.label}</p>
-                <h3 className="modern-card__title">{venue.name}</h3>
-                <p className="modern-card__text">{venue.address}</p>
-                <p className="modern-card__time">{venue.time}</p>
-                {venue.mapsEmbedUrl && (
-                  <iframe 
-                    src={toEmbedUrl(venue.mapsEmbedUrl)} 
-                    className="modern-card__map" 
-                    loading="lazy" 
-                    title={`${venue.label} location map`}
-                  />
-                )}
-              </div>
-            ))}
-            {site.venueInfoBlocks.map((block, i) => (
-              <div key={i} className="modern-card">
-                {block.heading && <h3 className="modern-card__title">{block.heading}</h3>}
-                <p className="modern-card__text">{block.text}</p>
-              </div>
-            ))}
+    quote: (id, cls = "", style = {}) => {
+      const text = d(id, 'text', site.quoteText);
+      if (!text) return null;
+      return (
+        <section className={`modern-section ${cls}`} id={id} style={style}>
+          <div className="modern-container modern-container--narrow text-center reveal">
+            <h2 className="modern-quote modern-quote--large">"{text}"</h2>
+            <p className="modern-quote-attr">— {d(id, 'attribution', site.quoteAttribution)}</p>
           </div>
-        </div>
-      </section>
-    ),
+        </section>
+      );
+    },
 
-    schedule: (cls = "", style = {}) => {
+    featuredPhoto: (id, cls = "", style = {}) => {
+      const url = d(id, 'url', site.featuredPhotoUrl);
+      if (!url) return null;
+      return (
+        <section className={`modern-section ${cls}`} id={id} style={style}>
+          <div className="modern-container">
+            <div className="modern-featured-photo reveal">
+              <img 
+                src={url} 
+                alt="Featured" 
+                className="modern-featured-photo__img" 
+                data-zoomable 
+              />
+              <p className="modern-featured-photo__caption">{d(id, 'caption', site.featuredPhotoCaption)}</p>
+            </div>
+          </div>
+        </section>
+      );
+    },
+
+    letter: (id, cls = "", style = {}) => {
+      const opening = d(id, 'opening', site.letterOpening);
+      if (!opening) return null;
+      return (
+        <section className={`modern-section ${cls}`} id={id} style={style}>
+          <div className="modern-container modern-container--narrow">
+            <div className="modern-letter reveal">
+              <p className="modern-letter__opening">{opening}</p>
+              {d(id, 'body', site.letterBody).map((p: string, i: number) => (
+                <p key={i} className="modern-letter__body">{p}</p>
+              ))}
+              <p className="modern-letter__closing">{d(id, 'closing', site.letterClosing)}</p>
+            </div>
+          </div>
+        </section>
+      );
+    },
+
+    details: (id, cls = "", style = {}) => {
+      if (!site.eventDays || site.eventDays.length === 0) return null;
+      const isPrv = cls.includes("preview");
+
+      const renderVenueCard = (venue: typeof site.venues[0], i: number) => (
+        <div key={i} className={`modern-card reveal ${isPrv ? "visible" : ""}`}>
+          <p className="modern-card__label">{venue.label}</p>
+          <h3 className="modern-card__title">{venue.name}</h3>
+          <p className="modern-card__text">{venue.address}</p>
+          <p className="modern-card__time">{venue.time}</p>
+          {venue.mapsEmbedUrl && (
+            <iframe 
+              src={toEmbedUrl(venue.mapsEmbedUrl)} 
+              className="modern-card__map" 
+              loading="lazy" 
+              title={`${venue.label} location map`}
+            />
+          )}
+        </div>
+      );
+
+      const renderInfoBlock = (block: typeof site.venueInfoBlocks[0], i: number) => (
+        <div key={i} className={`modern-card reveal ${isPrv ? "visible" : ""}`}>
+          {block.heading && <h3 className="modern-card__title">{block.heading}</h3>}
+          <p className="modern-card__text">{block.text}</p>
+        </div>
+      );
+
+      return (
+        <div id="details">
+          {site.eventDays.map((day, di) => {
+            const dayStyle = day.detailsStyle || "grid";
+            const bgUrl = day.sectionBackground;
+            const finalCls = `modern-section ${cls} ${bgUrl ? "modern-section--has-bg" : ""}`;
+            const finalStyle = { ...style, ...(bgUrl ? { backgroundImage: `url('${bgUrl}')` } : {}) };
+
+            if (dayStyle === "split") {
+              return (
+                <section key={day.id} className={finalCls} style={finalStyle}>
+                  <div className="modern-container">
+                    <p className={`modern-subtitle modern-subtitle--center reveal ${isPrv ? "visible" : ""}`}>{day.label}</p>
+                    {day.date && <p className={`modern-text modern-text--small text-center mb-10 reveal ${isPrv ? "visible" : ""}`}>{day.date}</p>}
+                    <div className={`modern-grid modern-grid--2col reveal ${isPrv ? "visible" : ""}`} style={{ alignItems: "start" }}>
+                      <div className="flex flex-col gap-6">
+                        <h2 className="modern-title">The Venues</h2>
+                        {day.venues.map(renderVenueCard)}
+                      </div>
+                      <div className="flex flex-col gap-6">
+                        <h2 className="modern-title">Good to Know</h2>
+                        {day.infoBlocks.map(renderInfoBlock)}
+                      </div>
+                    </div>
+                    {day.note && <p className={`modern-text modern-text--small text-center mt-10 reveal ${isPrv ? "visible" : ""}`}>{day.note}</p>}
+                  </div>
+                </section>
+              );
+            }
+
+            if (dayStyle === "minimal") {
+              return (
+                <section key={day.id} className={finalCls} style={finalStyle}>
+                  <div className="modern-container modern-container--narrow">
+                    <p className={`modern-subtitle modern-subtitle--center reveal ${isPrv ? "visible" : ""}`}>{day.label}</p>
+                    {day.date && <p className={`modern-text modern-text--small text-center mb-6 reveal ${isPrv ? "visible" : ""}`}>{day.date}</p>}
+                    <h2 className={`modern-title modern-title--center reveal ${isPrv ? "visible" : ""}`}>Essential Information</h2>
+                    <div className="modern-details-minimal">
+                      {day.venues.map((v, i) => (
+                        <div key={i} className={`modern-details-minimal__item reveal ${isPrv ? "visible" : ""}`}>
+                          <div className="modern-details-minimal__label">{v.label}</div>
+                          <div className="modern-details-minimal__main">
+                            <h3 className="modern-details-minimal__name">{v.name}</h3>
+                            <p className="modern-details-minimal__time">{v.time}</p>
+                          </div>
+                          <p className="modern-details-minimal__address">{v.address}</p>
+                        </div>
+                      ))}
+                    </div>
+                    {day.infoBlocks.length > 0 && (
+                      <div className="mt-12 flex flex-col gap-8">
+                        {day.infoBlocks.map(renderInfoBlock)}
+                      </div>
+                    )}
+                    {day.note && <p className={`modern-text modern-text--small text-center mt-10 reveal ${isPrv ? "visible" : ""}`}>{day.note}</p>}
+                  </div>
+                </section>
+              );
+            }
+
+            // Default: Grid
+            return (
+              <section key={day.id} className={finalCls} style={finalStyle}>
+                <div className="modern-container">
+                  <p className={`modern-subtitle modern-subtitle--center reveal ${isPrv ? "visible" : ""}`}>{day.label}</p>
+                  {day.date && <p className={`modern-text modern-text--small text-center mb-6 reveal ${isPrv ? "visible" : ""}`}>{day.date}</p>}
+                  <h2 className={`modern-title modern-title--center reveal ${isPrv ? "visible" : ""}`}>The Details</h2>
+                  <div className={`modern-grid modern-grid--3col reveal ${isPrv ? "visible" : ""}`}>
+                    {day.venues.map(renderVenueCard)}
+                    {day.infoBlocks.map(renderInfoBlock)}
+                  </div>
+                  {day.note && <p className={`modern-text modern-text--small text-center mt-10 reveal ${isPrv ? "visible" : ""}`}>{day.note}</p>}
+                </div>
+              </section>
+            );
+          })}
+        </div>
+      );
+    },
+
+    day2: () => null, // Day 2 is now integrated into details (eventDays)
+
+    schedule: (id, cls = "", style = {}) => {
       const days = site.weddingDays?.filter((d) => !d.isPrivate) ?? (
         site.scheduleItems.length > 0
           ? [{ label: "", date: "", isPrivate: false, items: site.scheduleItems }]
@@ -148,7 +279,7 @@ export function ModernTemplate({ site }: { site: WeddingSite }) {
       };
 
       return (
-        <section className={`modern-section ${cls}`} id="schedule" style={style}>
+        <section className={`modern-section ${cls}`} id={id} style={style}>
           <div className={`modern-container modern-container--narrow ${cls.includes("preview") ? "preview-mode" : ""}`}>
             <h2 className="modern-title modern-title--center reveal">Schedule</h2>
             
@@ -168,8 +299,8 @@ export function ModernTemplate({ site }: { site: WeddingSite }) {
       );
     },
 
-    gallery: (cls = "", style = {}) => (
-      <section className={`modern-section ${cls}`} id="gallery" style={style}>
+    gallery: (id, cls = "", style = {}) => (
+      <section className={`modern-section ${cls}`} id={id} style={style}>
         <div className="modern-container">
           <h2 className="modern-title reveal">Gallery</h2>
           <div className="modern-gallery reveal">
@@ -187,8 +318,68 @@ export function ModernTemplate({ site }: { site: WeddingSite }) {
       </section>
     ),
 
-    rsvp: (cls = "", style = {}) => (
-      <section className={`modern-section ${cls}`} id="rsvp" style={style}>
+    explore: (id, cls = "", style = {}) => {
+      if (site.exploreGroups.length === 0) return null;
+      const isPrv = cls.includes("preview");
+      return (
+        <section className={`modern-section ${cls}`} id={id} style={style}>
+          <div className="modern-container">
+            <h2 className={`modern-title modern-title--center reveal ${isPrv ? "visible" : ""}`}>Things to Do</h2>
+            <div className="modern-grid modern-grid--3col">
+              {site.exploreGroups.map((group, i) => (
+                <div key={i} className={`modern-card reveal ${isPrv ? "visible" : ""}`}>
+                  <h3 className="modern-card__title">{group.heading}</h3>
+                  {group.subheading && <p className="modern-card__text italic mb-4">{group.subheading}</p>}
+                  <ul className="flex flex-col gap-2">
+                    {group.links.map((link, j) => (
+                      <li key={j}>
+                        <a href={link.url} target="_blank" rel="noopener noreferrer" className="modern-link text-sm">
+                          {link.label}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      );
+    },
+
+    accommodations: (id, cls = "", style = {}) => {
+      if (site.accommodations.length === 0) return null;
+      const isPrv = cls.includes("preview");
+      return (
+        <section className={`modern-section ${cls}`} id={id} style={style}>
+          <div className="modern-container">
+            <h2 className={`modern-title modern-title--center reveal ${isPrv ? "visible" : ""}`}>Where to Stay</h2>
+            <div className="modern-grid modern-grid--2col">
+              {site.accommodations.map((hotel, i) => (
+                <div key={i} className={`modern-card reveal ${isPrv ? "visible" : ""}`}>
+                  {hotel.badge && <span className="modern-card__label">{hotel.badge}</span>}
+                  <h3 className="modern-card__title">{hotel.name}</h3>
+                  <p className="modern-card__label mb-4">{hotel.distance}</p>
+                  <p className="modern-card__text mb-6">{hotel.description}</p>
+                  {hotel.discountCode && (
+                    <div className="mb-6 p-3 bg-black/5 rounded-sm border border-black/5">
+                      <p className="text-[10px] font-bold uppercase tracking-widest opacity-50 mb-1">Discount Code</p>
+                      <p className="font-bold tracking-wider">{hotel.discountCode}</p>
+                    </div>
+                  )}
+                  <a href={hotel.bookingUrl} target="_blank" rel="noopener noreferrer" className="modern-btn modern-btn--primary text-center">
+                    Book Your Stay
+                  </a>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      );
+    },
+
+    rsvp: (id, cls = "", style = {}) => (
+      <section className={`modern-section ${cls}`} id={id} style={style}>
         <div className="modern-container modern-container--narrow">
           <div className="modern-card modern-card--flat reveal">
             <h2 className="modern-title modern-title--center">{site.rsvpHeading}</h2>
@@ -199,7 +390,7 @@ export function ModernTemplate({ site }: { site: WeddingSite }) {
       </section>
     ),
 
-    gift: (cls = "", style = {}) => {
+    gift: (id, cls = "", style = {}) => {
       if (!site.giftHeading) return null;
 
       const paymentLinks = [...(site.giftPaymentLinks || [])];
@@ -213,7 +404,7 @@ export function ModernTemplate({ site }: { site: WeddingSite }) {
       if (!hasAnyGifts) return null;
 
       return (
-        <section className={`modern-section ${cls}`} id="gift" style={style}>
+        <section className={`modern-section ${cls}`} id={id} style={style}>
           <div className="modern-container modern-container--narrow reveal text-center">
             <h2 className="modern-title">{site.giftHeading}</h2>
             <p className="modern-text">{site.giftSubheading}</p>
@@ -279,8 +470,8 @@ export function ModernTemplate({ site }: { site: WeddingSite }) {
       );
     },
 
-    contact: (cls = "", style = {}) => (
-      <section className={`modern-section ${cls}`} id="footer" style={style}>
+    contact: (id, cls = "", style = {}) => (
+      <section className={`modern-section ${cls}`} id={id} style={style}>
         <div className="modern-container reveal text-center">
           <h2 className="modern-title">{site.contactHeading || "Contact"}</h2>
           <div className="modern-contact-grid">
@@ -295,8 +486,8 @@ export function ModernTemplate({ site }: { site: WeddingSite }) {
       </section>
     ),
 
-    footer: (cls = "", style = {}) => (
-      <footer className={`modern-footer ${cls}`} id="footer" style={style}>
+    footer: (id, cls = "", style = {}) => (
+      <footer className={`modern-footer ${cls}`} id={id} style={style}>
         <div className="modern-container">
           <div className="modern-footer__content">
             <p className="modern-footer__names">{site.footerNames}</p>
@@ -312,7 +503,12 @@ export function ModernTemplate({ site }: { site: WeddingSite }) {
 
   return (
     <div className="modern-site" style={themeVars}>
-      <WeddingSiteClient weddingDate={site.weddingDate} scheduleStyle={site.scheduleStyle} />
+      <WeddingSiteClient 
+        weddingDate={site.weddingDate} 
+        scheduleStyle={site.scheduleStyle} 
+        detailsStyle={site.detailsStyle}
+        sectionOrder={site.sectionOrder}
+      />
       
       <nav className="modern-nav">
         <div className="modern-container modern-nav__inner">
@@ -327,14 +523,15 @@ export function ModernTemplate({ site }: { site: WeddingSite }) {
 
       {order.map((section) => {
         if (!section.visible) return null;
-        const render = sections[section.id];
+        const render = sections[section.type] || sections[section.id];
         if (!render) return null;
 
         const bgUrl = site.sectionBackgrounds?.[section.id];
-        const extraClass = bgUrl ? "modern-section--has-bg" : "";
+        let extraClass = bgUrl ? "modern-section--has-bg" : "";
+        if (isPreview) extraClass += " preview";
         const extraStyle = bgUrl ? { backgroundImage: `url('${bgUrl}')` } : {};
 
-        return <div key={section.id}>{render(extraClass, extraStyle)}</div>;
+        return <div key={section.id}>{render(section.id, extraClass, extraStyle)}</div>;
       })}
     </div>
   );

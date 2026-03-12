@@ -5,26 +5,28 @@ import WeddingSiteClient from "./WeddingSiteClient";
 import RSVPForm from "@/components/RSVPForm";
 import "./styles.css";
 
-export function ClassicTemplate({ site }: { site: WeddingSite }) {
+export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPreview?: boolean }) {
   const theme = getTheme(site.templateId);
   const themeVars = generateThemeVars(site.templateId);
   const { order, visibleSections, navItems } = getSectionData(site);
 
   // Section renderers
-  const sections: Record<string, (cls?: string, style?: React.CSSProperties) => React.ReactNode> = {
-    hero: () => (
-      <section className="hero" id="hero">
+  const d = (id: string, key: string, fallback: any) => site.sectionData?.[id]?.[key] ?? fallback;
+
+  const sections: Record<string, (id: string, cls?: string, style?: React.CSSProperties) => React.ReactNode> = {
+    hero: (id, cls = "", style = {}) => (
+      <section className={`hero ${cls}`} id={id} style={style}>
         <div className="hero__bg" style={{
           background: `linear-gradient(180deg, color-mix(in srgb, var(--color-dark), transparent 75%) 0%, color-mix(in srgb, var(--color-dark), transparent 60%) 100%), url('${site.heroImageUrl}') center/cover no-repeat`,
         }}></div>
         <div className="hero__content">
-          <p className="hero__pretext">{site.heroPretext}</p>
+          <p className="hero__pretext">{d(id, 'pretext', site.heroPretext)}</p>
           <h1 className="hero__names">
             {site.partner1Name} <span className="hero__ampersand">&amp;</span> {site.partner2Name}
           </h1>
           <div className="hero__line"></div>
-          <p className="hero__tagline">{site.heroTagline}</p>
-          <a href="#rsvp" className="hero__btn">{site.heroCta}</a>
+          <p className="hero__tagline">{d(id, 'tagline', site.heroTagline)}</p>
+          <a href="#rsvp" className="hero__btn">{d(id, 'cta', site.heroCta)}</a>
           <p className="hero__date-line">
             {site.dateDisplayText} &bull; {site.locationText}
           </p>
@@ -50,24 +52,24 @@ export function ClassicTemplate({ site }: { site: WeddingSite }) {
       </section>
     ),
 
-    story: (cls = "", style = {}) => (
-      <section className={`section ${cls || "section--tan"}`} id="story" style={style}>
+    story: (id, cls = "", style = {}) => (
+      <section className={`section ${cls || "section--tan"}`} id={id} style={style}>
         <div className="container">
           <div className="section__header reveal">
-            <p className="section__subtitle">{site.storySubtitle}</p>
-            <h2 className="section__title">{site.storyTitle}</h2>
+            <p className="section__subtitle">{d(id, 'subtitle', site.storySubtitle)}</p>
+            <h2 className="section__title">{d(id, 'title', site.storyTitle)}</h2>
             <div className="section__line"></div>
           </div>
           <div className="story">
             <div className="story__text-block reveal">
-              <p className="story__lead">&ldquo;{site.storyLeadQuote}&rdquo;</p>
-              {site.storyBody.map((p, i) => (
+              <p className="story__lead">&ldquo;{d(id, 'leadQuote', site.storyLeadQuote)}&rdquo;</p>
+              {d(id, 'body', site.storyBody).map((p, i) => (
                 <p key={i} className="story__text">{p}</p>
               ))}
             </div>
             <img
               className="story__img reveal reveal-delay-1"
-              src={site.storyImageUrl}
+              src={d(id, 'imageUrl', site.storyImageUrl)}
               alt={`${site.partner1Name} and ${site.partner2Name}`}
               data-zoomable
               loading="lazy"
@@ -77,190 +79,183 @@ export function ClassicTemplate({ site }: { site: WeddingSite }) {
       </section>
     ),
 
-    details: (cls = "", style = {}) => {
-      const detailsStyle = site.detailsStyle || "grid";
+    details: (id, cls = "", style = {}) => {
+      if (!site.eventDays || site.eventDays.length === 0) return null;
 
       const renderVenueCard = (venue: typeof site.venues[0], i: number) => (
-        <div key={i} className={`info-card reveal${i > 0 ? ` reveal-delay-${i}` : ""}`}>
-          <div className="info-card__label">{venue.label}</div>
-          <h3 className="info-card__title">{venue.name}</h3>
-          <p className="info-card__text">
-            {venue.address.split("\n").map((line, j) => (
-              <span key={j}>{line}{j < venue.address.split("\n").length - 1 && <br />}</span>
-            ))}
-          </p>
+        <div key={i} className="info-card reveal">
+          <p className="info-card__label">{venue.label}</p>
+          <h3 className="info-card__name">{venue.name}</h3>
+          <p className="info-card__text">{venue.address.split("\n").map((l, j) => <span key={j}>{l}<br/></span>)}</p>
           <p className="info-card__time">{venue.time}</p>
           {venue.mapsEmbedUrl && (
-            <iframe
-              className="info-card__map"
-              src={toEmbedUrl(venue.mapsEmbedUrl)}
-              allowFullScreen
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              title={`${venue.label} venue map`}
-            ></iframe>
+            <iframe 
+              src={toEmbedUrl(venue.mapsEmbedUrl)} 
+              className="info-card__map" 
+              loading="lazy" 
+              title={`${venue.label} location map`}
+            />
           )}
         </div>
       );
 
       const renderInfoBlock = (block: typeof site.venueInfoBlocks[0], i: number) => (
-        <div key={i} className="venue-info">
-          {block.heading && <h3 className="venue-info__heading">{block.heading}</h3>}
-          {block.subheading && <div className="venue-info__subheading">{block.subheading}</div>}
-          {block.text.split("\n").map((line, j) => {
-            if (j === 0) return <p key={j} className="venue-info__text">{line}</p>;
-            return <p key={j} className="venue-info__address">{line}</p>;
-          })}
+        <div key={i} className="info-block">
+          {block.heading && <h3 className="info-block__heading">{block.heading}</h3>}
+          {block.subheading && <h4 className="info-block__subheading">{block.subheading}</h4>}
+          <p className="info-block__text">{block.text}</p>
         </div>
       );
 
-      if (detailsStyle === "split") {
-        return (
-          <section className={`section ${cls || "section--tan"}`} id="details" style={style}>
-            <div className="container">
-              <div className="details-split-layout">
-                <div className="details-split__venues">
-                  {site.venues.map(renderVenueCard)}
-                </div>
-                <div className="details-split__info">
-                  <div className="section__header reveal" style={{ textAlign: "left", marginBottom: "2rem" }}>
-                    <p className="section__subtitle">The Celebration</p>
-                    <h2 className="section__title">Essential Info</h2>
-                    <div className="section__line" style={{ margin: "1.25rem 0 0" }}></div>
-                  </div>
-                  {site.venueInfoBlocks.map(renderInfoBlock)}
-                </div>
-              </div>
-            </div>
-          </section>
-        );
-      }
+      return (
+        <div id="details">
+          {site.eventDays.map((day) => {
+            const dayStyle = day.detailsStyle || "grid";
+            const bgUrl = day.sectionBackground;
+            const finalCls = `section ${cls} ${bgUrl ? "section--has-bg" : "section--tan"}`;
+            const finalStyle = { ...style, ...(bgUrl ? { backgroundImage: `url('${bgUrl}')` } : {}) };
 
-      if (detailsStyle === "minimal") {
-        return (
-          <section className={`section ${cls || "section--tan"}`} id="details" style={style}>
-            <div className="container">
-              <div className="section__header reveal">
-                <p className="section__subtitle">The Celebration</p>
-                <h2 className="section__title">Wedding Details</h2>
-                <div className="section__line"></div>
-              </div>
-              <div className="details-minimal">
-                {site.venues.map((v, i) => (
-                  <div key={i} className="details-minimal__item reveal">
-                    <div className="details-minimal__label">{v.label}</div>
-                    <div className="details-minimal__main">
-                      <h3 className="details-minimal__name">{v.name}</h3>
-                      <p className="details-minimal__time">{v.time}</p>
+            if (dayStyle === "split") {
+              return (
+                <section key={day.id} className={finalCls} style={finalStyle}>
+                  <div className="container">
+                    <div className="details-split-layout">
+                      <div className="details-split__venues">
+                        {day.venues.map(renderVenueCard)}
+                      </div>
+                      <div className="details-split__info">
+                        <div className="section__header reveal" style={{ textAlign: "left", marginBottom: "2rem" }}>
+                          <p className="section__subtitle">{day.label}</p>
+                          {day.date && <p className="section__date">{day.date}</p>}
+                          <h2 className="section__title">Essential Info</h2>
+                          <div className="section__line" style={{ margin: "1.25rem 0 0" }}></div>
+                        </div>
+                        {day.infoBlocks.map(renderInfoBlock)}
+                        {day.note && <p className="info-block__text mt-8" style={{ fontStyle: "italic", opacity: 0.8 }}>{day.note}</p>}
+                      </div>
                     </div>
-                    <p className="details-minimal__address">{v.address.replace("\n", ", ")}</p>
                   </div>
-                ))}
-              </div>
-              {site.venueInfoBlocks.length > 0 && (
-                <div className="details-minimal__info reveal">
-                  {site.venueInfoBlocks.map(renderInfoBlock)}
+                </section>
+              );
+            }
+
+            if (dayStyle === "minimal") {
+              return (
+                <section key={day.id} className={finalCls} style={finalStyle}>
+                  <div className="container">
+                    <div className="section__header reveal">
+                      <p className="section__subtitle">{day.label}</p>
+                      {day.date && <p className="section__date text-center mb-4">{day.date}</p>}
+                      <h2 className="section__title">Wedding Details</h2>
+                      <div className="section__line"></div>
+                    </div>
+                    <div className="details-minimal">
+                      {day.venues.map((v, i) => (
+                        <div key={i} className="details-minimal__item reveal">
+                          <div className="details-minimal__label">{v.label}</div>
+                          <div className="details-minimal__main">
+                            <h3 className="details-minimal__name">{v.name}</h3>
+                            <p className="details-minimal__time">{v.time}</p>
+                          </div>
+                          <p className="details-minimal__address">{v.address.replace("\n", ", ")}</p>
+                        </div>
+                      ))}
+                    </div>
+                    {day.infoBlocks.length > 0 && (
+                      <div className="details-minimal__info reveal">
+                        {day.infoBlocks.map(renderInfoBlock)}
+                      </div>
+                    )}
+                    {day.note && <p className="text-center mt-10 opacity-70 italic">{day.note}</p>}
+                  </div>
+                </section>
+              );
+            }
+
+            // Default: Grid
+            return (
+              <section key={day.id} className={finalCls} style={finalStyle}>
+                <div className="container">
+                  <div className="section__header reveal">
+                    <p className="section__subtitle">{day.label}</p>
+                    {day.date && <p className="section__date text-center mb-4">{day.date}</p>}
+                    <h2 className="section__title">Wedding Details</h2>
+                    <div className="section__line"></div>
+                  </div>
+                  <div className="info-grid">
+                    {day.venues.map(renderVenueCard)}
+                  </div>
+                  {day.infoBlocks.length > 0 && (
+                    <div className="details-split reveal">
+                      {day.infoBlocks.map(renderInfoBlock)}
+                    </div>
+                  )}
+                  {day.note && <p className="text-center mt-10 opacity-70 italic">{day.note}</p>}
                 </div>
-              )}
-            </div>
-          </section>
-        );
-      }
-
-      // Default: Grid
-      return (
-        <section className={`section ${cls || "section--tan"}`} id="details" style={style}>
-          <div className="container">
-            <div className="section__header reveal">
-              <p className="section__subtitle">The Celebration</p>
-              <h2 className="section__title">Wedding Details</h2>
-              <div className="section__line"></div>
-            </div>
-            <div className="info-grid">
-              {site.venues.map(renderVenueCard)}
-            </div>
-            {site.venueInfoBlocks.length > 0 && (
-              <div className="details-split reveal">
-                {site.venueInfoBlocks.map(renderInfoBlock)}
-              </div>
-            )}
-          </div>
-        </section>
+              </section>
+            );
+          })}
+        </div>
       );
     },
 
-    day2: (cls = "", style = {}) => {
-      if (!site.dayTwoEvent) return null;
-      return (
-        <section className={`section ${cls || "section--cream"}`} id="day2" style={style}>
-          <div className="container">
-            <div className="day2 reveal">
-              <h2 className="day2__heading">{site.dayTwoEvent.heading}</h2>
-              <p className="day2__time">{site.dayTwoEvent.time}</p>
-              <p className="day2__address">
-                {site.dayTwoEvent.address.split("\n").map((line, i) => (
-                  <span key={i}>{line}{i < site.dayTwoEvent!.address.split("\n").length - 1 && <br />}</span>
-                ))}
-              </p>
-              <p className="day2__note">{site.dayTwoEvent.note}</p>
-            </div>
-          </div>
-        </section>
-      );
-    },
+    day2: () => null,
 
-    quote: (cls = "", style = {}) => {
-      if (!site.quoteText) return null;
+    quote: (id, cls = "", style = {}) => {
+      const text = d(id, 'text', site.quoteText);
+      if (!text) return null;
       return (
         <section className={`section ${cls || "section--cream"}`} style={style}>
           <div className="container">
             <div className="quote-section reveal">
-              <p className="quote__text">&ldquo;{site.quoteText}&rdquo;</p>
-              <p className="quote__attribution">{site.quoteAttribution}</p>
+              <p className="quote__text">&ldquo;{text}&rdquo;</p>
+              <p className="quote__attribution">{d(id, 'attribution', site.quoteAttribution)}</p>
             </div>
           </div>
         </section>
       );
     },
 
-    featuredPhoto: (cls = "", style = {}) => {
-      if (!site.featuredPhotoUrl) return null;
+    featuredPhoto: (id, cls = "", style = {}) => {
+      const url = d(id, 'url', site.featuredPhotoUrl);
+      if (!url) return null;
       return (
         <section className={`section ${cls || "section--cream"}`} style={style}>
           <div className="container">
             <div className="featured-photo reveal">
               <img
                 className="featured-photo__img"
-                src={site.featuredPhotoUrl}
+                src={url}
                 alt={`${site.partner1Name} and ${site.partner2Name}`}
                 data-zoomable
                 loading="lazy"
               />
-              <p className="featured-photo__caption">{site.featuredPhotoCaption}</p>
+              <p className="featured-photo__caption">{d(id, 'caption', site.featuredPhotoCaption)}</p>
             </div>
           </div>
         </section>
       );
     },
 
-    letter: (cls = "", style = {}) => {
-      if (!site.letterOpening) return null;
+    letter: (id, cls = "", style = {}) => {
+      const opening = d(id, 'opening', site.letterOpening);
+      if (!opening) return null;
       return (
         <section className={`section ${cls || "section--dark"}`} style={style}>
           <div className="container">
             <div className="letter reveal">
-              <p className="letter__opening">{site.letterOpening}</p>
-              {site.letterBody.map((p, i) => (
+              <p className="letter__opening">{opening}</p>
+              {d(id, 'body', site.letterBody).map((p, i) => (
                 <p key={i} className="letter__body">{p}</p>
               ))}
-              <p className="letter__closing">{site.letterClosing}</p>
+              <p className="letter__closing">{d(id, 'closing', site.letterClosing)}</p>
             </div>
           </div>
         </section>
       );
     },
 
-    schedule: (cls = "", style = {}) => {
+    schedule: (id, cls = "", style = {}) => {
       // Support both legacy scheduleItems and new weddingDays
       const days = site.weddingDays?.filter((d) => !d.isPrivate) ?? (
         site.scheduleItems.length > 0
@@ -346,10 +341,10 @@ export function ClassicTemplate({ site }: { site: WeddingSite }) {
       );
     },
 
-    menu: (cls = "", style = {}) => {
+    menu: (id, cls = "", style = {}) => {
       if (site.menuItems.length === 0) return null;
       return (
-        <section className={`section ${cls || "section--dark"}`} id="menu" style={style}>
+        <section className={`section ${cls || "section--dark"}`} id={id} style={style}>
           <div className="container">
             <div className="menu-section reveal">
               <h2 className="menu__heading">Menu</h2>
@@ -370,7 +365,7 @@ export function ClassicTemplate({ site }: { site: WeddingSite }) {
       );
     },
 
-    gallery: (cls = "", style = {}) => {
+    gallery: (id, cls = "", style = {}) => {
       if (site.galleryImages.length === 0) return null;
       const isCustomBg = !!site.sectionBackgrounds?.gallery;
       return (
@@ -399,7 +394,7 @@ export function ClassicTemplate({ site }: { site: WeddingSite }) {
       );
     },
 
-    explore: (cls = "", style = {}) => {
+    explore: (id, cls = "", style = {}) => {
       if (site.exploreGroups.length === 0) return null;
       return (
         <section className={`section ${cls || "section--tan"}`} id="explore" style={style}>
@@ -431,7 +426,7 @@ export function ClassicTemplate({ site }: { site: WeddingSite }) {
       );
     },
 
-    accommodations: (cls = "", style = {}) => {
+    accommodations: (id, cls = "", style = {}) => {
       if (site.accommodations.length === 0) return null;
       return (
         <section className={`section ${cls || "section--dark"}`} id="accommodations" style={style}>
@@ -465,7 +460,7 @@ export function ClassicTemplate({ site }: { site: WeddingSite }) {
       );
     },
 
-    rsvp: (cls = "", style = {}) => (
+    rsvp: (id, cls = "", style = {}) => (
       <section className={`section ${cls || "section--tan"}`} id="rsvp" style={style}>
         <div className="container">
           <div className="rsvp__form-wrap reveal" style={{ maxWidth: 700, margin: "0 auto", textAlign: "center" }}>
@@ -477,7 +472,7 @@ export function ClassicTemplate({ site }: { site: WeddingSite }) {
       </section>
     ),
 
-    gift: (cls = "", style = {}) => {
+    gift: (id, cls = "", style = {}) => {
       if (!site.giftHeading) return null;
 
       const paymentLinks = [...(site.giftPaymentLinks || [])];
@@ -568,7 +563,7 @@ export function ClassicTemplate({ site }: { site: WeddingSite }) {
       );
     },
 
-    contact: (cls = "", style = {}) => {
+    contact: (id, cls = "", style = {}) => {
       if (site.contactEntries.length === 0) return null;
       return (
         <section className={`section ${cls || "section--cream"}`} id="contact" style={style}>
@@ -602,8 +597,8 @@ export function ClassicTemplate({ site }: { site: WeddingSite }) {
       );
     },
 
-    footer: (cls = "", style = {}) => (
-      <footer className={`footer ${cls}`} style={style}>
+    footer: (id, cls = "", style = {}) => (
+      <footer className={`footer ${cls}`} id="footer" style={style}>
         <p className="footer__names">{site.footerNames}</p>
         <p className="footer__date">{site.footerDateText}</p>
         <div className="footer__line"></div>
@@ -617,7 +612,12 @@ export function ClassicTemplate({ site }: { site: WeddingSite }) {
 
   return (
     <div className="wedding-site" style={themeVars}>
-      <WeddingSiteClient weddingDate={site.weddingDate} scheduleStyle={site.scheduleStyle} />
+      <WeddingSiteClient 
+        weddingDate={site.weddingDate} 
+        scheduleStyle={site.scheduleStyle} 
+        detailsStyle={site.detailsStyle}
+        sectionOrder={site.sectionOrder}
+      />
 
       {/* Fonts */}
       <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -646,14 +646,15 @@ export function ClassicTemplate({ site }: { site: WeddingSite }) {
       {/* Render sections in order */}
       {order.map((section) => {
         if (!section.visible) return null;
-        const render = sections[section.id];
+        const render = sections[section.type] || sections[section.id];
         if (!render) return null;
 
         const bgUrl = site.sectionBackgrounds?.[section.id];
-        const extraClass = bgUrl ? "section--has-bg section--light-text" : "";
+        let extraClass = bgUrl ? "section--has-bg light-text" : "";
+        if (isPreview) extraClass += " preview";
         const extraStyle = bgUrl ? { backgroundImage: `url('${bgUrl}')` } : {};
 
-        return <div key={section.id}>{render(extraClass, extraStyle)}</div>;
+        return <div key={section.id}>{render(section.id, extraClass, extraStyle)}</div>;
       })}
     </div>
   );
