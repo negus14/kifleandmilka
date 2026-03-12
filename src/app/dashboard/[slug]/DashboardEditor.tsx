@@ -104,16 +104,13 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
 function ColorPicker({ label, value, onChange }: { 
   label: string; 
   value: string; 
-  onChange: (v: "cream" | "tan" | "dark" | "tanLight" | "tanDark" | "creamDark" | "transparent") => void 
+  onChange: (v: "cream" | "tan" | "dark" | "transparent") => void 
 }) {
   const options = [
     { id: "transparent", name: "Default", color: "transparent", border: "border-dashed" },
     { id: "cream", name: "Cream", color: "var(--color-cream)", border: "border-solid" },
     { id: "tan", name: "Tan", color: "var(--color-tan)", border: "border-solid" },
     { id: "dark", name: "Dark", color: "var(--color-dark)", border: "border-solid" },
-    { id: "tanLight", name: "Tan Light", color: "var(--color-tanLight)", border: "border-solid" },
-    { id: "tanDark", name: "Tan Dark", color: "var(--color-tanDark)", border: "border-solid" },
-    { id: "creamDark", name: "Cream Dark", color: "var(--color-creamDark)", border: "border-solid" },
   ] as const;
 
   return (
