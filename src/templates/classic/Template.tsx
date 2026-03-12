@@ -112,10 +112,26 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
           {site.eventDays.map((day, di) => {
             const dayStyle = day.detailsStyle || "grid";
             const bgUrl = day.sectionBackground;
+            const dayBgColor = day.sectionBackgroundColor;
             
-            // Alternating backgrounds if no custom BG is set
-            const defaultBgClass = di % 2 === 0 ? "section--tan" : "section--cream";
-            const finalCls = `section ${cls} ${bgUrl ? "section--has-bg" : defaultBgClass}`;
+            // Clean up cls from parent to avoid conflicts with our own backgrounds
+            const cleanCls = cls.replace(/section--tan|section--cream/g, "").trim();
+            
+            // Background color logic:
+            // 1. Image background (overrides everything)
+            // 2. Explicitly selected background color
+            // 3. Alternating background (tan/cream)
+            
+            let finalCls = `section ${cleanCls} `;
+            if (bgUrl) {
+              finalCls += "section--has-bg section--light-text";
+            } else if (dayBgColor && dayBgColor !== "transparent") {
+              finalCls += `section--${dayBgColor}`;
+              if (dayBgColor === "dark") finalCls += " section--light-text";
+            } else {
+              finalCls += (di % 2 === 0 ? "section--tan" : "section--cream");
+            }
+
             const finalStyle = { ...style, ...(bgUrl ? { backgroundImage: `url('${bgUrl}')` } : {}) };
 
             if (dayStyle === "split") {
@@ -652,9 +668,31 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
         if (!render) return null;
 
         const bgUrl = site.sectionBackgrounds?.[section.id];
-        // Use global index for alternating background classes if no custom BG is set
-        const defaultBgClass = i % 2 === 0 ? "section--tan" : "section--cream";
-        let extraClass = bgUrl ? "section--has-bg section--light-text" : defaultBgClass;
+        const bgColor = site.sectionBackgroundColors?.[section.id];
+        
+        // Only apply alternating backgrounds to content sections (not hero or footer)
+        const isContent = !['hero', 'footer'].includes(section.type);
+        
+        // SPECIAL CASE: Some sections (letter, menu) are dark by design.
+        // If they don't have a custom background OR COLOR, we let them handle their own default.
+        const isSelfStyling = ['letter', 'menu'].includes(section.type);
+        
+        // Background color logic:
+        // 1. Image background (overrides everything)
+        // 2. Explicitly selected background color
+        // 3. Section default (self-styling)
+        // 4. Alternating background (tan/cream)
+        
+        let extraClass = "";
+        if (bgUrl) {
+          extraClass = "section--has-bg section--light-text";
+        } else if (bgColor && bgColor !== "transparent") {
+          extraClass = `section--${bgColor}`;
+          if (bgColor === "dark") extraClass += " section--light-text";
+        } else if (isContent && !isSelfStyling) {
+          extraClass = (i % 2 === 0) ? "section--tan" : "section--cream";
+        }
+
         if (isPreview) extraClass += " preview";
         const extraStyle = bgUrl ? { backgroundImage: `url('${bgUrl}')` } : {};
 

@@ -27,8 +27,9 @@ export interface EventDay {
   infoBlocks: VenueInfoBlock[];
   note?: string;
   detailsStyle?: "grid" | "split" | "minimal";
-  sectionBackground?: string;
-}
+  sectionBackground?: string; // Image URL
+  sectionBackgroundColor?: "cream" | "tan" | "dark" | "transparent";
+  }
 
 export interface ScheduleItem {
   hour: string;
@@ -223,6 +224,7 @@ export interface WeddingSite {
   contactEntries: ContactEntry[];
   navBrand: string;
   sectionBackgrounds?: Record<string, string>;
+  sectionBackgroundColors?: Record<string, "cream" | "tan" | "dark" | "transparent">;
   sectionData?: Record<string, any>; // Instance-specific data for duplicate sections
   recentlyUsedLinks?: string[];
 }

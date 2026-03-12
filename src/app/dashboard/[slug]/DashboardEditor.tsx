@@ -64,10 +64,7 @@ function Field({ label, value, onChange, placeholder, multiline, rows, type = "t
       ) : (
         <input
           type={type}
-          value={value} onChange={(e) => {
-            console.log(`Field ${label} changed to:`, e.target.value);
-            onChange(e.target.value);
-          }}
+          value={value} onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           className="w-full px-3 py-2 border border-[#2d2b25]/15 bg-white/50 text-[#2d2b25] text-sm outline-none focus:border-[#2d2b25]/40 rounded-sm"
         />
@@ -101,6 +98,47 @@ function AddButton({ onClick, label }: { onClick: () => void; label: string }) {
 
 function SectionTitle({ children }: { children: React.ReactNode }) {
   return <h2 className="text-lg mb-6" style={{ fontFamily: "'Playfair Display', serif" }}>{children}</h2>;
+}
+
+function ColorPicker({ label, value, onChange }: { 
+  label: string; 
+  value: string; 
+  onChange: (v: "cream" | "tan" | "dark" | "transparent") => void 
+}) {
+  const options = [
+    { id: "transparent", name: "Default", color: "transparent", border: "border-dashed" },
+    { id: "cream", name: "Cream", color: "var(--color-cream)", border: "border-solid" },
+    { id: "tan", name: "Tan", color: "var(--color-tan)", border: "border-solid" },
+    { id: "dark", name: "Dark", color: "var(--color-dark)", border: "border-solid" },
+  ] as const;
+
+  return (
+    <div className="mb-6">
+      <Label>{label}</Label>
+      <div className="flex gap-2 mt-2">
+        {options.map((opt) => (
+          <button
+            key={opt.id}
+            type="button"
+            onClick={() => onChange(opt.id as any)}
+            className={`group relative flex flex-col items-center gap-1.5 p-1 rounded-sm transition-all ${
+              value === opt.id ? "bg-[#2d2b25]/5" : "hover:bg-[#2d2b25]/5"
+            }`}
+          >
+            <div 
+              className={`w-8 h-8 rounded-full border ${opt.border} border-[#2d2b25]/20 shadow-sm transition-transform group-hover:scale-105 ${
+                value === opt.id ? "ring-2 ring-[#2d2b25] ring-offset-2" : ""
+              }`}
+              style={{ backgroundColor: opt.color }}
+            />
+            <span className={`text-[9px] font-bold uppercase tracking-wider ${
+              value === opt.id ? "text-[#2d2b25]" : "text-[#2d2b25]/40"
+            }`}>{opt.name}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 // ─── Image Upload ───
@@ -1226,12 +1264,29 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                 set("sectionBackgrounds", bgs);
               };
 
+              const bgColor = site.sectionBackgroundColors?.[id] || "transparent";
+              const setBgColor = (v: string) => {
+                const bgs = { ...(site.sectionBackgroundColors || {}) };
+                if (v && v !== "transparent") bgs[id] = v; else delete bgs[id];
+                set("sectionBackgroundColors", bgs);
+              };
+
               const renderBg = (label: string) => (
-                <div className="mb-6">
+                <div className="mb-6 pt-2">
+                  <ColorPicker 
+                    label="Background Color" 
+                    value={bgColor} 
+                    onChange={setBgColor as any} 
+                  />
+                  <div className="h-px bg-[#2d2b25]/5 my-6" />
                   <ImageField 
                     label={label} 
                     value={bg} 
-                    onChange={setBg} 
+                    onChange={(v) => {
+                      // If we set an image, we should probably clear the color?
+                      // Or maybe not. Let's keep them independent for now.
+                      setBg(v);
+                    }} 
                     recentLinks={site.recentlyUsedLinks || []}
                     onAddRecentLink={addRecentLink}
                   />
@@ -1366,6 +1421,12 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                             <Field label="Event Day Label" value={day.label} onChange={(v) => set("eventDays", updateInArray(site.eventDays, di, { label: v }))} placeholder="e.g. Day One" />
                             <Field label="Date (Optional)" value={day.date || ""} onChange={(v) => set("eventDays", updateInArray(site.eventDays, di, { date: v }))} placeholder="e.g. Saturday, Aug 1st" />
                           </div>
+
+                          <ColorPicker 
+                            label="Section Background Color" 
+                            value={day.sectionBackgroundColor || "transparent"} 
+                            onChange={(v) => set("eventDays", updateInArray(site.eventDays, di, { sectionBackgroundColor: v }))} 
+                          />
 
                           <ImageField 
                             label="Section Background Image" 

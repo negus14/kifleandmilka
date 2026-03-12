@@ -90,8 +90,12 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
     letter: (id, cls = "", style = {}) => {
       const opening = d(id, 'opening', site.letterOpening);
       if (!opening) return null;
+
+      // If parent didn't provide a background (tan or has-bg), default to dark for the letter
+      const finalCls = cls.includes('modern-section--tan') || cls.includes('modern-section--has-bg') ? cls : `modern-section--dark ${cls}`;
+
       return (
-        <section className={`modern-section ${cls}`} id={id} style={style}>
+        <section className={`modern-section ${finalCls}`} id={id} style={style}>
           <div className="modern-container modern-container--narrow">
             <div className="modern-letter reveal">
               <p className="modern-letter__opening">{opening}</p>
@@ -100,6 +104,30 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
               ))}
               <p className="modern-letter__closing">{d(id, 'closing', site.letterClosing)}</p>
             </div>
+          </div>
+        </section>
+      );
+    },
+
+    menu: (id, cls = "", style = {}) => {
+      if (site.menuItems.length === 0) return null;
+      
+      // If parent didn't provide a background (tan or has-bg), default to dark for the menu
+      const finalCls = cls.includes('modern-section--tan') || cls.includes('modern-section--has-bg') ? cls : `modern-section--dark ${cls}`;
+
+      return (
+        <section className={`modern-section ${finalCls}`} id={id} style={style}>
+          <div className="modern-container text-center">
+            <h2 className="modern-title reveal">Menu</h2>
+            <div className="modern-grid modern-grid--3col">
+              {site.menuItems.map((item, i) => (
+                <div key={i} className="reveal">
+                  <h3 className="modern-card__title" style={{ fontSize: '1.4rem' }}>{item.name}</h3>
+                  <p className="modern-text--small">{item.description}</p>
+                </div>
+              ))}
+            </div>
+            {site.menuNote && <p className="modern-text--small mt-12 italic reveal">{site.menuNote}</p>}
           </div>
         </section>
       );
@@ -138,10 +166,25 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
           {site.eventDays.map((day, di) => {
             const dayStyle = day.detailsStyle || "grid";
             const bgUrl = day.sectionBackground;
+            const dayBgColor = day.sectionBackgroundColor;
 
-            // Alternating backgrounds if no custom BG is set
-            const defaultBgClass = di % 2 === 0 ? "modern-section--tan" : "";
-            const finalCls = `modern-section ${cls} ${bgUrl ? "modern-section--has-bg" : defaultBgClass}`;
+            // Clean up cls from parent to avoid conflicts with our own backgrounds
+            const cleanCls = cls.replace(/modern-section--tan/g, "").trim();
+
+            // Background color logic:
+            // 1. Image background (overrides everything)
+            // 2. Explicitly selected background color
+            // 3. Alternating background (tan/default)
+            
+            let finalCls = `modern-section ${cleanCls} `;
+            if (bgUrl) {
+              finalCls += "modern-section--has-bg";
+            } else if (dayBgColor && dayBgColor !== "transparent") {
+              finalCls += `modern-section--${dayBgColor}`;
+            } else {
+              finalCls += (di % 2 === 0 ? "modern-section--tan" : "");
+            }
+
             const finalStyle = { ...style, ...(bgUrl ? { backgroundImage: `url('${bgUrl}')` } : {}) };
 
             if (dayStyle === "split") {
@@ -529,9 +572,30 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
         if (!render) return null;
 
         const bgUrl = site.sectionBackgrounds?.[section.id];
-        // Use global index for alternating background classes if no custom BG is set
-        const defaultBgClass = i % 2 === 0 ? "modern-section--tan" : "";
-        let extraClass = bgUrl ? "modern-section--has-bg" : defaultBgClass;
+        const bgColor = site.sectionBackgroundColors?.[section.id];
+        
+        // Only apply alternating backgrounds to content sections (not hero or footer)
+        const isContent = !['hero', 'footer'].includes(section.type);
+
+        // SPECIAL CASE: Some sections (letter, menu) are dark by design.
+        // If they don't have a custom background OR COLOR, we let them handle their own default.
+        const isSelfStyling = ['letter', 'menu'].includes(section.type);
+        
+        // Background color logic:
+        // 1. Image background (overrides everything)
+        // 2. Explicitly selected background color
+        // 3. Section default (self-styling)
+        // 4. Alternating background (tan/default)
+        
+        let extraClass = "";
+        if (bgUrl) {
+          extraClass = "modern-section--has-bg";
+        } else if (bgColor && bgColor !== "transparent") {
+          extraClass = `modern-section--${bgColor}`;
+        } else if (isContent && !isSelfStyling) {
+          extraClass = (i % 2 === 0) ? "modern-section--tan" : "";
+        }
+
         if (isPreview) extraClass += " preview";
         const extraStyle = bgUrl ? { backgroundImage: `url('${bgUrl}')` } : {};
 
