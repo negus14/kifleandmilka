@@ -23,7 +23,7 @@ function toEmbedUrl(url: string): string {
   return url;
 }
 
-export default function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
+export function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
   const theme = getTheme(site.templateId);
   const themeVars = {
     "--color-dark": theme.colors.dark,
@@ -414,7 +414,7 @@ export default function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
           <div className="rsvp__form-wrap reveal" style={{ maxWidth: 700, margin: "0 auto", textAlign: "center" }}>
             <h2 className="rsvp__heading">{site.rsvpHeading}</h2>
             <p className="rsvp__subheading">{site.rsvpDeadlineText}</p>
-            <RSVPForm slug={site.slug} mealOptions={site.rsvpMealOptions} />
+            <RSVPForm slug={site.slug} mealOptions={site.rsvpMealOptions} showHalalOption={site.showHalalOption ?? true} />
           </div>
         </div>
       </section>
@@ -575,3 +575,5 @@ export default function ElegantCreamTemplate({ site }: { site: WeddingSite }) {
     </div>
   );
 }
+
+export default ElegantCreamTemplate;

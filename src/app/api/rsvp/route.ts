@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { google } from "googleapis";
 import { getSiteBySlug } from "@/lib/data/sites";
+import { getAuthenticatedClient } from "@/lib/google-auth";
+import pool from "@/lib/db";
 
 interface GuestInput {
   name: string;
@@ -38,27 +40,48 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Google Sheets integration not configured for this site" }, { status: 400 });
     }
 
-    // Google Auth validation
-    const clientEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
-    const privateKey = process.env.GOOGLE_PRIVATE_KEY;
+    let auth: any;
 
-    if (!clientEmail || !privateKey) {
-      console.error("RSVP Error: Missing Google Service Account credentials", {
-        hasEmail: !!clientEmail,
-        hasKey: !!privateKey,
+    // 1. Check if user has connected their OWN Google account (OAuth)
+    if (site.googleTokens && site.googleTokens.refresh_token) {
+      auth = await getAuthenticatedClient(site.googleTokens, async (newTokens) => {
+        // Save refreshed tokens back to DB
+        const updatedData = {
+          ...site,
+          googleTokens: {
+            ...site.googleTokens,
+            ...newTokens
+          }
+        };
+        await pool.query(
+          "UPDATE sites SET data = $1, updated_at = NOW() WHERE slug = $2",
+          [updatedData, slug]
+        );
       });
-      return NextResponse.json({ 
-        error: "Server configuration error: Google Sheets credentials are missing." 
-      }, { status: 500 });
-    }
+    } 
+    // 2. Fallback to global Service Account
+    else {
+      const clientEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
+      const privateKey = process.env.GOOGLE_PRIVATE_KEY;
 
-    const auth = new google.auth.GoogleAuth({
-      credentials: {
-        client_email: clientEmail,
-        private_key: privateKey.replace(/\\n/g, "\n"),
-      },
-      scopes: ["https://www.googleapis.com/auth/spreadsheets"],
-    });
+      if (!clientEmail || !privateKey) {
+        console.error("RSVP Error: Missing Google Service Account credentials", {
+          hasEmail: !!clientEmail,
+          hasKey: !!privateKey,
+        });
+        return NextResponse.json({ 
+          error: "Server configuration error: Google Sheets credentials are missing." 
+        }, { status: 500 });
+      }
+
+      auth = new google.auth.GoogleAuth({
+        credentials: {
+          client_email: clientEmail,
+          private_key: privateKey.replace(/\\n/g, "\n"),
+        },
+        scopes: ["https://www.googleapis.com/auth/spreadsheets"],
+      });
+    }
 
     const sheets = google.sheets({ version: "v4", auth });
     const sheetName = site.googleSheetName || "Sheet1";
@@ -67,7 +90,8 @@ export async function POST(request: NextRequest) {
     console.log("RSVP Submission:", {
       spreadsheetId: googleSheetId,
       range,
-      siteSlug: slug
+      siteSlug: slug,
+      authMethod: site.googleTokens?.refresh_token ? "OAuth" : "ServiceAccount"
     });
 
     const timestamp = new Date().toISOString();

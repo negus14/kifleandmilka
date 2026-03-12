@@ -13,9 +13,10 @@ interface Guest {
 interface RSVPFormProps {
   slug: string;
   mealOptions?: string[];
+  showHalalOption?: boolean;
 }
 
-export default function RSVPForm({ slug, mealOptions }: RSVPFormProps) {
+export default function RSVPForm({ slug, mealOptions, showHalalOption = true }: RSVPFormProps) {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   
@@ -204,7 +205,7 @@ export default function RSVPForm({ slug, mealOptions }: RSVPFormProps) {
             )}
           </div>
 
-          {guest.attending === "yes" && (
+          {guest.attending === "yes" && showHalalOption && (
             <div style={{ display: "flex", gap: "1.5rem", marginTop: "0.5rem" }}>
               <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer", fontSize: "0.9rem" }}>
                 <input 
