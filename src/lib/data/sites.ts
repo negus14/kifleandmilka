@@ -27,6 +27,24 @@ export async function updateSite(
   return updated;
 }
 
+export async function renameSite(
+  oldSlug: string,
+  newSlug: string,
+  data: Partial<WeddingSite>
+): Promise<WeddingSite | null> {
+  const existing = await getSiteBySlug(oldSlug);
+  if (!existing) return null;
+
+  const updated = { ...existing, ...data, slug: newSlug };
+  
+  await pool.query(
+    "UPDATE sites SET slug = $1, data = $2 WHERE slug = $3",
+    [newSlug, JSON.stringify(updated), oldSlug]
+  );
+  
+  return updated;
+}
+
 export async function getAllSlugs(): Promise<string[]> {
   const { rows } = await pool.query("SELECT slug FROM sites ORDER BY slug");
   return rows.map((r) => r.slug);

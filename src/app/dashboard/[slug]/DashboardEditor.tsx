@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useId, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import type {
   WeddingSite,
   WeddingDay,
@@ -262,6 +263,7 @@ function SortableList<T>({ items, prefix, onReorder, children }: {
 // ─── Main Editor ───
 
 export default function DashboardEditor({ site: initial }: { site: WeddingSite }) {
+  const router = useRouter();
   // Migration logic for legacy data
   const migratedInitial = { ...initial };
   
@@ -375,23 +377,39 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
   }
 
   async function handleSave() {
+    // 1. Check for slug rename
+    if (site.slug !== initial.slug) {
+      const confirmRename = window.confirm(
+        `Are you sure you want to change your URL to /${site.slug}?\n\nThis will change your public website link and you will be redirected to the new dashboard.`
+      );
+      if (!confirmRename) return;
+    }
+
     setSaving(true);
     try {
       const { passwordHash, ...data } = site;
-      const res = await fetch(`/api/sites/${site.slug}`, {
+      const res = await fetch(`/api/sites/${initial.slug}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
+
+      const result = await res.json();
       if (!res.ok) {
-        const err = await res.json().catch(() => null);
-        throw new Error(err?.error || `Save failed (${res.status})`);
+        throw new Error(result?.error || `Save failed (${res.status})`);
       }
+
       setSaved(true);
+
+      // 2. Redirect if renamed
+      if (result.newSlug) {
+        router.push(`/dashboard/${result.newSlug}`);
+      }
     } catch (err) {
       alert(err instanceof Error ? err.message : "Failed to save. Please try again.");
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
   }
 
   return (
@@ -491,6 +509,27 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
             {tab === "Basics" && (
               <div>
                 <SectionTitle>Basic Info</SectionTitle>
+                
+                <div className="mb-6 p-4 bg-[#2d2b25]/5 border border-[#2d2b25]/10 rounded-sm">
+                  <Label>Site URL</Label>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className="text-sm text-[#2d2b25]/40 shrink-0">ithinkshewifey.com/</span>
+                    <input
+                      type="text"
+                      value={site.slug}
+                      onChange={(e) => {
+                        const val = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "");
+                        set("slug", val);
+                      }}
+                      className="flex-1 px-3 py-2 border border-[#2d2b25]/15 bg-white/50 text-[#2d2b25] text-sm font-medium outline-none focus:border-[#2d2b25]/40 rounded-sm"
+                      placeholder="your-url-here"
+                    />
+                  </div>
+                  <p className="text-[10px] text-[#2d2b25]/40 mt-2 uppercase tracking-wider">
+                    Caution: Changing this will change your public website address.
+                  </p>
+                </div>
+
                 <Field label="Partner 1 Name" value={site.partner1Name} onChange={(v) => set("partner1Name", v)} />
                 <Field label="Partner 2 Name" value={site.partner2Name} onChange={(v) => set("partner2Name", v)} />
                 
