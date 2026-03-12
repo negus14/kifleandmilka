@@ -18,7 +18,8 @@
   ],
   "heroCta": "RSVP Here",
   "giftNote": "You will be redirected to the payment provider",
-  "layoutId": "classic",
+  "layoutId": "modern",
+  "scheduleStyle": "minimal",
   "menuNote": "Your meal will also include soup, salad, sides and dessert",
   "navBrand": "K & M",
   "menuItems": [

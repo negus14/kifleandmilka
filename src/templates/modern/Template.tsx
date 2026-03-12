@@ -84,27 +84,89 @@ export function ModernTemplate({ site }: { site: WeddingSite }) {
       </section>
     ),
 
-    schedule: (cls = "", style = {}) => (
-      <section className={`modern-section ${cls}`} id="schedule" style={style}>
-        <div className="modern-container modern-container--narrow">
-          <h2 className="modern-title modern-title--center reveal">Schedule</h2>
-          <div className="modern-schedule reveal">
-            {site.scheduleItems.map((item, i) => (
+    schedule: (cls = "", style = {}) => {
+      const days = site.weddingDays?.filter((d) => !d.isPrivate) ?? (
+        site.scheduleItems.length > 0
+          ? [{ label: "", date: "", isPrivate: false, items: site.scheduleItems }]
+          : []
+      );
+      if (days.length === 0) return null;
+
+      const renderTimeline = (items: typeof site.scheduleItems) => {
+        const scheduleStyle = site.scheduleStyle || "classic";
+
+        if (scheduleStyle === "minimal") {
+          return (
+            <div className="modern-timeline-minimal">
+              {items.map((item, i) => (
+                <div key={i} className="modern-timeline-minimal__item reveal">
+                  <div className="modern-timeline-minimal__time">
+                    {item.hour}<span>{item.period}</span>
+                  </div>
+                  <div className="modern-timeline-minimal__details">
+                    <h3 className="modern-timeline-minimal__event">{item.event}</h3>
+                    {item.venue && <span className="modern-timeline-minimal__venue">at {item.venue}</span>}
+                  </div>
+                </div>
+              ))}
+            </div>
+          );
+        }
+
+        if (scheduleStyle === "cards") {
+          return (
+            <div className="modern-timeline-cards">
+              {items.map((item, i) => (
+                <div key={i} className="modern-timeline-card reveal">
+                  <div className="modern-timeline-card__time">{item.hour}<span>{item.period}</span></div>
+                  <h3 className="modern-timeline-card__event">{item.event}</h3>
+                  {item.venue && <p className="modern-timeline-card__venue">{item.venue}</p>}
+                  {item.description && <p className="modern-timeline-card__desc">{item.description}</p>}
+                </div>
+              ))}
+            </div>
+          );
+        }
+
+        // Default: Modern Classic
+        return (
+          <div className="modern-schedule">
+            {items.map((item, i) => (
               <div key={i} className="modern-schedule__item">
                 <div className="modern-schedule__time">
                   {item.hour}<span>{item.period}</span>
                 </div>
                 <div className="modern-schedule__info">
                   <h3 className="modern-schedule__event">{item.event}</h3>
-                  <p className="modern-schedule__venue">{item.venue}</p>
-                  <p className="modern-schedule__desc">{item.description}</p>
+                  {item.venue && <p className="modern-schedule__venue">{item.venue}</p>}
+                  {item.description && <p className="modern-schedule__desc">{item.description}</p>}
                 </div>
               </div>
             ))}
           </div>
-        </div>
-      </section>
-    ),
+        );
+      };
+
+      return (
+        <section className={`modern-section ${cls}`} id="schedule" style={style}>
+          <div className="modern-container modern-container--narrow">
+            <h2 className="modern-title modern-title--center reveal">Schedule</h2>
+            
+            {days.map((day, di) => (
+              <div key={di} className={di > 0 ? "modern-schedule-day-gap" : ""}>
+                {day.label && (
+                  <div className="modern-schedule-day-header reveal">
+                    <h3 className="modern-schedule-day-title">{day.label}</h3>
+                    {day.date && <p className="modern-schedule-day-date">{day.date}</p>}
+                  </div>
+                )}
+                {renderTimeline(day.items)}
+              </div>
+            ))}
+          </div>
+        </section>
+      );
+    },
 
     gallery: (cls = "", style = {}) => (
       <section className={`modern-section ${cls}`} id="gallery" style={style}>

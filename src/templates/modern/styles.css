@@ -333,6 +333,106 @@
   opacity: 0.6;
 }
 
+.modern-schedule-day-header {
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
+.modern-schedule-day-title {
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.modern-schedule-day-date {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  opacity: 0.6;
+}
+
+.modern-schedule-day-gap {
+  margin-top: 6rem;
+}
+
+/* Minimal Timeline */
+.modern-timeline-minimal {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.modern-timeline-minimal__item {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding: 1.5rem 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-dark), transparent 95%);
+}
+
+.modern-timeline-minimal__time {
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  width: 80px;
+  opacity: 0.6;
+}
+
+.modern-timeline-minimal__event {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.modern-timeline-minimal__venue {
+  font-size: 0.8rem;
+  opacity: 0.5;
+  font-style: italic;
+  margin-left: 0.5rem;
+}
+
+/* Cards Timeline */
+.modern-timeline-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.modern-timeline-card {
+  padding: 2.5rem;
+  background: color-mix(in srgb, var(--color-dark), transparent 97%);
+  border: 1px solid color-mix(in srgb, var(--color-dark), transparent 90%);
+  text-align: center;
+}
+
+.modern-timeline-card__time {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.modern-timeline-card__event {
+  font-size: 1.3rem;
+  font-family: var(--font-serif);
+  margin-bottom: 1rem;
+}
+
+.modern-timeline-card__venue {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+  opacity: 0.6;
+  margin-bottom: 0.5rem;
+}
+
+.modern-timeline-card__desc {
+  font-size: 0.9rem;
+  opacity: 0.7;
+}
+
 /* Gallery */
 .modern-gallery {
   display: grid;
