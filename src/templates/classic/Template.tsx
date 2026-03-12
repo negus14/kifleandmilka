@@ -276,7 +276,7 @@ export function ClassicTemplate({ site }: { site: WeddingSite }) {
           return (
             <div className="timeline-minimal">
               {items.map((item, i) => (
-                <div key={i} className="timeline-minimal__item reveal">
+                <div key={i} className={`timeline-minimal__item reveal ${cls.includes("preview") ? "visible" : ""}`}>
                   <div className="timeline-minimal__time">
                     {item.hour} {item.period}
                   </div>
@@ -295,7 +295,7 @@ export function ClassicTemplate({ site }: { site: WeddingSite }) {
           return (
             <div className="timeline-cards">
               {items.map((item, i) => (
-                <div key={i} className="timeline-card reveal">
+                <div key={i} className={`timeline-card reveal ${cls.includes("preview") ? "visible" : ""}`}>
                   <div className="timeline-card__time">{item.hour} {item.period}</div>
                   <h3 className="timeline-card__event">{item.event}</h3>
                   {item.venue && <p className="timeline-card__venue">{item.venue}</p>}
@@ -310,7 +310,7 @@ export function ClassicTemplate({ site }: { site: WeddingSite }) {
         return (
           <div className="timeline">
             {items.map((item, i) => (
-              <div key={i} className="timeline__item reveal">
+              <div key={i} className={`timeline__item reveal ${cls.includes("preview") ? "visible" : ""}`}>
                 <div className="timeline__time">
                   <div className="timeline__hour">{item.hour}</div>
                   <div className="timeline__period">{item.period}</div>

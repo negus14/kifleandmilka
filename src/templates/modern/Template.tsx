@@ -99,7 +99,7 @@ export function ModernTemplate({ site }: { site: WeddingSite }) {
           return (
             <div className="modern-timeline-minimal">
               {items.map((item, i) => (
-                <div key={i} className="modern-timeline-minimal__item reveal">
+                <div key={i} className={`modern-timeline-minimal__item reveal ${cls.includes("preview") ? "visible" : ""}`}>
                   <div className="modern-timeline-minimal__time">
                     {item.hour}<span>{item.period}</span>
                   </div>
@@ -117,7 +117,7 @@ export function ModernTemplate({ site }: { site: WeddingSite }) {
           return (
             <div className="modern-timeline-cards">
               {items.map((item, i) => (
-                <div key={i} className="modern-timeline-card reveal">
+                <div key={i} className={`modern-timeline-card reveal ${cls.includes("preview") ? "visible" : ""}`}>
                   <div className="modern-timeline-card__time">{item.hour}<span>{item.period}</span></div>
                   <h3 className="modern-timeline-card__event">{item.event}</h3>
                   {item.venue && <p className="modern-timeline-card__venue">{item.venue}</p>}
@@ -132,7 +132,7 @@ export function ModernTemplate({ site }: { site: WeddingSite }) {
         return (
           <div className="modern-schedule">
             {items.map((item, i) => (
-              <div key={i} className="modern-schedule__item">
+              <div key={i} className={`modern-schedule__item reveal ${cls.includes("preview") ? "visible" : ""}`}>
                 <div className="modern-schedule__time">
                   {item.hour}<span>{item.period}</span>
                 </div>
@@ -149,7 +149,7 @@ export function ModernTemplate({ site }: { site: WeddingSite }) {
 
       return (
         <section className={`modern-section ${cls}`} id="schedule" style={style}>
-          <div className="modern-container modern-container--narrow">
+          <div className={`modern-container modern-container--narrow ${cls.includes("preview") ? "preview-mode" : ""}`}>
             <h2 className="modern-title modern-title--center reveal">Schedule</h2>
             
             {days.map((day, di) => (
