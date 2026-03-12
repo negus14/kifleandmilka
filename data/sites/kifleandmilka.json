@@ -67,7 +67,16 @@
   "giftSubheading": "Your love and support mean the world to us. If you wish to honour us with a gift, a contribution towards our future together would be deeply appreciated.",
   "giftPaymentUrl": "https://paypal.me/KifleTekle",
   "giftPaymentLabel": "Contribute here",
-  "giftNote": "You will be redirected to PayPal",
+  "giftPaymentLinks": [
+    { "label": "PayPal", "url": "https://paypal.me/KifleTekle" },
+    { "label": "Venmo", "url": "https://venmo.com/KifleTekle" },
+    { "label": "CashApp", "url": "https://cash.app/$KifleTekle" }
+  ],
+  "giftNote": "You will be redirected to the payment provider",
+  "giftBankName": "Scotiabank",
+  "giftAccountHolder": "Kifle Tekle & Milka ...",
+  "giftAccountNumber": "12345-67890",
+  "giftSwiftCode": "NOSCCXXXX",
 
   "footerNames": "Kifle & Milka",
   "footerDateText": "August 1 & 2, 2026 • Winnipeg, Manitoba",

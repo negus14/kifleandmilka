@@ -48,9 +48,9 @@ function Label({ children }: { children: React.ReactNode }) {
   );
 }
 
-function Field({ label, value, onChange, placeholder, multiline, rows }: {
+function Field({ label, value, onChange, placeholder, multiline, rows, type = "text" }: {
   label: string; value: string; onChange: (v: string) => void;
-  placeholder?: string; multiline?: boolean; rows?: number;
+  placeholder?: string; multiline?: boolean; rows?: number; type?: string;
 }) {
   return (
     <div className="mb-3">
@@ -63,6 +63,7 @@ function Field({ label, value, onChange, placeholder, multiline, rows }: {
         />
       ) : (
         <input
+          type={type}
           value={value} onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           className="w-full px-3 py-2 border border-[#2d2b25]/15 bg-white/50 text-[#2d2b25] text-sm outline-none focus:border-[#2d2b25]/40 rounded-sm"
@@ -355,8 +356,29 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
               <SectionTitle>Basic Info</SectionTitle>
               <Field label="Partner 1 Name" value={site.partner1Name} onChange={(v) => set("partner1Name", v)} />
               <Field label="Partner 2 Name" value={site.partner2Name} onChange={(v) => set("partner2Name", v)} />
-              <Field label="Wedding Date" value={site.weddingDate} onChange={(v) => set("weddingDate", v)} placeholder="2026-08-01T14:00:00-05:00" />
-              <Field label="Display Date Text" value={site.dateDisplayText} onChange={(v) => set("dateDisplayText", v)} />
+              
+              <div className="grid grid-cols-2 gap-3 mb-4">
+                <Field 
+                  label="Wedding Start Date" 
+                  type="datetime-local"
+                  value={site.weddingDate ? new Date(site.weddingDate).toISOString().slice(0, 16) : ""} 
+                  onChange={(v) => {
+                    if (!v) { set("weddingDate", ""); return; }
+                    set("weddingDate", new Date(v).toISOString());
+                  }} 
+                />
+                <Field 
+                  label="Wedding End Date (optional)" 
+                  type="datetime-local"
+                  value={site.weddingEndDate ? new Date(site.weddingEndDate).toISOString().slice(0, 16) : ""} 
+                  onChange={(v) => {
+                    if (!v) { set("weddingEndDate", ""); return; }
+                    set("weddingEndDate", new Date(v).toISOString());
+                  }} 
+                />
+              </div>
+
+              <Field label="Display Date Text" value={site.dateDisplayText} onChange={(v) => set("dateDisplayText", v)} placeholder="e.g. August 1st & 2nd, 2026" />
               <Field label="Location" value={site.locationText} onChange={(v) => set("locationText", v)} />
               <Field label="Nav Brand Text" value={site.navBrand} onChange={(v) => set("navBrand", v)} placeholder="K & M" />
 
@@ -402,38 +424,40 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
               >
                 {(section, i, id) => (
                   <SortableCard key={id} id={id}>
-                    <div className="flex items-center justify-between">
-                      <span className={`text-sm font-medium ${section.visible ? "text-[#2d2b25]" : "text-[#2d2b25]/30 line-through"}`}>
-                        {SECTION_LABELS[section.id] || section.id}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const order = site.sectionOrder ?? DEFAULT_SECTION_ORDER;
-                          const updated = order.map((s, j) =>
-                            j === i ? { ...s, visible: !s.visible } : s
-                          );
-                          set("sectionOrder", updated);
-                        }}
-                        className={`text-lg px-2 transition-colors ${
-                          section.visible
-                            ? "text-[#2d2b25]/60 hover:text-[#2d2b25]"
-                            : "text-[#2d2b25]/20 hover:text-[#2d2b25]/40"
-                        }`}
-                        title={section.visible ? "Hide section" : "Show section"}
-                      >
-                        {section.visible ? (
-                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                            <circle cx="12" cy="12" r="3" />
-                          </svg>
-                        ) : (
-                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
-                            <line x1="1" y1="1" x2="23" y2="23" />
-                          </svg>
-                        )}
-                      </button>
+                    <div className="flex flex-col gap-3">
+                      <div className="flex items-center justify-between">
+                        <span className={`text-sm font-medium ${section.visible ? "text-[#2d2b25]" : "text-[#2d2b25]/30 line-through"}`}>
+                          {SECTION_LABELS[section.id] || section.id}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const order = site.sectionOrder ?? DEFAULT_SECTION_ORDER;
+                            const updated = order.map((s, j) =>
+                              j === i ? { ...s, visible: !s.visible } : s
+                            );
+                            set("sectionOrder", updated);
+                          }}
+                          className={`text-lg px-2 transition-colors ${
+                            section.visible
+                              ? "text-[#2d2b25]/60 hover:text-[#2d2b25]"
+                              : "text-[#2d2b25]/20 hover:text-[#2d2b25]/40"
+                          }`}
+                          title={section.visible ? "Hide section" : "Show section"}
+                        >
+                          {section.visible ? (
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                              <circle cx="12" cy="12" r="3" />
+                            </svg>
+                          ) : (
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                              <line x1="1" y1="1" x2="23" y2="23" />
+                            </svg>
+                          )}
+                        </button>
+                      </div>
                     </div>
                   </SortableCard>
                 )}
@@ -456,6 +480,16 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
           {tab === "Story" && (
             <div>
               <SectionTitle>Our Story</SectionTitle>
+              <ImageField 
+                label="Story Section Background Image" 
+                value={site.sectionBackgrounds?.story || ""} 
+                onChange={(v) => {
+                  const bgs = { ...(site.sectionBackgrounds || {}) };
+                  if (v) bgs.story = v; else delete bgs.story;
+                  set("sectionBackgrounds", bgs);
+                }} 
+              />
+              <div className="h-px bg-[#2d2b25]/10 my-6" />
               <Field label="Subtitle" value={site.storySubtitle} onChange={(v) => set("storySubtitle", v)} />
               <Field label="Title" value={site.storyTitle} onChange={(v) => set("storyTitle", v)} />
               <Field label="Lead Quote" value={site.storyLeadQuote} onChange={(v) => set("storyLeadQuote", v)} multiline rows={3} />
@@ -474,14 +508,44 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
               <ImageField label="Story Image" value={site.storyImageUrl} onChange={(v) => set("storyImageUrl", v)} />
 
               <SectionTitle>Quote</SectionTitle>
+              <ImageField 
+                label="Quote Section Background Image" 
+                value={site.sectionBackgrounds?.quote || ""} 
+                onChange={(v) => {
+                  const bgs = { ...(site.sectionBackgrounds || {}) };
+                  if (v) bgs.quote = v; else delete bgs.quote;
+                  set("sectionBackgrounds", bgs);
+                }} 
+              />
+              <div className="h-px bg-[#2d2b25]/10 my-6" />
               <Field label="Quote Text" value={site.quoteText} onChange={(v) => set("quoteText", v)} multiline rows={3} />
               <Field label="Attribution" value={site.quoteAttribution} onChange={(v) => set("quoteAttribution", v)} />
 
               <SectionTitle>Featured Photo</SectionTitle>
+              <ImageField 
+                label="Featured Photo Section Background Image" 
+                value={site.sectionBackgrounds?.featuredPhoto || ""} 
+                onChange={(v) => {
+                  const bgs = { ...(site.sectionBackgrounds || {}) };
+                  if (v) bgs.featuredPhoto = v; else delete bgs.featuredPhoto;
+                  set("sectionBackgrounds", bgs);
+                }} 
+              />
+              <div className="h-px bg-[#2d2b25]/10 my-6" />
               <ImageField label="Featured Photo" value={site.featuredPhotoUrl} onChange={(v) => set("featuredPhotoUrl", v)} />
               <Field label="Caption" value={site.featuredPhotoCaption} onChange={(v) => set("featuredPhotoCaption", v)} />
 
               <SectionTitle>Love Letter</SectionTitle>
+              <ImageField 
+                label="Love Letter Section Background Image" 
+                value={site.sectionBackgrounds?.letter || ""} 
+                onChange={(v) => {
+                  const bgs = { ...(site.sectionBackgrounds || {}) };
+                  if (v) bgs.letter = v; else delete bgs.letter;
+                  set("sectionBackgrounds", bgs);
+                }} 
+              />
+              <div className="h-px bg-[#2d2b25]/10 my-6" />
               <Field label="Opening" value={site.letterOpening} onChange={(v) => set("letterOpening", v)} />
               <Label>Body Paragraphs</Label>
               <SortableList items={site.letterBody} prefix="letter" onReorder={(items) => set("letterBody", items)}>
@@ -502,6 +566,18 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
           {/* ─── DETAILS (Venues) ─── */}
           {tab === "Details" && (
             <div>
+              <SectionTitle>Details Background</SectionTitle>
+              <ImageField 
+                label="Details Section Background Image" 
+                value={site.sectionBackgrounds?.details || ""} 
+                onChange={(v) => {
+                  const bgs = { ...(site.sectionBackgrounds || {}) };
+                  if (v) bgs.details = v; else delete bgs.details;
+                  set("sectionBackgrounds", bgs);
+                }} 
+              />
+              <div className="h-px bg-[#2d2b25]/10 my-6" />
+              
               <SectionTitle>Venues</SectionTitle>
               <SortableList items={site.venues} prefix="venues" onReorder={(items) => set("venues", items)}>
                 {(v, i, id) => (
@@ -529,6 +605,16 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
               <AddButton label="Add Info Block" onClick={() => set("venueInfoBlocks", [...site.venueInfoBlocks, { text: "" }])} />
 
               <SectionTitle>Day Two Event</SectionTitle>
+              <ImageField 
+                label="Day Two Section Background Image" 
+                value={site.sectionBackgrounds?.day2 || ""} 
+                onChange={(v) => {
+                  const bgs = { ...(site.sectionBackgrounds || {}) };
+                  if (v) bgs.day2 = v; else delete bgs.day2;
+                  set("sectionBackgrounds", bgs);
+                }} 
+              />
+              <div className="h-px bg-[#2d2b25]/10 my-6" />
               {site.dayTwoEvent ? (
                 <Card onRemove={() => set("dayTwoEvent", null)}>
                   <Field label="Heading" value={site.dayTwoEvent.heading} onChange={(v) => set("dayTwoEvent", { ...site.dayTwoEvent!, heading: v })} />
@@ -545,6 +631,18 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
           {/* ─── SCHEDULE ─── */}
           {tab === "Schedule" && (
             <div>
+              <SectionTitle>Schedule Background</SectionTitle>
+              <ImageField 
+                label="Schedule Section Background Image" 
+                value={site.sectionBackgrounds?.schedule || ""} 
+                onChange={(v) => {
+                  const bgs = { ...(site.sectionBackgrounds || {}) };
+                  if (v) bgs.schedule = v; else delete bgs.schedule;
+                  set("sectionBackgrounds", bgs);
+                }} 
+              />
+              <div className="h-px bg-[#2d2b25]/10 my-6" />
+              
               <SectionTitle>Wedding Days</SectionTitle>
               <p className="text-xs text-[#2d2b25]/50 mb-4">
                 Add multiple days (wedding day, day two, bridal party, etc.). Private days are only visible to you.
@@ -617,6 +715,18 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
           {/* ─── MENU ─── */}
           {tab === "Menu" && (
             <div>
+              <SectionTitle>Menu Background</SectionTitle>
+              <ImageField 
+                label="Menu Section Background Image" 
+                value={site.sectionBackgrounds?.menu || ""} 
+                onChange={(v) => {
+                  const bgs = { ...(site.sectionBackgrounds || {}) };
+                  if (v) bgs.menu = v; else delete bgs.menu;
+                  set("sectionBackgrounds", bgs);
+                }} 
+              />
+              <div className="h-px bg-[#2d2b25]/10 my-6" />
+              
               <SectionTitle>Menu</SectionTitle>
               <SortableList items={site.menuItems} prefix="menu" onReorder={(items) => set("menuItems", items)}>
                 {(item, i, id) => (
@@ -634,6 +744,18 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
           {/* ─── GALLERY ─── */}
           {tab === "Gallery" && (
             <div>
+              <SectionTitle>Gallery Background</SectionTitle>
+              <ImageField 
+                label="Gallery Section Background Image" 
+                value={site.sectionBackgrounds?.gallery || ""} 
+                onChange={(v) => {
+                  const bgs = { ...(site.sectionBackgrounds || {}) };
+                  if (v) bgs.gallery = v; else delete bgs.gallery;
+                  set("sectionBackgrounds", bgs);
+                }} 
+              />
+              <div className="h-px bg-[#2d2b25]/10 my-6" />
+              
               <SectionTitle>Gallery</SectionTitle>
               <SortableList items={site.galleryImages} prefix="gallery" onReorder={(items) => set("galleryImages", items)}>
                 {(img, i, id) => (
@@ -650,6 +772,18 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
           {/* ─── EXPLORE ─── */}
           {tab === "Explore" && (
             <div>
+              <SectionTitle>Things to Do Background</SectionTitle>
+              <ImageField 
+                label="Things to Do Section Background Image" 
+                value={site.sectionBackgrounds?.explore || ""} 
+                onChange={(v) => {
+                  const bgs = { ...(site.sectionBackgrounds || {}) };
+                  if (v) bgs.explore = v; else delete bgs.explore;
+                  set("sectionBackgrounds", bgs);
+                }} 
+              />
+              <div className="h-px bg-[#2d2b25]/10 my-6" />
+              
               <SectionTitle>Things to Do</SectionTitle>
               <SortableList items={site.exploreGroups} prefix="explore" onReorder={(items) => set("exploreGroups", items)}>
                 {(group, i, id) => (
@@ -696,6 +830,18 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
           {/* ─── STAY ─── */}
           {tab === "Stay" && (
             <div>
+              <SectionTitle>Accommodations Background</SectionTitle>
+              <ImageField 
+                label="Accommodations Section Background Image" 
+                value={site.sectionBackgrounds?.accommodations || ""} 
+                onChange={(v) => {
+                  const bgs = { ...(site.sectionBackgrounds || {}) };
+                  if (v) bgs.accommodations = v; else delete bgs.accommodations;
+                  set("sectionBackgrounds", bgs);
+                }} 
+              />
+              <div className="h-px bg-[#2d2b25]/10 my-6" />
+              
               <SectionTitle>Accommodations</SectionTitle>
               <SortableList items={site.accommodations} prefix="hotels" onReorder={(items) => set("accommodations", items)}>
                 {(hotel, i, id) => (
@@ -716,6 +862,18 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
           {/* ─── RSVP ─── */}
           {tab === "RSVP" && (
             <div>
+              <SectionTitle>RSVP Background</SectionTitle>
+              <ImageField 
+                label="RSVP Section Background Image" 
+                value={site.sectionBackgrounds?.rsvp || ""} 
+                onChange={(v) => {
+                  const bgs = { ...(site.sectionBackgrounds || {}) };
+                  if (v) bgs.rsvp = v; else delete bgs.rsvp;
+                  set("sectionBackgrounds", bgs);
+                }} 
+              />
+              <div className="h-px bg-[#2d2b25]/10 my-6" />
+              
               <SectionTitle>RSVP</SectionTitle>
               <Field label="Heading" value={site.rsvpHeading} onChange={(v) => set("rsvpHeading", v)} />
               <Field label="Deadline Text" value={site.rsvpDeadlineText} onChange={(v) => set("rsvpDeadlineText", v)} />
@@ -752,14 +910,33 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
           {/* ─── GIFT ─── */}
           {tab === "Gift" && (
             <div>
+              <SectionTitle>Gift Background</SectionTitle>
+              <ImageField 
+                label="Gift Section Background Image" 
+                value={site.sectionBackgrounds?.gift || ""} 
+                onChange={(v) => {
+                  const bgs = { ...(site.sectionBackgrounds || {}) };
+                  if (v) bgs.gift = v; else delete bgs.gift;
+                  set("sectionBackgrounds", bgs);
+                }} 
+              />
+              <div className="h-px bg-[#2d2b25]/10 my-6" />
+              
               <SectionTitle>Gift</SectionTitle>
               <Field label="Heading" value={site.giftHeading} onChange={(v) => set("giftHeading", v)} />
               <Field label="Subheading" value={site.giftSubheading} onChange={(v) => set("giftSubheading", v)} multiline rows={3} />
               
               <div className="mt-8 pt-8 border-t border-[#2d2b25]/10">
-                <SectionTitle>Payment Link (e.g. PayPal, Venmo)</SectionTitle>
-                <Field label="Button Label" value={site.giftPaymentLabel} onChange={(v) => set("giftPaymentLabel", v)} placeholder="e.g. Pay with PayPal" />
-                <Field label="URL" value={site.giftPaymentUrl} onChange={(v) => set("giftPaymentUrl", v)} placeholder="https://paypal.me/yourname" />
+                <SectionTitle>Payment Links (e.g. PayPal, Venmo, CashApp)</SectionTitle>
+                <SortableList items={site.giftPaymentLinks || []} prefix="giftLinks" onReorder={(items) => set("giftPaymentLinks", items)}>
+                  {(link, i, id) => (
+                    <SortableCard key={id} id={id} onRemove={() => set("giftPaymentLinks", removeFromArray(site.giftPaymentLinks || [], i))}>
+                      <Field label="Button Label" value={link.label} onChange={(v) => set("giftPaymentLinks", updateInArray(site.giftPaymentLinks || [], i, { label: v }))} placeholder="e.g. Pay with PayPal" />
+                      <Field label="URL" value={link.url} onChange={(v) => set("giftPaymentLinks", updateInArray(site.giftPaymentLinks || [], i, { url: v }))} placeholder="https://paypal.me/yourname" />
+                    </SortableCard>
+                  )}
+                </SortableList>
+                <AddButton label="Add Payment Link" onClick={() => set("giftPaymentLinks", [...(site.giftPaymentLinks || []), { label: "Contribute here", url: "" }])} />
               </div>
 
               <div className="mt-8 pt-8 border-t border-[#2d2b25]/10">
@@ -779,6 +956,18 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
           {/* ─── FOOTER ─── */}
           {tab === "Footer" && (
             <div>
+              <SectionTitle>Footer Background</SectionTitle>
+              <ImageField 
+                label="Footer Section Background Image" 
+                value={site.sectionBackgrounds?.footer || ""} 
+                onChange={(v) => {
+                  const bgs = { ...(site.sectionBackgrounds || {}) };
+                  if (v) bgs.footer = v; else delete bgs.footer;
+                  set("sectionBackgrounds", bgs);
+                }} 
+              />
+              <div className="h-px bg-[#2d2b25]/10 my-6" />
+              
               <SectionTitle>Footer</SectionTitle>
               <Field label="Names" value={site.footerNames} onChange={(v) => set("footerNames", v)} />
               <Field label="Date Text" value={site.footerDateText} onChange={(v) => set("footerDateText", v)} />
