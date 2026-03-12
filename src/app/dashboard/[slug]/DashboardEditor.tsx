@@ -1265,7 +1265,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
               };
 
               const bgColor = site.sectionBackgroundColors?.[id] || "transparent";
-              const setBgColor = (v: string) => {
+              const setBgColor = (v: "cream" | "tan" | "dark" | "transparent") => {
                 const bgs = { ...(site.sectionBackgroundColors || {}) };
                 if (v && v !== "transparent") bgs[id] = v; else delete bgs[id];
                 set("sectionBackgroundColors", bgs);
