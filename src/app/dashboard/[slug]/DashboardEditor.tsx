@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useId, useEffect } from "react";
+import { useState, useRef, useId, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import type {
   WeddingSite,
@@ -131,17 +131,160 @@ async function uploadFile(file: File): Promise<string> {
   return publicUrl;
 }
 
-function ImageField({ label, value, onChange }: {
-  label: string; value: string; onChange: (url: string) => void;
+function MediaLibrary({ onSelect, onClose, recentLinks = [] }: { onSelect: (url: string) => void; onClose: () => void; recentLinks?: string[] }) {
+  const [images, setImages] = useState<{ url: string; key: string }[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [libTab, setLibTab] = useState<"uploads" | "recent">("uploads");
+
+  useEffect(() => {
+    async function loadMedia() {
+      setLoading(true);
+      try {
+        const res = await fetch("/api/media");
+        const data = await res.json();
+        
+        if (data.error) {
+          console.error("Library API error:", data.error);
+          return;
+        }
+
+        // The API returns { images: [...] }
+        if (Array.isArray(data.images)) {
+          setImages(data.images);
+        } else if (data.data && Array.isArray(data.data.images)) {
+          // Fallback if structured differently
+          setImages(data.data.images);
+        }
+      } catch (err) {
+        console.error("Failed to load media", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadMedia();
+  }, []);
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#2d2b25]/60 backdrop-blur-sm p-4">
+      <div className="bg-[#faf1e1] w-full max-w-4xl max-h-[80vh] flex flex-col rounded-sm shadow-2xl border border-[#2d2b25]/10">
+        <div className="p-6 border-b border-[#2d2b25]/10 flex justify-between items-center">
+          <div>
+            <h2 className="text-xl font-serif italic">Media Library</h2>
+            <div className="flex gap-4 mt-2">
+              <button 
+                onClick={() => setLibTab("uploads")}
+                className={`text-[10px] font-bold uppercase tracking-widest pb-1 border-b-2 transition-all ${libTab === "uploads" ? "border-[#2d2b25] text-[#2d2b25]" : "border-transparent text-[#2d2b25]/40 hover:text-[#2d2b25]/60"}`}
+              >
+                Uploads
+              </button>
+              <button 
+                onClick={() => setLibTab("recent")}
+                className={`text-[10px] font-bold uppercase tracking-widest pb-1 border-b-2 transition-all ${libTab === "recent" ? "border-[#2d2b25] text-[#2d2b25]" : "border-transparent text-[#2d2b25]/40 hover:text-[#2d2b25]/60"}`}
+              >
+                Recently Used {recentLinks.length > 0 && `(${recentLinks.length})`}
+              </button>
+              <button 
+                onClick={() => {
+                  setImages([]);
+                  setLoading(true);
+                  async function refresh() {
+                    try {
+                      const res = await fetch("/api/media");
+                      const data = await res.json();
+                      if (data.images) setImages(data.images);
+                    } catch (err) {
+                      console.error("Refresh failed", err);
+                    } finally {
+                      setLoading(false);
+                    }
+                  }
+                  refresh();
+                }}
+                className="text-[10px] font-bold uppercase tracking-widest text-[#2d2b25]/40 hover:text-[#2d2b25] ml-4 flex items-center gap-1"
+              >
+                <svg className={`w-3 h-3 ${loading ? "animate-spin" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                Refresh
+              </button>
+            </div>
+          </div>
+          <button onClick={onClose} className="text-[#2d2b25]/40 hover:text-[#2d2b25] text-2xl">&times;</button>
+        </div>
+        
+        <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
+          {libTab === "uploads" ? (
+            loading ? (
+              <div className="flex items-center justify-center h-64 text-[#2d2b25]/40 italic uppercase tracking-widest text-xs">Loading your media...</div>
+            ) : images.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-64 text-[#2d2b25]/40 gap-4">
+                <p className="italic">Your library is empty.</p>
+                <p className="text-[10px] uppercase tracking-widest text-center max-w-xs">Upload images using the "Upload" button in the editor to see them here.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {images.map((img) => (
+                  <button
+                    key={img.key}
+                    onClick={() => { onSelect(img.url); onClose(); }}
+                    className="group relative aspect-square bg-white border border-[#2d2b25]/5 hover:border-[#2d2b25]/40 transition-all overflow-hidden rounded-sm"
+                  >
+                    <img src={img.url} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <div className="absolute inset-0 bg-[#2d2b25]/0 group-hover:bg-[#2d2b25]/10 transition-colors" />
+                  </button>
+                ))}
+              </div>
+            )
+          ) : (
+            recentLinks.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-64 text-[#2d2b25]/40 gap-4">
+                <p className="italic">No recently used links yet.</p>
+                <p className="text-[10px] uppercase tracking-widest text-center max-w-xs">Any images you paste as a URL or upload will appear here for easy re-use.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {recentLinks.map((url, i) => (
+                  <button
+                    key={i}
+                    onClick={() => { onSelect(url); onClose(); }}
+                    className="group relative aspect-square bg-white border border-[#2d2b25]/5 hover:border-[#2d2b25]/40 transition-all overflow-hidden rounded-sm"
+                  >
+                    <img src={url} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <div className="absolute inset-0 bg-[#2d2b25]/0 group-hover:bg-[#2d2b25]/10 transition-colors" />
+                    <div className="absolute bottom-1 left-1 bg-white/80 px-1 py-0.5 rounded-[1px] text-[8px] uppercase tracking-widest font-bold text-[#2d2b25]/60 shadow-sm border border-[#2d2b25]/5">Recent</div>
+                  </button>
+                ))}
+              </div>
+            )
+          )}
+        </div>
+        
+        <div className="p-4 border-t border-[#2d2b25]/5 bg-[#2d2b25]/[0.02] text-right">
+          <button onClick={onClose} className="px-6 py-2 text-[10px] font-bold uppercase tracking-widest text-[#2d2b25]/60 hover:text-[#2d2b25]">Close Library</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ImageField({ label, value, onChange, recentLinks = [], onAddRecentLink }: {
+  label: string; value: string; onChange: (url: string) => void; recentLinks?: string[]; onAddRecentLink?: (url: string) => void;
 }) {
   const [uploading, setUploading] = useState(false);
+  const [showLibrary, setShowLibrary] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   async function handleFile(file: File) {
+    if (file.size > 5 * 1024 * 1024) {
+      if (!confirm("This image is quite large (>5MB). Large images can slow down your site. Would you like to proceed anyway?")) {
+        return;
+      }
+    }
     setUploading(true);
     try {
       const url = await uploadFile(file);
       onChange(url);
+      if (onAddRecentLink) onAddRecentLink(url);
     } catch (err: any) {
       alert(err.message || "Upload failed");
     }
@@ -153,10 +296,20 @@ function ImageField({ label, value, onChange }: {
       <Label>{label}</Label>
       <div className="flex gap-2">
         <input
-          value={value} onChange={(e) => onChange(e.target.value)}
-          placeholder="https://... or upload below"
+          value={value} onChange={(e) => {
+            onChange(e.target.value);
+            if (e.target.value && onAddRecentLink) onAddRecentLink(e.target.value);
+          }}
+          placeholder="Paste URL (Canva, Unsplash, etc.) or upload"
           className="flex-1 px-3 py-2 border border-[#2d2b25]/15 bg-white/50 text-[#2d2b25] text-sm outline-none focus:border-[#2d2b25]/40 rounded-sm"
         />
+        <button
+          type="button"
+          onClick={() => setShowLibrary(true)}
+          className="px-3 py-2 text-xs font-semibold tracking-wide uppercase border border-[#2d2b25]/15 text-[#2d2b25]/60 hover:text-[#2d2b25] hover:border-[#2d2b25]/30 transition-colors rounded-sm whitespace-nowrap"
+        >
+          Library
+        </button>
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
@@ -174,8 +327,22 @@ function ImageField({ label, value, onChange }: {
           }}
         />
       </div>
+      <p className="text-[9px] text-[#2d2b25]/40 mt-1 uppercase tracking-tighter">
+        Tip: You can paste a Canva "Shared Link" here, or upload an optimized image for better speed.
+      </p>
       {value && (
         <img src={value} alt="Preview" className="w-full max-w-xs h-32 object-cover rounded-sm border border-[#2d2b25]/10 mt-2" />
+      )}
+      
+      {showLibrary && (
+        <MediaLibrary 
+          onSelect={(url) => {
+            onChange(url);
+            if (onAddRecentLink) onAddRecentLink(url);
+          }} 
+          onClose={() => setShowLibrary(false)} 
+          recentLinks={recentLinks} 
+        />
       )}
     </div>
   );
@@ -308,6 +475,34 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const autoSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
 
+  function handleTabChange(newTab: Tab) {
+    setTab(newTab);
+    
+    // Map tab name to section ID
+    const tabToSection: Record<string, string> = {
+      "Basics": "hero",
+      "Hero": "hero",
+      "Story": "story",
+      "Details": "details",
+      "Schedule": "schedule",
+      "Menu": "menu",
+      "Gallery": "gallery",
+      "Explore": "explore",
+      "Stay": "accommodations",
+      "RSVP": "rsvp",
+      "Gift": "gift",
+      "Footer": "footer"
+    };
+
+    const sectionId = tabToSection[newTab];
+    if (sectionId && isPreview && iframeRef.current) {
+      iframeRef.current.contentWindow?.postMessage({
+        type: "SCROLL_TO_SECTION",
+        sectionId
+      }, "*");
+    }
+  }
+
   // Undo/Redo logic
   function undo() {
     if (past.length === 0) return;
@@ -427,6 +622,16 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
     setSite((s) => ({ ...s, [key]: value }));
     setSaved(false);
   }
+
+  const addRecentLink = useCallback((url: string) => {
+    if (!url) return;
+    setSite((s) => {
+      if (s.recentlyUsedLinks?.includes(url)) return s;
+      const newRecent = [url, ...(s.recentlyUsedLinks || [])].slice(0, 20);
+      return { ...s, recentlyUsedLinks: newRecent };
+    });
+    setSaved(false);
+  }, []);
 
   function updateInArray<T>(arr: T[], index: number, patch: Partial<T>): T[] {
     return arr.map((item, i) => (i === index ? { ...item, ...patch } : item));
@@ -571,7 +776,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
         {/* Sidebar */}
         <nav className={`shrink-0 sticky top-20 self-start transition-all ${isPreview ? "w-36" : "w-44"}`}>
           {TABS.map((t) => (
-            <button key={t} onClick={() => setTab(t)}
+            <button key={t} onClick={() => handleTabChange(t)}
               className={`block w-full text-left px-3 py-2 text-sm rounded-sm mb-0.5 transition-colors ${
                 tab === t ? "bg-[#2d2b25] text-[#faf1e1]" : "text-[#2d2b25]/60 hover:text-[#2d2b25] hover:bg-[#2d2b25]/5"
               }`}
@@ -642,10 +847,10 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
 
                 <Label>Layout Style</Label>
                 <div className="grid grid-cols-2 gap-3 mt-2 mb-6">
-                  {[
+                  {([
                     { id: "classic", name: "Classic", desc: "Elegant, centered layout with script fonts." },
                     { id: "modern", name: "Modern", desc: "Minimalist, bold typography and high contrast." },
-                  ].map((layout) => (
+                  ] as const).map((layout) => (
                     <button
                       key={layout.id}
                       type="button"
@@ -661,7 +866,6 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                     </button>
                   ))}
                 </div>
-
                 <Label>Color Palette</Label>                <div className="grid grid-cols-3 gap-3 mt-2 mb-4">
                   {themes.map((theme) => (
                     <button
@@ -751,7 +955,13 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                 <Field label="Pre-text" value={site.heroPretext} onChange={(v) => set("heroPretext", v)} />
                 <Field label="Tagline" value={site.heroTagline} onChange={(v) => set("heroTagline", v)} />
                 <Field label="CTA Button Text" value={site.heroCta} onChange={(v) => set("heroCta", v)} />
-                <ImageField label="Hero Image" value={site.heroImageUrl} onChange={(v) => set("heroImageUrl", v)} />
+                <ImageField 
+                  label="Hero Image" 
+                  value={site.heroImageUrl} 
+                  onChange={(v) => set("heroImageUrl", v)} 
+                  recentLinks={site.recentlyUsedLinks || []}
+                  onAddRecentLink={addRecentLink}
+                />
               </div>
             )}
 
@@ -767,6 +977,8 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                     if (v) bgs.story = v; else delete bgs.story;
                     set("sectionBackgrounds", bgs);
                   }} 
+                  recentLinks={site.recentlyUsedLinks || []}
+                  onAddRecentLink={addRecentLink}
                 />
                 <div className="h-px bg-[#2d2b25]/10 my-6" />
                 <Field label="Subtitle" value={site.storySubtitle} onChange={(v) => set("storySubtitle", v)} />
@@ -784,7 +996,13 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                   )}
                 </SortableList>
                 <AddButton label="Add Paragraph" onClick={() => set("storyBody", [...site.storyBody, ""])} />
-                <ImageField label="Story Image" value={site.storyImageUrl} onChange={(v) => set("storyImageUrl", v)} />
+                <ImageField 
+                  label="Story Image" 
+                  value={site.storyImageUrl} 
+                  onChange={(v) => set("storyImageUrl", v)} 
+                  recentLinks={site.recentlyUsedLinks || []}
+                  onAddRecentLink={addRecentLink}
+                />
 
                 <SectionTitle>Quote</SectionTitle>
                 <ImageField 
@@ -795,6 +1013,8 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                     if (v) bgs.quote = v; else delete bgs.quote;
                     set("sectionBackgrounds", bgs);
                   }} 
+                  recentLinks={site.recentlyUsedLinks || []}
+                  onAddRecentLink={addRecentLink}
                 />
                 <div className="h-px bg-[#2d2b25]/10 my-6" />
                 <Field label="Quote Text" value={site.quoteText} onChange={(v) => set("quoteText", v)} multiline rows={3} />
@@ -809,9 +1029,17 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                     if (v) bgs.featuredPhoto = v; else delete bgs.featuredPhoto;
                     set("sectionBackgrounds", bgs);
                   }} 
+                  recentLinks={site.recentlyUsedLinks || []}
+                  onAddRecentLink={addRecentLink}
                 />
                 <div className="h-px bg-[#2d2b25]/10 my-6" />
-                <ImageField label="Featured Photo" value={site.featuredPhotoUrl} onChange={(v) => set("featuredPhotoUrl", v)} />
+                <ImageField 
+                  label="Featured Photo" 
+                  value={site.featuredPhotoUrl} 
+                  onChange={(v) => set("featuredPhotoUrl", v)} 
+                  recentLinks={site.recentlyUsedLinks || []}
+                  onAddRecentLink={addRecentLink}
+                />
                 <Field label="Caption" value={site.featuredPhotoCaption} onChange={(v) => set("featuredPhotoCaption", v)} />
 
                 <SectionTitle>Love Letter</SectionTitle>
@@ -823,6 +1051,8 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                     if (v) bgs.letter = v; else delete bgs.letter;
                     set("sectionBackgrounds", bgs);
                   }} 
+                  recentLinks={site.recentlyUsedLinks || []}
+                  onAddRecentLink={addRecentLink}
                 />
                 <div className="h-px bg-[#2d2b25]/10 my-6" />
                 <Field label="Opening" value={site.letterOpening} onChange={(v) => set("letterOpening", v)} />
@@ -854,6 +1084,8 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                     if (v) bgs.details = v; else delete bgs.details;
                     set("sectionBackgrounds", bgs);
                   }} 
+                  recentLinks={site.recentlyUsedLinks || []}
+                  onAddRecentLink={addRecentLink}
                 />
                 <div className="h-px bg-[#2d2b25]/10 my-6" />
 
@@ -912,6 +1144,8 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                     if (v) bgs.day2 = v; else delete bgs.day2;
                     set("sectionBackgrounds", bgs);
                   }} 
+                  recentLinks={site.recentlyUsedLinks || []}
+                  onAddRecentLink={addRecentLink}
                 />
                 <div className="h-px bg-[#2d2b25]/10 my-6" />
                 {site.dayTwoEvent ? (
@@ -939,6 +1173,8 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                     if (v) bgs.schedule = v; else delete bgs.schedule;
                     set("sectionBackgrounds", bgs);
                   }} 
+                  recentLinks={site.recentlyUsedLinks || []}
+                  onAddRecentLink={addRecentLink}
                 />
                 <div className="h-px bg-[#2d2b25]/10 my-6" />
                 
@@ -1043,6 +1279,8 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                     if (v) bgs.menu = v; else delete bgs.menu;
                     set("sectionBackgrounds", bgs);
                   }} 
+                  recentLinks={site.recentlyUsedLinks || []}
+                  onAddRecentLink={addRecentLink}
                 />
                 <div className="h-px bg-[#2d2b25]/10 my-6" />
                 
@@ -1072,6 +1310,8 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                     if (v) bgs.gallery = v; else delete bgs.gallery;
                     set("sectionBackgrounds", bgs);
                   }} 
+                  recentLinks={site.recentlyUsedLinks || []}
+                  onAddRecentLink={addRecentLink}
                 />
                 <div className="h-px bg-[#2d2b25]/10 my-6" />
                 
@@ -1079,7 +1319,13 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                 <SortableList items={site.galleryImages} prefix="gallery" onReorder={(items) => set("galleryImages", items)}>
                   {(img, i, id) => (
                     <SortableCard key={id} id={id} onRemove={() => set("galleryImages", removeFromArray(site.galleryImages, i))}>
-                      <ImageField label="Image" value={img.url} onChange={(v) => set("galleryImages", updateInArray(site.galleryImages, i, { url: v }))} />
+                      <ImageField 
+                        label="Image" 
+                        value={img.url} 
+                        onChange={(v) => set("galleryImages", updateInArray(site.galleryImages, i, { url: v }))} 
+                        recentLinks={site.recentlyUsedLinks || []}
+                        onAddRecentLink={addRecentLink}
+                      />
                       <Field label="Alt Text" value={img.alt} onChange={(v) => set("galleryImages", updateInArray(site.galleryImages, i, { alt: v }))} />
                     </SortableCard>
                   )}
@@ -1100,6 +1346,8 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                     if (v) bgs.explore = v; else delete bgs.explore;
                     set("sectionBackgrounds", bgs);
                   }} 
+                  recentLinks={site.recentlyUsedLinks || []}
+                  onAddRecentLink={addRecentLink}
                 />
                 <div className="h-px bg-[#2d2b25]/10 my-6" />
                 
@@ -1158,6 +1406,8 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                     if (v) bgs.accommodations = v; else delete bgs.accommodations;
                     set("sectionBackgrounds", bgs);
                   }} 
+                  recentLinks={site.recentlyUsedLinks || []}
+                  onAddRecentLink={addRecentLink}
                 />
                 <div className="h-px bg-[#2d2b25]/10 my-6" />
                 
@@ -1190,6 +1440,8 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                     if (v) bgs.rsvp = v; else delete bgs.rsvp;
                     set("sectionBackgrounds", bgs);
                   }} 
+                  recentLinks={site.recentlyUsedLinks || []}
+                  onAddRecentLink={addRecentLink}
                 />
                 <div className="h-px bg-[#2d2b25]/10 my-6" />
                 
@@ -1256,12 +1508,14 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                     2. Share it with <strong>edit</strong> access to:
                     <div className="mt-1 mb-3 flex items-center gap-2">
                       <div className="flex-1 px-3 py-2 bg-[#2d2b25]/5 border border-[#2d2b25]/10 font-mono text-[10px] text-[#2d2b25]/60 truncate rounded-sm">
-                        rsvp-69@ithinkshewifey.iam.gserviceaccount.com
+                        {process.env.NEXT_PUBLIC_GOOGLE_SERVICE_ACCOUNT_EMAIL || "Configure email in settings"}
                       </div>
                       <button
                         type="button"
                         onClick={() => {
-                          navigator.clipboard.writeText("rsvp-69@ithinkshewifey.iam.gserviceaccount.com");
+                          const email = process.env.NEXT_PUBLIC_GOOGLE_SERVICE_ACCOUNT_EMAIL;
+                          if (!email) return alert("Email not configured.");
+                          navigator.clipboard.writeText(email);
                           alert("Email copied! Go to your Google Sheet > Share, and invite this email as an Editor.");
                         }}
                         className="px-3 py-2 bg-white border border-[#2d2b25]/20 text-[#2d2b25] text-xs font-semibold uppercase tracking-wider hover:bg-[#2d2b25] hover:text-white transition-all rounded-sm shrink-0"
@@ -1317,6 +1571,8 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                     if (v) bgs.gift = v; else delete bgs.gift;
                     set("sectionBackgrounds", bgs);
                   }} 
+                  recentLinks={site.recentlyUsedLinks || []}
+                  onAddRecentLink={addRecentLink}
                 />
                 <div className="h-px bg-[#2d2b25]/10 my-6" />
                 
@@ -1388,6 +1644,8 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                     if (v) bgs.footer = v; else delete bgs.footer;
                     set("sectionBackgrounds", bgs);
                   }} 
+                  recentLinks={site.recentlyUsedLinks || []}
+                  onAddRecentLink={addRecentLink}
                 />
                 <div className="h-px bg-[#2d2b25]/10 my-6" />
                 

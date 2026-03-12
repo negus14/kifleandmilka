@@ -206,4 +206,5 @@ export interface WeddingSite {
   contactEntries: ContactEntry[];
   navBrand: string;
   sectionBackgrounds?: Record<string, string>;
+  recentlyUsedLinks?: string[];
 }
