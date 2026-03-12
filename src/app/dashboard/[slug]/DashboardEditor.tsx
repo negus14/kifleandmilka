@@ -64,7 +64,10 @@ function Field({ label, value, onChange, placeholder, multiline, rows, type = "t
       ) : (
         <input
           type={type}
-          value={value} onChange={(e) => onChange(e.target.value)}
+          value={value} onChange={(e) => {
+            console.log(`Field ${label} changed to:`, e.target.value);
+            onChange(e.target.value);
+          }}
           placeholder={placeholder}
           className="w-full px-3 py-2 border border-[#2d2b25]/15 bg-white/50 text-[#2d2b25] text-sm outline-none focus:border-[#2d2b25]/40 rounded-sm"
         />
