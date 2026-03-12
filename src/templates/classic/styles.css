@@ -371,6 +371,12 @@
 .section--dark .explore-group__heading,
 .section--dark .hotel-card__name,
 .section--dark .gift__heading,
+.section--dark .contact__heading,
+.section--dark .menu__heading,
+.section--dark .menu__item-name,
+.section--dark .hero__pretext,
+.section--dark .hero__tagline,
+.section--dark .hero__date-line,
 .section--dark .contact__label,
 .section--dark .footer__names { color: var(--color-cream); }
 
@@ -394,12 +400,48 @@
 .section--dark .hotel-card__desc,
 .section--dark .gift__subheading,
 .section--dark .gift__note,
+.section--dark .contact__subheading,
+.section--dark .contact__entry,
+.section--dark .contact__entry a,
+.section--dark .contact__phone-number,
 .section--dark .contact__link,
+.section--dark .menu__item { border-color: rgba(212, 189, 172, 0.15); }
+.section--dark .menu__item-desc,
+.section--dark .menu__note,
 .section--dark .footer__date,
 .section--dark .footer__contact,
 .section--dark .footer__contact a,
 .section--dark .footer__copy,
 .section--dark p { color: var(--color-tan); }
+
+.section--dark .hero__names,
+.section--dark .hero__ampersand { color: var(--color-cream); }
+.section--dark .hero__line { background: var(--color-tan); }
+.section--dark .hero__btn {
+  background: var(--color-tan);
+  color: var(--color-dark);
+  border-color: var(--color-tan);
+}
+.section--dark .hero__btn:hover {
+  background: transparent;
+  color: var(--color-tan);
+}
+
+.section--dark .contact__entry a:hover {
+  border-color: var(--color-cream);
+}
+
+.section--dark .contact__phone-action {
+  color: var(--color-tan);
+  border-color: rgba(212, 189, 172, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.section--dark .contact__phone-action:hover {
+  background: var(--color-tan);
+  color: var(--color-dark);
+  border-color: var(--color-tan);
+}
 
 .section--dark .section__line,
 .section--dark .footer__line,
@@ -411,11 +453,27 @@
   background: var(--color-dark);
 }
 
-.section--dark .info-card,
-.section--dark .timeline-card {
+.section--dark .hotel-card,
+.section--dark .explore-card {
   background: rgba(255, 255, 255, 0.03);
   border-color: rgba(212, 189, 172, 0.2);
 }
+
+.section--dark .hotel-card__badge {
+  background: var(--color-tan);
+  color: var(--color-dark);
+}
+
+.section--tan .hotel-card,
+.section--tan .explore-card {
+  background: var(--color-cream);
+  border-color: rgba(0, 0, 0, 0.05);
+}
+
+.section--dark .explore-col__heading { color: var(--color-cream); }
+.section--dark .explore-col__list li::before { background: var(--color-tan); }
+.section--dark .explore-col__list a { color: var(--color-tan); text-decoration-color: rgba(212, 189, 172, 0.3); }
+.section--dark .explore-col__list a:hover { text-decoration-color: var(--color-tan); }
 
 .section--dark .rsvp__button,
 .section--dark .hotel-card__link,
@@ -1384,14 +1442,14 @@
 .menu__heading {
   font-family: var(--font-script);
   font-size: clamp(2.2rem, 5vw, 3.2rem);
-  color: var(--color-cream);
+  color: var(--color-dark);
   margin-bottom: clamp(2rem, 4vw, 3rem);
 }
 
 .menu__item {
   margin-bottom: 2rem;
   padding-bottom: 2rem;
-  border-bottom: 1px solid color-mix(in srgb, var(--color-tan), transparent 85%);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-dark), transparent 90%);
 }
 
 .menu__item:last-child {
@@ -1406,7 +1464,7 @@
   font-weight: 600;
   letter-spacing: 0.25em;
   text-transform: uppercase;
-  color: var(--color-cream);
+  color: var(--color-dark);
   margin-bottom: 0.6rem;
 }
 
@@ -1414,18 +1472,18 @@
   font-family: var(--font-serif);
   font-size: 1rem;
   font-weight: 300;
-  color: var(--color-tan);
+  color: var(--color-dark);
   line-height: 1.8;
-  opacity: 0.8;
+  opacity: 0.7;
 }
 
 .menu__note {
-  margin-top: 2.5rem;
   font-family: var(--font-serif);
   font-size: 0.95rem;
   font-style: italic;
-  color: var(--color-tan);
-  opacity: 0.7;
+  color: var(--color-dark);
+  opacity: 0.6;
+  margin-top: 3rem;
 }
 
 /* ===== THINGS TO DO ===== */
@@ -1568,10 +1626,11 @@
   margin: 0 auto;
 }
 
-.hotel-card {
+.hotel-card,
+.explore-card {
   padding: 2.25rem 2rem;
-  border: 1px solid color-mix(in srgb, var(--color-tan), transparent 80%);
-  background: color-mix(in srgb, var(--color-cream), transparent 94%);
+  border: 1px solid color-mix(in srgb, var(--color-dark), transparent 90%);
+  background: color-mix(in srgb, var(--color-dark), transparent 97%);
   position: relative;
 }
 
@@ -1583,7 +1642,7 @@
   letter-spacing: 0.15em;
   text-transform: uppercase;
   color: var(--color-cream);
-  background: color-mix(in srgb, var(--color-tan), transparent 80%);
+  background: var(--color-dark);
   padding: 0.3rem 0.75rem;
   margin-bottom: 1rem;
 }
@@ -1592,7 +1651,7 @@
   font-family: var(--font-serif);
   font-size: 1.3rem;
   font-weight: 400;
-  color: var(--color-cream);
+  color: var(--color-dark);
   margin-bottom: 0.4rem;
 }
 
@@ -1601,14 +1660,14 @@
   font-size: 0.78rem;
   font-weight: 500;
   letter-spacing: 0.1em;
-  color: var(--color-tan);
-  opacity: 0.75;
+  color: var(--color-dark);
+  opacity: 0.6;
   margin-bottom: 1rem;
 }
 
 .hotel-card__desc {
   font-size: 0.94rem;
-  color: var(--color-tan);
+  color: var(--color-dark);
   line-height: 1.8;
   opacity: 0.7;
   margin-bottom: 1.5rem;
@@ -1620,9 +1679,9 @@
   font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.1em;
-  color: var(--color-cream);
-  background: color-mix(in srgb, var(--color-tan), transparent 85%);
-  border: 1px dashed color-mix(in srgb, var(--color-tan), transparent 65%);
+  color: var(--color-dark);
+  background: color-mix(in srgb, var(--color-dark), transparent 94%);
+  border: 1px dashed color-mix(in srgb, var(--color-dark), transparent 80%);
   padding: 0.5rem 1rem;
   margin-bottom: 1.25rem;
 }
@@ -1639,7 +1698,7 @@
 .hotel-card__discount-code {
   font-size: 0.85rem;
   letter-spacing: 0.2em;
-  color: var(--color-tan-light);
+  color: var(--color-dark);
 }
 
 .hotel-card__link {
@@ -1649,17 +1708,17 @@
   font-weight: 500;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--color-dark);
-  background: var(--color-cream);
-  border: 2px solid var(--color-cream);
+  color: var(--color-cream);
+  background: var(--color-dark);
+  border: 2px solid var(--color-dark);
   padding: 0.65rem 1.5rem;
   transition: all 0.3s ease;
 }
 
 .hotel-card__link:hover {
   background: transparent;
-  color: var(--color-cream);
-  border-color: var(--color-cream);
+  color: var(--color-dark);
+  border-color: var(--color-dark);
 }
 
 /* ===== GIFT ===== */
@@ -1994,27 +2053,26 @@
   height: 24px;
   border-radius: 50%;
   background: color-mix(in srgb, var(--color-dark), transparent 94%);
-  color: var(--color-dark) !important;
-  border: 1px solid color-mix(in srgb, var(--color-dark), transparent 85%) !important;
+  color: var(--color-dark);
+  border: 1px solid color-mix(in srgb, var(--color-dark), transparent 85%);
   transition: all 0.3s ease;
-  padding: 0 !important;
 }
 
 .contact__phone-action:hover {
   background: var(--color-dark);
-  color: var(--color-cream) !important;
-  opacity: 1 !important;
+  color: var(--color-cream);
+  opacity: 1;
 }
 
 .section--has-bg.section--light-text .contact__phone-action {
   background: rgba(255, 255, 255, 0.1);
-  color: #fff !important;
-  border-color: rgba(255, 255, 255, 0.3) !important;
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 .section--has-bg.section--light-text .contact__phone-action:hover {
   background: #fff;
-  color: var(--color-dark) !important;
+  color: var(--color-dark);
 }
 
 .contact__phone-actions--footer {

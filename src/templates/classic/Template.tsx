@@ -424,11 +424,10 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
               <div className="section__line"></div>
             </div>
             <div className="explore-grid">
-              {site.exploreGroups.map((group, i) => (
-                <div key={i} className={`reveal${i > 0 ? ` reveal-delay-${i}` : ""}`}>
-                  <h3 className="explore-col__heading">{group.heading}</h3>
-                  <ul className="explore-col__list">
-                    {group.links.map((link, j) => (
+             {site.exploreGroups.map((group, i) => (
+               <div key={i} className={`explore-card reveal${i > 0 ? ` reveal-delay-${i}` : ""}`}>
+                 <h3 className="explore-col__heading">{group.heading}</h3>
+                 <ul className="explore-col__list">                    {group.links.map((link, j) => (
                       <li key={j}>
                         <a href={link.url} target="_blank" rel="noopener">{link.label}</a>
                       </li>
