@@ -82,7 +82,7 @@
   "footerNames": "Kifle & Milka",
   "footerDateText": "August 1 & 2, 2026 • Winnipeg, Manitoba",
   "footerCopyright": "Made with love • K & M 2026",
-  "footerDevCredit": "Want a wedding website like this?<br/>Built by <strong>Abel Ghebrezadik</strong> — <a href=\"mailto:abelghebz@gmail.com\">abelghebz@gmail.com</a> • <a href=\"tel:+447527841324\">+44 7527 841324</a>",
+  "footerDevCredit": "Want a wedding website like this?<br/>Built by <strong>Abel Ghebrezadik</strong> — <a href=\"mailto:abelghebz@gmail.com\">abelghebz@gmail.com</a> • <a href=\"tel:+447527841324\">+44 7527 841324</a><div class=\"contact__phone-actions contact__phone-actions--footer\"><a href=\"sms:+447527841324\" title=\"Text Message\" class=\"contact__phone-action\">SMS</a> <a href=\"https://wa.me/447527841324\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"WhatsApp\" class=\"contact__phone-action\">WhatsApp</a></div>",
 
   "venues": [
     {
