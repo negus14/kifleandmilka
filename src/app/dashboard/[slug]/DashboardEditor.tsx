@@ -548,6 +548,14 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
   const autoSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
   const lastManualTabClick = useRef<number>(0);
 
+  // Helper to format date for datetime-local without timezone shift
+  const formatForInput = (dateStr: string) => {
+    if (!dateStr) return "";
+    const d = new Date(dateStr);
+    const pad = (n: number) => n.toString().padStart(2, "0");
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  };
+
   function handleTabChange(newTab: string) {
     setTab(newTab);
     lastManualTabClick.current = Date.now();
@@ -1027,7 +1035,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                     <Field 
                       label="Wedding Start Date" 
                       type="datetime-local"
-                      value={site.weddingDate ? new Date(site.weddingDate).toISOString().slice(0, 16) : ""} 
+                      value={formatForInput(site.weddingDate)} 
                       onChange={(v) => {
                         if (!v) { set("weddingDate", ""); return; }
                         set("weddingDate", new Date(v).toISOString());
@@ -1036,7 +1044,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                     <Field 
                       label="Wedding End Date (optional)" 
                       type="datetime-local"
-                      value={site.weddingEndDate ? new Date(site.weddingEndDate).toISOString().slice(0, 16) : ""} 
+                      value={formatForInput(site.weddingEndDate || "")} 
                       onChange={(v) => {
                         if (!v) { set("weddingEndDate", ""); return; }
                         set("weddingEndDate", new Date(v).toISOString());
