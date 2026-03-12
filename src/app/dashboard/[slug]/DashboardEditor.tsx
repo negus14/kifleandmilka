@@ -1040,7 +1040,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
 
                 <div className="mt-8 pt-8 border-t border-[#2d2b25]/10">
                   <SectionTitle>Google Sheets Integration</SectionTitle>
-                  <p className="text-xs text-[#2d2b25]/60 mb-6 leading-relaxed">
+                  <div className="text-xs text-[#2d2b25]/60 mb-6 leading-relaxed">
                     Link RSVPs directly to your Google Sheet.
                     <br />
                     1. Create a new Google Sheet.
@@ -1080,7 +1080,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                     </div>
                     <br />
                     4. Paste the <strong>entire URL</strong> of your Google Sheet below.
-                  </p>                
+                  </div>                
                   <Field 
                     label="Google Sheets Link" 
                     value={site.rsvpEmbedUrl || ""} 
