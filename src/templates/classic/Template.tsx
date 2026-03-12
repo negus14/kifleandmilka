@@ -670,8 +670,8 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
         const bgUrl = site.sectionBackgrounds?.[section.id];
         const bgColor = site.sectionBackgroundColors?.[section.id];
         
-        // Only apply alternating backgrounds to content sections (not hero or footer)
-        const isContent = !['hero', 'footer'].includes(section.type);
+        // Only apply alternating backgrounds to content sections (not hero)
+        const isContent = section.type !== 'hero';
         
         // SPECIAL CASE: Some sections (letter, menu) are dark by design.
         // If they don't have a custom background OR COLOR, we let them handle their own default.

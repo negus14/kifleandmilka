@@ -1654,6 +1654,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
               if (type === "footer") return (
                 <div>
                   <SectionTitle>Footer</SectionTitle>
+                  {renderBg("Footer Background Image")}
                   <Field label="Names" value={d("names", site.footerNames)} onChange={(v) => update({ names: v })} />
                   <Field label="Date Text" value={d("date", site.footerDateText)} onChange={(v) => update({ date: v })} />
                   <Field label="Copyright" value={d("copy", site.footerCopyright)} onChange={(v) => update({ copy: v })} />
