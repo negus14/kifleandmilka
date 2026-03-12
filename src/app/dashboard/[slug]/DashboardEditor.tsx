@@ -1637,6 +1637,58 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                   {renderBg("Gift Background Image")}
                   <Field label="Heading" value={d("heading", site.giftHeading)} onChange={(v) => update({ heading: v })} />
                   <Field label="Subheading" value={d("subheading", site.giftSubheading)} onChange={(v) => update({ subheading: v })} multiline rows={3} />
+                  
+                  <div className="mt-8 mb-10">
+                    <Label>External Registry Links</Label>
+                    <p className="text-[10px] text-[#2d2b25]/40 mb-4 uppercase tracking-wider">Simple links for PayPal, Monzo, Revolut, Wise, or Store Registries</p>
+                    
+                    <SortableList 
+                      items={site.giftPaymentLinks || []} 
+                      prefix={`reg-${id}`} 
+                      onReorder={(items) => set("giftPaymentLinks", items)}
+                    >
+                      {(link, i, sid) => (
+                        <SortableCard key={sid} id={sid} onRemove={() => set("giftPaymentLinks", removeFromArray(site.giftPaymentLinks || [], i))}>
+                          <div className="grid grid-cols-2 gap-3">
+                            <Field label="Label" value={link.label} onChange={(v) => set("giftPaymentLinks", updateInArray(site.giftPaymentLinks || [], i, { label: v }))} placeholder="e.g. PayPal, Monzo, Revolut" />
+                            <Field label="URL" value={link.url} onChange={(v) => set("giftPaymentLinks", updateInArray(site.giftPaymentLinks || [], i, { url: v }))} placeholder="https://..." />
+                          </div>
+                        </SortableCard>
+                      )}
+                    </SortableList>
+                    <AddButton label="Add Registry/Payment Link" onClick={() => set("giftPaymentLinks", [...(site.giftPaymentLinks || []), { label: "", url: "" }])} />
+                  </div>
+
+                  <div className="mt-8">
+                    <Label>Bank & Payment Options</Label>
+                    <p className="text-[10px] text-[#2d2b25]/40 mb-4 uppercase tracking-wider">Add bank details here</p>
+                    
+                    <SortableList 
+                      items={site.giftBankDetails || []} 
+                      prefix={`banks-${id}`} 
+                      onReorder={(items) => set("giftBankDetails", items)}
+                    >
+                      {(bank, i, sid) => (
+                        <SortableCard key={sid} id={sid} title={bank.label || `Option ${i + 1}`} onRemove={() => set("giftBankDetails", removeFromArray(site.giftBankDetails || [], i))}>
+                          <Field label="Method Label" value={bank.label} onChange={(v) => set("giftBankDetails", updateInArray(site.giftBankDetails || [], i, { label: v }))} placeholder="e.g. Wise (International) or UK Bank" />
+                          <div className="grid grid-cols-2 gap-3">
+                            <Field label="Account Holder" value={bank.accountHolder || ""} onChange={(v) => set("giftBankDetails", updateInArray(site.giftBankDetails || [], i, { accountHolder: v }))} />
+                            <Field label="Bank Name" value={bank.bankName || ""} onChange={(v) => set("giftBankDetails", updateInArray(site.giftBankDetails || [], i, { bankName: v }))} />
+                          </div>
+                          <div className="grid grid-cols-2 gap-3">
+                            <Field label="Account Number" value={bank.accountNumber || ""} onChange={(v) => set("giftBankDetails", updateInArray(site.giftBankDetails || [], i, { accountNumber: v }))} />
+                            <Field label="Sort Code" value={bank.sortCode || ""} onChange={(v) => set("giftBankDetails", updateInArray(site.giftBankDetails || [], i, { sortCode: v }))} />
+                          </div>
+                          <div className="grid grid-cols-2 gap-3">
+                            <Field label="SWIFT/BIC" value={bank.swiftCode || ""} onChange={(v) => set("giftBankDetails", updateInArray(site.giftBankDetails || [], i, { swiftCode: v }))} />
+                            <Field label="Email (for e-transfer)" value={bank.email || ""} onChange={(v) => set("giftBankDetails", updateInArray(site.giftBankDetails || [], i, { email: v }))} />
+                          </div>
+                          <Field label="Direct Payment Link (Wise, Venmo, PayPal)" value={bank.payLink || ""} onChange={(v) => set("giftBankDetails", updateInArray(site.giftBankDetails || [], i, { payLink: v }))} placeholder="https://wise.com/pay/..." />
+                        </SortableCard>
+                      )}
+                    </SortableList>
+                    <AddButton label="Add Payment Method" onClick={() => set("giftBankDetails", [...(site.giftBankDetails || []), { label: "", accountHolder: "" }])} />
+                  </div>
                 </div>
               );
 

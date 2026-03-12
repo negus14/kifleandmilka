@@ -54,7 +54,44 @@
   "heroTagline": "are getting married",
   "isPublished": true,
   "rsvpHeading": "Join Our Celebration",
-  "weddingDate": "2026-09-01T14:00:00-05:00",
+  "weddingDate": "2026-08-30T23:00:00.000Z",
+  "weddingDays": [
+    {
+      "date": "September 1, 2026",
+      "items": [
+        {
+          "hour": "2:00",
+          "event": "Ceremony",
+          "venue": "Your Ceremony Venue",
+          "period": "PM",
+          "description": "Join us as we say 'I do'"
+        },
+        {
+          "hour": "3:00",
+          "event": "Cocktail Hour",
+          "venue": "Your Venue",
+          "period": "PM",
+          "description": "Drinks and appetizers while the couple takes photos"
+        },
+        {
+          "hour": "5:00",
+          "event": "Reception",
+          "venue": "Your Reception Venue",
+          "period": "PM",
+          "description": "Dinner, toasts, and dancing"
+        },
+        {
+          "hour": "10:00",
+          "event": "Last Dance",
+          "venue": "",
+          "period": "PM",
+          "description": "One final song before we say goodnight"
+        }
+      ],
+      "label": "Wedding Day",
+      "isPrivate": false
+    }
+  ],
   "heroImageUrl": "/demo/images/photo-1.jpg",
   "locationText": "City, Province",
   "partner1Name": "Meron",
@@ -189,43 +226,6 @@
   "quoteAttribution": "— Author or Source",
   "rsvpDeadlineText": "Kindly respond by August 1, 2026",
   "featuredPhotoCaption": "Add a caption for your favourite photo together",
-  "weddingDays": [
-    {
-      "label": "Wedding Day",
-      "date": "September 1, 2026",
-      "isPrivate": false,
-      "items": [
-        {
-          "hour": "2:00",
-          "event": "Ceremony",
-          "venue": "Your Ceremony Venue",
-          "period": "PM",
-          "description": "Join us as we say 'I do'"
-        },
-        {
-          "hour": "3:00",
-          "event": "Cocktail Hour",
-          "venue": "Your Venue",
-          "period": "PM",
-          "description": "Drinks and appetizers while the couple takes photos"
-        },
-        {
-          "hour": "5:00",
-          "event": "Reception",
-          "venue": "Your Reception Venue",
-          "period": "PM",
-          "description": "Dinner, toasts, and dancing"
-        },
-        {
-          "hour": "10:00",
-          "event": "Last Dance",
-          "venue": "",
-          "period": "PM",
-          "description": "One final song before we say goodnight"
-        }
-      ]
-    }
-  ],
   "eventDays": [
     {
       "id": "day-1",

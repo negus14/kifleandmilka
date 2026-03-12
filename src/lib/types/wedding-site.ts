@@ -79,6 +79,7 @@ export interface BankDetail {
   sortCode?: string;
   swiftCode?: string;
   email?: string;
+  payLink?: string;
 }
 
 export interface ContactEntry {

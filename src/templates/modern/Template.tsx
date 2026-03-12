@@ -488,13 +488,25 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
                           </span>
                           {bank.label}
-                          <button 
-                            className="bank-copy-btn bank-copy-btn--all" 
-                            data-copy={allDetails} 
-                            title="Copy all details"
-                          >
-                            Copy All
-                          </button>
+                          <div className="gift__bank-actions">
+                            {bank.payLink && (
+                              <a 
+                                href={bank.payLink} 
+                                target="_blank" 
+                                rel="noopener" 
+                                className="bank-copy-btn bank-copy-btn--pay"
+                              >
+                                Pay Now
+                              </a>
+                            )}
+                            <button 
+                              className="bank-copy-btn bank-copy-btn--all" 
+                              data-copy={allDetails} 
+                              title="Copy all details"
+                            >
+                              Copy All
+                            </button>
+                          </div>
                         </div>
                         <div className="gift__bank-details-mini">
                           {bank.accountHolder && <div className="gift__mini-row"><span>Holder:</span> <strong>{bank.accountHolder}</strong></div>}

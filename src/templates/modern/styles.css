@@ -245,36 +245,12 @@
   color: var(--color-dark);
 }
 
-.modern-section--tan .modern-btn--primary,
-.modern-section--tanLight .modern-btn--primary,
-.modern-section--tanDark .modern-btn--primary,
-.modern-section--creamDark .modern-btn--primary,
-.modern-section--tan .gift__dropdown-toggle,
-.modern-section--tanLight .gift__dropdown-toggle,
-.modern-section--tanDark .gift__dropdown-toggle,
-.modern-section--creamDark .gift__dropdown-toggle {
-  background: var(--color-dark);
-  color: var(--color-cream);
-  border-color: var(--color-dark);
-}
-
-.modern-section--tan .modern-btn--primary:hover,
-.modern-section--tanLight .modern-btn--primary:hover,
-.modern-section--tanDark .modern-btn--primary:hover,
-.modern-section--creamDark .modern-btn--primary:hover,
-.modern-section--tan .gift__dropdown-toggle:hover,
-.modern-section--tanLight .gift__dropdown-toggle:hover,
-.modern-section--tanDark .gift__dropdown-toggle:hover,
-.modern-section--creamDark .gift__dropdown-toggle:hover {
-  background: transparent;
-  color: var(--color-dark);
-}
-
 .modern-section--dark {
   background: var(--color-dark);
   color: var(--color-cream);
 }
 
+/* Modern Dark section overrides */
 .modern-section--dark .modern-title,
 .modern-section--dark .modern-text,
 .modern-section--dark .modern-subtitle,
@@ -314,28 +290,36 @@
   opacity: 0.9;
 }
 
-.modern-section--dark .modern-card {
-  background: rgba(255, 255, 255, 0.03);
-  border-color: rgba(212, 189, 172, 0.2);
-}
-
-.modern-section--dark .modern-details-minimal__item,
-.modern-section--dark .modern-schedule__item,
-.modern-section--dark .modern-timeline-minimal__item {
-  border-color: rgba(212, 189, 172, 0.15);
+/* Button overrides for different backgrounds */
+.modern-section--tan .modern-btn--primary,
+.modern-section--tanLight .modern-btn--primary,
+.modern-section--tanDark .modern-btn--primary,
+.modern-section--creamDark .modern-btn--primary,
+.modern-section--tan .gift__dropdown-toggle,
+.modern-section--tanLight .gift__dropdown-toggle,
+.modern-section--tanDark .gift__dropdown-toggle,
+.modern-section--creamDark .gift__dropdown-toggle,
+.modern-section--tan .bank-copy-btn,
+.modern-section--tanLight .bank-copy-btn,
+.modern-section--tanDark .bank-copy-btn,
+.modern-section--creamDark .bank-copy-btn {
+  background: var(--color-dark);
+  color: var(--color-cream);
+  border-color: var(--color-dark);
 }
 
 .modern-section--dark .modern-btn--primary,
-.modern-section--dark .gift__dropdown-toggle {
+.modern-section--dark .gift__dropdown-toggle,
+.modern-section--dark .bank-copy-btn {
   background: var(--color-cream);
   color: var(--color-dark);
   border-color: var(--color-cream);
 }
 
-.modern-section--dark .modern-btn--primary:hover,
-.modern-section--dark .gift__dropdown-toggle:hover {
-  background: transparent;
-  color: var(--color-cream);
+.modern-section--dark .bank-copy-btn--pay {
+  background: var(--color-tan);
+  color: var(--color-dark);
+  border-color: var(--color-tan);
 }
 
 .modern-grid {
@@ -887,7 +871,7 @@
 
 .reveal.visible {
   opacity: 1;
-  transform: translateY(0);
+  transform: none;
 }
 
 /* Responsive */
