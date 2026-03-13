@@ -42,6 +42,11 @@ export function generateThemeVars(site: WeddingSite): React.CSSProperties {
     "--font-script": fontStyle.fonts.script,
     "--font-serif": fontStyle.fonts.serif,
     "--font-sans": fontStyle.fonts.sans,
+    // Optical tuning overrides
+    "--tracking-sans": fontStyle.overrides?.letterSpacingSans || "0em",
+    "--tracking-serif": fontStyle.overrides?.letterSpacingSerif || "0em",
+    "--line-height-script": fontStyle.overrides?.lineHeightScript || "1.1",
+    "--weight-sans": fontStyle.overrides?.fontWeightSans || "400",
   } as React.CSSProperties;
 }
 

@@ -1,4 +1,4 @@
-import Image from "next/image";
+import SafeImage from "@/components/SafeImage";
 import type { WeddingSite, VenueItem, VenueInfoBlock } from "@/lib/types/wedding-site";
 import { getTheme, getFontStyle } from "@/lib/themes";
 import { toEmbedUrl, generateThemeVars, getSectionData } from "@/lib/template-utils";
@@ -20,7 +20,7 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
       <section className={`hero ${cls}`} id={id} style={style}>
         <div className="hero__bg" style={{ position: 'absolute', inset: 0 }}>
           {site.heroImageUrl && (
-            <Image 
+            <SafeImage 
               src={site.heroImageUrl} 
               alt="" 
               fill 
@@ -84,11 +84,12 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
               ))}
             </div>
             <div className="story__img reveal reveal-delay-1">
-              <Image
+              <SafeImage
                 src={d(id, 'imageUrl', site.storyImageUrl)}
                 alt={`${site.partner1Name} and ${site.partner2Name}`}
                 width={600}
                 height={800}
+                sizes="(max-width: 768px) 100vw, 600px"
                 className="story__img"
                 style={{ objectFit: 'cover' }}
                 data-zoomable
@@ -254,11 +255,12 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
       <section className={`section ${cls}`} id={id} style={style}>
         <div className="container">
           <div className="featured-photo reveal">
-            <Image 
+            <SafeImage 
               src={d(id, 'url', site.featuredPhotoUrl)} 
               alt="Featured" 
               width={1200}
               height={800}
+              sizes="(max-width: 1200px) 100vw, 1200px"
               className="featured-photo__img" 
               style={{ objectFit: 'cover' }}
               data-zoomable 
@@ -373,7 +375,7 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
             <div className="gallery-float reveal">
               {site.galleryImages.map((img, i) => (
                 <div key={i} className="gallery-float__img-wrap">
-                  <Image
+                  <SafeImage
                     src={img.url}
                     alt={img.alt || "Gallery Image"}
                     fill
@@ -707,7 +709,7 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
           <div key={section.id} style={{ position: 'relative' }}>
             {bgUrl && (
               <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
-                <Image 
+                <SafeImage 
                   src={bgUrl} 
                   alt="" 
                   fill 

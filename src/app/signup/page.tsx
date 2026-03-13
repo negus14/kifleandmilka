@@ -54,7 +54,7 @@ async function signupAction(formData: FormData) {
     heroPretext: "The Wedding of",
     heroTagline: "We're getting married",
     heroCta: "RSVP Now",
-    heroImageUrl: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=2560&auto=format&fit=crop",
+    heroImageUrl: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=1920&auto=format&fit=crop",
 
     storySubtitle: "Our Journey",
     storyTitle: "Our Love Story",

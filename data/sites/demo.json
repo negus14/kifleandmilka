@@ -54,7 +54,7 @@
   "isPublished": true,
   "rsvpHeading": "Join Our Celebration",
   "weddingDate": "2026-09-01T14:00:00-05:00",
-  "heroImageUrl": "https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?q=80&w=2560&auto=format&fit=crop",
+  "heroImageUrl": "https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?q=80&w=1920&auto=format&fit=crop",
   "locationText": "Garden of Eden, Africa",
   "partner1Name": "Adam",
   "partner2Name": "Eve",
@@ -176,9 +176,9 @@
   "quoteAttribution": "Matthew 19:6",
   "rsvpDeadlineText": "Kindly respond by August 1, 2026",
   "sectionBackgrounds": {
-    "gift": "https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?q=80&w=2560&auto=format&fit=crop",
-    "explore": "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?q=80&w=2560&auto=format&fit=crop",
-    "gallery": "https://images.unsplash.com/photo-1523810192022-5a0fb9aa77d4?q=80&w=2560&auto=format&fit=crop"
+    "gift": "https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?q=80&w=1920&auto=format&fit=crop",
+    "explore": "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?q=80&w=1920&auto=format&fit=crop",
+    "gallery": "https://images.unsplash.com/photo-1523810192022-5a0fb9aa77d4?q=80&w=1920&auto=format&fit=crop"
   },
   "featuredPhotoCaption": "The Beginning of Forever",
   "weddingDays": [

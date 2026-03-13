@@ -343,6 +343,15 @@ function ImageField({ label, value, onChange, recentLinks = [], onAddRecentLink 
           placeholder="Paste URL (Canva, Unsplash, etc.) or upload"
           className="flex-1 px-3 py-2 border border-[#2d2b25]/15 bg-white/50 text-[#2d2b25] text-sm outline-none focus:border-[#2d2b25]/40 rounded-sm"
         />
+        {value && (
+          <button
+            type="button"
+            onClick={() => onChange("")}
+            className="px-3 py-2 text-xs font-semibold tracking-wide uppercase border border-red-500/30 text-red-600/80 hover:text-red-700 hover:border-red-500/50 hover:bg-red-50 transition-colors rounded-sm whitespace-nowrap"
+          >
+            Clear
+          </button>
+        )}
         <button
           type="button"
           onClick={() => setShowLibrary(true)}

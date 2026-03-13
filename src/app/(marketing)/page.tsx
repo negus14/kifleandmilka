@@ -1,4 +1,5 @@
 import Link from "next/link";
+import SafeImage from "@/components/SafeImage";
 
 function ArrowIcon({ className = "" }: { className?: string }) {
   return (
@@ -139,10 +140,13 @@ export default function LandingPage() {
 
                 {/* Main image */}
                 <div className="relative aspect-[3/4] w-full max-w-[380px] ml-auto overflow-hidden">
-                  <img
+                  <SafeImage
                     src="/demo/images/photo-1.jpg"
                     alt="Wedding couple"
-                    className="w-full h-full object-cover filter sepia-[0.05]"
+                    fill
+                    priority
+                    sizes="(max-width: 768px) 100vw, 380px"
+                    className="object-cover filter sepia-[0.05]"
                   />
                   {/* Overlay label */}
                   <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#2d2b25]/70 to-transparent p-6 pt-16">
@@ -157,10 +161,12 @@ export default function LandingPage() {
 
                 {/* Floating secondary image */}
                 <div className="absolute -bottom-10 -left-8 w-40 h-48 overflow-hidden shadow-2xl hidden md:block">
-                  <img
+                  <SafeImage
                     src="/demo/images/photo-2.jpg"
                     alt="Couple detail"
-                    className="w-full h-full object-cover"
+                    fill
+                    sizes="160px"
+                    className="object-cover"
                   />
                 </div>
               </div>
@@ -269,11 +275,15 @@ export default function LandingPage() {
               <div className="relative">
                 {/* Stacked card composition */}
                 <div className="relative bg-white p-3 shadow-[0_20px_60px_rgba(0,0,0,0.06)]">
-                  <img
-                    src="/demo/images/photo-4.jpg"
-                    alt="Wedding website preview"
-                    className="w-full aspect-[4/3] object-cover"
-                  />
+                  <div className="relative w-full aspect-[4/3] overflow-hidden">
+                    <SafeImage
+                      src="/demo/images/photo-4.jpg"
+                      alt="Wedding website preview"
+                      fill
+                      sizes="(max-width: 1024px) 100vw, 500px"
+                      className="object-cover"
+                    />
+                  </div>
                 </div>
                 {/* Floating RSVP card mockup */}
                 <div className="absolute -bottom-8 -right-4 md:-right-8 bg-white p-5 shadow-[0_15px_40px_rgba(0,0,0,0.08)] w-52">
@@ -392,11 +402,13 @@ export default function LandingPage() {
               </div>
             </div>
             <Link href="/demo" className="block group relative">
-              <div className="relative overflow-hidden border border-t-0 border-[#2d2b25]/10">
-                <img
+              <div className="relative overflow-hidden border border-t-0 border-[#2d2b25]/10 aspect-[16/9]">
+                <SafeImage
                   src="/demo/images/photo-1.jpg"
-                  alt="Jane & John wedding website demo"
-                  className="w-full aspect-[16/9] object-cover object-top transition-transform duration-700 group-hover:scale-[1.02]"
+                  alt="Adam & Eve wedding website demo"
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 896px"
+                  className="object-cover object-top transition-transform duration-700 group-hover:scale-[1.02]"
                 />
                 {/* Overlay on hover */}
                 <div className="absolute inset-0 bg-[#2d2b25]/0 group-hover:bg-[#2d2b25]/40 transition-colors duration-500 flex items-center justify-center">

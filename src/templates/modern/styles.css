@@ -11,6 +11,14 @@
   font-family: var(--font-sans);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+
+  /* Hide scrollbar while keeping scroll functionality */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* IE/Edge */
+}
+
+.modern-site::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
 }
 
 .modern-site *, .modern-site *::before, .modern-site *::after {
@@ -332,9 +340,19 @@
 /* Story */
 .modern-story__img {
   width: 100%;
-  aspect-ratio: 4/5;
+  height: auto;
   object-fit: cover;
   filter: grayscale(0.2);
+}
+
+/* Hide scrollbars globally but keep functionality */
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
 }
 
 .modern-quote {
@@ -613,8 +631,8 @@
 /* Gallery */
 .modern-gallery {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
 }
 
 .modern-gallery__img {
@@ -622,11 +640,13 @@
   aspect-ratio: 1;
   object-fit: cover;
   cursor: pointer;
-  transition: opacity 0.3s ease;
+  transition: all 0.4s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
 .modern-gallery__img:hover {
-  opacity: 0.8;
+  transform: scale(1.02);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
 }
 
 /* Gift Dropdown */
@@ -872,20 +892,72 @@
 
 /* Responsive */
 @media (max-width: 768px) {
+  .modern-site {
+    --section-padding: clamp(3rem, 8vw, 5rem);
+  }
+
+  .modern-container {
+    width: 92%;
+  }
+
+  .modern-grid {
+    gap: 2.5rem;
+  }
+
   .modern-grid--2col {
     grid-template-columns: 1fr;
   }
   
+  .modern-nav {
+    padding: 1rem 0;
+  }
+
   .modern-nav__links {
     display: none;
   }
   
+  .modern-hero {
+    padding-top: 60px;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .modern-hero__names {
+    font-size: clamp(3rem, 15vw, 4.5rem);
+    line-height: 1;
+  }
+
+  .modern-hero__pretext {
+    font-size: 0.8rem;
+    letter-spacing: 0.3em;
+  }
+
+  .modern-hero__date-loc {
+    justify-content: center;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
   .modern-schedule__item {
     flex-direction: column;
     gap: 1rem;
+    text-align: center;
   }
-  
-  .modern-hero__names {
-    font-size: 4rem;
+
+  .modern-schedule__time {
+    min-width: 0;
+  }
+
+  .modern-gallery {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1rem;
+  }
+
+  .modern-letter__opening {
+    font-size: 2.2rem;
+  }
+
+  .modern-letter__body {
+    font-size: 1.1rem;
   }
 }

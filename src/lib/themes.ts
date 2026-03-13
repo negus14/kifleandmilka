@@ -26,6 +26,12 @@ export interface FontStyle {
     sans: string;
   };
   googleFontsUrl: string;
+  overrides?: {
+    letterSpacingSans?: string;
+    letterSpacingSerif?: string;
+    lineHeightScript?: string;
+    fontWeightSans?: string;
+  };
 }
 
 export const fontStyles: FontStyle[] = [
@@ -38,6 +44,11 @@ export const fontStyles: FontStyle[] = [
       sans: "'Josefin Sans', system-ui, sans-serif",
     },
     googleFontsUrl: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Pinyon+Script&family=Josefin+Sans:wght@300;400;500;600&display=swap",
+    overrides: {
+      letterSpacingSans: "0.1em",
+      letterSpacingSerif: "0.02em",
+      lineHeightScript: "1.2",
+    }
   },
   {
     id: "editorial",
@@ -48,6 +59,12 @@ export const fontStyles: FontStyle[] = [
       sans: "'Montserrat', sans-serif",
     },
     googleFontsUrl: "https://fonts.googleapis.com/css2?family=Mea+Culpa&family=Tenor+Sans&family=Montserrat:wght@200;300;400&display=swap",
+    overrides: {
+      letterSpacingSans: "0.25em",
+      letterSpacingSerif: "0.15em",
+      lineHeightScript: "1.1",
+      fontWeightSans: "200",
+    }
   },
   {
     id: "bohemian",
@@ -58,6 +75,11 @@ export const fontStyles: FontStyle[] = [
       sans: "'Work Sans', sans-serif",
     },
     googleFontsUrl: "https://fonts.googleapis.com/css2?family=La+Belle+Aurore&family=Lora:ital,wght@0,400;1,400&family=Work+Sans:wght@300;400&display=swap",
+    overrides: {
+      letterSpacingSans: "0.05em",
+      letterSpacingSerif: "-0.01em",
+      lineHeightScript: "1.4",
+    }
   },
   {
     id: "classic-serif",
@@ -68,6 +90,11 @@ export const fontStyles: FontStyle[] = [
       sans: "'Source Sans 3', sans-serif",
     },
     googleFontsUrl: "https://fonts.googleapis.com/css2?family=Mrs+Saint+Delafield&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;600&display=swap",
+    overrides: {
+      letterSpacingSans: "0.08em",
+      letterSpacingSerif: "0.01em",
+      lineHeightScript: "1.3",
+    }
   },
   {
     id: "bold-modern",
@@ -78,6 +105,12 @@ export const fontStyles: FontStyle[] = [
       sans: "'Archivo', sans-serif",
     },
     googleFontsUrl: "https://fonts.googleapis.com/css2?family=Monsieur+La+Doulaise&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;1,9..144,400&family=Archivo:wght@300;400;700&display=swap",
+    overrides: {
+      letterSpacingSans: "-0.02em",
+      letterSpacingSerif: "-0.03em",
+      lineHeightScript: "1.0",
+      fontWeightSans: "700",
+    }
   },
   {
     id: "modern",
@@ -88,6 +121,11 @@ export const fontStyles: FontStyle[] = [
       sans: "'Raleway', system-ui, sans-serif",
     },
     googleFontsUrl: "https://fonts.googleapis.com/css2?family=Great+Vibes&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Raleway:wght@300;400;500;600&display=swap",
+    overrides: {
+      letterSpacingSans: "0.15em",
+      letterSpacingSerif: "0.05em",
+      lineHeightScript: "1.2",
+    }
   },
   {
     id: "playful",
@@ -98,6 +136,11 @@ export const fontStyles: FontStyle[] = [
       sans: "'Nunito Sans', system-ui, sans-serif",
     },
     googleFontsUrl: "https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Nunito+Sans:wght@300;400;500;600&display=swap",
+    overrides: {
+      letterSpacingSans: "0.02em",
+      letterSpacingSerif: "0em",
+      lineHeightScript: "1.5",
+    }
   },
   {
     id: "vintage",
@@ -108,6 +151,11 @@ export const fontStyles: FontStyle[] = [
       sans: "'Lato', system-ui, sans-serif",
     },
     googleFontsUrl: "https://fonts.googleapis.com/css2?family=Alex+Brush&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Lato:wght@300;400;700&display=swap",
+    overrides: {
+      letterSpacingSans: "0.12em",
+      letterSpacingSerif: "0.08em",
+      lineHeightScript: "1.2",
+    }
   },
 ];
 

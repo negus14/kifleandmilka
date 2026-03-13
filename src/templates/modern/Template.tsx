@@ -1,4 +1,4 @@
-import Image from "next/image";
+import SafeImage from "@/components/SafeImage";
 import type { WeddingSite, VenueItem, VenueInfoBlock } from "@/lib/types/wedding-site";
 import { getTheme, getFontStyle } from "@/lib/themes";
 import { toEmbedUrl, generateThemeVars, getSectionData } from "@/lib/template-utils";
@@ -19,7 +19,7 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
       <header className={`modern-hero ${cls}`} id={id} style={style}>
         {site.heroImageUrl && (
           <div className="modern-hero__bg">
-            <Image
+            <SafeImage
               src={site.heroImageUrl}
               alt={`${site.partner1Name} & ${site.partner2Name}`}
               fill
@@ -52,11 +52,12 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
         <div className="modern-container">
           <div className="modern-grid modern-grid--2col">
             <div className="modern-story__img-wrap reveal">
-              <Image 
+              <SafeImage 
                 src={d(id, 'imageUrl', site.storyImageUrl)} 
                 alt={d(id, 'title', site.storyTitle)} 
                 width={600}
                 height={600}
+                sizes="(max-width: 768px) 100vw, 600px"
                 className="modern-story__img"
                 style={{ objectFit: 'cover' }}
               />
@@ -94,11 +95,12 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
         <section className={`modern-section ${cls}`} id={id} style={style}>
           <div className="modern-container">
             <div className="modern-featured-photo reveal">
-              <Image 
+              <SafeImage 
                 src={url} 
                 alt="Featured" 
                 width={1200}
                 height={800}
+                sizes="(max-width: 1200px) 100vw, 1200px"
                 className="modern-featured-photo__img" 
                 style={{ objectFit: 'cover', width: '100%', height: 'auto' }}
                 data-zoomable 
@@ -373,12 +375,13 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
           <h2 className="modern-title reveal">Gallery</h2>
           <div className="modern-gallery reveal">
             {site.galleryImages.map((img, i) => (
-              <Image 
+              <SafeImage 
                 key={i}
                 src={img.url} 
                 alt={img.alt || "Gallery Image"} 
                 width={400}
                 height={400}
+                sizes="(max-width: 640px) 50vw, 400px"
                 className="modern-gallery__img" 
                 style={{ objectFit: 'cover' }}
                 data-zoomable 
@@ -671,7 +674,7 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
           <div key={section.id} style={{ position: 'relative' }}>
             {bgUrl && (
               <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
-                <Image 
+                <SafeImage 
                   src={bgUrl} 
                   alt="" 
                   fill 

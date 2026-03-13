@@ -1,12 +1,16 @@
 "use client";
 
 import { useActionState } from "react";
+import { useSearchParams } from "next/navigation";
 
 export default function LoginForm({
   action,
 }: {
   action: (formData: FormData) => Promise<{ error: string } | void>;
 }) {
+  const searchParams = useSearchParams();
+  const loggedOut = searchParams.get("loggedOut") === "true";
+  
   const [state, formAction, pending] = useActionState(
     async (_prev: { error: string } | null, formData: FormData) => {
       const result = await action(formData);
@@ -136,6 +140,22 @@ export default function LoginForm({
               }}
             >
               {state.error}
+            </p>
+          )}
+
+          {loggedOut && !state?.error && (
+            <p
+              style={{
+                color: "#2d2b25",
+                fontSize: "0.8rem",
+                textAlign: "center",
+                marginBottom: "1rem",
+                background: "rgba(45,43,37,0.05)",
+                padding: "0.5rem",
+                borderRadius: "2px"
+              }}
+            >
+              Logged out successfully
             </p>
           )}
 

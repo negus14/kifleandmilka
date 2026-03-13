@@ -10,13 +10,22 @@
   scroll-behavior: smooth;
   font-size: 18px;
   font-family: var(--font-sans);
-  font-weight: 400;
+  font-weight: var(--weight-sans);
+  letter-spacing: var(--tracking-sans);
   color: var(--color-dark);
   background: var(--color-primary);
   line-height: 1.7;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   min-height: 100%;
+  
+  /* Hide scrollbar while keeping scroll functionality */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* IE/Edge */
+}
+
+.wedding-site::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
 }
 
 .wedding-site *, .wedding-site *::before, .wedding-site *::after {
@@ -74,7 +83,7 @@
   font-family: var(--font-sans);
   font-size: 0.74rem;
   font-weight: 600;
-  letter-spacing: 0.25em;
+  letter-spacing: var(--tracking-sans, 0.25em);
   text-transform: uppercase;
   color: #fff;
   text-decoration: none;
@@ -224,7 +233,7 @@
   font-family: var(--font-script);
   font-size: clamp(3.5rem, 13vw, 9rem);
   color: var(--color-primary);
-  line-height: 1.1;
+  line-height: var(--line-height-script, 1.1);
   margin-bottom: 1rem;
   opacity: 0;
   transform: translateY(30px);
@@ -663,7 +672,7 @@
   font-family: var(--font-serif);
   font-size: clamp(1.6rem, 3.5vw, 2.5rem);
   font-weight: 300;
-  letter-spacing: 0.1em;
+  letter-spacing: var(--tracking-serif, 0.1em);
   color: var(--color-dark);
   text-transform: uppercase;
 }
@@ -695,38 +704,53 @@
 /* ===== STORY (Section 2) ===== */
 .story {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: clamp(3rem, 6vw, 5rem);
-  align-items: center;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: clamp(2rem, 5vw, 4rem);
+  align-items: start;
 }
 
 .story__text-block {
-  max-width: 480px;
+  max-width: 520px;
 }
 
 .story__lead {
   font-family: var(--font-serif);
-  font-size: clamp(1.2rem, 2.2vw, 1.6rem);
+  font-size: clamp(1.1rem, 2vw, 1.5rem);
   font-weight: 300;
   font-style: italic;
   color: var(--color-dark);
-  line-height: 1.9;
+  line-height: 1.8;
   margin-bottom: 2rem;
 }
 
 .story__text {
   font-size: 0.95rem;
+  font-weight: var(--weight-sans, 400);
+  letter-spacing: var(--tracking-sans, 0em);
   color: var(--color-dark);
-  line-height: 2;
+  line-height: 1.9;
   margin-bottom: 1.25rem;
-  opacity: 0.8;
+  opacity: 0.85;
 }
 
 .story__img {
   width: 100%;
-  aspect-ratio: 3 / 4;
+  max-width: 500px;
+  margin-left: auto;
+  height: auto;
   object-fit: cover;
   filter: sepia(0.08) contrast(1.02);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.05);
+}
+
+/* Hide scrollbars globally but keep functionality */
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
 }
 
 /* ===== DETAILS (Section 3) ===== */
@@ -1546,48 +1570,34 @@
   margin-bottom: 0.75rem;
 }
 
-/* ===== GALLERY (dark with floral overlay) ===== */
-.gallery-dark {
+/* ===== GALLERY (float grid) ===== */
+.gallery-float {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.gallery-float__img-wrap {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
   position: relative;
   overflow: hidden;
 }
 
-.gallery-dark__bg {
-  position: absolute;
-  inset: 0;
-}
-
-.gallery-dark .container {
-  position: relative;
-  z-index: 2;
-}
-
-.gallery-float {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 2rem;
-  flex-wrap: wrap;
-}
-
-.gallery-float__img-wrap {
-  width: 280px;
-  aspect-ratio: 3 / 4;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
-  transition: transform 0.5s ease;
-  position: relative;
-}
-
-.gallery-float__img-wrap:nth-child(2) {
-  transform: translateY(2rem);
-}
-
 .gallery-float__img-wrap:hover {
-  transform: scale(1.03);
+  transform: translateY(-5px);
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.15);
 }
 
-.gallery-float__img-wrap:nth-child(2):hover {
-  transform: translateY(2rem) scale(1.03);
+.gallery-float__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: sepia(0.02);
 }
 
 /* ===== MAP EMBEDS ===== */
@@ -2318,17 +2328,9 @@ img[data-zoomable] {
     gap: 2.5rem;
   }
 
-  .gallery-float__img {
-    width: 100%;
-    max-width: 320px;
-  }
-
-  .gallery-float__img:nth-child(2) {
-    transform: none;
-  }
-
-  .gallery-float__img:nth-child(2):hover {
-    transform: scale(1.03);
+  .gallery-float {
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   }
 
   .hotels-grid {
