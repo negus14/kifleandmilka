@@ -706,7 +706,7 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
         const extraStyle = {};
 
         return (
-          <div key={section.id} style={{ position: 'relative' }}>
+          <div key={section.id} style={{ position: 'relative', zIndex: order.length - i }}>
             {bgUrl && (
               <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
                 <SafeImage 

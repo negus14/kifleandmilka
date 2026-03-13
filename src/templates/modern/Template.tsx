@@ -671,7 +671,7 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
         const extraStyle = {}; // Reset style as we use Image component for backgrounds
 
         return (
-          <div key={section.id} style={{ position: 'relative' }}>
+          <div key={section.id} style={{ position: 'relative', zIndex: order.length - i }}>
             {bgUrl && (
               <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
                 <SafeImage 

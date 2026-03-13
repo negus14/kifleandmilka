@@ -212,14 +212,23 @@ export default function WeddingSiteClient({
 
             // Ensure parent doesn't clip dropdown and stays above other sections
             if (parent) {
-              (parent as HTMLElement).style.zIndex = willShow ? "9999" : "";
-              (parent as HTMLElement).style.position = willShow ? "relative" : "";
+              const dropdown = parent as HTMLElement;
+              dropdown.style.zIndex = willShow ? "9999" : "";
+              dropdown.style.position = willShow ? "relative" : "";
               
-              // NEW: Promote the entire section container too
-              const section = parent.closest("section");
+              // Promote the entire section and its wrapper
+              const section = dropdown.closest("section");
               if (section) {
                 section.style.zIndex = willShow ? "9999" : "";
                 section.style.position = willShow ? "relative" : "";
+                // Add some bottom margin to ensure scrollability if at the end of the page
+                section.style.marginBottom = willShow ? "300px" : "";
+                
+                // Also promote the outermost wrapper div from Template.tsx
+                const wrapper = section.closest('div[style*="z-index"]');
+                if (wrapper) {
+                  (wrapper as HTMLElement).style.zIndex = willShow ? "9999" : "";
+                }
               }
             }
           }
@@ -230,9 +239,19 @@ export default function WeddingSiteClient({
       document.addEventListener("click", () => {
         document.querySelectorAll(".gift__dropdown-menu").forEach(m => m.classList.remove("show"));
         document.querySelectorAll(".gift__dropdown-toggle").forEach(t => t.setAttribute("aria-expanded", "false"));
-        document.querySelectorAll(".gift__dropdown").forEach(d => (d as HTMLElement).style.zIndex = "");
+        document.querySelectorAll(".gift__dropdown").forEach(d => {
+          (d as HTMLElement).style.zIndex = "";
+          (d as HTMLElement).style.position = "";
+        });
         document.querySelectorAll("section").forEach(s => {
-          if (s.style.zIndex === "9999") s.style.zIndex = "";
+          s.style.zIndex = "";
+          s.style.position = "";
+          s.style.marginBottom = "";
+        });
+        document.querySelectorAll('div[style*="z-index"]').forEach(w => {
+          // We can't easily restore the original z-index from Template.tsx here without storing it
+          // But resetting it to empty should let the inline style from React take over again on next render
+          (w as HTMLElement).style.zIndex = "";
         });
       });
     }
