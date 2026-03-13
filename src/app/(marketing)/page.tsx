@@ -66,7 +66,7 @@ export default function LandingPage() {
               Log In
             </Link>
             <Link
-              href="/login"
+              href="/signup"
               className="text-[13px] font-['DM_Sans',sans-serif] font-medium tracking-[0.08em] uppercase border border-[#2d2b25] px-5 py-2 hover:bg-[#2d2b25] hover:text-[#faf1e1] transition-all duration-300"
             >
               Get Started
@@ -114,10 +114,13 @@ export default function LandingPage() {
               </p>
 
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 animate-[fadeUp_0.8s_ease_0.7s_both]">
-                <button className="group relative inline-flex items-center gap-3 bg-[#2d2b25] text-[#faf1e1] px-8 py-4 font-['DM_Sans',sans-serif] text-[13px] font-semibold tracking-[0.12em] uppercase hover:bg-[#1a1812] transition-colors duration-300">
+                <Link 
+                  href="/signup"
+                  className="group relative inline-flex items-center gap-3 bg-[#2d2b25] text-[#faf1e1] px-8 py-4 font-['DM_Sans',sans-serif] text-[13px] font-semibold tracking-[0.12em] uppercase hover:bg-[#1a1812] transition-colors duration-300"
+                >
                   Import Your Canva Design
                   <ArrowIcon className="transition-transform duration-300 group-hover:translate-x-1" />
-                </button>
+                </Link>
                 <Link
                   href="/demo"
                   className="group inline-flex items-center gap-2 font-['DM_Sans',sans-serif] text-[13px] font-medium tracking-[0.08em] uppercase text-[#2d2b25]/60 hover:text-[#2d2b25] transition-colors px-2 py-4"
@@ -427,10 +430,13 @@ export default function LandingPage() {
             using.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button className="group inline-flex items-center gap-3 bg-[#faf1e1] text-[#2d2b25] px-8 py-4 font-['DM_Sans',sans-serif] text-[13px] font-semibold tracking-[0.12em] uppercase hover:bg-[#cdc1ab] transition-colors duration-300">
+            <Link 
+              href="/signup"
+              className="group inline-flex items-center gap-3 bg-[#faf1e1] text-[#2d2b25] px-8 py-4 font-['DM_Sans',sans-serif] text-[13px] font-semibold tracking-[0.12em] uppercase hover:bg-[#cdc1ab] transition-colors duration-300"
+            >
               Get Started Free
               <ArrowIcon className="transition-transform duration-300 group-hover:translate-x-1" />
-            </button>
+            </Link>
             <Link
               href="/demo"
               className="font-['DM_Sans',sans-serif] text-[13px] font-medium tracking-[0.08em] uppercase text-[#faf1e1]/50 hover:text-[#faf1e1] transition-colors px-4 py-4"

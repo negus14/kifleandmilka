@@ -12,7 +12,7 @@
   font-family: var(--font-sans);
   font-weight: 400;
   color: var(--color-dark);
-  background: var(--color-cream);
+  background: var(--color-primary);
   line-height: 1.7;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
@@ -56,7 +56,7 @@
 }
 
 .nav.scrolled {
-  background: var(--color-cream);
+  background: var(--color-primary);
   backdrop-filter: blur(20px);
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
   border-bottom: 1px solid color-mix(in srgb, var(--color-dark), transparent 90%);
@@ -193,9 +193,6 @@
 .hero__bg {
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--color-dark), transparent 75%) 0%, color-mix(in srgb, var(--color-dark), transparent 60%) 100%),
-    url('/demo/images/photo-1.jpg') center/cover no-repeat;
   transform: scale(1.05);
   animation: heroZoom 20s ease-in-out infinite alternate;
 }
@@ -216,7 +213,7 @@
   font-weight: 500;
   letter-spacing: 0.4em;
   text-transform: uppercase;
-  color: var(--color-cream);
+  color: var(--color-primary);
   margin-bottom: 2rem;
   opacity: 0;
   transform: translateY(20px);
@@ -226,7 +223,7 @@
 .hero__names {
   font-family: var(--font-script);
   font-size: clamp(3.5rem, 13vw, 9rem);
-  color: var(--color-cream);
+  color: var(--color-primary);
   line-height: 1.1;
   margin-bottom: 1rem;
   opacity: 0;
@@ -244,7 +241,7 @@
 .hero__line {
   width: 60px;
   height: 1px;
-  background: var(--color-cream);
+  background: var(--color-primary);
   margin: 1.5rem auto;
   opacity: 0.75;
   opacity: 0;
@@ -256,7 +253,7 @@
   font-size: clamp(1rem, 2vw, 1.3rem);
   font-weight: 300;
   font-style: italic;
-  color: var(--color-cream);
+  color: var(--color-primary);
   letter-spacing: 0.05em;
   margin-bottom: 2rem;
   opacity: 0;
@@ -272,8 +269,8 @@
   letter-spacing: 0.25em;
   text-transform: uppercase;
   color: var(--color-dark);
-  background: var(--color-cream);
-  border: 2px solid var(--color-cream);
+  background: var(--color-primary);
+  border: 2px solid var(--color-primary);
   padding: 0.9rem 2.5rem;
   transition: all 0.3s ease;
   opacity: 0;
@@ -283,7 +280,7 @@
 
 .hero__btn:hover {
   background: transparent;
-  color: var(--color-cream);
+  color: var(--color-primary);
 }
 
 .hero__date-line {
@@ -292,12 +289,12 @@
   font-weight: 500;
   letter-spacing: 0.35em;
   text-transform: uppercase;
-  color: var(--color-cream);
+  color: var(--color-primary);
   margin-top: 3rem;
-  background: color-mix(in srgb, var(--color-cream), transparent 88%);
+  background: color-mix(in srgb, var(--color-primary), transparent 88%);
   display: inline-block;
   padding: 0.6rem 1.5rem;
-  border: 1px solid color-mix(in srgb, var(--color-cream), transparent 80%);
+  border: 1px solid color-mix(in srgb, var(--color-primary), transparent 80%);
   opacity: 0;
   transform: translateY(20px);
   animation: fadeUp 1s ease 1.5s forwards;
@@ -321,7 +318,7 @@
   font-family: var(--font-serif);
   font-size: clamp(2rem, 4vw, 3rem);
   font-weight: 500;
-  color: var(--color-cream);
+  color: var(--color-primary);
   line-height: 1;
 }
 
@@ -331,7 +328,7 @@
   font-weight: 400;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--color-cream);
+  color: var(--color-primary);
   opacity: 0.7;
   margin-top: 0.4rem;
 }
@@ -345,44 +342,44 @@
   padding: var(--section-padding) 0;
 }
 
-.section--cream {
-  background: var(--color-cream);
+.section--primary {
+  background: var(--color-primary);
 }
 
-.section--tan {
-  background: var(--color-tan);
+.section--accent {
+  background: var(--color-accent);
 }
 
 .section--dark {
   background: var(--color-dark);
-  color: var(--color-tan);
+  color: var(--color-accent);
 }
 
 /* Base colors for light palette sections */
-.section--tan,
-.section--cream {
+.section--accent,
+.section--primary {
   color: var(--color-dark);
 }
 
-.section--tan .section__title,
-.section--cream .section__title,
-.section--tan .info-card__title,
-.section--cream .info-card__title {
+.section--accent .section__title,
+.section--primary .section__title,
+.section--accent .info-card__title,
+.section--primary .info-card__title {
   color: var(--color-dark);
 }
 
-.section--tan .section__subtitle,
-.section--cream .section__subtitle,
-.section--tan .info-card__label,
-.section--cream .info-card__label {
+.section--accent .section__subtitle,
+.section--primary .section__subtitle,
+.section--accent .info-card__label,
+.section--primary .info-card__label {
   color: var(--color-dark);
   opacity: 0.8;
 }
 
-.section--tan p,
-.section--cream p,
-.section--tan .info-card__text,
-.section--cream .info-card__text {
+.section--accent p,
+.section--primary p,
+.section--accent .info-card__text,
+.section--primary .info-card__text {
   color: var(--color-dark);
   opacity: 0.7;
 }
@@ -410,7 +407,7 @@
 .section--dark .contact__label,
 .section--dark .letter__opening,
 .section--dark .letter__closing,
-.section--dark .footer__names { color: var(--color-cream); }
+.section--dark .footer__names { color: var(--color-primary); }
 
 .section--dark .section__title,
 .section--dark .story__text, 
@@ -446,44 +443,44 @@
 .section--dark .footer__contact,
 .section--dark .footer__contact a,
 .section--dark .footer__copy,
-.section--dark p { color: var(--color-tan); }
+.section--dark p { color: var(--color-accent); }
 
 .section--dark .hero__names,
-.section--dark .hero__ampersand { color: var(--color-cream); }
-.section--dark .hero__line { background: var(--color-tan); }
+.section--dark .hero__ampersand { color: var(--color-primary); }
+.section--dark .hero__line { background: var(--color-accent); }
 .section--dark .hero__btn {
-  background: var(--color-tan);
+  background: var(--color-accent);
   color: var(--color-dark);
-  border-color: var(--color-tan);
+  border-color: var(--color-accent);
 }
 .section--dark .hero__btn:hover {
   background: transparent;
-  color: var(--color-tan);
+  color: var(--color-accent);
 }
 
 .section--dark .contact__entry a:hover {
-  border-color: var(--color-cream);
+  border-color: var(--color-primary);
 }
 
 .section--dark .contact__phone-action {
-  color: var(--color-tan);
+  color: var(--color-accent);
   border-color: rgba(212, 189, 172, 0.2);
   background: rgba(255, 255, 255, 0.05);
 }
 
 .section--dark .contact__phone-action:hover {
-  background: var(--color-tan);
+  background: var(--color-accent);
   color: var(--color-dark);
-  border-color: var(--color-tan);
+  border-color: var(--color-accent);
 }
 
 .section--dark .section__line,
 .section--dark .footer__line,
 .section--dark .timeline::before,
-.section--dark .timeline-minimal__dot { background: var(--color-tan); }
+.section--dark .timeline-minimal__dot { background: var(--color-accent); }
 
 .section--dark .timeline__item::before {
-  border-color: var(--color-tan);
+  border-color: var(--color-accent);
   background: var(--color-dark);
 }
 
@@ -494,84 +491,82 @@
 }
 
 .section--dark .hotel-card__badge {
-  background: var(--color-tan);
+  background: var(--color-accent);
   color: var(--color-dark);
 }
 
-.section--tan .hotel-card,
-.section--tan .explore-card {
-  background: var(--color-cream);
+.section--accent .hotel-card,
+.section--accent .explore-card {
+  background: var(--color-primary);
   border-color: rgba(0, 0, 0, 0.05);
 }
 
-.section--dark .explore-col__heading { color: var(--color-cream); }
-.section--dark .explore-col__list li::before { background: var(--color-tan); }
-.section--dark .explore-col__list a { color: var(--color-tan); text-decoration-color: rgba(212, 189, 172, 0.3); }
-.section--dark .explore-col__list a:hover { text-decoration-color: var(--color-tan); }
+.section--dark .explore-col__heading { color: var(--color-primary); }
+.section--dark .explore-col__list li::before { background: var(--color-accent); }
+.section--dark .explore-col__list a { color: var(--color-accent); text-decoration-color: rgba(212, 189, 172, 0.3); }
+.section--dark .explore-col__list a:hover { text-decoration-color: var(--color-accent); }
 
 .section--dark .rsvp__button,
 .section--dark .hotel-card__link,
 .section--dark .gift__dropdown-toggle {
-  background: var(--color-tan);
+  background: var(--color-accent);
   color: var(--color-dark);
-  border-color: var(--color-tan);
+  border-color: var(--color-accent);
 }
 
 .section--dark .rsvp__button:hover,
 .section--dark .hotel-card__link:hover,
 .section--dark .gift__dropdown-toggle:hover {
   background: transparent;
-  color: var(--color-tan);
+  color: var(--color-accent);
 }
 
-.section--dark .rsvp__label { color: var(--color-tan); }
+.section--dark .rsvp__label { color: var(--color-accent); }
 .section--dark .rsvp__input,
 .section--dark .rsvp__select,
 .section--dark .rsvp__textarea {
   background: rgba(255, 255, 255, 0.05);
   border-color: rgba(212, 189, 172, 0.2);
-  color: var(--color-cream);
+  color: var(--color-primary);
 }
 
-.section--dark .rsvp__input:focus { border-color: var(--color-tan); }
+.section--dark .rsvp__input:focus { border-color: var(--color-accent); }
 
 /* Contextual overrides for Tan sections */
-.section--tan .rsvp__button,
-.section--tan .hotel-card__link,
-.section--tan .gift__dropdown-toggle {
+.section--accent .rsvp__button,
+.section--accent .hotel-card__link,
+.section--accent .gift__dropdown-toggle {
   background: var(--color-dark);
-  color: var(--color-cream);
+  color: var(--color-primary);
   border-color: var(--color-dark);
 }
 
-.section--tan .rsvp__button:hover,
-.section--tan .hotel-card__link:hover,
-.section--tan .gift__dropdown-toggle:hover {
+.section--accent .rsvp__button:hover,
+.section--accent .hotel-card__link:hover,
+.section--accent .gift__dropdown-toggle:hover {
   background: transparent;
   color: var(--color-dark);
 }
 
 /* Contextual overrides for Cream sections */
-.section--cream .rsvp__button,
-.section--cream .hotel-card__link,
-.section--cream .gift__dropdown-toggle {
+.section--primary .rsvp__button,
+.section--primary .hotel-card__link,
+.section--primary .gift__dropdown-toggle {
   background: var(--color-dark);
-  color: var(--color-cream);
+  color: var(--color-primary);
   border-color: var(--color-dark);
 }
 
-.section--cream .rsvp__button:hover,
-.section--cream .hotel-card__link:hover,
-.section--cream .gift__dropdown-toggle:hover {
+.section--primary .rsvp__button:hover,
+.section--primary .hotel-card__link:hover,
+.section--primary .gift__dropdown-toggle:hover {
   background: transparent;
   color: var(--color-dark);
 }
 
 .section--has-bg {
   position: relative;
-  background-attachment: fixed;
-  background-size: cover;
-  background-position: center;
+  min-height: 400px;
 }
 
 .section--has-bg::before {
@@ -582,7 +577,7 @@
   z-index: 1;
 }
 
-.section--has-bg > * {
+.section--has-bg > div {
   position: relative;
   z-index: 2;
 }
@@ -599,9 +594,6 @@
 .section--has-bg.section--light-text .venue-info__subheading,
 .section--has-bg.section--light-text .venue-info__text,
 .section--has-bg.section--light-text .venue-info__address,
-.section--has-bg.section--light-text .day2__heading,
-.section--has-bg.section--light-text .day2__address,
-.section--has-bg.section--light-text .day2__note,
 .section--has-bg.section--light-text .quote__text,
 .section--has-bg.section--light-text .quote__attribution,
 .section--has-bg.section--light-text .featured-photo__caption,
@@ -638,7 +630,7 @@
 
 .section--has-bg.section--light-text .info-card,
 .section--has-bg.section--light-text .gift__dropdown-menu {
-  background: var(--color-cream);
+  background: var(--color-primary);
   color: var(--color-dark);
   backdrop-filter: none;
   border-color: var(--color-dark);
@@ -649,11 +641,6 @@
 }
 
 .section--has-bg.section--light-text .info-card__time,
-.section--has-bg.section--light-text .day2__time {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.3);
-  color: #fff;
-}
 
 .container {
   width: var(--container-width);
@@ -755,7 +742,7 @@
   text-align: center;
   padding: 2.5rem 1.5rem;
   border: 1px solid color-mix(in srgb, var(--color-dark), transparent 90%);
-  background: color-mix(in srgb, var(--color-cream), transparent 70%);
+  background: color-mix(in srgb, var(--color-primary), transparent 70%);
 }
 
 .info-card__label {
@@ -879,13 +866,13 @@
 }
 
 /* Info Card Contrast Overrides */
-.section--tan .info-card {
-  background: var(--color-cream);
+.section--accent .info-card {
+  background: var(--color-primary);
   border-color: rgba(0, 0, 0, 0.05);
 }
 
-.section--cream .info-card {
-  background: var(--color-tan-light);
+.section--primary .info-card {
+  background: var(--color-accent-light);
   border-color: rgba(0, 0, 0, 0.05);
 }
 
@@ -956,7 +943,7 @@
   height: 12px;
   border-radius: 50%;
   border: 2px solid var(--color-dark);
-  background: var(--color-tan);
+  background: var(--color-accent);
   opacity: 0.8;
   z-index: 1;
   transform: translateX(-5px);
@@ -1102,7 +1089,7 @@
 
 .timeline-card {
   padding: 2rem;
-  background: color-mix(in srgb, var(--color-cream), transparent 60%);
+  background: color-mix(in srgb, var(--color-primary), transparent 60%);
   border: 1px solid color-mix(in srgb, var(--color-dark), transparent 92%);
   text-align: center;
   transition: transform 0.3s ease, border-color 0.3s ease;
@@ -1247,7 +1234,7 @@
   width: 100%;
   padding: 1rem;
   background: var(--color-dark);
-  color: var(--color-cream);
+  color: var(--color-primary);
   font-family: var(--font-sans);
   font-size: 0.8rem;
   font-weight: 500;
@@ -1276,12 +1263,12 @@
 
 .rsvp__button--outline:hover {
   background: var(--color-dark);
-  color: var(--color-cream);
+  color: var(--color-primary);
 }
 
 .rsvp__success {
   padding: 3rem 2rem;
-  background: color-mix(in srgb, var(--color-cream), transparent 50%);
+  background: color-mix(in srgb, var(--color-primary), transparent 50%);
   border: 1px dashed color-mix(in srgb, var(--color-dark), transparent 70%);
 }
 
@@ -1435,49 +1422,6 @@
   font-style: italic;
 }
 
-/* ===== DAY 2 ===== */
-.day2 {
-  text-align: center;
-  max-width: 620px;
-  margin: 0 auto;
-}
-
-.day2__heading {
-  font-family: var(--font-script);
-  font-size: clamp(2rem, 4vw, 2.8rem);
-  color: var(--color-dark);
-  margin-bottom: 1rem;
-}
-
-.day2__time {
-  font-family: var(--font-serif);
-  font-size: 1.5rem;
-  font-weight: 500;
-  color: var(--color-dark);
-  opacity: 1;
-  margin-bottom: 1rem;
-  background: color-mix(in srgb, var(--color-dark), transparent 94%);
-  display: inline-block;
-  padding: 0.4rem 1.2rem;
-  border: 1px solid color-mix(in srgb, var(--color-dark), transparent 88%);
-}
-
-.day2__address {
-  font-size: 0.95rem;
-  color: var(--color-dark);
-  line-height: 1.8;
-  opacity: 0.75;
-}
-
-.day2__note {
-  font-family: var(--font-serif);
-  font-size: 0.95rem;
-  font-style: italic;
-  color: var(--color-dark);
-  opacity: 0.7;
-  margin-top: 2rem;
-}
-
 /* ===== MENU ===== */
 .menu-section {
   max-width: 700px;
@@ -1611,9 +1555,6 @@
 .gallery-dark__bg {
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--color-dark), transparent 15%) 0%, color-mix(in srgb, var(--color-dark), transparent 10%) 100%),
-    url('/demo/images/photo-3.jpg') center/cover no-repeat;
 }
 
 .gallery-dark .container {
@@ -1629,23 +1570,23 @@
   flex-wrap: wrap;
 }
 
-.gallery-float__img {
+.gallery-float__img-wrap {
   width: 280px;
   aspect-ratio: 3 / 4;
-  object-fit: cover;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
   transition: transform 0.5s ease;
+  position: relative;
 }
 
-.gallery-float__img:nth-child(2) {
+.gallery-float__img-wrap:nth-child(2) {
   transform: translateY(2rem);
 }
 
-.gallery-float__img:hover {
+.gallery-float__img-wrap:hover {
   transform: scale(1.03);
 }
 
-.gallery-float__img:nth-child(2):hover {
+.gallery-float__img-wrap:nth-child(2):hover {
   transform: translateY(2rem) scale(1.03);
 }
 
@@ -1687,7 +1628,7 @@
   font-weight: 600;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: var(--color-cream);
+  color: var(--color-primary);
   background: var(--color-dark);
   padding: 0.3rem 0.75rem;
   margin-bottom: 1rem;
@@ -1754,7 +1695,7 @@
   font-weight: 500;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--color-cream);
+  color: var(--color-primary);
   background: var(--color-dark);
   border: 2px solid var(--color-dark);
   padding: 0.65rem 1.5rem;
@@ -1820,7 +1761,7 @@
   gap: 1rem;
   padding: 1.25rem 1.5rem;
   background: var(--color-dark);
-  color: var(--color-cream);
+  color: var(--color-primary);
   border: none;
   font-family: var(--font-sans);
   font-size: 0.8rem;
@@ -1850,7 +1791,7 @@
   left: 0;
   right: 0;
   margin-top: 0.5rem;
-  background: var(--color-cream);
+  background: var(--color-primary);
   border: 1px solid var(--color-dark);
   box-shadow: 0 20px 50px rgba(0,0,0,0.3);
   border-radius: 4px;
@@ -1889,7 +1830,7 @@
 }
 
 .gift__dropdown-item--link:hover {
-  background: var(--color-tan);
+  background: var(--color-accent);
 }
 
 .gift__dropdown-item--bank {
@@ -1916,7 +1857,7 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: var(--color-cream);
+  background: var(--color-primary);
   color: var(--color-dark);
   box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
@@ -1958,7 +1899,7 @@
 
 .bank-copy-btn:hover {
   background: var(--color-dark);
-  color: var(--color-cream);
+  color: var(--color-primary);
 }
 
 .gift__cta-btn {
@@ -1966,7 +1907,7 @@
   align-items: center;
   gap: 0.75rem;
   padding: 1rem 2.5rem;
-  background: var(--color-cream);
+  background: var(--color-primary);
   color: var(--color-dark);
   font-family: var(--font-sans);
   font-size: 0.8rem;
@@ -1981,7 +1922,7 @@
 
 .gift__cta-btn:hover {
   background: var(--color-dark);
-  color: var(--color-cream);
+  color: var(--color-primary);
 }
 
 .gift__cta-btn:active {
@@ -2106,7 +2047,7 @@
 
 .contact__phone-action:hover {
   background: var(--color-dark);
-  color: var(--color-cream);
+  color: var(--color-primary);
   opacity: 1;
 }
 
@@ -2142,7 +2083,7 @@
 
 .contact__phone-actions--footer .contact__phone-action:hover {
   background: var(--color-dark);
-  color: var(--color-tan) !important;
+  color: var(--color-accent) !important;
 }
 
 .section--has-bg.section--light-text .contact__phone-actions--footer .contact__phone-action {
@@ -2208,19 +2149,19 @@
 }
 
 /* Footer contextual palette overrides */
-.section--dark .footer__names { color: var(--color-cream); }
+.section--dark .footer__names { color: var(--color-primary); }
 .section--dark .footer__date,
 .section--dark .footer__contact,
 .section--dark .footer__contact a,
-.section--dark .footer__copy { color: var(--color-tan); }
-.section--dark .footer__line { background: var(--color-tan); }
+.section--dark .footer__copy { color: var(--color-accent); }
+.section--dark .footer__line { background: var(--color-accent); }
 
-.section--tan .footer__names,
-.section--tan .footer__date,
-.section--tan .footer__contact,
-.section--tan .footer__contact a,
-.section--tan .footer__copy { color: var(--color-dark); }
-.section--tan .footer__line { background: var(--color-dark); }
+.section--accent .footer__names,
+.section--accent .footer__date,
+.section--accent .footer__contact,
+.section--accent .footer__contact a,
+.section--accent .footer__copy { color: var(--color-dark); }
+.section--accent .footer__line { background: var(--color-dark); }
 
 .section--has-bg.section--light-text .footer__names { color: #fff; }
 .section--has-bg.section--light-text .footer__date,
@@ -2310,7 +2251,7 @@ img[data-zoomable] {
     width: 75%;
     max-width: 300px;
     height: 100vh;
-    background: var(--color-cream);
+    background: var(--color-primary);
     flex-direction: column;
     justify-content: center;
     gap: 1.75rem;

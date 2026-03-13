@@ -1,5 +1,6 @@
+import Image from "next/image";
 import type { WeddingSite, VenueItem, VenueInfoBlock } from "@/lib/types/wedding-site";
-import { getTheme } from "@/lib/themes";
+import { getTheme, getFontStyle } from "@/lib/themes";
 import { toEmbedUrl, generateThemeVars, getSectionData } from "@/lib/template-utils";
 import WeddingSiteClient from "./WeddingSiteClient";
 import RSVPForm from "@/components/RSVPForm";
@@ -7,7 +8,8 @@ import "./styles.css";
 
 export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPreview?: boolean }) {
   const theme = getTheme(site.templateId);
-  const themeVars = generateThemeVars(site.templateId);
+  const fontStyle = getFontStyle(site.fontStyleId);
+  const themeVars = generateThemeVars(site);
   const { order, visibleSections, navItems } = getSectionData(site);
 
   // Section renderers
@@ -16,10 +18,24 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
   const sections: Record<string, (id: string, cls?: string, style?: React.CSSProperties) => React.ReactNode> = {
     hero: (id, cls = "", style = {}) => (
       <section className={`hero ${cls}`} id={id} style={style}>
-        <div className="hero__bg" style={{
-          background: `linear-gradient(180deg, color-mix(in srgb, var(--color-dark), transparent 75%) 0%, color-mix(in srgb, var(--color-dark), transparent 60%) 100%), url('${site.heroImageUrl}') center/cover no-repeat`,
-        }}></div>
-        <div className="hero__content">
+        <div className="hero__bg" style={{ position: 'absolute', inset: 0 }}>
+          {site.heroImageUrl && (
+            <Image 
+              src={site.heroImageUrl} 
+              alt="" 
+              fill 
+              priority 
+              sizes="100vw"
+              style={{ objectFit: 'cover' }} 
+            />
+          )}
+          <div style={{
+            position: 'absolute',
+            inset: 0,
+            background: `linear-gradient(180deg, color-mix(in srgb, var(--color-dark), transparent 75%) 0%, color-mix(in srgb, var(--color-dark), transparent 60%) 100%)`,
+          }}></div>
+        </div>
+        <div className="hero__content" style={{ position: 'relative', zIndex: 1 }}>
           <p className="hero__pretext">{d(id, 'pretext', site.heroPretext)}</p>
           <h1 className="hero__names">
             {site.partner1Name} <span className="hero__ampersand">&amp;</span> {site.partner2Name}
@@ -67,13 +83,17 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
                 <p key={i} className="story__text">{p}</p>
               ))}
             </div>
-            <img
-              className="story__img reveal reveal-delay-1"
-              src={d(id, 'imageUrl', site.storyImageUrl)}
-              alt={`${site.partner1Name} and ${site.partner2Name}`}
-              data-zoomable
-              loading="lazy"
-            />
+            <div className="story__img reveal reveal-delay-1">
+              <Image
+                src={d(id, 'imageUrl', site.storyImageUrl)}
+                alt={`${site.partner1Name} and ${site.partner2Name}`}
+                width={600}
+                height={800}
+                className="story__img"
+                style={{ objectFit: 'cover' }}
+                data-zoomable
+              />
+            </div>
           </div>
         </div>
       </section>
@@ -219,143 +239,91 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
       );
     },
 
-    day2: () => null,
-
-    quote: (id, cls = "", style = {}) => {
-      const text = d(id, 'text', site.quoteText);
-      if (!text) return null;
-      return (
-        <section className={`section ${cls || "section--cream"}`} id={id} style={style}>
-          <div className="container">
-            <div className="quote-section reveal">
-              <p className="quote__text">&ldquo;{text}&rdquo;</p>
-              <p className="quote__attribution">{d(id, 'attribution', site.quoteAttribution)}</p>
-            </div>
+    quote: (id, cls = "", style = {}) => (
+      <section className={`section ${cls}`} id={id} style={style}>
+        <div className="container">
+          <div className="quote reveal">
+            <p className="quote__text">&ldquo;{d(id, 'text', site.quoteText)}&rdquo;</p>
+            <p className="quote__attribution">&mdash; {d(id, 'attribution', site.quoteAttribution)}</p>
           </div>
-        </section>
-      );
-    },
+        </div>
+      </section>
+    ),
 
-    featuredPhoto: (id, cls = "", style = {}) => {
-      const url = d(id, 'url', site.featuredPhotoUrl);
-      if (!url) return null;
-      return (
-        <section className={`section ${cls || "section--cream"}`} id={id} style={style}>
-          <div className="container">
-            <div className="featured-photo reveal">
-              <img
-                className="featured-photo__img"
-                src={url}
-                alt={`${site.partner1Name} and ${site.partner2Name}`}
-                data-zoomable
-                loading="lazy"
-              />
-              <p className="featured-photo__caption">{d(id, 'caption', site.featuredPhotoCaption)}</p>
-            </div>
+    featuredPhoto: (id, cls = "", style = {}) => (
+      <section className={`section ${cls}`} id={id} style={style}>
+        <div className="container">
+          <div className="featured-photo reveal">
+            <Image 
+              src={d(id, 'url', site.featuredPhotoUrl)} 
+              alt="Featured" 
+              width={1200}
+              height={800}
+              className="featured-photo__img" 
+              style={{ objectFit: 'cover' }}
+              data-zoomable 
+            />
+            <p className="featured-photo__caption">{d(id, 'caption', site.featuredPhotoCaption)}</p>
           </div>
-        </section>
-      );
-    },
+        </div>
+      </section>
+    ),
 
-    letter: (id, cls = "", style = {}) => {
-      const opening = d(id, 'opening', site.letterOpening);
-      if (!opening) return null;
-      return (
-        <section className={`section ${cls || "section--dark"}`} id={id} style={style}>
-          <div className="container">
-            <div className="letter reveal">
-              <p className="letter__opening">{opening}</p>
-              {d(id, 'body', site.letterBody).map((p, i) => (
-                <p key={i} className="letter__body">{p}</p>
-              ))}
-              <p className="letter__closing">{d(id, 'closing', site.letterClosing)}</p>
-            </div>
+    letter: (id, cls = "", style = {}) => (
+      <section className={`section ${cls || "section--dark"}`} id={id} style={style}>
+        <div className="container">
+          <div className="letter reveal">
+            <p className="letter__opening">{d(id, 'opening', site.letterOpening)}</p>
+            {d(id, 'body', site.letterBody).map((p, i) => (
+              <p key={i} className="letter__text">{p}</p>
+            ))}
+            <p className="letter__closing">{d(id, 'closing', site.letterClosing)}</p>
           </div>
-        </section>
-      );
-    },
+        </div>
+      </section>
+    ),
+
+    loveletter: (id, cls = "", style = {}) => sections.letter(id, cls, style),
 
     schedule: (id, cls = "", style = {}) => {
-      // Support both legacy scheduleItems and new weddingDays
-      const days = site.weddingDays?.filter((d) => !d.isPrivate) ?? (
-        site.scheduleItems.length > 0
-          ? [{ label: "", date: "", isPrivate: false, items: site.scheduleItems }]
-          : []
-      );
-      if (days.length === 0) return null;
-
-      const renderTimeline = (items: typeof site.scheduleItems) => {
-        const scheduleStyle = site.scheduleStyle || "classic";
-
-        if (scheduleStyle === "minimal") {
-          return (
-            <div className="timeline-minimal">
-              {items.map((item, i) => (
-                <div key={i} className={`timeline-minimal__item reveal ${cls.includes("preview") ? "visible" : ""}`}>
-                  <div className="timeline-minimal__time">
-                    {item.hour} {item.period}
-                  </div>
-                  <div className="timeline-minimal__dot"></div>
-                  <div className="timeline-minimal__details">
-                    <h3 className="timeline-minimal__event">{item.event}</h3>
-                    {item.venue && <span className="timeline-minimal__venue">at {item.venue}</span>}
-                  </div>
-                </div>
-              ))}
-            </div>
-          );
-        }
-
-        if (scheduleStyle === "cards") {
-          return (
-            <div className="timeline-cards">
-              {items.map((item, i) => (
-                <div key={i} className={`timeline-card reveal ${cls.includes("preview") ? "visible" : ""}`}>
-                  <div className="timeline-card__time">{item.hour} {item.period}</div>
-                  <h3 className="timeline-card__event">{item.event}</h3>
-                  {item.venue && <p className="timeline-card__venue">{item.venue}</p>}
-                  {item.description && <p className="timeline-card__desc">{item.description}</p>}
-                </div>
-              ))}
-            </div>
-          );
-        }
-
-        // Default: Classic
-        return (
-          <div className="timeline">
-            {items.map((item, i) => (
-              <div key={i} className={`timeline__item reveal ${cls.includes("preview") ? "visible" : ""}`}>
-                <div className="timeline__time">
-                  <div className="timeline__hour">{item.hour}</div>
-                  <div className="timeline__period">{item.period}</div>
-                </div>
-                <div className="timeline__details">
-                  <h3 className="timeline__event">{item.event}</h3>
-                  {item.venue && <p className="timeline__venue">{item.venue}</p>}
-                  {item.description && <p className="timeline__desc">{item.description}</p>}
-                </div>
-              </div>
-            ))}
-          </div>
-        );
-      };
+      if (site.scheduleItems.length === 0) return null;
+      const scheduleStyle = site.scheduleStyle || "timeline";
 
       return (
-        <section className={`section ${cls || "section--tan"}`} id="schedule" style={style}>
+        <section className={`section ${cls}`} id={id} style={style}>
           <div className="container">
             <div className="section__header reveal">
-              <p className="section__subtitle">The Day{days.length > 1 ? "s" : ""}</p>
-              <h2 className="section__title">Schedule</h2>
+              <p className="section__subtitle">Plan</p>
+              <h2 className="section__title">Our Schedule</h2>
               <div className="section__line"></div>
             </div>
-            {days.map((day, di) => (
-              <div key={di} className="schedule-day">
-                {day.label && <h3 className="schedule-day__label">{day.label}</h3>}
-                {day.date && <p className="schedule-day__date">{day.date}</p>}
-                {renderTimeline(day.items)}
+            
+            {scheduleStyle === "timeline" ? (
+              <div className="timeline">
+                {site.scheduleItems.map((item, i) => (
+                  <div key={i} className="timeline__item reveal">
+                    <div className="timeline__hour">
+                      {item.hour}<span>{item.period}</span>
+                    </div>
+                    <div className="timeline__content">
+                      <h3 className="timeline__event">{item.event}</h3>
+                      <p className="timeline__venue">{item.venue}</p>
+                      {item.description && <p className="timeline__desc">{item.description}</p>}
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
+            ) : (
+              <div className="timeline-minimal">
+                {site.scheduleItems.map((item, i) => (
+                  <div key={i} className="timeline-minimal__item reveal">
+                    <div className="timeline-minimal__time">{item.hour}{item.period}</div>
+                    <div className="timeline-minimal__event">{item.event}</div>
+                    <div className="timeline-minimal__venue">{item.venue}</div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </section>
       );
@@ -404,14 +372,17 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
             </div>
             <div className="gallery-float reveal">
               {site.galleryImages.map((img, i) => (
-                <img
-                  key={i}
-                  className="gallery-float__img"
-                  src={img.url}
-                  alt={img.alt}
-                  data-zoomable
-                  loading="lazy"
-                />
+                <div key={i} className="gallery-float__img-wrap">
+                  <Image
+                    src={img.url}
+                    alt={img.alt || "Gallery Image"}
+                    fill
+                    sizes="(max-width: 640px) 100vw, 280px"
+                    style={{ objectFit: 'cover' }}
+                    className="gallery-float__img"
+                    data-zoomable
+                  />
+                </div>
               ))}
             </div>
           </div>
@@ -676,7 +647,7 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
       {/* Fonts */}
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-      <link href={theme.googleFontsUrl} rel="stylesheet" />
+      <link href={fontStyle.googleFontsUrl} rel="stylesheet" />
 
       {/* Lightbox */}
       <div className="lightbox" id="lightbox">
@@ -717,7 +688,7 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
         // 1. Image background (overrides everything)
         // 2. Explicitly selected background color
         // 3. Section default (self-styling)
-        // 4. Alternating background (tan/cream)
+        // 4. Alternating background (accent/primary)
         
         let extraClass = "";
         if (bgUrl) {
@@ -726,13 +697,30 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
           extraClass = `section--${bgColor}`;
           if (bgColor === "dark") extraClass += " section--dark";
         } else if (isContent && !isSelfStyling) {
-          extraClass = (i % 2 === 0) ? "section--tan" : "section--cream";
+          extraClass = (i % 2 === 0) ? "section--accent" : "section--primary";
         }
 
         if (isPreview) extraClass += " preview";
-        const extraStyle = bgUrl ? { backgroundImage: `url('${bgUrl}')` } : {};
+        const extraStyle = {};
 
-        return <div key={section.id}>{render(section.id, extraClass, extraStyle)}</div>;
+        return (
+          <div key={section.id} style={{ position: 'relative' }}>
+            {bgUrl && (
+              <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
+                <Image 
+                  src={bgUrl} 
+                  alt="" 
+                  fill 
+                  sizes="100vw"
+                  style={{ objectFit: 'cover' }} 
+                />
+              </div>
+            )}
+            <div style={{ position: 'relative', zIndex: 1 }}>
+              {render(section.id, extraClass, extraStyle)}
+            </div>
+          </div>
+        );
       })}
     </div>
   );

@@ -123,11 +123,6 @@
       "type": "details"
     },
     {
-      "id": "day2",
-      "visible": true,
-      "type": "day2"
-    },
-    {
       "id": "quote",
       "visible": true,
       "type": "quote"

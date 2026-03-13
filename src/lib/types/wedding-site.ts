@@ -28,7 +28,7 @@ export interface EventDay {
   note?: string;
   detailsStyle?: "grid" | "split" | "minimal";
   sectionBackground?: string; // Image URL
-  sectionBackgroundColor?: "cream" | "tan" | "dark" | "transparent";
+  sectionBackgroundColor?: "primary" | "accent" | "dark" | "transparent";
   }
 
 export interface ScheduleItem {
@@ -92,10 +92,9 @@ export interface SectionConfig {
   type: string; // Section type, e.g. "quote", "story", "featuredPhoto"
   visible: boolean;
 }
-
 export const DEFAULT_SECTION_ORDER: SectionConfig[] = [
   { id: "hero", type: "hero", visible: true },
-  { id: "story", type: "story", visible: true },
+  { id: "story", type: "story", visible: false },
   { id: "details", type: "details", visible: true },
   { id: "quote", type: "quote", visible: true },
   { id: "featuredPhoto", type: "featuredPhoto", visible: true },
@@ -115,7 +114,6 @@ export const SECTION_LABELS: Record<string, string> = {
   hero: "Hero",
   story: "Our Story",
   details: "Wedding Details",
-  day2: "Day Two Event",
   quote: "Quote",
   featuredPhoto: "Photo",
   letter: "Letter",
@@ -130,10 +128,12 @@ export const SECTION_LABELS: Record<string, string> = {
   footer: "Footer",
 };
 
+
 export interface WeddingSite {
   slug: string;
   isPublished: boolean;
   templateId: string;
+  fontStyleId?: "timeless" | "modern" | "playful" | "vintage" | "editorial" | "bohemian" | "classic-serif" | "bold-modern";
   layoutId?: "classic" | "modern";
   passwordHash?: string;
   sectionOrder?: SectionConfig[];
@@ -225,7 +225,7 @@ export interface WeddingSite {
   contactEntries: ContactEntry[];
   navBrand: string;
   sectionBackgrounds?: Record<string, string>;
-  sectionBackgroundColors?: Record<string, "cream" | "tan" | "dark" | "transparent">;
+  sectionBackgroundColors?: Record<string, "primary" | "accent" | "dark" | "transparent">;
   sectionData?: Record<string, any>; // Instance-specific data for duplicate sections
   recentlyUsedLinks?: string[];
 }

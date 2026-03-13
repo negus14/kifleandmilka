@@ -45,6 +45,17 @@ export async function renameSite(
   return updated;
 }
 
+export async function createSite(
+  slug: string,
+  data: WeddingSite
+): Promise<WeddingSite> {
+  await pool.query(
+    "INSERT INTO sites (slug, data) VALUES ($1, $2)",
+    [slug, JSON.stringify(data)]
+  );
+  return data;
+}
+
 export async function getAllSlugs(): Promise<string[]> {
   const { rows } = await pool.query("SELECT slug FROM sites ORDER BY slug");
   return rows.map((r) => r.slug);

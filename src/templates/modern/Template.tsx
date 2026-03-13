@@ -1,5 +1,6 @@
+import Image from "next/image";
 import type { WeddingSite, VenueItem, VenueInfoBlock } from "@/lib/types/wedding-site";
-import { getTheme } from "@/lib/themes";
+import { getTheme, getFontStyle } from "@/lib/themes";
 import { toEmbedUrl, generateThemeVars, getSectionData } from "@/lib/template-utils";
 import WeddingSiteClient from "./WeddingSiteClient";
 import RSVPForm from "@/components/RSVPForm";
@@ -7,7 +8,8 @@ import "./styles.css";
 
 export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPreview?: boolean }) {
   const theme = getTheme(site.templateId);
-  const themeVars = generateThemeVars(site.templateId);
+  const fontStyle = getFontStyle(site.fontStyleId);
+  const themeVars = generateThemeVars(site);
   const { order, visibleSections, navItems } = getSectionData(site);
 
   const d = <T,>(id: string, key: string, fallback: T): T => (site.sectionData?.[id]?.[key] as T) ?? fallback;
@@ -15,7 +17,18 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
   const sections: Record<string, (id: string, cls?: string, style?: React.CSSProperties) => React.ReactNode> = {
     hero: (id, cls = "", style = {}) => (
       <header className={`modern-hero ${cls}`} id={id} style={style}>
-        <div className="modern-hero__bg"></div>
+        {site.heroImageUrl && (
+          <div className="modern-hero__bg">
+            <Image
+              src={site.heroImageUrl}
+              alt={`${site.partner1Name} & ${site.partner2Name}`}
+              fill
+              priority
+              sizes="100vw"
+              style={{ objectFit: "cover" }}
+            />
+          </div>
+        )}
         <div className="modern-container">
           <div className="modern-hero__content reveal">
             <p className="modern-hero__pretext">{d(id, 'pretext', site.heroPretext)}</p>
@@ -39,7 +52,14 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
         <div className="modern-container">
           <div className="modern-grid modern-grid--2col">
             <div className="modern-story__img-wrap reveal">
-              <img src={d(id, 'imageUrl', site.storyImageUrl)} alt={d(id, 'title', site.storyTitle)} className="modern-story__img" />
+              <Image 
+                src={d(id, 'imageUrl', site.storyImageUrl)} 
+                alt={d(id, 'title', site.storyTitle)} 
+                width={600}
+                height={600}
+                className="modern-story__img"
+                style={{ objectFit: 'cover' }}
+              />
             </div>
             <div className="modern-story__content reveal">
               <p className="modern-subtitle">{d(id, 'subtitle', site.storySubtitle)}</p>
@@ -74,10 +94,13 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
         <section className={`modern-section ${cls}`} id={id} style={style}>
           <div className="modern-container">
             <div className="modern-featured-photo reveal">
-              <img 
+              <Image 
                 src={url} 
                 alt="Featured" 
+                width={1200}
+                height={800}
                 className="modern-featured-photo__img" 
+                style={{ objectFit: 'cover', width: '100%', height: 'auto' }}
                 data-zoomable 
               />
               <p className="modern-featured-photo__caption">{d(id, 'caption', site.featuredPhotoCaption)}</p>
@@ -260,8 +283,6 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
       );
     },
 
-    day2: () => null, // Day 2 is now integrated into details (eventDays)
-
     schedule: (id, cls = "", style = {}) => {
       const days = site.weddingDays?.filter((d) => !d.isPrivate) ?? (
         site.scheduleItems.length > 0
@@ -352,11 +373,14 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
           <h2 className="modern-title reveal">Gallery</h2>
           <div className="modern-gallery reveal">
             {site.galleryImages.map((img, i) => (
-              <img 
-                key={i} 
+              <Image 
+                key={i}
                 src={img.url} 
-                alt={img.alt} 
+                alt={img.alt || "Gallery Image"} 
+                width={400}
+                height={400}
                 className="modern-gallery__img" 
+                style={{ objectFit: 'cover' }}
                 data-zoomable 
               />
             ))}
@@ -593,6 +617,11 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
         detailsStyle={site.detailsStyle}
         sectionOrder={site.sectionOrder}
       />
+
+      {/* Fonts */}
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      <link href={fontStyle.googleFontsUrl} rel="stylesheet" />
       
       <nav className="modern-nav">
         <div className="modern-container modern-nav__inner">
@@ -636,9 +665,26 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
         }
 
         if (isPreview) extraClass += " preview";
-        const extraStyle = bgUrl ? { backgroundImage: `url('${bgUrl}')` } : {};
+        const extraStyle = {}; // Reset style as we use Image component for backgrounds
 
-        return <div key={section.id}>{render(section.id, extraClass, extraStyle)}</div>;
+        return (
+          <div key={section.id} style={{ position: 'relative' }}>
+            {bgUrl && (
+              <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
+                <Image 
+                  src={bgUrl} 
+                  alt="" 
+                  fill 
+                  sizes="100vw"
+                  style={{ objectFit: 'cover' }} 
+                />
+              </div>
+            )}
+            <div style={{ position: 'relative', zIndex: 1 }}>
+              {render(section.id, extraClass, extraStyle)}
+            </div>
+          </div>
+        );
       })}
     </div>
   );

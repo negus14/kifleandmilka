@@ -1,5 +1,5 @@
 import { WeddingSite, DEFAULT_SECTION_ORDER } from "./types/wedding-site";
-import { getTheme } from "./themes";
+import { getTheme, getFontStyle } from "./themes";
 
 /**
  * Maps a standard Google Maps URL to an embeddable format.
@@ -26,20 +26,22 @@ export function toEmbedUrl(url: string): string {
 }
 
 /**
- * Generates CSS variables based on the site's theme.
+ * Generates CSS variables based on the site's theme and font style.
  */
-export function generateThemeVars(templateId: string): React.CSSProperties {
-  const theme = getTheme(templateId);
+export function generateThemeVars(site: WeddingSite): React.CSSProperties {
+  const theme = getTheme(site.templateId);
+  const fontStyle = getFontStyle(site.fontStyleId);
+
   return {
     "--color-dark": theme.colors.dark,
-    "--color-tan": theme.colors.tan,
-    "--color-cream": theme.colors.cream,
-    "--color-tan-light": theme.colors.tanLight,
-    "--color-tan-dark": theme.colors.tanDark,
-    "--color-cream-dark": theme.colors.creamDark,
-    "--font-script": theme.fonts.script,
-    "--font-serif": theme.fonts.serif,
-    "--font-sans": theme.fonts.sans,
+    "--color-accent": theme.colors.accent,
+    "--color-primary": theme.colors.primary,
+    "--color-accent-light": theme.colors.accentLight,
+    "--color-accent-dark": theme.colors.accentDark,
+    "--color-primary-dark": theme.colors.primaryDark,
+    "--font-script": fontStyle.fonts.script,
+    "--font-serif": fontStyle.fonts.serif,
+    "--font-sans": fontStyle.fonts.sans,
   } as React.CSSProperties;
 }
 

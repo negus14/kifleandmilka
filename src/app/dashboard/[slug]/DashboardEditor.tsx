@@ -15,7 +15,7 @@ import type {
   VenueInfoBlock,
 } from "@/lib/types/wedding-site";
 import { DEFAULT_SECTION_ORDER, SECTION_LABELS, type SectionConfig } from "@/lib/types/wedding-site";
-import { themes } from "@/lib/themes";
+import { themes, fontStyles } from "@/lib/themes";
 import {
   DndContext,
   closestCenter,
@@ -104,13 +104,13 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
 function ColorPicker({ label, value, onChange, themeColors }: { 
   label: string; 
   value: string; 
-  onChange: (v: "cream" | "tan" | "dark" | "transparent") => void;
-  themeColors: { cream: string; tan: string; dark: string };
+  onChange: (v: "primary" | "accent" | "dark" | "transparent") => void;
+  themeColors: { primary: string; accent: string; dark: string };
 }) {
   const options = [
     { id: "transparent", name: "Default", color: "transparent", border: "border-dashed" },
-    { id: "cream", name: "Light", color: themeColors.cream, border: "border-solid" },
-    { id: "tan", name: "Accent", color: themeColors.tan, border: "border-solid" },
+    { id: "primary", name: "Light", color: themeColors.primary, border: "border-solid" },
+    { id: "accent", name: "Accent", color: themeColors.accent, border: "border-solid" },
     { id: "dark", name: "Dark", color: themeColors.dark, border: "border-solid" },
   ] as const;
 
@@ -493,12 +493,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
     }];
   }
 
-  // 3. Ensure legacy fields are correctly mapped if missing
-  if (migratedInitial.dayTwoEvent && !migratedInitial.dayTwoEvent.heading) {
-    // This is just to ensure it's not an empty object if it was supposed to be there
-  }
-
-  // 4. Migrate legacy "Details" and "Day Two" to eventDays
+  // 3. Migrate legacy "Details" to eventDays
   if (!migratedInitial.eventDays) {
     migratedInitial.eventDays = [];
   }
@@ -515,31 +510,17 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
         sectionBackground: migratedInitial.sectionBackgrounds?.details
       });
     }
-    // Migrate Day Two
-    if (migratedInitial.dayTwoEvent) {
-      migratedInitial.eventDays.push({
-        id: "day-2",
-        label: migratedInitial.dayTwoDayLabel || "Day Two",
-        venues: [{
-          label: migratedInitial.dayTwoEvent.heading,
-          name: "",
-          address: migratedInitial.dayTwoEvent.address,
-          time: migratedInitial.dayTwoEvent.time
-        }],
-        infoBlocks: [],
-        note: migratedInitial.dayTwoEvent.note,
-        detailsStyle: "minimal",
-        sectionBackground: migratedInitial.sectionBackgrounds?.day2
-      });
-    }
   }
 
-  // 5. Ensure all sections have a type (new standardized format)
+  // 4. Ensure all sections have a type (new standardized format)
+  // AND remove any remaining 'day2' sections from the order
   if (migratedInitial.sectionOrder) {
-    migratedInitial.sectionOrder = migratedInitial.sectionOrder.map(s => ({
-      ...s,
-      type: s.type || s.id // Fallback to id if type is missing
-    }));
+    migratedInitial.sectionOrder = migratedInitial.sectionOrder
+      .filter(s => s.id !== "day2" && s.type !== "day2")
+      .map(s => ({
+        ...s,
+        type: s.type || s.id // Fallback to id if type is missing
+      }));
   } else {
     migratedInitial.sectionOrder = DEFAULT_SECTION_ORDER;
   }
@@ -903,6 +884,10 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
         href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap"
         rel="stylesheet"
       />
+      {/* Load fonts for selection previews */}
+      {fontStyles.map(s => (
+        <link key={s.id} href={s.googleFontsUrl} rel="stylesheet" />
+      ))}
 
       {/* Header */}
       <header className="sticky top-0 z-50 border-b border-[#2d2b25]/[0.08] bg-[#faf1e1]/95 backdrop-blur-sm">
@@ -1129,7 +1114,8 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                       </button>
                     ))}
                   </div>
-                  <Label>Color Palette</Label>                <div className="grid grid-cols-3 gap-3 mt-2 mb-4">
+                  <Label>Color Palette</Label>
+                  <div className="grid grid-cols-3 gap-3 mt-2 mb-6">
                     {themes.map((theme) => (
                       <button
                         key={theme.id}
@@ -1137,18 +1123,44 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                         onClick={() => set("templateId", theme.id)}
                         className={`relative text-left p-3 rounded-sm border-2 transition-all ${
                           site.templateId === theme.id
-                            ? "border-[#2d2b25] shadow-sm"
+                            ? "border-[#2d2b25] shadow-sm bg-[#2d2b25]/[0.02]"
                             : "border-[#2d2b25]/10 hover:border-[#2d2b25]/30"
                         }`}
                       >
                         <div className="flex gap-1.5 mb-2">
-                          <span className="w-5 h-5 rounded-full border border-black/10" style={{ background: theme.colors.cream }} />
-                          <span className="w-5 h-5 rounded-full border border-black/10" style={{ background: theme.colors.tan }} />
+                          <span className="w-5 h-5 rounded-full border border-black/10" style={{ background: theme.colors.primary }} />
+                          <span className="w-5 h-5 rounded-full border border-black/10" style={{ background: theme.colors.accent }} />
                           <span className="w-5 h-5 rounded-full border border-black/10" style={{ background: theme.colors.dark }} />
                         </div>
-                        <p className="text-sm font-medium text-[#2d2b25]">{theme.name}</p>
+                        <p className="text-[11px] font-bold uppercase tracking-tight text-[#2d2b25]">{theme.name}</p>
                         {site.templateId === theme.id && (
-                          <span className="absolute top-2 right-2 text-xs font-semibold tracking-wide uppercase text-[#2d2b25]/50">Active</span>
+                          <span className="absolute top-2 right-2 text-[8px] font-bold uppercase tracking-widest text-[#2d2b25]/40">Active</span>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+
+                  <Label>Font Style</Label>
+                  <div className="grid grid-cols-2 gap-3 mt-2 mb-4">
+                    {fontStyles.map((style) => (
+                      <button
+                        key={style.id}
+                        type="button"
+                        onClick={() => set("fontStyleId", style.id)}
+                        className={`relative text-left p-4 rounded-sm border-2 transition-all ${
+                          (site.fontStyleId || "timeless") === style.id
+                            ? "border-[#2d2b25] shadow-sm bg-[#2d2b25]/[0.02]"
+                            : "border-[#2d2b25]/10 hover:border-[#2d2b25]/30"
+                        }`}
+                      >
+                        <p className="text-sm font-bold text-[#2d2b25] uppercase tracking-tight mb-2">{style.name}</p>
+                        <div className="flex flex-col gap-1 border-t border-[#2d2b25]/5 pt-2">
+                          <span className="text-lg" style={{ fontFamily: style.fonts.script }}>The Wedding of</span>
+                          <span className="text-xs uppercase tracking-widest" style={{ fontFamily: style.fonts.serif }}>Partner & Partner</span>
+                          <span className="text-[9px] uppercase font-bold opacity-40" style={{ fontFamily: style.fonts.sans }}>Saturday, August 1st 2026</span>
+                        </div>
+                        {(site.fontStyleId || "timeless") === style.id && (
+                          <span className="absolute top-2 right-2 text-[9px] font-bold uppercase tracking-widest text-[#2d2b25]/40">Active</span>
                         )}
                       </button>
                     ))}
@@ -1280,7 +1292,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
               };
 
               const bgColor = site.sectionBackgroundColors?.[id] || "transparent";
-              const setBgColor = (v: "cream" | "tan" | "dark" | "transparent") => {
+              const setBgColor = (v: "primary" | "accent" | "dark" | "transparent") => {
                 const bgs = { ...(site.sectionBackgroundColors || {}) };
                 if (v && v !== "transparent") bgs[id] = v; else delete bgs[id];
                 set("sectionBackgroundColors", bgs);

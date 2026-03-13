@@ -17,7 +17,7 @@
     }
   ],
   "heroCta": "RSVP Here",
-  "giftNote": "Placeholder for your donation or gift details",
+  "giftNote": "Your presence is our greatest gift, but if you wish to contribute to our new journey together, a gift towards our home would be cherished.",
   "layoutId": "classic",
   "menuNote": "Please notify us of any dietary requirements when you RSVP.",
   "navBrand": "A & E",
@@ -45,7 +45,7 @@
     "Your presence is a blessing to us as we begin our life together, rooted in faith and blooming in love."
   ],
   "storyTitle": "Our Eden",
-  "templateId": "elegant-cream",
+  "templateId": "earthy-savannah",
   "dayTwoEvent": null,
   "footerNames": "Adam & Eve",
   "giftHeading": "Your Presence Is Our Gift",
@@ -54,8 +54,8 @@
   "isPublished": true,
   "rsvpHeading": "Join Our Celebration",
   "weddingDate": "2026-09-01T14:00:00-05:00",
-  "heroImageUrl": "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2560&auto=format&fit=crop",
-  "locationText": "Garden of Eden",
+  "heroImageUrl": "https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?q=80&w=2560&auto=format&fit=crop",
+  "locationText": "Garden of Eden, Africa",
   "partner1Name": "Adam",
   "partner2Name": "Eve",
   "passwordHash": "$2b$10$5JvgovlkakoeamziHwAZEeSPsu9jf9uM2xWj4GVhQMph5/.LmUQCe",
@@ -77,16 +77,20 @@
   ],
   "galleryImages": [
     {
-      "alt": "Lush garden pathways",
-      "url": "https://images.unsplash.com/photo-1518131359073-372f444bc89c?q=80&w=1200&auto=format&fit=crop"
+      "alt": "Serene African savanna sunset",
+      "url": "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?q=80&w=1200&auto=format&fit=crop"
     },
     {
-      "alt": "Serene sunlight through trees",
-      "url": "https://images.unsplash.com/photo-1523438885200-e635ba2c371e?q=80&w=1200&auto=format&fit=crop"
+      "alt": "Tropical forest mist",
+      "url": "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?q=80&w=1200&auto=format&fit=crop"
     },
     {
-      "alt": "A peaceful landscape",
-      "url": "https://images.unsplash.com/photo-1464618663641-bbdd760ae84a?q=80&w=1200&auto=format&fit=crop"
+      "alt": "Savanna golden hour",
+      "url": "https://images.unsplash.com/photo-1516426122078-c23e76319801?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+      "alt": "Tropical waterfall",
+      "url": "https://images.unsplash.com/photo-1433086966358-54859d0ed716?q=80&w=1200&auto=format&fit=crop"
     }
   ],
   "letterClosing": "With grace and love, Adam & Eve",
@@ -114,7 +118,7 @@
       "description": "Celebrate the union with a banquet and songs of praise."
     }
   ],
-  "storyImageUrl": "https://images.unsplash.com/photo-1516589174422-8fedd0197b67?q=80&w=1200&auto=format&fit=crop",
+  "storyImageUrl": "https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?q=80&w=1200&auto=format&fit=crop",
   "storySubtitle": "The First Story",
   "accommodations": [
     {
@@ -144,8 +148,9 @@
   "giftBankDetails": [
     {
       "email": "eve@eden.com",
-      "label": "Canada (Interac e-Transfer)",
-      "accountHolder": "Adam & Eve"
+      "label": "Wise (International)",
+      "accountHolder": "Adam & Eve",
+      "payLink": "https://wise.com/pay/me"
     },
     {
       "label": "UK (Bank Transfer)",
@@ -167,13 +172,13 @@
       "subheading": ""
     }
   ],
-  "featuredPhotoUrl": "https://images.unsplash.com/photo-1522673607200-164883214c98?q=80&w=1200&auto=format&fit=crop",
+  "featuredPhotoUrl": "https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=1200&auto=format&fit=crop",
   "quoteAttribution": "Matthew 19:6",
   "rsvpDeadlineText": "Kindly respond by August 1, 2026",
   "sectionBackgrounds": {
-    "gift": "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2560&auto=format&fit=crop",
-    "explore": "https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?q=80&w=2560&auto=format&fit=crop",
-    "gallery": "https://images.unsplash.com/photo-1501004318641-739e828a1751?q=80&w=2560&auto=format&fit=crop"
+    "gift": "https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?q=80&w=2560&auto=format&fit=crop",
+    "explore": "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?q=80&w=2560&auto=format&fit=crop",
+    "gallery": "https://images.unsplash.com/photo-1523810192022-5a0fb9aa77d4?q=80&w=2560&auto=format&fit=crop"
   },
   "featuredPhotoCaption": "The Beginning of Forever",
   "weddingDays": [

@@ -63,24 +63,6 @@ async function migrate() {
           });
           modified = true;
         }
-        // Migrate Day Two
-        if (site.dayTwoEvent) {
-          site.eventDays.push({
-            id: "day-2",
-            label: site.dayTwoDayLabel || "Day Two",
-            venues: [{
-              label: site.dayTwoEvent.heading,
-              name: "",
-              address: site.dayTwoEvent.address,
-              time: site.dayTwoEvent.time
-            }],
-            infoBlocks: [],
-            note: site.dayTwoEvent.note,
-            detailsStyle: "minimal",
-            sectionBackground: site.sectionBackgrounds?.day2
-          });
-          modified = true;
-        }
       }
 
       // 5. Ensure all sections have a type

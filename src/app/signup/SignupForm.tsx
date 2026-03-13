@@ -1,8 +1,9 @@
 "use client";
 
 import { useActionState } from "react";
+import Link from "next/link";
 
-export default function LoginForm({
+export default function SignupForm({
   action,
 }: {
   action: (formData: FormData) => Promise<{ error: string } | void>;
@@ -41,7 +42,7 @@ export default function LoginForm({
             textAlign: "center",
           }}
         >
-          Welcome back
+          Create your site
         </h1>
         <p
           style={{
@@ -52,7 +53,7 @@ export default function LoginForm({
             marginBottom: "2rem",
           }}
         >
-          Log in to edit your wedding site
+          Choose a URL and password to get started
         </p>
 
         <form action={formAction}>
@@ -70,27 +71,44 @@ export default function LoginForm({
                 marginBottom: "0.4rem",
               }}
             >
-              Site Name
+              Desired Site URL
             </label>
-            <input
-              id="slug"
-              name="slug"
-              type="text"
-              required
-              autoComplete="username"
-              placeholder="e.g. adamandeve"
-              style={{
-                width: "100%",
-                padding: "0.75rem 1rem",
-                border: "1px solid rgba(45,43,37,0.15)",
-                background: "transparent",
-                fontFamily: "inherit",
-                fontSize: "0.95rem",
-                color: "#2d2b25",
-                outline: "none",
-              }}
-            />
+            <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+              <span style={{ 
+                paddingLeft: '1rem',
+                fontSize: '0.95rem',
+                opacity: 0.3,
+                whiteSpace: 'nowrap'
+              }}>
+                ithinkshewifey.com/
+              </span>
+              <input
+                id="slug"
+                name="slug"
+                type="text"
+                required
+                placeholder="adamandeve"
+                style={{
+                  width: "100%",
+                  padding: "0.75rem 1rem 0.75rem 0.2rem",
+                  border: "1px solid rgba(45,43,37,0.15)",
+                  borderLeft: 'none',
+                  background: "transparent",
+                  fontFamily: "inherit",
+                  fontSize: "0.95rem",
+                  color: "#2d2b25",
+                  outline: "none",
+                }}
+              />
+            </div>
+            <div style={{ 
+              height: '1px', 
+              width: '100%', 
+              background: 'rgba(45,43,37,0.15)',
+              marginTop: '-1px' 
+            }} />
           </div>
+          
           <div style={{ marginBottom: "1.5rem" }}>
             <label
               htmlFor="password"
@@ -105,14 +123,13 @@ export default function LoginForm({
                 marginBottom: "0.4rem",
               }}
             >
-              Password
+              Create Password
             </label>
             <input
               id="password"
               name="password"
               type="password"
               required
-              autoComplete="current-password"
               style={{
                 width: "100%",
                 padding: "0.75rem 1rem",
@@ -155,10 +172,15 @@ export default function LoginForm({
               textTransform: "uppercase" as const,
               cursor: pending ? "wait" : "pointer",
               opacity: pending ? 0.7 : 1,
+              marginBottom: '1.5rem'
             }}
           >
-            {pending ? "Logging in..." : "Log In"}
+            {pending ? "Creating..." : "Create My Site"}
           </button>
+          
+          <p style={{ textAlign: 'center', fontSize: '0.8rem', opacity: 0.6 }}>
+            Already have a site? <Link href="/login" style={{ color: '#2d2b25', fontWeight: 600, textDecoration: 'none' }}>Log In</Link>
+          </p>
         </form>
       </div>
     </div>
