@@ -560,13 +560,9 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
     },
 
     gift: (id, cls = "", style = {}) => {
-      const paymentLinks = [...(site.giftPaymentLinks || [])];
-      if (paymentLinks.length === 0 && site.giftPaymentUrl && site.giftPaymentLabel) {
-        paymentLinks.push({ label: site.giftPaymentLabel, url: site.giftPaymentUrl });
-      }
-
-      const hasBankDetails = (site.giftBankDetails?.length ?? 0) > 0 || site.giftBankName || site.giftAccountNumber;
-      const hasAnyGifts = paymentLinks.length > 0 || hasBankDetails;
+      const paymentLinks = site.giftPaymentLinks || [];
+      const bankDetails = site.giftBankDetails || [];
+      const hasAnyGifts = paymentLinks.length > 0 || bankDetails.length > 0;
 
       if (!hasAnyGifts || !site.giftHeading) return null;
 
@@ -728,7 +724,6 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
       <WeddingSiteClient 
         weddingDate={site.weddingDate} 
         scheduleStyle={site.scheduleStyle} 
-        detailsStyle={site.detailsStyle}
         sectionOrder={site.sectionOrder}
       />
 

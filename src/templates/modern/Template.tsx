@@ -1,5 +1,5 @@
 import SafeImage from "@/components/SafeImage";
-import type { WeddingSite, VenueItem, VenueInfoBlock } from "@/lib/types/wedding-site";
+import type { WeddingSite, VenueItem, VenueInfoBlock, ScheduleItem } from "@/lib/types/wedding-site";
 import { getTheme, getFontStyle } from "@/lib/themes";
 import { toEmbedUrl, generateThemeVars, getSectionData } from "@/lib/template-utils";
 import WeddingSiteClient from "./WeddingSiteClient";
@@ -658,7 +658,6 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
       <WeddingSiteClient 
         weddingDate={site.weddingDate} 
         scheduleStyle={site.scheduleStyle} 
-        detailsStyle={site.detailsStyle}
         sectionOrder={site.sectionOrder}
       />
 

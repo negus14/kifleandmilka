@@ -5,12 +5,10 @@ import { useEffect } from "react";
 export default function WeddingSiteClient({
   weddingDate,
   scheduleStyle,
-  detailsStyle,
   sectionOrder,
 }: {
   weddingDate: string;
   scheduleStyle?: string;
-  detailsStyle?: string;
   sectionOrder?: any[];
 }) {
   useEffect(() => {
@@ -304,7 +302,7 @@ export default function WeddingSiteClient({
       sectionObserver.disconnect();
       window.removeEventListener("message", handleMessage);
     };
-  }, [weddingDate, scheduleStyle, detailsStyle, sectionOrder]);
+  }, [weddingDate, scheduleStyle, sectionOrder]);
 
   return null;
 }
