@@ -34,6 +34,15 @@ export async function POST(request: NextRequest) {
   if (!process.env.R2_SECRET_ACCESS_KEY) missingVars.push("R2_SECRET_ACCESS_KEY");
   if (!R2_PUBLIC_URL) missingVars.push("R2_PUBLIC_URL");
 
+  console.log("[Upload API] Config Check:", {
+    has_bucket: !!R2_BUCKET,
+    has_account: !!process.env.R2_ACCOUNT_ID,
+    has_key: !!process.env.R2_ACCESS_KEY_ID,
+    has_secret: !!process.env.R2_SECRET_ACCESS_KEY,
+    has_public_url: !!R2_PUBLIC_URL,
+    missing: missingVars
+  });
+
   const client = r2;
 
   if (missingVars.length > 0 || !client) {

@@ -388,13 +388,16 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
     },
 
     menu: (id, cls = "", style = {}) => {
-      if (!site.menuItems || site.menuItems.length === 0) return null;
+      const hasBg = cls.includes("section--has-bg");
+      const hasContent = site.menuItems && site.menuItems.length > 0;
+      if (!hasContent && !hasBg) return null;
+
       return (
         <section className={`section ${cls || "section--dark"}`} id={id} style={style}>
           <div className="container">
             <div className="menu-section reveal">
               <h2 className="menu__heading">Menu</h2>
-              {site.menuItems.map((item, i) => (
+              {(site.menuItems || []).map((item, i) => (
                 <div key={i} className="menu__item">
                   <div className="menu__item-name">{item.name}</div>
                   <p className="menu__item-desc">
@@ -412,7 +415,10 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
     },
 
     faqs: (id, cls = "", style = {}) => {
-      if (!site.faqs || site.faqs.length === 0) return null;
+      const hasBg = cls.includes("section--has-bg");
+      const hasContent = site.faqs && site.faqs.length > 0;
+      if (!hasContent && !hasBg) return null;
+
       return (
         <section className={`section ${cls}`} id={id} style={style}>
           <div className="container">
@@ -422,7 +428,7 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
               <div className="section__line"></div>
             </div>
             <div className="faq-list reveal" style={{ maxWidth: '800px', margin: '0 auto' }}>
-              {site.faqs.map((faq, i) => (
+              {(site.faqs || []).map((faq, i) => (
                 <div key={i} className="faq-item" style={{ marginBottom: '3rem' }}>
                   <h3 className="faq-question" style={{ fontFamily: 'var(--font-serif)', fontSize: '1.4rem', fontStyle: 'italic', marginBottom: '1rem', color: 'var(--color-dark)' }}>
                     {faq.question}
@@ -478,7 +484,11 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
     },
 
     explore: (id, cls = "", style = {}) => {
-      if (!site.exploreGroups || site.exploreGroups.length === 0) return null;
+      const hasBg = cls.includes("section--has-bg");
+      const hasContent = site.exploreGroups && site.exploreGroups.length > 0;
+      
+      if (!hasContent && !hasBg) return null;
+      
       return (
         <section className={`section ${cls}`} id={id} style={style}>
           <div className="container">
@@ -488,7 +498,7 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
               <div className="section__line"></div>
             </div>
             <div className="explore-grid">
-             {site.exploreGroups.map((group, i) => (
+             {(site.exploreGroups || []).map((group, i) => (
                <div key={i} className={`explore-card reveal${i > 0 ? ` reveal-delay-${i}` : ""}`}>
                  <h3 className="explore-col__heading">{group.heading}</h3>
                  <ul className="explore-col__list">                    {group.links.map((link, j) => (
@@ -509,7 +519,11 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
     },
 
     accommodations: (id, cls = "", style = {}) => {
-      if (!site.accommodations || site.accommodations.length === 0) return null;
+      const hasBg = cls.includes("section--has-bg");
+      const hasContent = site.accommodations && site.accommodations.length > 0;
+      
+      if (!hasContent && !hasBg) return null;
+
       return (
         <section className={`section ${cls}`} id={id} style={style}>
           <div className="container">
@@ -519,7 +533,7 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
               <div className="section__line"></div>
             </div>
             <div className="hotels-grid">
-              {site.accommodations.map((hotel, i) => (
+              {(site.accommodations || []).map((hotel, i) => (
                 <div key={i} className={`hotel-card reveal${i > 0 ? ` reveal-delay-${i}` : ""}`}>
                   <h3 className="hotel-card__name">{hotel.name}</h3>
                   <p className="hotel-card__distance">{hotel.distance}</p>

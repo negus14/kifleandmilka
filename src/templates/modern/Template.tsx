@@ -142,8 +142,10 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
     },
 
     menu: (id, cls = "", style = {}) => {
-      if (!site.menuItems || site.menuItems.length === 0) return null;
-      
+      const hasBg = cls.includes("modern-section--has-bg");
+      const hasContent = site.menuItems && site.menuItems.length > 0;
+      if (!hasContent && !hasBg) return null;
+
       // If parent didn't provide a background (tan or has-bg), default to dark for the menu
       const finalCls = cls.includes('modern-section--tan') || cls.includes('modern-section--has-bg') ? cls : `modern-section--dark ${cls}`;
 
@@ -152,7 +154,7 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
           <div className="modern-container text-center">
             <h2 className="modern-title reveal">Menu</h2>
             <div className="modern-grid modern-grid--3col">
-              {site.menuItems.map((item, i) => (
+              {(site.menuItems || []).map((item, i) => (
                 <div key={i} className="reveal">
                   <h3 className="modern-card__title" style={{ fontSize: '1.4rem' }}>{item.name}</h3>
                   <p className="modern-text--small">{item.description}</p>
@@ -166,7 +168,10 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
     },
 
     faqs: (id, cls = "", style = {}) => {
-      if (!site.faqs || site.faqs.length === 0) return null;
+      const hasBg = cls.includes("modern-section--has-bg");
+      const hasContent = site.faqs && site.faqs.length > 0;
+      if (!hasContent && !hasBg) return null;
+
       const isPrv = cls.includes("preview");
 
       return (
@@ -176,7 +181,7 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
               {d(id, 'heading', site.faqHeading) || "Frequently Asked Questions"}
             </h2>
             <div className="flex flex-col gap-12 mt-16">
-              {site.faqs.map((faq, i) => (
+              {(site.faqs || []).map((faq, i) => (
                 <div key={i} className={`reveal ${isPrv ? "visible" : ""}`}>
                   <h3 className="modern-card__title" style={{ fontSize: '1.2rem', marginBottom: '0.5rem' }}>
                     {faq.question}
@@ -193,7 +198,6 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
         </section>
       );
     },
-
     details: (id, cls = "", style = {}) => {
       if (!site.eventDays || site.eventDays.length === 0) return null;
       const isPrv = cls.includes("preview");
@@ -430,7 +434,11 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
     },
 
     explore: (id, cls = "", style = {}) => {
-      if (!site.exploreGroups || site.exploreGroups.length === 0) return null;
+      const hasBg = cls.includes("modern-section--has-bg");
+      const hasContent = site.exploreGroups && site.exploreGroups.length > 0;
+      
+      if (!hasContent && !hasBg) return null;
+      
       const isPrv = cls.includes("preview");
       return (
         <section className={`modern-section ${cls}`} id={id} style={style}>
@@ -459,14 +467,18 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
     },
 
     accommodations: (id, cls = "", style = {}) => {
-      if (!site.accommodations || site.accommodations.length === 0) return null;
+      const hasBg = cls.includes("modern-section--has-bg");
+      const hasContent = site.accommodations && site.accommodations.length > 0;
+      
+      if (!hasContent && !hasBg) return null;
+      
       const isPrv = cls.includes("preview");
       return (
         <section className={`modern-section ${cls}`} id={id} style={style}>
           <div className="modern-container">
             <h2 className={`modern-title modern-title--center reveal ${isPrv ? "visible" : ""}`}>Where to Stay</h2>
             <div className="modern-grid modern-grid--2col">
-              {site.accommodations.map((hotel, i) => (
+              {(site.accommodations || []).map((hotel, i) => (
                 <div key={i} className={`modern-card reveal ${isPrv ? "visible" : ""}`}>
                   <h3 className="modern-card__title">{hotel.name}</h3>
                   <p className="modern-card__label mb-4">{hotel.distance}</p>

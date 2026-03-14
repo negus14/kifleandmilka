@@ -83,8 +83,16 @@ function DateTimePicker({ label, value, onChange }: {
     if (!iso) return { date: "", time: "" };
     try {
       const d = new Date(iso);
-      const date = d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
-      const time = d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+      const date = d.toLocaleDateString("en-US", { 
+        month: "short", 
+        day: "numeric", 
+        year: "numeric" 
+      });
+      const time = d.toLocaleTimeString("en-US", { 
+        hour: "numeric", 
+        minute: "2-digit",
+        hour12: true
+      });
       return { date, time };
     } catch (e) {
       return { date: "", time: "" };
@@ -93,32 +101,43 @@ function DateTimePicker({ label, value, onChange }: {
 
   const { date, time } = formatDateTime(value);
   
+  // Format the value for the datetime-local input (YYYY-MM-DDThh:mm)
+  const inputValue = value ? new Date(value).toISOString().slice(0, 16) : "";
+  
   return (
     <div className="mb-4">
       <Label>{label}</Label>
       <div className="relative group">
         <input
           type="datetime-local"
-          value={value ? new Date(value).toISOString().slice(0, 16) : ""}
+          value={inputValue}
           onChange={(e) => onChange(e.target.value)}
           className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
         />
-        <div className="flex items-center gap-3 w-full px-4 py-3 border border-[#2d2b25]/15 bg-white text-[#2d2b25] text-sm outline-none focus-within:border-[#2d2b25]/40 rounded-sm transition-all group-hover:border-[#2d2b25]/30 shadow-sm">
-          <div className="text-[#2d2b25]/40 group-hover:text-[#2d2b25]/60 transition-colors">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <div className="flex items-center gap-3 w-full px-4 py-3.5 border border-[#2d2b25]/15 bg-white text-[#2d2b25] text-sm outline-none focus-within:border-[#2d2b25]/40 rounded-sm transition-all group-hover:border-[#2d2b25]/30 shadow-sm">
+          <div className="text-[#2d2b25]/30 group-hover:text-[#2d2b25]/50 transition-colors">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
           </div>
           <div className="flex-1 flex flex-col items-start overflow-hidden">
-             <span className={`text-base font-serif italic ${value ? "text-[#2d2b25]" : "text-[#2d2b25]/30"}`}>
-               {value ? date : "Select Date"}
+             <span className={`text-base font-serif italic leading-none ${value ? "text-[#2d2b25]" : "text-[#2d2b25]/20"}`}>
+               {value ? date : "Set Date & Time"}
              </span>
              {value && (
-               <span className="text-[10px] font-bold uppercase tracking-widest text-[#2d2b25]/40 mt-0.5">
+               <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#2d2b25]/40 mt-1.5 flex items-center gap-1.5">
+                 <span className="w-1 h-1 rounded-full bg-[#2d2b25]/20" />
                  {time}
                </span>
              )}
           </div>
-          <div className="text-[#2d2b25]/20 group-hover:text-[#2d2b25]/40 transition-colors">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          <div className="text-[#2d2b25]/10 group-hover:text-[#2d2b25]/25 transition-colors">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M7 7l5 5 5-5M7 13l5 5 5-5" />
+            </svg>
           </div>
         </div>
       </div>
@@ -1122,7 +1141,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
 
       <div className={`mx-auto transition-all ${isPreview ? "max-w-[1600px] px-0 lg:px-4" : "max-w-6xl px-6"} py-4 lg:py-8 flex flex-col lg:flex-row gap-0 lg:gap-8`}>
         {/* Sidebar / Mobile Tabs */}
-        <nav className={`shrink-0 lg:sticky lg:top-20 self-start transition-all ${isPreview ? "lg:w-36" : "lg:w-44"} w-full overflow-x-auto lg:overflow-x-visible no-scrollbar mb-6 lg:mb-0 px-4 lg:px-0`}>
+        <nav className={`shrink-0 lg:sticky lg:top-20 self-start transition-all ${isPreview ? "lg:w-36" : "lg:w-44"} w-full overflow-x-auto lg:overflow-x-visible no-scrollbar mb-6 lg:mb-0 px-4 lg:px-0 block`}>
           <div className="flex lg:flex-col gap-1 min-w-max lg:min-w-0">
             {(() => {
               const order = site.sectionOrder ?? DEFAULT_SECTION_ORDER;
@@ -1183,20 +1202,8 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
           {/* Editor Column */}
           <div 
             style={isPreview ? { width: undefined } : { width: '100%' }}
-            className={`transition-all ${isPreview ? "lg:flex-1 h-auto lg:h-[calc(100vh-10rem)] lg:overflow-y-auto lg:pr-6 custom-scrollbar" : "w-full"} ${isPreview && previewDevice === "desktop" ? "hidden lg:block" : "block"}`}
-            // Only hide editor on small screens if we are in preview mode and want to see mobile preview
-            // Actually, let's use isPreview to toggle between editor and preview on mobile
+            className={`transition-all ${isPreview ? "lg:flex-1 h-auto lg:h-[calc(100vh-10rem)] lg:overflow-y-auto lg:pr-6 custom-scrollbar" : "w-full"} ${isPreview ? "hidden lg:block" : "block"}`}
           >
-            {/* Logic: if isPreview is true on mobile, show the iframe. if false, show editor. */}
-            {(!isPreview || (isPreview && false)) && (
-              // This is handled by the parent container logic
-              null
-            )}
-            {/* The actual editor content is always rendered here, but hidden via classes on mobile */}
-            <div className={isPreview ? "hidden lg:block" : "block"}>
-              {/* ... existing dynamic content logic ... */}
-            </div>
-          </div>
             {(() => {
               if (tab === "Basics") return (
                 <div>
@@ -1225,7 +1232,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                   <Field label="Partner 1 Name" value={site.partner1Name} onChange={(v) => set("partner1Name", v)} />
                   <Field label="Partner 2 Name" value={site.partner2Name} onChange={(v) => set("partner2Name", v)} />
                   
-                  <div className="grid grid-cols-2 gap-3 mb-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
                     <DateTimePicker 
                       label="Wedding Start Date" 
                       value={site.weddingDate} 
@@ -1967,17 +1974,20 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
           {/* Preview Column */}
           {isPreview && (
             <div 
-              style={{ width: `${100 - editorWidth}%` }}
-              className="sticky top-20 h-[calc(100vh-10rem)] border border-[#2d2b25]/10 bg-white rounded-sm overflow-hidden flex flex-col shadow-xl"
+              style={{ width: undefined }}
+              className={`sticky top-20 h-[calc(100vh-10rem)] border border-[#2d2b25]/10 bg-white rounded-sm overflow-hidden flex flex-col shadow-xl transition-all w-full lg:w-[var(--preview-width)]`}
+              ref={(el) => {
+                if (el) el.style.setProperty('--preview-width', `${100 - editorWidth}%`);
+              }}
             >
               <div className="bg-[#2d2b25]/[0.02] border-b border-[#2d2b25]/10 px-4 py-2 flex items-center justify-between">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-[#2d2b25]/40">Real-time Preview</span>
                 <span className="text-[10px] text-[#2d2b25]/30">{previewDevice === "desktop" ? "Desktop Mode" : "Mobile View"} &bull; Auto-syncing</span>
               </div>
-              <div className="flex-1 bg-[#f0f0f0] overflow-hidden flex justify-center">
+              <div className="flex-1 bg-[#f0f0f0] overflow-hidden flex justify-center p-0 lg:p-4">
                 <div 
                   className={`bg-white shadow-2xl transition-all h-full origin-top ${
-                    previewDevice === "mobile" ? "w-[375px]" : "w-full"
+                    previewDevice === "mobile" ? "w-full max-w-[375px]" : "w-full"
                   } ${isDragging ? "pointer-events-none" : ""}`}
                 >
                   <iframe
@@ -1992,5 +2002,6 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
           )}
         </div>
       </div>
+    </div>
   );
 }
