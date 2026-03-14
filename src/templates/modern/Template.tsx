@@ -441,15 +441,15 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
       
       const isPrv = cls.includes("preview");
       return (
-        <section className={`modern-section ${cls}`} id={id} style={style}>
+        <div id={id} className={`w-full ${cls}`} style={style}>
           <div className="modern-container">
             <h2 className={`modern-title modern-title--center reveal ${isPrv ? "visible" : ""}`}>Things to Do</h2>
             <div className="modern-grid modern-grid--3col">
-              {site.exploreGroups.map((group, i) => (
+              {(site.exploreGroups || []).map((group, i) => (
                 <div key={i} className={`modern-card reveal ${isPrv ? "visible" : ""}`}>
                   <h3 className="modern-card__title">{group.heading}</h3>
                   {group.subheading && <p className="modern-card__text italic mb-4">{group.subheading}</p>}
-                  <ul className="flex flex-col gap-2">
+                  <ul className="flex flex-col gap-2 list-none p-0">
                     {group.links.map((link, j) => (
                       <li key={j}>
                         <a href={link.url} target="_blank" rel="noopener noreferrer" className="modern-link text-sm">
@@ -462,7 +462,7 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
               ))}
             </div>
           </div>
-        </section>
+        </div>
       );
     },
 
@@ -474,7 +474,7 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
       
       const isPrv = cls.includes("preview");
       return (
-        <section className={`modern-section ${cls}`} id={id} style={style}>
+        <div className={`w-full ${cls}`} id={id} style={style}>
           <div className="modern-container">
             <h2 className={`modern-title modern-title--center reveal ${isPrv ? "visible" : ""}`}>Where to Stay</h2>
             <div className="modern-grid modern-grid--2col">
@@ -496,7 +496,7 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
               ))}
             </div>
           </div>
-        </section>
+        </div>
       );
     },
 

@@ -490,7 +490,7 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
       if (!hasContent && !hasBg) return null;
       
       return (
-        <section className={`section ${cls}`} id={id} style={style}>
+        <div className={`section ${cls}`} id={id} style={style}>
           <div className="container">
             <div className="section__header reveal">
               <p className="section__subtitle">While You&rsquo;re Here</p>
@@ -514,7 +514,7 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
               ))}
             </div>
           </div>
-        </section>
+        </div>
       );
     },
 
@@ -525,7 +525,7 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
       if (!hasContent && !hasBg) return null;
 
       return (
-        <section className={`section ${cls}`} id={id} style={style}>
+        <div className={`section ${cls}`} id={id} style={style}>
           <div className="container">
             <div className="section__header reveal">
               <p className="section__subtitle">Where to Stay</p>
@@ -551,7 +551,7 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
               ))}
             </div>
           </div>
-        </section>
+        </div>
       );
     },
 

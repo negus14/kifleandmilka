@@ -101,20 +101,40 @@ function DateTimePicker({ label, value, onChange }: {
 
   const { date, time } = formatDateTime(value);
   
-  // Format the value for the datetime-local input (YYYY-MM-DDThh:mm)
-  const inputValue = value ? new Date(value).toISOString().slice(0, 16) : "";
+  // Format for datetime-local input (YYYY-MM-DDThh:mm) in LOCAL time
+  const getInputValue = (iso: string) => {
+    if (!iso) return "";
+    try {
+      const d = new Date(iso);
+      const z = d.getTimezoneOffset() * 60 * 1000;
+      const local = new Date(d.getTime() - z);
+      return local.toISOString().slice(0, 16);
+    } catch (e) { return ""; }
+  };
+
+  const inputValue = getInputValue(value);
   
   return (
     <div className="mb-4">
       <Label>{label}</Label>
       <div className="relative group">
+        {/* Transparent input on top to capture clicks and trigger native picker */}
         <input
           type="datetime-local"
           value={inputValue}
-          onChange={(e) => onChange(e.target.value)}
-          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
+          onChange={(e) => {
+            const val = e.target.value;
+            if (!val) {
+              onChange("");
+            } else {
+              // Convert the local time back to ISO string
+              onChange(new Date(val).toISOString());
+            }
+          }}
+          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-30 appearance-none"
+          style={{ WebkitAppearance: 'none' }}
         />
-        <div className="flex items-center gap-3 w-full px-4 py-3.5 border border-[#2d2b25]/15 bg-white text-[#2d2b25] text-sm outline-none focus-within:border-[#2d2b25]/40 rounded-sm transition-all group-hover:border-[#2d2b25]/30 shadow-sm">
+        <div className="flex items-center gap-3 w-full px-4 py-3.5 border border-[#2d2b25]/15 bg-white text-[#2d2b25] text-sm outline-none focus-within:border-[#2d2b25]/40 rounded-sm transition-all group-hover:border-[#2d2b25]/30 shadow-sm relative z-10">
           <div className="text-[#2d2b25]/30 group-hover:text-[#2d2b25]/50 transition-colors">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
@@ -1097,14 +1117,24 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
             
             <div className="flex bg-[#2d2b25]/5 rounded-sm p-1">
               <button 
-                onClick={() => setIsPreview(!isPreview)}
-                className={`px-2 sm:px-3 py-1 sm:py-1.5 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider rounded-sm transition-all ${
-                  isPreview 
+                onClick={() => setIsPreview(false)}
+                className={`px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-sm transition-all ${
+                  !isPreview 
                   ? "bg-[#2d2b25] text-white shadow-sm" 
-                  : "text-[#2d2b25]/60 hover:text-[#2d2b25]"
+                  : "text-[#2d2b25]/40 hover:text-[#2d2b25]/60"
                 }`}
               >
-                {isPreview ? "Live" : "Edit"}
+                Edit
+              </button>
+              <button 
+                onClick={() => setIsPreview(true)}
+                className={`px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-sm transition-all ${
+                  isPreview 
+                  ? "bg-[#2d2b25] text-white shadow-sm" 
+                  : "text-[#2d2b25]/40 hover:text-[#2d2b25]/60"
+                }`}
+              >
+                Live
               </button>
             </div>
 
@@ -1197,12 +1227,12 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
         </nav>
 
         {/* Content Wrapper */}
-        <div className={`flex flex-col lg:flex-row transition-all px-4 lg:px-0 ${isPreview ? "flex-1" : "flex-1 max-w-2xl gap-8"}`}>
+        <div className={`flex flex-col lg:flex-row transition-all px-4 lg:px-0 ${isPreview ? "flex-1" : "flex-1 max-w-2xl lg:mx-auto"}`}>
           
           {/* Editor Column */}
           <div 
             style={isPreview ? { width: undefined } : { width: '100%' }}
-            className={`transition-all ${isPreview ? "lg:flex-1 h-auto lg:h-[calc(100vh-10rem)] lg:overflow-y-auto lg:pr-6 custom-scrollbar" : "w-full"} ${isPreview ? "hidden lg:block" : "block"}`}
+            className={`transition-all ${isPreview ? "lg:flex-1 h-auto lg:h-[calc(100vh-10rem)] lg:overflow-y-auto lg:pr-6 custom-scrollbar hidden lg:block" : "w-full block"}`}
           >
             {(() => {
               if (tab === "Basics") return (
