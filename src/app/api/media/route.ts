@@ -19,12 +19,15 @@ export async function GET(request: NextRequest) {
   if (!process.env.R2_SECRET_ACCESS_KEY) missingVars.push("R2_SECRET_ACCESS_KEY");
   if (!R2_PUBLIC_URL) missingVars.push("R2_PUBLIC_URL");
 
-  if (missingVars.length > 0) {
-    console.error("R2 is not configured for media. Missing environment variables:", missingVars.join(", "));
+  const client = r2;
+
+  if (missingVars.length > 0 || !client) {
+    console.error("R2 is not configured for media. Missing environment variables or client failed to initialize:", missingVars.join(", "));
     return NextResponse.json({ 
       images: [], 
-      error: `Media library not configured. Missing variables: ${missingVars.join(", ")}`,
+      error: `Media library not configured. Missing or invalid credentials.`,
       debug_config: {
+        has_client: !!client,
         has_bucket: !!R2_BUCKET,
         has_account: !!process.env.R2_ACCOUNT_ID,
         has_key: !!process.env.R2_ACCESS_KEY_ID,
@@ -38,10 +41,10 @@ export async function GET(request: NextRequest) {
   try {
     const fetchObjects = async (p: string) => {
       const command = new ListObjectsV2Command({
-        Bucket: R2_BUCKET,
+        Bucket: R2_BUCKET as string,
         Prefix: p,
       });
-      const response = await r2.send(command);
+      const response = await client.send(command);
       return response.Contents || [];
     };
 

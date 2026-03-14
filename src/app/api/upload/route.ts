@@ -34,10 +34,12 @@ export async function POST(request: NextRequest) {
   if (!process.env.R2_SECRET_ACCESS_KEY) missingVars.push("R2_SECRET_ACCESS_KEY");
   if (!R2_PUBLIC_URL) missingVars.push("R2_PUBLIC_URL");
 
-  if (missingVars.length > 0) {
-    console.error("R2 is not configured for upload. Missing environment variables:", missingVars.join(", "));
+  const client = r2;
+
+  if (missingVars.length > 0 || !client) {
+    console.error("R2 is not configured for upload. Missing environment variables or client failed to initialize:", missingVars.join(", "));
     return NextResponse.json({ 
-      error: `Upload not configured. Missing variables: ${missingVars.join(", ")}`,
+      error: `Upload not configured. Missing or invalid credentials.`,
       missing: missingVars
     }, { status: 500 });
   }
@@ -47,12 +49,12 @@ export async function POST(request: NextRequest) {
   const key = `sites/${session.slug}/${Date.now()}.${ext}`;
 
   const command = new PutObjectCommand({
-    Bucket: R2_BUCKET,
+    Bucket: R2_BUCKET as string,
     Key: key,
     ContentType: contentType,
   });
 
-  const uploadUrl = await getSignedUrl(r2, command, { expiresIn: 600 });
+  const uploadUrl = await getSignedUrl(client, command, { expiresIn: 600 });
   const publicUrl = `${R2_PUBLIC_URL}/${key}`;
 
   return NextResponse.json({ uploadUrl, publicUrl });
