@@ -3,12 +3,24 @@ import Stripe from "stripe";
 import { getSession } from "@/lib/auth";
 import { getSiteBySlug } from "@/lib/data/sites";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2025-02-24.acacia" as any,
-});
+export const dynamic = "force-dynamic";
+
+const getStripe = () => {
+  const key = process.env.STRIPE_SECRET_KEY;
+  if (!key) return null;
+  return new Stripe(key, {
+    apiVersion: "2025-02-24.acacia" as any,
+  });
+};
 
 export async function POST(req: NextRequest) {
   try {
+    const stripe = getStripe();
+    if (!stripe) {
+      console.warn("[Stripe] Checkout missing configuration. Skipping.");
+      return NextResponse.json({ error: "Stripe not configured" }, { status: 500 });
+    }
+
     const session = await getSession();
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

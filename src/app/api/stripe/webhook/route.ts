@@ -6,16 +6,34 @@ import { sites } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { getSiteBySlug, updateSite } from "@/lib/data/sites";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2025-02-24.acacia" as any,
-});
+export const dynamic = "force-dynamic";
 
-const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!;
+const getStripe = () => {
+  const key = process.env.STRIPE_SECRET_KEY;
+  if (!key) return null;
+  return new Stripe(key, {
+    apiVersion: "2025-02-24.acacia" as any,
+  });
+};
+
+const getWebhookSecret = () => process.env.STRIPE_WEBHOOK_SECRET;
 
 export async function POST(req: NextRequest) {
+  const stripe = getStripe();
+  const endpointSecret = getWebhookSecret();
+
+  if (!stripe || !endpointSecret) {
+    console.warn("[Stripe] Webhook missing configuration. Skipping event handling.");
+    return NextResponse.json({ error: "Webhook not configured" }, { status: 500 });
+  }
+
   const body = await req.text();
   const headersList = await headers();
-  const sig = headersList.get("stripe-signature")!;
+  const sig = headersList.get("stripe-signature");
+
+  if (!sig) {
+    return NextResponse.json({ error: "Missing stripe-signature" }, { status: 400 });
+  }
 
   let event: Stripe.Event;
 
