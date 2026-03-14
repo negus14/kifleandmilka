@@ -41,6 +41,8 @@ async function signupAction(formData: FormData) {
     slug,
     passwordHash,
     isPublished: false,
+    isPaid: null,
+    stripeCustomerId: null,
     templateId: "classic-savannah",
     layoutId: "classic",
     fontStyleId: "timeless",

@@ -17,69 +17,29 @@ export default function SignupForm({
   );
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        background: "#faf1e1",
-        fontFamily: "'DM Sans', sans-serif",
-        padding: "2rem",
-      }}
-    >
+    <div className="min-h-screen flex items-center justify-center bg-[#faf1e1] font-sans p-8">
       <link
         href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;1,400&display=swap"
         rel="stylesheet"
       />
-      <div style={{ width: "100%", maxWidth: 380 }}>
-        <h1
-          style={{
-            fontFamily: "'Playfair Display', serif",
-            fontSize: "1.8rem",
-            color: "#2d2b25",
-            marginBottom: "0.5rem",
-            textAlign: "center",
-          }}
-        >
+      <div className="w-full max-w-[380px]">
+        <h1 className="font-serif italic text-3xl text-[#2d2b25] mb-2 text-center">
           Create your site
         </h1>
-        <p
-          style={{
-            fontSize: "0.85rem",
-            color: "#2d2b25",
-            opacity: 0.5,
-            textAlign: "center",
-            marginBottom: "2rem",
-          }}
-        >
+        <p className="text-sm text-[#2d2b25]/50 text-center mb-8">
           Choose a URL and password to get started
         </p>
 
-        <form action={formAction}>
-          <div style={{ marginBottom: "1rem" }}>
+        <form action={formAction} className="space-y-4">
+          <div>
             <label
               htmlFor="slug"
-              style={{
-                display: "block",
-                fontSize: "0.7rem",
-                fontWeight: 600,
-                letterSpacing: "0.15em",
-                textTransform: "uppercase" as const,
-                color: "#2d2b25",
-                opacity: 0.6,
-                marginBottom: "0.4rem",
-              }}
+              className="block text-[11px] font-semibold tracking-[0.15em] uppercase text-[#2d2b25]/60 mb-1.5"
             >
               Desired Site URL
             </label>
-            <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-              <span style={{ 
-                paddingLeft: '1rem',
-                fontSize: '0.95rem',
-                opacity: 0.3,
-                whiteSpace: 'nowrap'
-              }}>
+            <div className="flex items-center border border-[#2d2b25]/15 rounded-sm overflow-hidden focus-within:border-[#2d2b25]/40 transition-colors">
+              <span className="pl-4 py-3 text-base text-[#2d2b25]/30 whitespace-nowrap bg-transparent">
                 ithinkshewifey.com/
               </span>
               <input
@@ -88,40 +48,15 @@ export default function SignupForm({
                 type="text"
                 required
                 placeholder="adamandeve"
-                style={{
-                  width: "100%",
-                  padding: "0.75rem 1rem 0.75rem 0.2rem",
-                  border: "1px solid rgba(45,43,37,0.15)",
-                  borderLeft: 'none',
-                  background: "transparent",
-                  fontFamily: "inherit",
-                  fontSize: "0.95rem",
-                  color: "#2d2b25",
-                  outline: "none",
-                }}
+                className="w-full pl-1 pr-4 py-3 bg-transparent font-inherit text-base text-[#2d2b25] outline-none"
               />
             </div>
-            <div style={{ 
-              height: '1px', 
-              width: '100%', 
-              background: 'rgba(45,43,37,0.15)',
-              marginTop: '-1px' 
-            }} />
           </div>
           
-          <div style={{ marginBottom: "1.5rem" }}>
+          <div>
             <label
               htmlFor="password"
-              style={{
-                display: "block",
-                fontSize: "0.7rem",
-                fontWeight: 600,
-                letterSpacing: "0.15em",
-                textTransform: "uppercase" as const,
-                color: "#2d2b25",
-                opacity: 0.6,
-                marginBottom: "0.4rem",
-              }}
+              className="block text-[11px] font-semibold tracking-[0.15em] uppercase text-[#2d2b25]/60 mb-1.5"
             >
               Create Password
             </label>
@@ -130,28 +65,12 @@ export default function SignupForm({
               name="password"
               type="password"
               required
-              style={{
-                width: "100%",
-                padding: "0.75rem 1rem",
-                border: "1px solid rgba(45,43,37,0.15)",
-                background: "transparent",
-                fontFamily: "inherit",
-                fontSize: "0.95rem",
-                color: "#2d2b25",
-                outline: "none",
-              }}
+              className="w-full px-4 py-3 border border-[#2d2b25]/15 bg-transparent font-inherit text-base text-[#2d2b25] outline-none focus:border-[#2d2b25]/40 transition-colors rounded-sm"
             />
           </div>
 
           {state?.error && (
-            <p
-              style={{
-                color: "#b04040",
-                fontSize: "0.8rem",
-                textAlign: "center",
-                marginBottom: "1rem",
-              }}
-            >
+            <p className="text-red-600 text-sm text-center">
               {state.error}
             </p>
           )}
@@ -159,27 +78,13 @@ export default function SignupForm({
           <button
             type="submit"
             disabled={pending}
-            style={{
-              width: "100%",
-              padding: "0.85rem",
-              background: "#2d2b25",
-              color: "#faf1e1",
-              border: "none",
-              fontFamily: "inherit",
-              fontSize: "0.76rem",
-              fontWeight: 600,
-              letterSpacing: "0.15em",
-              textTransform: "uppercase" as const,
-              cursor: pending ? "wait" : "pointer",
-              opacity: pending ? 0.7 : 1,
-              marginBottom: '1.5rem'
-            }}
+            className="w-full py-3.5 bg-[#2d2b25] text-[#faf1e1] font-semibold text-xs tracking-[0.15em] uppercase transition-all rounded-sm disabled:opacity-70 disabled:cursor-wait hover:opacity-90 mt-2"
           >
             {pending ? "Creating..." : "Create My Site"}
           </button>
           
-          <p style={{ textAlign: 'center', fontSize: '0.8rem', opacity: 0.6 }}>
-            Already have a site? <Link href="/login" style={{ color: '#2d2b25', fontWeight: 600, textDecoration: 'none' }}>Log In</Link>
+          <p className="text-center text-sm opacity-60 mt-6">
+            Already have a site? <Link href="/login" className="text-[#2d2b25] font-semibold no-underline hover:underline">Log In</Link>
           </p>
         </form>
       </div>

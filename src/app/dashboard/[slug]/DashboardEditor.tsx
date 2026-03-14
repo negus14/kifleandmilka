@@ -978,29 +978,79 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
     }
   }
 
+  const [isPaying, setIsPaying] = useState(false);
+
+  async function handleCheckout() {
+    setIsPaying(true);
+    try {
+      const res = await fetch("/api/stripe/checkout", { method: "POST" });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error(data.error || "Failed to create checkout session");
+      }
+    } catch (err: any) {
+      alert(err.message);
+      setIsPaying(false);
+    }
+  }
+
   return (
     <div className="min-h-screen bg-[#faf1e1]" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-      <link
-        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap"
-        rel="stylesheet"
-      />
-      {/* Load fonts for selection previews */}
-      {fontStyles.map(s => (
-        <link key={s.id} href={s.googleFontsUrl} rel="stylesheet" />
-      ))}
+      {/* ... Existing Head/Scripts ... */}
+      
+      {!site.isPaid && (
+        <div className="fixed inset-0 z-[200] bg-[#faf1e1]/80 backdrop-blur-md flex items-center justify-center p-6 text-center">
+          <div className="max-w-md bg-white p-8 rounded-sm shadow-2xl border border-[#2d2b25]/10">
+            <h2 className="text-2xl font-serif italic mb-4">Complete your setup</h2>
+            <p className="text-[#2d2b25]/60 mb-8 leading-relaxed">
+              Your wedding site is ready to be built! To publish your site and access all features, 
+              there is a one-time fee of <strong>$29.00</strong>.
+            </p>
+            <ul className="text-left text-sm text-[#2d2b25]/70 space-y-3 mb-8 px-4">
+              <li className="flex gap-3 items-start">
+                <svg className="shrink-0 text-green-600 mt-0.5" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
+                Unlimited image uploads & media library
+              </li>
+              <li className="flex gap-3 items-start">
+                <svg className="shrink-0 text-green-600 mt-0.5" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
+                Custom URL (e.g. ithinkshewifey.com/amyandjack)
+              </li>
+              <li className="flex gap-3 items-start">
+                <svg className="shrink-0 text-green-600 mt-0.5" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
+                Google Sheets RSVP synchronization
+              </li>
+            </ul>
+            <button
+              onClick={handleCheckout}
+              disabled={isPaying}
+              className="w-full py-4 bg-[#2d2b25] text-[#faf1e1] font-bold uppercase tracking-widest text-xs rounded-sm hover:opacity-90 disabled:opacity-50 transition-all shadow-lg"
+            >
+              {isPaying ? "Preparing Checkout..." : "Unlock Full Access — $29"}
+            </button>
+            <form action="/api/auth/logout" method="POST" className="mt-6">
+              <button type="submit" className="text-[10px] uppercase tracking-widest font-bold text-[#2d2b25]/30 hover:text-[#2d2b25] transition-colors">
+                Sign Out
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* Header */}
       <header className="sticky top-0 z-50 border-b border-[#2d2b25]/[0.08] bg-[#faf1e1]/95 backdrop-blur-sm">
-        <div className="max-w-[1600px] mx-auto px-6 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <a href="/" className="text-base" style={{ fontFamily: "'Playfair Display', serif" }}>
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <a href="/" className="text-base hidden sm:block" style={{ fontFamily: "'Playfair Display', serif" }}>
               I Think She Wifey
             </a>
+            <a href="/" className="text-base sm:hidden font-serif italic">ITSW</a>
             <span className="text-[#2d2b25]/30">/</span>
-            <span className="text-sm text-[#2d2b25]/60">{site.partner1Name} & {site.partner2Name}</span>
+            <span className="text-xs sm:text-sm text-[#2d2b25]/60 truncate max-w-[100px] sm:max-w-none">{site.partner1Name} & {site.partner2Name}</span>
           </div>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-1 bg-[#2d2b25]/5 p-1 rounded-sm">
+          <div className="flex items-center gap-2 sm:gap-4">
+            <div className="hidden md:flex items-center gap-1 bg-[#2d2b25]/5 p-1 rounded-sm">
               <button
                 onClick={undo}
                 disabled={past.length === 0}
@@ -1019,127 +1069,139 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
               </button>
             </div>
 
-            <div className="flex items-center gap-2 px-3">
-              <div className={`w-1.5 h-1.5 rounded-full transition-colors ${saveError ? "bg-red-500 animate-pulse" : saving ? "bg-amber-400 animate-pulse" : saved ? "bg-green-500" : "bg-amber-400"}`} />
-              <span className={`text-[10px] font-bold uppercase tracking-widest ${saveError ? "text-red-600" : "text-[#2d2b25]/40"}`}>
-                {saveError ? "Save Failed!" : saving ? "Saving..." : saved ? "Changes Saved" : "Unsaved Changes"}
+            <div className="flex items-center gap-1.5 px-1 sm:px-3">
+              <div className={`w-1.5 h-1.5 rounded-full transition-colors flex-shrink-0 ${saveError ? "bg-red-500 animate-pulse" : saving ? "bg-amber-400 animate-pulse" : saved ? "bg-green-500" : "bg-amber-400"}`} />
+              <span className={`text-[9px] sm:text-[10px] font-bold uppercase tracking-widest whitespace-nowrap ${saveError ? "text-red-600" : "text-[#2d2b25]/40"}`}>
+                {saveError ? "Error" : saving ? "Saving" : saved ? "Saved" : "Changes"}
               </span>
             </div>
 
             <a href={`/${site.slug}`} target="_blank"
-              className="text-xs tracking-wide uppercase text-[#2d2b25]/50 hover:text-[#2d2b25] transition-colors">
-              View Live
+              className="hidden sm:block text-xs tracking-wide uppercase text-[#2d2b25]/50 hover:text-[#2d2b25] transition-colors">
+              View
             </a>
             
             <div className="flex bg-[#2d2b25]/5 rounded-sm p-1">
               <button 
                 onClick={() => setIsPreview(!isPreview)}
-                className={`px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-sm transition-all ${
+                className={`px-2 sm:px-3 py-1 sm:py-1.5 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider rounded-sm transition-all ${
                   isPreview 
                   ? "bg-[#2d2b25] text-white shadow-sm" 
                   : "text-[#2d2b25]/60 hover:text-[#2d2b25]"
                 }`}
               >
-                {isPreview ? "Preview: On" : "Preview: Off"}
+                {isPreview ? "Live" : "Edit"}
               </button>
             </div>
 
-            {isPreview && (
-              <div className="flex bg-[#2d2b25]/5 rounded-sm p-1">
-                <button 
-                  onClick={() => setPreviewDevice("desktop")}
-                  className={`px-2 py-1.5 rounded-sm transition-all ${
-                    previewDevice === "desktop" ? "bg-white shadow-sm text-[#2d2b25]" : "text-[#2d2b25]/40 hover:text-[#2d2b25]/60"
-                  }`}
-                  title="Desktop Preview"
-                >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
-                </button>
-                <button 
-                  onClick={() => setPreviewDevice("mobile")}
-                  className={`px-2 py-1.5 rounded-sm transition-all ${
-                    previewDevice === "mobile" ? "bg-white shadow-sm text-[#2d2b25]" : "text-[#2d2b25]/40 hover:text-[#2d2b25]/60"
-                  }`}
-                  title="Mobile Preview"
-                >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
-                </button>
-              </div>
-            )}
+            <div className="hidden lg:flex bg-[#2d2b25]/5 rounded-sm p-1">
+              <button 
+                onClick={() => setPreviewDevice("desktop")}
+                className={`px-2 py-1.5 rounded-sm transition-all ${
+                  previewDevice === "desktop" ? "bg-white shadow-sm text-[#2d2b25]" : "text-[#2d2b25]/40 hover:text-[#2d2b25]/60"
+                }`}
+                title="Desktop Preview"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+              </button>
+              <button 
+                onClick={() => setPreviewDevice("mobile")}
+                className={`px-2 py-1.5 rounded-sm transition-all ${
+                  previewDevice === "mobile" ? "bg-white shadow-sm text-[#2d2b25]" : "text-[#2d2b25]/40 hover:text-[#2d2b25]/60"
+                }`}
+                title="Mobile Preview"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+              </button>
+            </div>
 
-            <form action="/api/auth/logout" method="POST">
+            <form action="/api/auth/logout" method="POST" className="hidden sm:block">
               <button type="submit"
-                className="text-xs tracking-wide uppercase text-[#2d2b25]/40 hover:text-red-500 transition-colors ml-2">
-                Log Out
+                className="text-xs tracking-wide uppercase text-[#2d2b25]/40 hover:text-red-500 transition-colors ml-1">
+                Out
               </button>
             </form>
           </div>
         </div>
       </header>
 
-      <div className={`mx-auto transition-all ${isPreview ? "max-w-[1600px] px-4" : "max-w-6xl px-6"} py-8 flex gap-8`}>
-        {/* Sidebar */}
-        <nav className={`shrink-0 sticky top-20 self-start transition-all ${isPreview ? "w-36" : "w-44"}`}>
-          {(() => {
-            const order = site.sectionOrder ?? DEFAULT_SECTION_ORDER;
-            const dynamicTabs: { label: string, id: string, type: string }[] = [
-              { label: "Basics", id: "Basics", type: "static" },
-              { label: "Layout", id: "Layout", type: "static" }
-            ];
-            
-            const typeCounts: Record<string, number> = {};
-            order.forEach(s => {
-              const baseLabel = SECTION_LABELS[s.type] || SECTION_LABELS[s.id] || s.type;
-              typeCounts[s.type] = (typeCounts[s.type] || 0) + 1;
-              const label = typeCounts[s.type] > 1 ? `${baseLabel} ${typeCounts[s.type]}` : baseLabel;
-              dynamicTabs.push({ label, id: s.id, type: s.type });
-            });
+      <div className={`mx-auto transition-all ${isPreview ? "max-w-[1600px] px-0 lg:px-4" : "max-w-6xl px-6"} py-4 lg:py-8 flex flex-col lg:flex-row gap-0 lg:gap-8`}>
+        {/* Sidebar / Mobile Tabs */}
+        <nav className={`shrink-0 lg:sticky lg:top-20 self-start transition-all ${isPreview ? "lg:w-36" : "lg:w-44"} w-full overflow-x-auto lg:overflow-x-visible no-scrollbar mb-6 lg:mb-0 px-4 lg:px-0`}>
+          <div className="flex lg:flex-col gap-1 min-w-max lg:min-w-0">
+            {(() => {
+              const order = site.sectionOrder ?? DEFAULT_SECTION_ORDER;
+              const dynamicTabs: { label: string, id: string, type: string }[] = [
+                { label: "Basics", id: "Basics", type: "static" },
+                { label: "Layout", id: "Layout", type: "static" }
+              ];
+              
+              const typeCounts: Record<string, number> = {};
+              order.forEach(s => {
+                const baseLabel = SECTION_LABELS[s.type] || SECTION_LABELS[s.id] || s.type;
+                typeCounts[s.type] = (typeCounts[s.type] || 0) + 1;
+                const label = typeCounts[s.type] > 1 ? `${baseLabel} ${typeCounts[s.type]}` : baseLabel;
+                dynamicTabs.push({ label, id: s.id, type: s.type });
+              });
 
-            return dynamicTabs.map((t) => {
-              const isHidden = t.type !== "static" && order.find(s => s.id === t.id)?.visible === false;
+              return dynamicTabs.map((t) => {
+                const isHidden = t.type !== "static" && order.find(s => s.id === t.id)?.visible === false;
 
-              return (
-                <button 
-                  key={t.id} 
-                  onClick={() => {
-                    if (isHidden) {
-                      alert(`The "${t.label}" section is currently hidden. Enable it in the "Layout" tab to edit its content and see it in the preview.`);
-                      return;
-                    }
-                    handleTabChange(t.id);
-                  }}
-                  className={`block w-full text-left px-3 py-2 text-sm rounded-sm mb-0.5 transition-all ${
-                    tab === t.id 
-                      ? "bg-[#2d2b25] text-[#faf1e1] shadow-sm" 
-                      : isHidden
-                        ? "text-[#2d2b25]/20 cursor-not-allowed italic"
-                        : "text-[#2d2b25]/60 hover:text-[#2d2b25] hover:bg-[#2d2b25]/5"
-                  }`}
-                  title={isHidden ? `${t.label} is hidden in layout` : ""}
-                >
-                  <div className="flex items-center justify-between">
-                    <span>{t.label}</span>
-                    {isHidden && (
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="opacity-40">
-                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
-                        <line x1="1" y1="1" x2="23" y2="23" />
-                      </svg>
-                    )}
-                  </div>
-                </button>
-              );
-            });
-          })()}
+                return (
+                  <button 
+                    key={t.id} 
+                    onClick={() => {
+                      if (isHidden) {
+                        alert(`The "${t.label}" section is currently hidden. Enable it in the "Layout" tab to edit its content and see it in the preview.`);
+                        return;
+                      }
+                      handleTabChange(t.id);
+                    }}
+                    className={`whitespace-nowrap px-4 lg:px-3 py-2 text-[11px] lg:text-sm rounded-sm transition-all ${
+                      tab === t.id 
+                        ? "bg-[#2d2b25] text-[#faf1e1] shadow-sm font-bold" 
+                        : isHidden
+                          ? "text-[#2d2b25]/20 cursor-not-allowed italic"
+                          : "text-[#2d2b25]/60 hover:text-[#2d2b25] hover:bg-[#2d2b25]/5"
+                    }`}
+                    title={isHidden ? `${t.label} is hidden in layout` : ""}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span>{t.label}</span>
+                      {isHidden && (
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="opacity-40">
+                          <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                          <line x1="1" y1="1" x2="23" y2="23" />
+                        </svg>
+                      )}
+                    </div>
+                  </button>
+                );
+              });
+            })()}
+          </div>
         </nav>
 
         {/* Content Wrapper */}
-        <div className={`flex transition-all ${isPreview ? "flex-1" : "flex-1 max-w-2xl gap-8"}`}>
+        <div className={`flex flex-col lg:flex-row transition-all px-4 lg:px-0 ${isPreview ? "flex-1" : "flex-1 max-w-2xl gap-8"}`}>
           
           {/* Editor Column */}
           <div 
-            style={isPreview ? { width: `${editorWidth}%` } : { width: '100%' }}
-            className={`transition-all ${isPreview ? "h-[calc(100vh-10rem)] overflow-y-auto pr-6 custom-scrollbar" : "w-full"}`}
+            style={isPreview ? { width: undefined } : { width: '100%' }}
+            className={`transition-all ${isPreview ? "lg:flex-1 h-auto lg:h-[calc(100vh-10rem)] lg:overflow-y-auto lg:pr-6 custom-scrollbar" : "w-full"} ${isPreview && previewDevice === "desktop" ? "hidden lg:block" : "block"}`}
+            // Only hide editor on small screens if we are in preview mode and want to see mobile preview
+            // Actually, let's use isPreview to toggle between editor and preview on mobile
           >
+            {/* Logic: if isPreview is true on mobile, show the iframe. if false, show editor. */}
+            {(!isPreview || (isPreview && false)) && (
+              // This is handled by the parent container logic
+              null
+            )}
+            {/* The actual editor content is always rendered here, but hidden via classes on mobile */}
+            <div className={isPreview ? "hidden lg:block" : "block"}>
+              {/* ... existing dynamic content logic ... */}
+            </div>
+          </div>
             {(() => {
               if (tab === "Basics") return (
                 <div>

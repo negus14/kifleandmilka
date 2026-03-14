@@ -139,6 +139,8 @@ export const SECTION_LABELS: Record<string, string> = {
 export interface WeddingSite {
   slug: string;
   isPublished: boolean;
+  isPaid?: string | Date | null;
+  stripeCustomerId?: string | null;
   templateId: string;
   fontStyleId?: "timeless" | "modern" | "playful" | "vintage" | "editorial" | "bohemian" | "classic-serif" | "bold-modern";
   layoutId?: "classic" | "modern";

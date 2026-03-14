@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { SignJWT, jwtVerify } from "jose";
+import { getSiteBySlug } from "./data/sites";
 
 const SECRET = new TextEncoder().encode(
   process.env.AUTH_SECRET || "dev-secret-change-in-production"
@@ -9,10 +10,14 @@ const COOKIE_NAME = "itsw_session";
 
 interface SessionPayload {
   slug: string;
+  isPaid: boolean;
 }
 
 export async function createSession(slug: string) {
-  const token = await new SignJWT({ slug })
+  const site = await getSiteBySlug(slug, true);
+  const isPaid = !!site?.isPaid;
+
+  const token = await new SignJWT({ slug, isPaid })
     .setProtectedHeader({ alg: "HS256" })
     .setExpirationTime("30d")
     .sign(SECRET);

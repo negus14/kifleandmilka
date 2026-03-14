@@ -5,6 +5,8 @@ import { sql } from "drizzle-orm";
 export const sites = pgTable("sites", {
   slug: text("slug").primaryKey(),
   data: jsonb("data").notNull(),
+  isPaid: timestamp("is_paid").default(sql`NULL`), // Using timestamp for paid date or null
+  stripeCustomerId: text("stripe_customer_id"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 }, (table) => {

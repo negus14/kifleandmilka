@@ -19,6 +19,8 @@
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
+    "@sentry/nextjs": "^10.43.0",
+    "@stripe/stripe-js": "^8.9.0",
     "@tailwindcss/postcss": "^4.2.1",
     "@types/node": "^25.4.0",
     "@types/react": "^19.2.14",
@@ -34,6 +36,7 @@
     "postcss": "^8.5.8",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
+    "stripe": "^20.4.1",
     "tailwindcss": "^4.2.1",
     "typescript": "^5.9.3"
   },

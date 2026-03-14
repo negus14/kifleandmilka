@@ -39,12 +39,11 @@ export async function getSiteBySlug(
       const cached = await redis.get(cacheKey);
       if (cached) {
         console.log(`[Redis] Cache HIT for: ${slug}`);
-        return normalizeSiteData(JSON.parse(cached) as WeddingSite);
+        const site = JSON.parse(cached) as WeddingSite;
+        return normalizeSiteData(site);
       }
       console.log(`[Redis] Cache MISS for: ${slug}`);
     } catch (error) {
-      // We don't need to log full error here as the global error handler in redis.ts handles connection issues
-      // Just a brief note that we're skipping cache
       if (!(redis as any)._logged_error) {
         console.error("[Redis] Read Error (skipping cache):", (error as any).message || error);
       }
@@ -53,12 +52,21 @@ export async function getSiteBySlug(
 
   // 2. Fallback to Drizzle
   console.log(`[DB] Fetching site from database: ${slug}`);
-  const result = await db.query.sites.findFirst({
-    where: eq(sites.slug, slug),
-  });
+  const [result] = await db
+    .select({ 
+      data: sites.data, 
+      isPaid: sites.isPaid, 
+      stripeCustomerId: sites.stripeCustomerId 
+    })
+    .from(sites)
+    .where(eq(sites.slug, slug));
 
   if (!result) return null;
-  const site = normalizeSiteData(result.data as WeddingSite);
+  const site = {
+    ...normalizeSiteData(result.data as WeddingSite),
+    isPaid: result.isPaid,
+    stripeCustomerId: result.stripeCustomerId
+  };
 
   // 3. Populate Cache
   try {
@@ -87,8 +95,15 @@ export async function updateSite(
     fieldsChanged: changedFields,
     sectionCount: updated.sectionOrder?.length 
   });
+
+  const { isPaid, stripeCustomerId, ...rest } = updated;
   const result = await db.update(sites)
-    .set({ data: updated, updatedAt: new Date() })
+    .set({ 
+      data: rest, 
+      isPaid: isPaid ? new Date(isPaid) : null,
+      stripeCustomerId: stripeCustomerId || null,
+      updatedAt: new Date() 
+    })
     .where(eq(sites.slug, slug))
     .returning({ slug: sites.slug });
 
@@ -130,8 +145,15 @@ export async function renameSite(
 
   // Drizzle Update (including PK change) — verify rows affected
   console.log(`[DB] Renaming site: ${oldSlug} -> ${newSlug}`);
+  const { isPaid, stripeCustomerId, ...rest } = updated;
   const result = await db.update(sites)
-    .set({ slug: newSlug, data: updated, updatedAt: new Date() })
+    .set({ 
+      slug: newSlug, 
+      data: rest, 
+      isPaid: isPaid ? new Date(isPaid) : null,
+      stripeCustomerId: stripeCustomerId || null,
+      updatedAt: new Date() 
+    })
     .where(eq(sites.slug, oldSlug))
     .returning({ slug: sites.slug });
 
@@ -159,9 +181,12 @@ export async function createSite(
   data: WeddingSite
 ): Promise<WeddingSite> {
   console.log(`[DB] Creating site: ${slug}`);
+  const { isPaid, stripeCustomerId, ...rest } = data;
   await db.insert(sites).values({
     slug,
-    data,
+    data: rest,
+    isPaid: isPaid ? new Date(isPaid) : null,
+    stripeCustomerId: stripeCustomerId || null,
   });
   return data;
 }
