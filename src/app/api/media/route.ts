@@ -12,17 +12,26 @@ export async function GET(request: NextRequest) {
   const originalPrefix = `sites/${session.slug}/`;
   const lowerPrefix = `sites/${session.slug.toLowerCase()}/`;
 
-  if (!R2_BUCKET || !process.env.R2_ACCOUNT_ID || !process.env.R2_ACCESS_KEY_ID || !process.env.R2_SECRET_ACCESS_KEY) {
-    console.error("R2 is not configured. Missing environment variables.");
+  const missingVars = [];
+  if (!R2_BUCKET) missingVars.push("R2_BUCKET");
+  if (!process.env.R2_ACCOUNT_ID) missingVars.push("R2_ACCOUNT_ID");
+  if (!process.env.R2_ACCESS_KEY_ID) missingVars.push("R2_ACCESS_KEY_ID");
+  if (!process.env.R2_SECRET_ACCESS_KEY) missingVars.push("R2_SECRET_ACCESS_KEY");
+  if (!R2_PUBLIC_URL) missingVars.push("R2_PUBLIC_URL");
+
+  if (missingVars.length > 0) {
+    console.error("R2 is not configured for media. Missing environment variables:", missingVars.join(", "));
     return NextResponse.json({ 
       images: [], 
-      error: "Media library not configured. Please set R2 environment variables.",
+      error: `Media library not configured. Missing variables: ${missingVars.join(", ")}`,
       debug_config: {
         has_bucket: !!R2_BUCKET,
         has_account: !!process.env.R2_ACCOUNT_ID,
         has_key: !!process.env.R2_ACCESS_KEY_ID,
-        has_secret: !!process.env.R2_SECRET_ACCESS_KEY
-      }
+        has_secret: !!process.env.R2_SECRET_ACCESS_KEY,
+        has_public_url: !!R2_PUBLIC_URL
+      },
+      missing: missingVars
     }, { status: 500 });
   }
 

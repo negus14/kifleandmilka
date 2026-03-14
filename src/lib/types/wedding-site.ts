@@ -87,6 +87,11 @@ export interface ContactEntry {
   phone?: string;
 }
 
+export interface FAQItem {
+  question: string;
+  answer: string;
+}
+
 export interface SectionConfig {
   id: string;   // Unique instance ID, e.g. "quote-1710264000"
   type: string; // Section type, e.g. "quote", "story", "featuredPhoto"
@@ -101,9 +106,10 @@ export const DEFAULT_SECTION_ORDER: SectionConfig[] = [
   { id: "letter", type: "letter", visible: true },
   { id: "schedule", type: "schedule", visible: true },
   { id: "menu", type: "menu", visible: true },
+  { id: "faqs", type: "faqs", visible: false },
   { id: "gallery", type: "gallery", visible: true },
   { id: "explore", type: "explore", visible: true },
-  { id: "accommodations", type: "accommodations", visible: true },
+  { id: "accommodations", type: "accommodations", visible: false },
   { id: "rsvp", type: "rsvp", visible: true },
   { id: "gift", type: "gift", visible: true },
   { id: "contact", type: "contact", visible: true },
@@ -119,6 +125,7 @@ export const SECTION_LABELS: Record<string, string> = {
   letter: "Letter",
   schedule: "Schedule",
   menu: "Menu",
+  faqs: "FAQs",
   gallery: "Gallery",
   explore: "Things to Do",
   accommodations: "Accommodations",
@@ -181,17 +188,15 @@ export interface WeddingSite {
   googleSheetId?: string;
   googleSheetName?: string;
 
+  // FAQs
+  faqHeading: string;
+  faqs: FAQItem[];
+
   // Gift
   giftHeading: string;
   giftSubheading: string;
-  giftPaymentUrl: string;
-  giftPaymentLabel: string;
   giftPaymentLinks?: { label: string; url: string }[];
   giftNote: string;
-  giftBankName?: string;
-  giftAccountHolder?: string;
-  giftAccountNumber?: string;
-  giftSwiftCode?: string;
   giftBankDetails?: BankDetail[];
 
   // Footer
@@ -206,15 +211,6 @@ export interface WeddingSite {
   // Structured sections
   eventDays: EventDay[];
   
-  // Legacy fields (to be migrated)
-  venues?: VenueItem[];
-  venueInfoBlocks?: VenueInfoBlock[];
-  detailsStyle?: "grid" | "split" | "minimal";
-  detailsDayLabel?: string;
-  dayTwoEvent?: DayTwoEvent | null;
-  dayTwoDayLabel?: string;
-
-  scheduleItems: ScheduleItem[];
   weddingDays?: WeddingDay[];
   scheduleStyle?: "classic" | "minimal" | "cards";
   menuItems: MenuItem[];

@@ -5,46 +5,25 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { POST } from '@/app/api/rsvp/route';
 import { NextRequest } from 'next/server';
 import * as sites from '@/lib/data/sites';
-import * as db from '@/lib/db';
-import { google } from 'googleapis';
+import * as rsvps from '@/lib/data/rsvps';
+import * as googleSync from '@/lib/google-sheets';
 
 // Mock dependencies
 vi.mock('@/lib/data/sites', () => ({
   getSiteBySlug: vi.fn(),
 }));
 
-vi.mock('@/lib/db', () => ({
-  default: {
-    query: vi.fn(),
-  },
+vi.mock('@/lib/data/rsvps', () => ({
+  createRSVP: vi.fn(),
 }));
 
-const mockAppend = vi.fn();
-vi.mock('googleapis', () => ({
-  google: {
-    auth: {
-      GoogleAuth: class {
-        constructor() {}
-      },
-      OAuth2: class {
-        setCredentials() {}
-      },
-    },
-    sheets: vi.fn(() => ({
-      spreadsheets: {
-        values: {
-          append: mockAppend,
-        },
-      },
-    })),
-  },
+vi.mock('@/lib/google-sheets', () => ({
+  syncRSVPToGoogleSheets: vi.fn(),
 }));
 
 describe('POST /api/rsvp', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL = 'test@example.com';
-    process.env.GOOGLE_PRIVATE_KEY = 'test-key';
   });
 
   const createRequest = (body: any) => {
@@ -64,7 +43,7 @@ describe('POST /api/rsvp', () => {
     expect(data.error).toMatch(/Slug and at least one guest are required/);
   });
 
-  it('should return 400 if site is not found or googleSheetId is missing', async () => {
+  it('should return 404 if site is not found', async () => {
     vi.mocked(sites.getSiteBySlug).mockResolvedValueOnce(null);
 
     const req = createRequest({
@@ -74,45 +53,48 @@ describe('POST /api/rsvp', () => {
     const res = await POST(req);
     const data = await res.json();
 
-    expect(res.status).toBe(400);
-    expect(data.error).toMatch(/Google Sheets integration not configured/);
+    expect(res.status).toBe(404);
+    expect(data.error).toBe('Site not found');
   });
 
-  it('should successfully append to google sheets using Service Account', async () => {
-    vi.mocked(sites.getSiteBySlug).mockResolvedValueOnce({
-      slug: 'test-site',
-      googleSheetId: 'test-sheet-id',
-      // No googleTokens -> fallback to Service Account
-    } as any);
+  it('should successfully save to DB and attempt sync', async () => {
+    const mockSite = { slug: 'test-site' } as any;
+    vi.mocked(sites.getSiteBySlug).mockResolvedValueOnce(mockSite);
+    vi.mocked(rsvps.createRSVP).mockResolvedValueOnce({ id: 'rsvp-123' } as any);
+    vi.mocked(googleSync.syncRSVPToGoogleSheets).mockResolvedValueOnce(true);
 
-    mockAppend.mockResolvedValueOnce({});
-
-    const req = createRequest({
+    const rsvpData = {
       slug: 'test-site',
       email: 'john@example.com',
       message: 'Cant wait!',
       guests: [
         { name: 'John Doe', attending: true, mealChoice: 'Chicken', isHalal: true },
       ],
-    });
+    };
 
+    const req = createRequest(rsvpData);
     const res = await POST(req);
     const data = await res.json();
 
     expect(res.status).toBe(200);
     expect(data.success).toBe(true);
+    expect(data.rsvpId).toBe('rsvp-123');
 
-    expect(mockAppend).toHaveBeenCalledTimes(1);
-    expect(mockAppend.mock.calls[0][0].spreadsheetId).toBe('test-sheet-id');
-    expect(mockAppend.mock.calls[0][0].requestBody.values[0]).toEqual(
-      expect.arrayContaining([
-        'john@example.com',
-        'John Doe',
-        'Yes', // Attending
-        'Chicken',
-        'Yes', // Halal
-        'Cant wait!',
-      ])
+    // Verify DB was called
+    expect(rsvps.createRSVP).toHaveBeenCalledWith(
+      'test-site',
+      'john@example.com',
+      rsvpData.guests,
+      'Cant wait!'
+    );
+
+    // Verify Sync was called
+    expect(googleSync.syncRSVPToGoogleSheets).toHaveBeenCalledWith(
+      mockSite,
+      'john@example.com',
+      rsvpData.guests,
+      'Cant wait!',
+      'rsvp-123'
     );
   });
 });

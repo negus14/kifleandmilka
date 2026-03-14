@@ -15,65 +15,72 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
   const d = <T,>(id: string, key: string, fallback: T): T => (site.sectionData?.[id]?.[key] as T) ?? fallback;
 
   const sections: Record<string, (id: string, cls?: string, style?: React.CSSProperties) => React.ReactNode> = {
-    hero: (id, cls = "", style = {}) => (
-      <header className={`modern-hero ${cls}`} id={id} style={style}>
-        {site.heroImageUrl && (
-          <div className="modern-hero__bg">
-            <SafeImage
-              src={site.heroImageUrl}
-              alt={`${site.partner1Name} & ${site.partner2Name}`}
-              fill
-              priority
-              sizes="100vw"
-              style={{ objectFit: "cover" }}
-            />
-          </div>
-        )}
-        <div className="modern-container">
-          <div className="modern-hero__content reveal">
-            <p className="modern-hero__pretext">{d(id, 'pretext', site.heroPretext)}</p>
-            <h1 className="modern-hero__names">
-              {site.partner1Name} <span className="modern-amp">&</span> {site.partner2Name}
-            </h1>
-            <p className="modern-hero__tagline">{d(id, 'tagline', site.heroTagline)}</p>
-            <div className="modern-hero__date-loc">
-              <span className="modern-hero__date">{site.dateDisplayText}</span>
-              <span className="modern-hero__sep">|</span>
-              <span className="modern-hero__loc">{site.locationText}</span>
-            </div>
-            <a href="#rsvp" className="modern-btn modern-btn--primary">{d(id, 'cta', site.heroCta)}</a>
-          </div>
-        </div>
-      </header>
-    ),
-
-    story: (id, cls = "", style = {}) => (
-      <section className={`modern-section ${cls}`} id={id} style={style}>
-        <div className="modern-container">
-          <div className="modern-grid modern-grid--2col">
-            <div className="modern-story__img-wrap reveal">
-              <SafeImage 
-                src={d(id, 'imageUrl', site.storyImageUrl)} 
-                alt={d(id, 'title', site.storyTitle)} 
-                width={600}
-                height={600}
-                sizes="(max-width: 768px) 100vw, 600px"
-                className="modern-story__img"
-                style={{ objectFit: 'cover' }}
+    hero: (id, cls = "", style = {}) => {
+      if (!site.partner1Name && !site.partner2Name) return null;
+      return (
+        <header className={`modern-hero ${cls}`} id={id} style={style}>
+          {site.heroImageUrl && (
+            <div className="modern-hero__bg">
+              <SafeImage
+                src={site.heroImageUrl}
+                alt={`${site.partner1Name} & ${site.partner2Name}`}
+                fill
+                priority
+                sizes="100vw"
+                style={{ objectFit: "cover" }}
               />
             </div>
-            <div className="modern-story__content reveal">
-              <p className="modern-subtitle">{d(id, 'subtitle', site.storySubtitle)}</p>
-              <h2 className="modern-title">{d(id, 'title', site.storyTitle)}</h2>
-              <blockquote className="modern-quote">{d(id, 'leadQuote', site.storyLeadQuote)}</blockquote>
-              <div className="modern-text">
-                {d(id, 'body', site.storyBody).map((p: string, i: number) => <p key={i}>{p}</p>)}
+          )}
+          <div className="modern-container">
+            <div className="modern-hero__content reveal">
+              {d(id, 'pretext', site.heroPretext) && <p className="modern-hero__pretext">{d(id, 'pretext', site.heroPretext)}</p>}
+              <h1 className="modern-hero__names">
+                {site.partner1Name} <span className="modern-amp">&</span> {site.partner2Name}
+              </h1>
+              {d(id, 'tagline', site.heroTagline) && <p className="modern-hero__tagline">{d(id, 'tagline', site.heroTagline)}</p>}
+              <div className="modern-hero__date-loc">
+                <span className="modern-hero__date">{site.dateDisplayText}</span>
+                <span className="modern-hero__sep">|</span>
+                <span className="modern-hero__loc">{site.locationText}</span>
+              </div>
+              {d(id, 'cta', site.heroCta) && <a href="#rsvp" className="modern-btn modern-btn--primary">{d(id, 'cta', site.heroCta)}</a>}
+            </div>
+          </div>
+        </header>
+      );
+    },
+
+    story: (id, cls = "", style = {}) => {
+      const body = d(id, 'body', site.storyBody);
+      if (!body || body.length === 0 || (body.length === 1 && !body[0])) return null;
+      return (
+        <section className={`modern-section ${cls}`} id={id} style={style}>
+          <div className="modern-container">
+            <div className="modern-grid modern-grid--2col">
+              <div className="modern-story__img-wrap reveal">
+                <SafeImage 
+                  src={d(id, 'imageUrl', site.storyImageUrl)} 
+                  alt={d(id, 'title', site.storyTitle)} 
+                  width={600}
+                  height={600}
+                  sizes="(max-width: 768px) 100vw, 600px"
+                  className="modern-story__img"
+                  style={{ objectFit: 'cover' }}
+                />
+              </div>
+              <div className="modern-story__content reveal">
+                {d(id, 'subtitle', site.storySubtitle) && <p className="modern-subtitle">{d(id, 'subtitle', site.storySubtitle)}</p>}
+                <h2 className="modern-title">{d(id, 'title', site.storyTitle)}</h2>
+                {d(id, 'leadQuote', site.storyLeadQuote) && <blockquote className="modern-quote">{d(id, 'leadQuote', site.storyLeadQuote)}</blockquote>}
+                <div className="modern-text">
+                  {body.map((p: string, i: number) => <p key={i}>{p}</p>)}
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
-    ),
+        </section>
+      );
+    },
 
     quote: (id, cls = "", style = {}) => {
       const text = d(id, 'text', site.quoteText);
@@ -135,7 +142,7 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
     },
 
     menu: (id, cls = "", style = {}) => {
-      if (site.menuItems.length === 0) return null;
+      if (!site.menuItems || site.menuItems.length === 0) return null;
       
       // If parent didn't provide a background (tan or has-bg), default to dark for the menu
       const finalCls = cls.includes('modern-section--tan') || cls.includes('modern-section--has-bg') ? cls : `modern-section--dark ${cls}`;
@@ -153,6 +160,35 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
               ))}
             </div>
             {site.menuNote && <p className="modern-text--small mt-12 italic reveal">{site.menuNote}</p>}
+          </div>
+        </section>
+      );
+    },
+
+    faqs: (id, cls = "", style = {}) => {
+      if (!site.faqs || site.faqs.length === 0) return null;
+      const isPrv = cls.includes("preview");
+
+      return (
+        <section className={`modern-section ${cls}`} id={id} style={style}>
+          <div className="modern-container modern-container--narrow">
+            <h2 className={`modern-title modern-title--center reveal ${isPrv ? "visible" : ""}`}>
+              {d(id, 'heading', site.faqHeading) || "Frequently Asked Questions"}
+            </h2>
+            <div className="flex flex-col gap-12 mt-16">
+              {site.faqs.map((faq, i) => (
+                <div key={i} className={`reveal ${isPrv ? "visible" : ""}`}>
+                  <h3 className="modern-card__title" style={{ fontSize: '1.2rem', marginBottom: '0.5rem' }}>
+                    {faq.question}
+                  </h3>
+                  <div className="modern-text--small" style={{ opacity: 0.7, lineHeight: '1.7' }}>
+                    {faq.answer.split('\n').map((line, j) => (
+                      <p key={j} className={j < faq.answer.split('\n').length - 1 ? "mb-4" : ""}>{line}</p>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
       );
@@ -286,14 +322,10 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
     },
 
     schedule: (id, cls = "", style = {}) => {
-      const days = site.weddingDays?.filter((d) => !d.isPrivate) ?? (
-        site.scheduleItems.length > 0
-          ? [{ label: "", date: "", isPrivate: false, items: site.scheduleItems }]
-          : []
-      );
+      const days = site.weddingDays?.filter((d) => !d.isPrivate) || [];
       if (days.length === 0) return null;
 
-      const renderTimeline = (items: typeof site.scheduleItems) => {
+      const renderTimeline = (items: ScheduleItem[]) => {
         const scheduleStyle = site.scheduleStyle || "classic";
 
         if (scheduleStyle === "minimal") {
@@ -361,7 +393,9 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
                     {day.date && <p className="modern-schedule-day-date">{day.date}</p>}
                   </div>
                 )}
-                {renderTimeline(day.items)}
+                <div style={(!site.scheduleStyle || site.scheduleStyle === "classic" || site.scheduleStyle === "cards") ? { marginTop: '4rem' } : {}}>
+                  {renderTimeline(day.items)}
+                </div>
               </div>
             ))}
           </div>
@@ -369,31 +403,34 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
       );
     },
 
-    gallery: (id, cls = "", style = {}) => (
-      <section className={`modern-section ${cls}`} id={id} style={style}>
-        <div className="modern-container">
-          <h2 className="modern-title reveal">Gallery</h2>
-          <div className="modern-gallery reveal">
-            {site.galleryImages.map((img, i) => (
-              <SafeImage 
-                key={i}
-                src={img.url} 
-                alt={img.alt || "Gallery Image"} 
-                width={400}
-                height={400}
-                sizes="(max-width: 640px) 50vw, 400px"
-                className="modern-gallery__img" 
-                style={{ objectFit: 'cover' }}
-                data-zoomable 
-              />
-            ))}
+    gallery: (id, cls = "", style = {}) => {
+      if (!site.galleryImages || site.galleryImages.length === 0) return null;
+      return (
+        <section className={`modern-section ${cls}`} id={id} style={style}>
+          <div className="modern-container">
+            <h2 className="modern-title reveal">Gallery</h2>
+            <div className="modern-gallery reveal">
+              {site.galleryImages.map((img, i) => (
+                <SafeImage 
+                  key={i}
+                  src={img.url} 
+                  alt={img.alt || "Gallery Image"} 
+                  width={400}
+                  height={400}
+                  sizes="(max-width: 640px) 50vw, 400px"
+                  className="modern-gallery__img" 
+                  style={{ objectFit: 'cover' }}
+                  data-zoomable 
+                />
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
-    ),
+        </section>
+      );
+    },
 
     explore: (id, cls = "", style = {}) => {
-      if (site.exploreGroups.length === 0) return null;
+      if (!site.exploreGroups || site.exploreGroups.length === 0) return null;
       const isPrv = cls.includes("preview");
       return (
         <section className={`modern-section ${cls}`} id={id} style={style}>
@@ -422,7 +459,7 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
     },
 
     accommodations: (id, cls = "", style = {}) => {
-      if (site.accommodations.length === 0) return null;
+      if (!site.accommodations || site.accommodations.length === 0) return null;
       const isPrv = cls.includes("preview");
       return (
         <section className={`modern-section ${cls}`} id={id} style={style}>
@@ -431,7 +468,6 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
             <div className="modern-grid modern-grid--2col">
               {site.accommodations.map((hotel, i) => (
                 <div key={i} className={`modern-card reveal ${isPrv ? "visible" : ""}`}>
-                  {hotel.badge && <span className="modern-card__label">{hotel.badge}</span>}
                   <h3 className="modern-card__title">{hotel.name}</h3>
                   <p className="modern-card__label mb-4">{hotel.distance}</p>
                   <p className="modern-card__text mb-6">{hotel.description}</p>
@@ -453,6 +489,7 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
     },
 
     rsvp: (id, cls = "", style = {}) => {
+      if (!site.rsvpHeading) return null;
       const menuMeals = site.menuItems?.map(m => m.name) || [];
       const mealOptions = menuMeals.length > 0 ? menuMeals : site.rsvpMealOptions;
 
@@ -472,13 +509,9 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
     gift: (id, cls = "", style = {}) => {
       if (!site.giftHeading) return null;
 
-      const paymentLinks = [...(site.giftPaymentLinks || [])];
-      if (paymentLinks.length === 0 && site.giftPaymentUrl && site.giftPaymentLabel) {
-        paymentLinks.push({ label: site.giftPaymentLabel, url: site.giftPaymentUrl });
-      }
-
-      const hasBankDetails = (site.giftBankDetails?.length ?? 0) > 0 || site.giftBankName || site.giftAccountNumber;
-      const hasAnyGifts = paymentLinks.length > 0 || hasBankDetails;
+      const paymentLinks = site.giftPaymentLinks || [];
+      const bankDetails = site.giftBankDetails || [];
+      const hasAnyGifts = paymentLinks.length > 0 || bankDetails.length > 0;
 
       if (!hasAnyGifts) return null;
 
@@ -505,7 +538,7 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
                     </a>
                   ))}
 
-                  {site.giftBankDetails?.map((bank, i) => {
+                  {bankDetails.map((bank, i) => {
                     const allDetails = [
                       bank.accountHolder ? `Account Holder: ${bank.accountHolder}` : null,
                       bank.email ? `Email: ${bank.email}` : null,
@@ -575,41 +608,49 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
               </div>
             </div>
 
-            <p className="modern-text modern-text--small">{site.giftNote}</p>
+            {site.giftNote && <p className="modern-text modern-text--small">{site.giftNote}</p>}
           </div>
         </section>
       );
     },
 
-    contact: (id, cls = "", style = {}) => (
-      <section className={`modern-section ${cls}`} id={id} style={style}>
-        <div className="modern-container reveal text-center">
-          <h2 className="modern-title">{site.contactHeading || "Contact"}</h2>
-          <div className="modern-contact-grid">
-            {site.contactEntries.map((c, i) => (
-              <div key={i} className="modern-contact-item">
-                <a href={`mailto:${c.email}`} className="modern-link">{c.email}</a>
-                {c.phone && <a href={`tel:${c.phone}`} className="modern-link">{c.phone}</a>}
-              </div>
-            ))}
+    contact: (id, cls = "", style = {}) => {
+      if (!site.contactEntries || site.contactEntries.length === 0) return null;
+      return (
+        <section className={`modern-section ${cls}`} id={id} style={style}>
+          <div className="modern-container reveal text-center">
+            <h2 className="modern-title">{site.contactHeading || "Contact"}</h2>
+            <div className="modern-contact-grid">
+              {site.contactEntries.map((c, i) => (
+                <div key={i} className="modern-contact-item">
+                  <a href={`mailto:${c.email}`} className="modern-link">{c.email}</a>
+                  {c.phone && <a href={`tel:${c.phone}`} className="modern-link">{c.phone}</a>}
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
-    ),
+        </section>
+      );
+    },
 
-    footer: (id, cls = "", style = {}) => (
-      <footer className={`modern-footer ${cls}`} id={id} style={style}>
-        <div className="modern-container">
-          <div className="modern-footer__content">
-            <p className="modern-footer__names">{site.footerNames}</p>
-            <p className="modern-footer__copy">{site.footerCopyright}</p>
-            {site.footerDevCredit && (
-              <div className="modern-footer__dev" dangerouslySetInnerHTML={{ __html: site.footerDevCredit }} />
-            )}
+    footer: (id, cls = "", style = {}) => {
+      const names = d(id, 'names', site.footerNames);
+      if (!names) return null;
+      return (
+        <footer className={`modern-footer ${cls}`} id={id} style={style}>
+          <div className="modern-container">
+            <div className="modern-footer__content">
+              <p className="modern-footer__names">{names}</p>
+              {d(id, 'date', site.footerDateText) && <p className="modern-footer__copy" style={{ marginTop: '0.25rem', opacity: 0.6 }}>{d(id, 'date', site.footerDateText)}</p>}
+              <p className="modern-footer__copy" style={{ marginTop: '1rem' }}>{d(id, 'copy', site.footerCopyright)}</p>
+              {site.footerDevCredit && (
+                <div className="modern-footer__dev" dangerouslySetInnerHTML={{ __html: site.footerDevCredit }} />
+              )}
+            </div>
           </div>
-        </div>
-      </footer>
-    ),
+        </footer>
+      );
+    },
   };
 
   return (

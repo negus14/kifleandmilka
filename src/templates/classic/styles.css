@@ -932,127 +932,89 @@
 
 /* Vertical timeline */
 .timeline {
-  max-width: 600px;
+  max-width: 800px;
   margin: 0 auto;
-  position: relative;
-  padding-left: 2rem;
-}
-
-.timeline::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: 2px;
-  background: var(--color-dark);
-  opacity: 0.12;
 }
 
 .timeline__item {
-  position: relative;
-  padding: 0 0 2.5rem 2rem;
+  display: flex;
+  margin-bottom: 3.5rem;
 }
 
 .timeline__item:last-child {
-  padding-bottom: 0;
-}
-
-.timeline__item::before {
-  content: '';
-  position: absolute;
-  top: 0.5rem;
-  left: -2rem;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  border: 2px solid var(--color-dark);
-  background: var(--color-accent);
-  opacity: 0.8;
-  z-index: 1;
-  transform: translateX(-5px);
-}
-
-.timeline__item::after {
-  content: '';
-  position: absolute;
-  top: 0.85rem;
-  left: -2rem;
-  width: 2rem;
-  height: 1px;
-  background: var(--color-dark);
-  opacity: 0.12;
-}
-
-.timeline__time {
-  display: flex;
-  align-items: baseline;
-  gap: 0.4rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0;
 }
 
 .timeline__hour {
+  width: 120px;
+  flex-shrink: 0;
   font-family: var(--font-serif);
-  font-size: 1.5rem;
-  font-weight: 500;
+  font-size: 1.8rem;
+  font-style: italic;
   color: var(--color-dark);
   line-height: 1;
+  padding-top: 0.2rem;
 }
 
-.timeline__period {
+.timeline__hour span {
+  display: block;
   font-family: var(--font-sans);
-  font-size: 0.72rem;
-  font-weight: 500;
-  letter-spacing: 0.1em;
+  font-size: 0.65rem;
+  font-weight: 700;
+  font-style: normal;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
   color: var(--color-dark);
-  opacity: 0.6;
+  opacity: 0.4;
+  margin-top: 0.4rem;
 }
 
-.timeline__line {
-  display: none;
-}
-
-.timeline__details {
-  padding-top: 0;
+.timeline__content {
+  flex: 1;
+  padding-left: 2.5rem;
+  border-left: 1px solid color-mix(in srgb, var(--color-dark), transparent 90%);
+  padding-bottom: 0.5rem;
 }
 
 .timeline__event {
   font-family: var(--font-serif);
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   font-weight: 400;
   color: var(--color-dark);
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.6rem;
+  letter-spacing: -0.01em;
 }
 
 .timeline__venue {
   font-family: var(--font-sans);
-  font-size: 0.72rem;
-  font-weight: 500;
-  letter-spacing: 0.05em;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   color: var(--color-dark);
-  opacity: 0.55;
-  margin-bottom: 0.4rem;
+  opacity: 0.5;
+  margin-bottom: 0.75rem;
 }
 
 .timeline__desc {
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   color: var(--color-dark);
   line-height: 1.8;
-  opacity: 0.65;
+  opacity: 0.7;
+  max-width: 500px;
 }
 
 /* Minimal Timeline */
 .timeline-minimal {
-  max-width: 500px;
+  max-width: 600px;
   margin: 0 auto;
 }
 
 .timeline-minimal__item {
   display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  padding: 1rem 0;
+  align-items: flex-start;
+  gap: 2.5rem;
+  padding: 1.75rem 0;
   border-bottom: 1px solid color-mix(in srgb, var(--color-dark), transparent 94%);
 }
 
@@ -1062,101 +1024,99 @@
 
 .timeline-minimal__time {
   font-family: var(--font-sans);
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.1em;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
   color: var(--color-dark);
-  opacity: 0.5;
-  width: 70px;
+  opacity: 0.4;
+  width: 80px;
   flex-shrink: 0;
-}
-
-.timeline-minimal__dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--color-dark);
-  opacity: 0.2;
+  padding-top: 0.35rem;
 }
 
 .timeline-minimal__details {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.5rem;
+  flex: 1;
 }
 
 .timeline-minimal__event {
   font-family: var(--font-serif);
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: 400;
   color: var(--color-dark);
+  margin-bottom: 0.25rem;
 }
 
 .timeline-minimal__venue {
   font-family: var(--font-sans);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   color: var(--color-dark);
-  opacity: 0.4;
+  opacity: 0.5;
   font-style: italic;
+  letter-spacing: 0.02em;
 }
 
 /* Cards Timeline */
 .timeline-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
-  max-width: 1000px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  max-width: 1100px;
   margin: 0 auto;
 }
 
 .timeline-card {
-  padding: 2rem;
-  background: color-mix(in srgb, var(--color-primary), transparent 60%);
-  border: 1px solid color-mix(in srgb, var(--color-dark), transparent 92%);
+  padding: 3.5rem 2.5rem;
+  background: color-mix(in srgb, var(--color-primary), transparent 80%);
+  border: 1px solid color-mix(in srgb, var(--color-dark), transparent 94%);
   text-align: center;
-  transition: transform 0.3s ease, border-color 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  position: relative;
 }
 
 .timeline-card:hover {
-  transform: translateY(-5px);
-  border-color: color-mix(in srgb, var(--color-dark), transparent 80%);
+  transform: translateY(-8px);
+  background: var(--color-primary);
+  border-color: color-mix(in srgb, var(--color-dark), transparent 85%);
+  box-shadow: 0 15px 35px color-mix(in srgb, var(--color-dark), transparent 95%);
 }
 
 .timeline-card__time {
   font-family: var(--font-sans);
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.2em;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.25em;
   text-transform: uppercase;
   color: var(--color-dark);
-  opacity: 0.5;
-  margin-bottom: 1rem;
+  opacity: 0.35;
+  margin-bottom: 1.5rem;
 }
 
 .timeline-card__event {
   font-family: var(--font-serif);
-  font-size: 1.3rem;
+  font-size: 1.5rem;
   font-weight: 400;
   color: var(--color-dark);
   margin-bottom: 0.5rem;
+  letter-spacing: -0.01em;
 }
 
 .timeline-card__venue {
   font-family: var(--font-sans);
-  font-size: 0.74rem;
-  font-weight: 500;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   color: var(--color-dark);
-  opacity: 0.6;
-  margin-bottom: 1rem;
+  opacity: 0.5;
 }
 
 .timeline-card__desc {
-  font-size: 0.88rem;
+  font-size: 0.9rem;
   color: var(--color-dark);
-  line-height: 1.7;
+  line-height: 1.8;
   opacity: 0.7;
+  margin-top: 1.5rem;
 }
 
 /* ===== GALLERY ===== */

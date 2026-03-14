@@ -78,9 +78,18 @@ async function signupAction(formData: FormData) {
     
     giftHeading: "Registry",
     giftSubheading: "Your presence is enough, but if you wish to give...",
-    giftPaymentUrl: "",
-    giftPaymentLabel: "Honeymoon Fund",
+    giftPaymentLinks: [
+      { label: "Honeymoon Fund", url: "" }
+    ],
     giftNote: "Thank you for your generosity.",
+
+    faqHeading: "Frequently Asked Questions",
+    faqs: [
+      {
+        question: "Is there a dress code?",
+        answer: "The dress code is formal attire. We suggest men wear suits and women wear mid-length or long dresses."
+      }
+    ],
 
     footerNames: "P & P",
     footerDateText: "2026",
@@ -102,13 +111,20 @@ async function signupAction(formData: FormData) {
         detailsStyle: "grid"
       }
     ],
-    scheduleItems: [
+    weddingDays: [
       {
-        hour: "4:00",
-        period: "PM",
-        event: "Ceremony",
-        venue: "Main Hall",
-        description: "The exchange of vows."
+        label: "Wedding Day",
+        date: "August 1st, 2026",
+        isPrivate: false,
+        items: [
+          {
+            hour: "4:00",
+            period: "PM",
+            event: "Ceremony",
+            venue: "Main Hall",
+            description: "The exchange of vows."
+          }
+        ]
       }
     ],
     menuItems: [],

@@ -18,14 +18,15 @@ describe('template-utils', () => {
 
   describe('generateThemeVars', () => {
     it('should return CSS variables for a valid theme', () => {
-      const vars = generateThemeVars('classic-cream');
-      expect(vars).toHaveProperty('--color-cream');
+      const vars = generateThemeVars({ templateId: 'classic-cream', fontStyleId: 'classic-serif' } as any);
       expect(vars).toHaveProperty('--color-dark');
+      expect(vars).toHaveProperty('--color-accent');
+      expect(vars).toHaveProperty('--font-serif');
     });
 
     it('should fallback to default theme if themeId is invalid', () => {
-      const vars = generateThemeVars('invalid-theme' as any);
-      expect(vars).toHaveProperty('--color-cream');
+      const vars = generateThemeVars({ templateId: 'invalid-theme', fontStyleId: 'classic-serif' } as any);
+      expect(vars).toHaveProperty('--color-dark');
     });
   });
 
@@ -47,10 +48,12 @@ describe('template-utils', () => {
       expect(visibleSections.has('schedule')).toBe(true);
     });
 
-    it('should filter navItems based on visibility', () => {
+    it('should filter navItems to exclude hero and footer', () => {
       const { navItems } = getSectionData(mockSite);
-      // Hero is usually in navItems
-      expect(navItems.some(n => n.id === 'story')).toBe(true);
+      expect(navItems.some(n => n.id === 'hero')).toBe(false);
+      expect(navItems.some(n => n.id === 'footer')).toBe(false);
+      // Details is visible by default
+      expect(navItems.some(n => n.id === 'details')).toBe(true);
     });
   });
 });

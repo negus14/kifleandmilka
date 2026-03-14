@@ -1,5 +1,54 @@
-import { WeddingSite, DEFAULT_SECTION_ORDER } from "./types/wedding-site";
+import { WeddingSite, DEFAULT_SECTION_ORDER, SECTION_LABELS } from "./types/wedding-site";
 import { getTheme, getFontStyle } from "./themes";
+
+/**
+ * Ensures a site object has all required fields and conforms to the latest structure.
+ * This is used when loading data from the DB to "silently" upgrade older records.
+ */
+export function normalizeSiteData(site: WeddingSite): WeddingSite {
+  const data = { ...site };
+
+  // 1. Ensure sectionOrder exists and is valid
+  if (!data.sectionOrder || data.sectionOrder.length === 0) {
+    data.sectionOrder = [...DEFAULT_SECTION_ORDER];
+  } else {
+    // Ensure all existing sections have a 'type' (legacy fix)
+    data.sectionOrder = data.sectionOrder
+      .filter(s => s.id !== "day2" && s.type !== "day2")
+      .map(s => ({
+        ...s,
+        type: s.type || s.id
+      }));
+
+    // Mandatory sections: Hero must be first, Footer must be last.
+    const hasHero = data.sectionOrder.some(s => s.type === "hero");
+    if (!hasHero) {
+      data.sectionOrder.unshift({ id: "hero", type: "hero", visible: true });
+    }
+    
+    const hasFooter = data.sectionOrder.some(s => s.type === "footer");
+    if (!hasFooter) {
+      data.sectionOrder.push({ id: "footer", type: "footer", visible: true });
+    }
+  }
+
+  // 2. Initialize empty containers for new features if missing
+  if (data.faqs === undefined) {
+    data.faqHeading = "Frequently Asked Questions";
+    data.faqs = [];
+  }
+  
+  if (!data.eventDays) {
+    data.eventDays = [];
+  }
+
+  // 3. Ensure weddingDays exists
+  if (!data.weddingDays || data.weddingDays.length === 0) {
+    data.weddingDays = [];
+  }
+
+  return data;
+}
 
 /**
  * Maps a standard Google Maps URL to an embeddable format.

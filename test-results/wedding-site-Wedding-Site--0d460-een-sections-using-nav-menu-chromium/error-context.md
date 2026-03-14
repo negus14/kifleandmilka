@@ -1,0 +1,339 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - navigation "Main navigation" [ref=e3]:
+      - link "K & M" [ref=e4] [cursor=pointer]:
+        - /url: "#hero"
+      - list [ref=e5]:
+        - listitem [ref=e6]:
+          - link "Photo" [ref=e7] [cursor=pointer]:
+            - /url: "#featuredPhoto"
+        - listitem [ref=e8]:
+          - link "Details" [ref=e9] [cursor=pointer]:
+            - /url: "#details"
+        - listitem [ref=e10]:
+          - link "Quote" [ref=e11] [cursor=pointer]:
+            - /url: "#quote"
+        - listitem [ref=e12]:
+          - link "Letter" [ref=e13] [cursor=pointer]:
+            - /url: "#letter"
+        - listitem [ref=e14]:
+          - link "Schedule" [ref=e15] [cursor=pointer]:
+            - /url: "#schedule"
+        - listitem [ref=e16]:
+          - link "Menu" [ref=e17] [cursor=pointer]:
+            - /url: "#menu"
+        - listitem [ref=e18]:
+          - link "Gallery" [ref=e19] [cursor=pointer]:
+            - /url: "#gallery"
+        - listitem [ref=e20]:
+          - link "Explore" [ref=e21] [cursor=pointer]:
+            - /url: "#explore"
+        - listitem [ref=e22]:
+          - link "Stay" [ref=e23] [cursor=pointer]:
+            - /url: "#accommodations"
+        - listitem [ref=e24]:
+          - link "RSVP" [ref=e25] [cursor=pointer]:
+            - /url: "#rsvp"
+        - listitem [ref=e26]:
+          - link "Gift" [ref=e27] [cursor=pointer]:
+            - /url: "#gift"
+        - listitem [ref=e28]:
+          - link "Contact" [ref=e29] [cursor=pointer]:
+            - /url: "#contact"
+    - generic [ref=e35]:
+      - paragraph [ref=e36]: Together with their families
+      - heading "Kifle & Milka" [level=1] [ref=e37]:
+        - text: Kifle
+        - generic [ref=e38]: "&"
+        - text: Milka
+      - paragraph [ref=e40]: are getting married
+      - link "RSVP Here PLEASE" [ref=e41] [cursor=pointer]:
+        - /url: "#rsvp"
+      - paragraph [ref=e42]: 1st August 2026 • Winnipeg, Manitoba
+      - generic "Countdown to wedding" [ref=e43]:
+        - generic [ref=e44]:
+          - generic [ref=e45]: "139"
+          - generic [ref=e46]: Days
+        - generic [ref=e47]:
+          - generic [ref=e48]: "17"
+          - generic [ref=e49]: Hours
+        - generic [ref=e50]:
+          - generic [ref=e51]: "58"
+          - generic [ref=e52]: Minutes
+        - generic [ref=e53]:
+          - generic [ref=e54]: "21"
+          - generic [ref=e55]: Seconds
+    - generic [ref=e60]:
+      - img "Featured" [ref=e61]
+      - paragraph [ref=e62]: Forever starts here
+    - generic [ref=e64]:
+      - generic [ref=e66]:
+        - generic [ref=e67]:
+          - paragraph [ref=e68]: Day One
+          - heading "Wedding Details" [level=2] [ref=e69]
+        - generic [ref=e71]:
+          - generic [ref=e72]:
+            - paragraph [ref=e73]: Ceremony
+            - heading "St. Michael Eritrean Orthodox Tewahdo Church" [level=3] [ref=e74]
+            - paragraph [ref=e75]:
+              - generic [ref=e76]: 357 Dufferin Ave., Winnipeg, MB R2W 2Y2, Canada
+            - paragraph [ref=e77]: 08:00am
+            - iframe [ref=e78]:
+              - link "Open in Maps (opens in new tab)" [ref=f1e7] [cursor=pointer]:
+                - /url: about:invalid#zClosurez
+                - text: Open in Maps
+                - img [ref=f1e9]
+          - generic [ref=e79]:
+            - paragraph [ref=e80]: Reception
+            - heading "The Gates On Roblin" [level=3] [ref=e81]
+            - paragraph [ref=e82]:
+              - generic [ref=e83]: 6945 Roblin Blvd, Headingley, MB R4H 1A2, Canada
+            - paragraph [ref=e84]: 4:30 PM
+            - iframe [ref=e85]:
+              - link "Open in Maps (opens in new tab)" [ref=f2e7] [cursor=pointer]:
+                - /url: about:invalid#zClosurez
+                - text: Open in Maps
+                - img [ref=f2e9]
+        - generic [ref=e86]:
+          - generic [ref=e87]:
+            - heading "Reception Venue" [level=3] [ref=e88]
+            - paragraph [ref=e89]: Our reception will take place at The Gates on Roblin in Winnipeg, a beautiful venue set along the Assiniboine River and surrounded by gardens and green space.
+          - generic [ref=e90]:
+            - heading "Shuttle Service" [level=4] [ref=e91]
+            - paragraph [ref=e92]: For guests staying downtown, we are planning to provide a shuttle service from one of the downtown hotels to the venue and back. Shuttle details will be confirmed closer to the date.
+          - generic [ref=e93]:
+            - heading "Parking & Directions" [level=4] [ref=e94]
+            - paragraph [ref=e95]: Free parking is available on-site, with designated areas for PMRs and senior guests. If you need special assistance or a drop-off closer to the garden entrance, let us know.
+      - generic [ref=e97]:
+        - generic [ref=e98]:
+          - paragraph [ref=e99]: Day Two
+          - heading "Wedding Details" [level=2] [ref=e100]
+        - generic [ref=e103]:
+          - generic [ref=e104]: Day Two Celebration
+          - generic [ref=e105]:
+            - heading [level=3]
+            - paragraph [ref=e106]: Starting from 5:30 PM
+          - paragraph [ref=e107]: 181 Austin St N, Winnipeg, MB R2W 3M5, Canada
+        - paragraph [ref=e108]: Join us for an evening of food, music, and celebration as we continue the festivities.
+    - generic [ref=e113]:
+      - paragraph [ref=e114]: "“And now these three remain: faith, hope and love. But the greatest of these is love.”"
+      - paragraph [ref=e115]: — 1 Corinthians 13:13
+    - generic [ref=e120]:
+      - paragraph [ref=e121]: To Our Dearest Family & Friends
+      - paragraph [ref=e122]: From the moment we met, we knew our lives would never be the same. What began as two separate journeys has become one beautiful path. We have been blessed beyond measure by your love, your support, and your presence in our lives.
+      - paragraph [ref=e123]: As we prepare to say "I do," we are filled with gratitude for each of you. You have shaped who we are, individually and together. This celebration is as much yours as it is ours, because without you, our story would be incomplete.
+      - paragraph [ref=e124]: We cannot wait to share this day with you — to laugh, to cry happy tears, to dance until our feet ache, and to begin this new chapter surrounded by the people who matter most.
+      - paragraph [ref=e125]: With all our love, Kifle & Milka
+    - generic [ref=e129]:
+      - generic [ref=e130]:
+        - paragraph [ref=e131]: Plan
+        - heading "Our Schedule" [level=2] [ref=e132]
+      - generic [ref=e134]:
+        - generic [ref=e135]:
+          - heading "Wedding Day" [level=3] [ref=e136]
+          - paragraph [ref=e137]: 1st August 2026
+        - generic [ref=e138]:
+          - generic [ref=e139]:
+            - generic [ref=e140]: 8:00AM
+            - heading "The Ceremony" [level=3] [ref=e141]
+            - paragraph [ref=e143]: St. Michael Eritrean Orthodox Tewahdo Church
+            - paragraph [ref=e144]: Join us as we exchange vows. Please arrive 15 minutes early to be seated. We ask that women wear a scarf to wrap their hair.
+          - generic [ref=e145]:
+            - generic [ref=e146]: 4:30PM
+            - heading "Cocktail Hour" [level=3] [ref=e147]
+            - paragraph [ref=e149]: The Gates On Roblin
+            - paragraph [ref=e150]: Enjoy handcrafted cocktails, hors d'oeuvres, and live music.
+          - generic [ref=e151]:
+            - generic [ref=e152]: 6:00PM
+            - heading "Dinner & Reception" [level=3] [ref=e153]
+            - paragraph [ref=e155]: The Gates On Roblin
+            - paragraph [ref=e156]: An evening of dining, toasts, and dancing until 2:00 AM.
+    - generic [ref=e161]:
+      - heading "Menu" [level=2] [ref=e162]
+      - generic [ref=e163]:
+        - generic [ref=e164]: Beef
+        - paragraph [ref=e165]:
+          - generic [ref=e166]: Charred beef filet with a bordelaise sauce;
+          - text: Served with roasted green beans
+      - generic [ref=e167]:
+        - generic [ref=e168]: Chicken
+        - paragraph [ref=e169]:
+          - generic [ref=e170]: Pesto and fontina cheese stuffed chicken breast with a basil tomato sauce;
+          - text: Served with roasted peppers and zucchini medley
+      - generic [ref=e171]:
+        - generic [ref=e172]: Vegetarian
+        - paragraph [ref=e173]: Creamy pesto gnocchi with wilted greens and grilled portobello 'steak'; topped with parmesan
+      - paragraph [ref=e174]: All entrées are served with soup, salad, sides, and dessert. Please indicate if you require a halal meal.qfq
+    - generic [ref=e178]:
+      - generic [ref=e179]:
+        - paragraph [ref=e180]: Moments
+        - heading "Our Gallery" [level=2] [ref=e181]
+      - generic [ref=e183]:
+        - img "Ring detail" [ref=e185]
+        - img "Kifle and Milka together" [ref=e187]
+        - img "Kifle and Milka walking" [ref=e189]
+    - generic [ref=e193]:
+      - generic [ref=e194]:
+        - paragraph [ref=e195]: While You’re Here
+        - heading "Things to Do" [level=2] [ref=e196]
+      - generic [ref=e198]:
+        - generic [ref=e199]:
+          - heading "Things to Do in Winnipeg" [level=3] [ref=e200]
+          - list [ref=e201]:
+            - listitem [ref=e202]:
+              - link "Thermea Spa Village" [ref=e203] [cursor=pointer]:
+                - /url: https://www.thermea.ca
+            - listitem [ref=e204]:
+              - link "Human Rights Museum" [ref=e205] [cursor=pointer]:
+                - /url: https://humanrights.ca
+            - listitem [ref=e206]:
+              - link "The Leaf" [ref=e207] [cursor=pointer]:
+                - /url: https://www.assiniboinepark.ca/the-leaf
+            - listitem [ref=e208]:
+              - link "Manitoba Museum" [ref=e209] [cursor=pointer]:
+                - /url: https://manitobamuseum.ca
+            - listitem [ref=e210]:
+              - link "The Forks Market" [ref=e211] [cursor=pointer]:
+                - /url: https://www.theforks.com
+            - listitem [ref=e212]:
+              - link "Winnipeg Art Gallery" [ref=e213] [cursor=pointer]:
+                - /url: https://www.wag.ca
+        - generic [ref=e214]:
+          - heading "If Flying in from Calgary" [level=3] [ref=e215]
+          - list [ref=e216]:
+            - listitem [ref=e217]:
+              - link "Visit Banff" [ref=e218] [cursor=pointer]:
+                - /url: https://www.banfflakelouise.com
+            - listitem [ref=e219]:
+              - link "Johnston Canyon" [ref=e220] [cursor=pointer]:
+                - /url: https://www.pc.gc.ca/en/pn-np/ab/banff/activ/randonee-hiking/johnston
+        - generic [ref=e221]:
+          - heading "Places to Eat" [level=3] [ref=e222]
+          - list [ref=e223]:
+            - listitem [ref=e224]:
+              - link "Clementine" [ref=e225] [cursor=pointer]:
+                - /url: https://www.clementinecalgary.com
+            - listitem [ref=e226]:
+              - link "Harth" [ref=e227] [cursor=pointer]:
+                - /url: https://www.harthrestaurant.com
+            - listitem [ref=e228]:
+              - link "Parcel Pizza" [ref=e229] [cursor=pointer]:
+                - /url: https://www.parcelpizza.com
+    - generic [ref=e233]:
+      - generic [ref=e234]:
+        - paragraph [ref=e235]: Where to Stay
+        - heading "Accommodations" [level=2] [ref=e236]
+      - generic [ref=e238]:
+        - generic [ref=e239]:
+          - generic [ref=e240]: Reception Venue
+          - heading "The Fort Garry Hotel" [level=3] [ref=e241]
+          - paragraph [ref=e242]: 20–25 minute drive (15 km) from venue
+          - paragraph [ref=e243]: A historic luxury hotel built in 1913, known for its grand architecture, elegant rooms, and renowned Ten Spa in downtown Winnipeg.
+          - link "Book Your Stay" [ref=e244] [cursor=pointer]:
+            - /url: https://www.fortgarryhotel.com
+        - generic [ref=e245]:
+          - heading "Viscount Gort Hotel" [level=3] [ref=e246]
+          - paragraph [ref=e247]: 10–12 minute drive (8 km) from venue
+          - paragraph [ref=e248]: A comfortable and convenient hotel located near Polo Park shopping and restaurants, offering modern rooms, on-site dining, and free parking.
+          - link "Book Your Stay" [ref=e249] [cursor=pointer]:
+            - /url: https://www.viscountgort.com
+        - generic [ref=e250]:
+          - heading "Inn at The Forks" [level=3] [ref=e251]
+          - paragraph [ref=e252]: 20–25 minute drive (16 km) from venue
+          - paragraph [ref=e253]: An upscale boutique hotel located at Winnipeg’s historic Forks district, featuring modern rooms, a spa, and the popular SMITH restaurant.
+          - link "Book Your Stay" [ref=e254] [cursor=pointer]:
+            - /url: https://www.innforks.com
+        - generic [ref=e255]:
+          - heading "Birchwood Hotel" [level=3] [ref=e256]
+          - paragraph [ref=e257]: 8–10 minute drive (5–6 km) from venue
+          - paragraph [ref=e258]: A family-friendly hotel featuring comfortable accommodations, dining options, and an indoor water park area.
+          - link "Book Your Stay" [ref=e259] [cursor=pointer]:
+            - /url: https://www.birchwoodhotel.ca
+    - generic [ref=e264]:
+      - heading "Join Our Celebration" [level=2] [ref=e265]
+      - paragraph [ref=e266]: Kindly respond by July 1st, 2026
+      - generic [ref=e267]:
+        - generic [ref=e268]:
+          - generic [ref=e269]: Your Email Address
+          - textbox "Your Email Address" [ref=e270]:
+            - /placeholder: your.email@example.com
+          - paragraph [ref=e271]: We will send any updates here.
+        - heading "Guest Details" [level=3] [ref=e273]
+        - generic [ref=e274]:
+          - heading "Primary Guest" [level=4] [ref=e275]
+          - generic [ref=e276]:
+            - generic [ref=e277]: Full Name
+            - textbox "Guest full name" [ref=e278]
+          - generic [ref=e279]:
+            - generic [ref=e280]:
+              - generic [ref=e281]: Will attend?
+              - combobox [ref=e282]:
+                - option "Joyfully Accept" [selected]
+                - option "Regretfully Decline"
+            - generic [ref=e283]:
+              - generic [ref=e284]: Meal Choice
+              - combobox [ref=e285]:
+                - option "Select a meal..." [disabled] [selected]
+                - option "Beef"
+                - option "Chicken"
+                - option "Vegetarian"
+          - generic [ref=e287] [cursor=pointer]:
+            - checkbox "Halal" [ref=e288]
+            - text: Halal
+        - button "+ Add Partner / Family Member" [ref=e289] [cursor=pointer]
+        - generic [ref=e290]:
+          - generic [ref=e291]: Message to the Couple (Optional)
+          - textbox "Message to the Couple (Optional)" [ref=e292]:
+            - /placeholder: Any additional notes or well wishes
+        - button "Submit RSVP" [ref=e293] [cursor=pointer]
+    - generic [ref=e298]:
+      - heading "Your Presence is Our Gift" [level=2] [ref=e299]
+      - paragraph [ref=e300]: Your love and support mean the world to us. If you wish to honour us with a gift, a contribution towards our future together would be deeply appreciated.
+      - button "Choose a Gift Method" [ref=e303] [cursor=pointer]:
+        - text: Choose a Gift Method
+        - img [ref=e304]
+      - paragraph [ref=e306]: You will be redirected to the payment provider
+    - generic [ref=e311]:
+      - heading "Get in Touch" [level=2] [ref=e312]
+      - paragraph [ref=e313]: Questions? We’d love to hear from you
+      - generic [ref=e315]:
+        - link "afaf" [ref=e316] [cursor=pointer]:
+          - /url: mailto:afaf
+        - generic [ref=e317]:
+          - link "da" [ref=e318] [cursor=pointer]:
+            - /url: tel:da
+          - generic [ref=e319]:
+            - link "Text Message" [ref=e320] [cursor=pointer]:
+              - /url: sms:da
+              - img [ref=e321]
+            - link "WhatsApp" [ref=e323] [cursor=pointer]:
+              - /url: https://wa.me/
+              - img [ref=e324]
+    - contentinfo [ref=e328]:
+      - paragraph [ref=e329]: Kifle & Milka
+      - paragraph [ref=e330]: August 1 & 2, 2026 • Winnipeg, Manitoba
+      - paragraph [ref=e332]: Made with love • K & M 2026
+      - generic [ref=e333]:
+        - text: Want a wedding website like this?
+        - text: Built by
+        - strong [ref=e334]: Abel Ghebrezadik
+        - text: —
+        - link "abelghebz@gmail.com" [ref=e335] [cursor=pointer]:
+          - /url: mailto:abelghebz@gmail.com
+        - text: •
+        - link "+44 7527 841324" [ref=e336] [cursor=pointer]:
+          - /url: tel:+447527841324
+        - generic [ref=e337]:
+          - link "SMS" [ref=e338] [cursor=pointer]:
+            - /url: sms:+447527841324
+          - link "WhatsApp" [ref=e339] [cursor=pointer]:
+            - /url: https://wa.me/447527841324
+          - link "☕ Ko-fi" [ref=e340] [cursor=pointer]:
+            - /url: https://ko-fi.com/abeallin
+  - button "Open Next.js Dev Tools" [ref=e346] [cursor=pointer]:
+    - img [ref=e347]
+  - alert [ref=e350]
+```

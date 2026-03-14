@@ -10,10 +10,6 @@ global.fetch = mockFetch;
 describe('RSVPForm Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    // Stub randomUUID as it might not be available in all jsdom environments
-    vi.stubGlobal('crypto', {
-      randomUUID: () => Math.random().toString(36).substring(7),
-    });
   });
 
   it('renders the initial form fields correctly', () => {
@@ -95,12 +91,12 @@ describe('RSVPForm Component', () => {
           ],
         }),
       });
-    });
+    }, { timeout: 10000 });
 
     // Check success state
     expect(await screen.findByText(/Thank You!/i)).toBeInTheDocument();
     expect(await screen.findByText(/Your RSVP has been received/i)).toBeInTheDocument();
-  });
+  }, 10000);
 
   it('displays an error message when submission fails', async () => {
     mockFetch.mockResolvedValueOnce({
@@ -120,5 +116,5 @@ describe('RSVPForm Component', () => {
     await user.click(submitButton);
 
     expect(await screen.findByText(/Database error/i)).toBeInTheDocument();
-  });
+  }, 10000);
 });

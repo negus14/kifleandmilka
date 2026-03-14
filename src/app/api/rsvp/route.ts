@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { google } from "googleapis";
 import { getSiteBySlug } from "../../../lib/data/sites";
+import { createRSVP } from "../../../lib/data/rsvps";
+import { syncRSVPToGoogleSheets } from "../../../lib/google-sheets";
 
 interface GuestInput {
   name: string;
@@ -16,11 +17,6 @@ interface RSVPPayload {
   guests: GuestInput[];
 }
 
-function extractSheetId(url: string) {
-  const match = url.match(/\/d\/([a-zA-Z0-9-_]+)/);
-  return match ? match[1] : url;
-}
-
 export async function POST(request: NextRequest) {
   try {
     const body = (await request.json()) as RSVPPayload;
@@ -31,71 +27,19 @@ export async function POST(request: NextRequest) {
     }
 
     const site = await getSiteBySlug(slug);
-    
-    // Prioritize the URL edited in the Dashboard (rsvpEmbedUrl)
-    const googleSheetId = (site?.rsvpEmbedUrl ? extractSheetId(site.rsvpEmbedUrl) : null) || site?.googleSheetId;
-
-    if (!site || !googleSheetId) {
-      console.warn(`Site or Google Sheet ID not found for slug: ${slug}`);
-      return NextResponse.json({ error: "Google Sheets integration not configured for this site" }, { status: 400 });
+    if (!site) {
+      return NextResponse.json({ error: "Site not found" }, { status: 404 });
     }
 
-    // Google Auth validation
-    const clientEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
-    const privateKey = process.env.GOOGLE_PRIVATE_KEY;
+    // 1. Save to PostgreSQL (Primary Data Store)
+    const rsvp = await createRSVP(slug, email, guests, message);
 
-    if (!clientEmail || !privateKey) {
-      console.error("RSVP Error: Missing Google Service Account credentials", {
-        hasEmail: !!clientEmail,
-        hasKey: !!privateKey,
-      });
-      return NextResponse.json({ 
-        error: "Server configuration error: Google Sheets credentials are missing." 
-      }, { status: 500 });
-    }
+    // 2. Attempt Sync to Google Sheets (Secondary/Legacy Store)
+    // We await this to ensure we try at least once, but failure won't break the response
+    // since the data is now safe in our DB.
+    await syncRSVPToGoogleSheets(site, email, guests, message, rsvp.id);
 
-    const auth = new google.auth.GoogleAuth({
-      credentials: {
-        client_email: clientEmail,
-        private_key: privateKey.replace(/\\n/g, "\n"),
-      },
-      scopes: ["https://www.googleapis.com/auth/spreadsheets"],
-    });
-
-    const sheets = google.sheets({ version: "v4", auth });
-    const sheetName = site.googleSheetName || "Sheet1";
-    const range = `'${sheetName}'!A:G`;
-
-    console.log("RSVP Submission:", {
-      spreadsheetId: googleSheetId,
-      range,
-      siteSlug: slug
-    });
-
-    const timestamp = new Date().toISOString();
-    
-    // Map each guest to a row in the sheet
-    // Columns: [Timestamp, Submitter Email, Guest Name, Attending, Meal Choice, Halal, Message]
-    const values = guests.map((guest) => [
-      timestamp,
-      email || "",
-      guest.name || "Unknown",
-      guest.attending ? "Yes" : "No",
-      guest.mealChoice || "None",
-      guest.isHalal ? "Yes" : "No",
-      message || "",
-    ]);
-
-    await sheets.spreadsheets.values.append({
-      spreadsheetId: googleSheetId,
-      range,
-      valueInputOption: "RAW",
-      requestBody: {
-        values,
-      },
-    });
-
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, rsvpId: rsvp.id });
   } catch (error: any) {
     console.error("RSVP Error:", error);
     return NextResponse.json({ error: error.message || "Failed to submit RSVP" }, { status: 500 });

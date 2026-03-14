@@ -1,8 +1,11 @@
+import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
+import * as schema from "@/db/schema";
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false,
 });
 
-export default pool;
+export const db = drizzle(pool, { schema });
+export default pool; // Keep export for legacy compatibility

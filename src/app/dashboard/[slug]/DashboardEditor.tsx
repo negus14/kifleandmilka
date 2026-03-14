@@ -42,7 +42,7 @@ type Tab = string; // Allows dynamic tabs like "story-123"
 
 function Label({ children }: { children: React.ReactNode }) {
   return (
-    <label className="block text-[11px] font-semibold tracking-[0.15em] uppercase text-[#2d2b25]/60 mb-1 mt-4 first:mt-0">
+    <label className="block text-[11px] font-semibold tracking-[0.15em] uppercase text-[#2d2b25]/60 mb-3 mt-8 first:mt-0">
       {children}
     </label>
   );
@@ -54,7 +54,7 @@ function Field({ label, value, onChange, placeholder, multiline, rows, type = "t
 }) {
   const val = value ?? "";
   return (
-    <div className="mb-3">
+    <div className="mb-4">
       <Label>{label}</Label>
       {multiline ? (
         <textarea
@@ -70,6 +70,104 @@ function Field({ label, value, onChange, placeholder, multiline, rows, type = "t
           className="w-full px-3 py-2 border border-[#2d2b25]/15 bg-white/50 text-[#2d2b25] text-sm outline-none focus:border-[#2d2b25]/40 rounded-sm"
         />
       )}
+    </div>
+  );
+}
+
+function DateTimePicker({ label, value, onChange }: { 
+  label: string; 
+  value: string; 
+  onChange: (v: string) => void 
+}) {
+  const formatDateTime = (iso: string) => {
+    if (!iso) return { date: "", time: "" };
+    try {
+      const d = new Date(iso);
+      const date = d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+      const time = d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+      return { date, time };
+    } catch (e) {
+      return { date: "", time: "" };
+    }
+  };
+
+  const formatForInput = (dateStr: string) => {
+    if (!dateStr) return "";
+    const d = new Date(dateStr);
+    const pad = (n: number) => n.toString().padStart(2, "0");
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  };
+
+  const { date, time } = formatDateTime(value);
+  
+  return (
+    <div className="mb-4">
+      <Label>{label}</Label>
+      <div className="relative group">
+        <input
+          type="datetime-local"
+          value={formatForInput(value)}
+          onChange={(e) => onChange(e.target.value)}
+          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
+        />
+        <div className="flex items-center gap-2 w-full px-3 py-2 border border-[#2d2b25]/15 bg-white/50 text-[#2d2b25] text-sm outline-none focus-within:border-[#2d2b25]/40 rounded-sm transition-all group-hover:border-[#2d2b25]/30">
+          <div className="text-[#2d2b25]/30">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <div className="flex-1 flex justify-between items-center pr-1 overflow-hidden">
+             <span className={`truncate ${value ? "text-[#2d2b25]" : "text-[#2d2b25]/30"}`}>
+               {value ? date : "Select Date"}
+             </span>
+             <span className={`flex-shrink-0 ${value ? "text-[#2d2b25]/60 font-medium" : "text-[#2d2b25]/20"}`}>
+               {value ? time : "--:--"}
+             </span>
+          </div>
+          <div className="text-[#2d2b25]/20">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function TimePicker({ label, hour, period, onChange }: { 
+  label: string; 
+  hour: string; 
+  period: string; 
+  onChange: (hour: string, period: string) => void 
+}) {
+  return (
+    <div className="mb-4">
+      <Label>{label}</Label>
+      <div className="flex gap-1">
+        <div className="relative flex-1 group">
+           <input
+             type="text"
+             value={hour}
+             onChange={(e) => onChange(e.target.value, period)}
+             placeholder="4:00"
+             className="w-full pl-9 pr-3 py-2 border border-[#2d2b25]/15 bg-white/50 text-[#2d2b25] text-sm outline-none focus:border-[#2d2b25]/40 rounded-sm transition-all group-hover:border-[#2d2b25]/30"
+           />
+           <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#2d2b25]/30 group-focus-within:text-[#2d2b25]/50 transition-colors">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+           </div>
+        </div>
+        <div className="flex border border-[#2d2b25]/15 rounded-sm overflow-hidden bg-white/50">
+          {(["AM", "PM"] as const).map((p) => (
+            <button
+              key={p}
+              type="button"
+              onClick={() => onChange(hour, p)}
+              className={`px-3 py-2 text-[10px] font-bold transition-all ${
+                period === p ? "bg-[#2d2b25] text-[#faf1e1]" : "text-[#2d2b25]/40 hover:text-[#2d2b25] hover:bg-[#2d2b25]/5"
+              }`}
+            >
+              {p}
+            </button>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
@@ -331,16 +429,31 @@ function ImageField({ label, value, onChange, recentLinks = [], onAddRecentLink 
     setUploading(false);
   }
 
+  const handlePaste = async (e: React.ClipboardEvent) => {
+    const items = e.clipboardData.items;
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].type.indexOf("image") !== -1) {
+        const file = items[i].getAsFile();
+        if (file) {
+          e.preventDefault();
+          handleFile(file);
+        }
+      }
+    }
+  };
+
   return (
-    <div className="mb-3">
+    <div className="mb-6">
       <Label>{label}</Label>
       <div className="flex gap-2">
         <input
-          value={value} onChange={(e) => {
+          value={value} 
+          onChange={(e) => {
             onChange(e.target.value);
             if (e.target.value && onAddRecentLink) onAddRecentLink(e.target.value);
           }}
-          placeholder="Paste URL (Canva, Unsplash, etc.) or upload"
+          onPaste={handlePaste}
+          placeholder="Paste URL or paste image directly (Ctrl+V)"
           className="flex-1 px-3 py-2 border border-[#2d2b25]/15 bg-white/50 text-[#2d2b25] text-sm outline-none focus:border-[#2d2b25]/40 rounded-sm"
         />
         {value && (
@@ -481,66 +594,14 @@ function SortableList<T>({ items, prefix, onReorder, children }: {
 
 export default function DashboardEditor({ site: initial }: { site: WeddingSite }) {
   const router = useRouter();
-  // Migration logic for legacy data
-  const migratedInitial = { ...initial };
   
-  // 1. Migrate scheduleItems to weddingDays if weddingDays is empty
-  if ((!migratedInitial.weddingDays || migratedInitial.weddingDays.length === 0) && migratedInitial.scheduleItems?.length > 0) {
-    migratedInitial.weddingDays = [{
-      label: "Wedding Day",
-      date: migratedInitial.dateDisplayText,
-      isPrivate: false,
-      items: migratedInitial.scheduleItems
-    }];
-  }
-
-  // 2. Migrate legacy gift payment fields to giftPaymentLinks
-  if ((!migratedInitial.giftPaymentLinks || migratedInitial.giftPaymentLinks.length === 0) && migratedInitial.giftPaymentUrl && migratedInitial.giftPaymentLabel) {
-    migratedInitial.giftPaymentLinks = [{
-      label: migratedInitial.giftPaymentLabel,
-      url: migratedInitial.giftPaymentUrl
-    }];
-  }
-
-  // 3. Migrate legacy "Details" to eventDays
-  if (!migratedInitial.eventDays) {
-    migratedInitial.eventDays = [];
-  }
-  
-  if (migratedInitial.eventDays.length === 0) {
-    // Migrate Day One
-    if (migratedInitial.venues && migratedInitial.venues.length > 0) {
-      migratedInitial.eventDays.push({
-        id: "day-1",
-        label: migratedInitial.detailsDayLabel || "Day One",
-        venues: migratedInitial.venues,
-        infoBlocks: migratedInitial.venueInfoBlocks || [],
-        detailsStyle: migratedInitial.detailsStyle || "grid",
-        sectionBackground: migratedInitial.sectionBackgrounds?.details
-      });
-    }
-  }
-
-  // 4. Ensure all sections have a type (new standardized format)
-  // AND remove any remaining 'day2' sections from the order
-  if (migratedInitial.sectionOrder) {
-    migratedInitial.sectionOrder = migratedInitial.sectionOrder
-      .filter(s => s.id !== "day2" && s.type !== "day2")
-      .map(s => ({
-        ...s,
-        type: s.type || s.id // Fallback to id if type is missing
-      }));
-  } else {
-    migratedInitial.sectionOrder = DEFAULT_SECTION_ORDER;
-  }
-
-  const [site, setSite] = useState(migratedInitial);
+  const [site, setSite] = useState(initial);
   
   // History stacks
   const [past, setPast] = useState<WeddingSite[]>([]);
   const [future, setFuture] = useState<WeddingSite[]>([]);
 
-  const [tab, setTab] = useState<Tab>("Hero");
+  const [tab, setTab] = useState<Tab>("Basics");
   
   // Persist and restore tab state safely
   useEffect(() => {
@@ -569,6 +630,9 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
 
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(true); // Start as saved
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const saveRetryCountRef = useRef(0);
+  const MAX_SAVE_RETRIES = 2;
   const [isPreview, setIsPreview] = useState(true);
   const [previewDevice, setPreviewDevice] = useState<"desktop" | "mobile">("desktop");
   const [editorWidth, setEditorWidth] = useState(40); // percentage
@@ -778,6 +842,11 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
 
   function removeSection(index: number) {
     const order = site.sectionOrder || DEFAULT_SECTION_ORDER;
+    const section = order[index];
+    if (section.type === "hero" || section.type === "footer") {
+      alert("The Hero and Footer sections are mandatory and cannot be removed.");
+      return;
+    }
     if (order.length <= 1) {
       alert("You must have at least one section in your layout.");
       return;
@@ -788,6 +857,10 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
   function duplicateSection(index: number) {
     const order = site.sectionOrder || DEFAULT_SECTION_ORDER;
     const original = order[index];
+    if (original.type === "hero" || original.type === "footer") {
+      alert("The Hero and Footer sections cannot be duplicated.");
+      return;
+    }
     const newId = `${original.type}-${Date.now()}`;
     const duplicated: SectionConfig = {
       ...original,
@@ -851,7 +924,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
     return arr.filter((_, i) => i !== index);
   }
 
-  async function handleSave() {
+  async function handleSave(isRetry = false) {
     // 1. Check for slug rename
     if (site.slug !== initial.slug) {
       const confirmRename = window.confirm(
@@ -861,6 +934,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
     }
 
     setSaving(true);
+    setSaveError(null);
     try {
       const { passwordHash, ...data } = site;
       const res = await fetch(`/api/sites/${initial.slug}`, {
@@ -875,15 +949,32 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
       }
 
       setSaved(true);
+      setSaveError(null);
+      saveRetryCountRef.current = 0;
 
       // 2. Redirect if renamed
       if (result.newSlug) {
         router.push(`/dashboard/${result.newSlug}`);
       }
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Failed to save. Please try again.");
+      const message = err instanceof Error ? err.message : "Failed to save";
+      console.error(`[Dashboard] Save failed (attempt ${saveRetryCountRef.current + 1}):`, message);
+
+      // Auto-retry for network/server errors (not for validation errors)
+      if (!isRetry && saveRetryCountRef.current < MAX_SAVE_RETRIES) {
+        saveRetryCountRef.current++;
+        console.log(`[Dashboard] Retrying save (${saveRetryCountRef.current}/${MAX_SAVE_RETRIES})...`);
+        setTimeout(() => handleSave(true), 2000);
+        return; // Don't clear saving state yet
+      }
+
+      setSaveError(message);
+      saveRetryCountRef.current = 0;
+      alert(`${message}\n\nYour changes have NOT been saved. Please check your connection and try again.`);
     } finally {
-      setSaving(false);
+      if (!isRetry || saveRetryCountRef.current === 0) {
+        setSaving(false);
+      }
     }
   }
 
@@ -929,9 +1020,9 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
             </div>
 
             <div className="flex items-center gap-2 px-3">
-              <div className={`w-1.5 h-1.5 rounded-full transition-colors ${saving ? "bg-amber-400 animate-pulse" : saved ? "bg-green-500" : "bg-amber-400"}`} />
-              <span className="text-[10px] font-bold uppercase tracking-widest text-[#2d2b25]/40">
-                {saving ? "Saving..." : saved ? "Changes Saved" : "Unsaved Changes"}
+              <div className={`w-1.5 h-1.5 rounded-full transition-colors ${saveError ? "bg-red-500 animate-pulse" : saving ? "bg-amber-400 animate-pulse" : saved ? "bg-green-500" : "bg-amber-400"}`} />
+              <span className={`text-[10px] font-bold uppercase tracking-widest ${saveError ? "text-red-600" : "text-[#2d2b25]/40"}`}>
+                {saveError ? "Save Failed!" : saving ? "Saving..." : saved ? "Changes Saved" : "Unsaved Changes"}
               </span>
             </div>
 
@@ -1078,19 +1169,17 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                   <Field label="Partner 2 Name" value={site.partner2Name} onChange={(v) => set("partner2Name", v)} />
                   
                   <div className="grid grid-cols-2 gap-3 mb-4">
-                    <Field 
+                    <DateTimePicker 
                       label="Wedding Start Date" 
-                      type="datetime-local"
-                      value={formatForInput(site.weddingDate)} 
+                      value={site.weddingDate} 
                       onChange={(v) => {
                         if (!v) { set("weddingDate", ""); return; }
                         set("weddingDate", new Date(v).toISOString());
                       }} 
                     />
-                    <Field 
+                    <DateTimePicker 
                       label="Wedding End Date (optional)" 
-                      type="datetime-local"
-                      value={formatForInput(site.weddingEndDate || "")} 
+                      value={site.weddingEndDate || ""} 
                       onChange={(v) => {
                         if (!v) { set("weddingEndDate", ""); return; }
                         set("weddingEndDate", new Date(v).toISOString());
@@ -1263,13 +1352,21 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                     <SectionTitle>Add New Section</SectionTitle>
                     <p className="text-[10px] font-medium text-[#2d2b25]/40 uppercase tracking-widest mb-4">Click to append to layout</p>
                     <div className="flex flex-wrap gap-2">
-                      {Object.entries(SECTION_LABELS).map(([type, label]) => (
-                        <button
-                          key={type}
-                          onClick={() => addSection(type)}
-                          className="text-[10px] font-bold uppercase tracking-wider px-3 py-2 border border-[#2d2b25]/10 bg-white/30 hover:border-[#2d2b25]/30 hover:bg-white/60 transition-all rounded-sm"
-                        >+ {label}</button>
-                      ))}
+                      {Object.entries(SECTION_LABELS).map(([type, label]) => {
+                        // Unique sections that shouldn't be duplicated usually, 
+                        // but if they are missing entirely we want to show them.
+                        const isUnique = ["hero", "footer"].includes(type);
+                        const exists = site.sectionOrder?.some(s => s.type === type);
+                        if (isUnique && exists) return null;
+
+                        return (
+                          <button
+                            key={type}
+                            onClick={() => addSection(type)}
+                            className="text-[10px] font-bold uppercase tracking-wider px-3 py-2 border border-[#2d2b25]/10 bg-white/30 hover:border-[#2d2b25]/30 hover:bg-white/60 transition-all rounded-sm"
+                          >+ {label}</button>
+                        );
+                      })}
                     </div>
                   </div>
                 </div>
@@ -1335,13 +1432,13 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                 <div>
                   <SectionTitle>Hero Section</SectionTitle>
                   {renderBg("Hero Background Image")}
-                  <Field label="Pre-text" value={d("pretext", site.heroPretext)} onChange={(v) => update({ pretext: v })} />
-                  <Field label="Tagline" value={d("tagline", site.heroTagline)} onChange={(v) => update({ tagline: v })} />
-                  <Field label="CTA Button Text" value={d("cta", site.heroCta)} onChange={(v) => update({ cta: v })} />
+                  <Field label="Pre-text" value={site.heroPretext} onChange={(v) => set("heroPretext", v)} />
+                  <Field label="Tagline" value={site.heroTagline} onChange={(v) => set("heroTagline", v)} />
+                  <Field label="CTA Button Text" value={site.heroCta} onChange={(v) => set("heroCta", v)} />
                   <ImageField 
                     label="Hero Image (Foreground)" 
-                    value={d("imageUrl", site.heroImageUrl)} 
-                    onChange={(v) => update({ imageUrl: v })} 
+                    value={site.heroImageUrl} 
+                    onChange={(v) => set("heroImageUrl", v)} 
                     recentLinks={site.recentlyUsedLinks || []}
                     onAddRecentLink={addRecentLink}
                   />
@@ -1352,29 +1449,29 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                 <div>
                   <SectionTitle>Our Story</SectionTitle>
                   {renderBg("Story Background Image")}
-                  <Field label="Subtitle" value={d("subtitle", site.storySubtitle)} onChange={(v) => update({ subtitle: v })} />
-                  <Field label="Title" value={d("title", site.storyTitle)} onChange={(v) => update({ title: v })} />
-                  <Field label="Lead Quote" value={d("leadQuote", site.storyLeadQuote)} onChange={(v) => update({ leadQuote: v })} multiline rows={3} />
+                  <Field label="Subtitle" value={site.storySubtitle} onChange={(v) => set("storySubtitle", v)} />
+                  <Field label="Title" value={site.storyTitle} onChange={(v) => set("storyTitle", v)} />
+                  <Field label="Lead Quote" value={site.storyLeadQuote} onChange={(v) => set("storyLeadQuote", v)} multiline rows={3} />
                   <Label>Story Paragraphs</Label>
-                  <SortableList items={d("body", site.storyBody)} prefix={`story-${id}`} onReorder={(items) => update({ body: items })}>
+                  <SortableList items={site.storyBody || []} prefix={`story-${id}`} onReorder={(items) => set("storyBody", items)}>
                     {(p, i, sid) => (
-                      <SortableCard key={sid} id={sid} onRemove={() => update({ body: removeFromArray(d("body", site.storyBody), i) })}>
+                      <SortableCard key={sid} id={sid} onRemove={() => set("storyBody", removeFromArray(site.storyBody || [], i))}>
                         <textarea value={p} rows={3}
                           onChange={(e) => {
-                            const body = [...d("body", site.storyBody)];
+                            const body = [...(site.storyBody || [])];
                             body[i] = e.target.value;
-                            update({ body });
+                            set("storyBody", body);
                           }}
                           className="w-full px-3 py-2 border border-[#2d2b25]/15 bg-white/50 text-[#2d2b25] text-sm outline-none focus:border-[#2d2b25]/40 resize-y rounded-sm"
                         />
                       </SortableCard>
                     )}
                   </SortableList>
-                  <AddButton label="Add Paragraph" onClick={() => update({ body: [...d("body", site.storyBody), ""] })} />
+                  <AddButton label="Add Paragraph" onClick={() => set("storyBody", [...(site.storyBody || []), ""])} />
                   <ImageField 
                     label="Story Image" 
-                    value={d("imageUrl", site.storyImageUrl)} 
-                    onChange={(v) => update({ imageUrl: v })} 
+                    value={site.storyImageUrl} 
+                    onChange={(v) => set("storyImageUrl", v)} 
                     recentLinks={site.recentlyUsedLinks || []}
                     onAddRecentLink={addRecentLink}
                   />
@@ -1385,8 +1482,8 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                 <div>
                   <SectionTitle>Quote</SectionTitle>
                   {renderBg("Quote Background Image")}
-                  <Field label="Quote Text" value={d("text", site.quoteText)} onChange={(v) => update({ text: v })} multiline rows={3} />
-                  <Field label="Attribution" value={d("attribution", site.quoteAttribution)} onChange={(v) => update({ attribution: v })} />
+                  <Field label="Quote Text" value={site.quoteText} onChange={(v) => set("quoteText", v)} multiline rows={3} />
+                  <Field label="Attribution" value={site.quoteAttribution} onChange={(v) => set("quoteAttribution", v)} />
                 </div>
               );
 
@@ -1396,12 +1493,12 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                   {renderBg("Photo Section Background")}
                   <ImageField
                     label="Photo URL"
-                    value={d("url", site.featuredPhotoUrl)}
-                    onChange={(v) => update({ url: v })}
+                    value={site.featuredPhotoUrl}
+                    onChange={(v) => set("featuredPhotoUrl", v)}
                     recentLinks={site.recentlyUsedLinks || []}
                     onAddRecentLink={addRecentLink}
                   />
-                  <Field label="Caption" value={d("caption", site.featuredPhotoCaption)} onChange={(v) => update({ caption: v })} />
+                  <Field label="Caption" value={site.featuredPhotoCaption} onChange={(v) => set("featuredPhotoCaption", v)} />
                 </div>
               );
 
@@ -1409,23 +1506,24 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                 <div>
                   <SectionTitle>Letter</SectionTitle>
                   {renderBg("Letter Background Image")}
-                  <Field label="Opening" value={d("opening", site.letterOpening)} onChange={(v) => update({ opening: v })} />                  <Label>Body Paragraphs</Label>
-                  <SortableList items={d("body", site.letterBody)} prefix={`letter-${id}`} onReorder={(items) => update({ body: items })}>
+                  <Field label="Opening" value={site.letterOpening} onChange={(v) => set("letterOpening", v)} />
+                  <Label>Body Paragraphs</Label>
+                  <SortableList items={site.letterBody || []} prefix={`letter-${id}`} onReorder={(items) => set("letterBody", items)}>
                     {(p, i, sid) => (
-                      <SortableCard key={sid} id={sid} onRemove={() => update({ body: removeFromArray(d("body", site.letterBody), i) })}>
+                      <SortableCard key={sid} id={sid} onRemove={() => set("letterBody", removeFromArray(site.letterBody || [], i))}>
                         <textarea value={p} rows={3}
                           onChange={(e) => {
-                            const body = [...d("body", site.letterBody)];
+                            const body = [...(site.letterBody || [])];
                             body[i] = e.target.value;
-                            update({ body });
+                            set("letterBody", body);
                           }}
                           className="w-full px-3 py-2 border border-[#2d2b25]/15 bg-white/50 text-[#2d2b25] text-sm outline-none focus:border-[#2d2b25]/40 resize-y rounded-sm"
                         />
                       </SortableCard>
                     )}
                   </SortableList>
-                  <AddButton label="Add Paragraph" onClick={() => update({ body: [...d("body", site.letterBody), ""] })} />
-                  <Field label="Closing" value={d("closing", site.letterClosing)} onChange={(v) => update({ closing: v })} />
+                  <AddButton label="Add Paragraph" onClick={() => set("letterBody", [...(site.letterBody || []), ""])} />
+                  <Field label="Closing" value={site.letterClosing} onChange={(v) => set("letterClosing", v)} />
                 </div>
               );
 
@@ -1558,10 +1656,12 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                         <SortableList items={day.items} prefix={`items-${sid}`} onReorder={(items) => set("weddingDays", updateInArray(site.weddingDays ?? [], di, { items }))}>
                           {(item, i, iid) => (
                             <SortableCard key={iid} id={iid} title={item.event || `Event ${i + 1}`} onRemove={() => set("weddingDays", updateInArray(site.weddingDays ?? [], di, { items: removeFromArray(day.items, i) }))}>
-                              <div className="grid grid-cols-2 gap-3">
-                                <Field label="Time" value={item.hour} onChange={(v) => set("weddingDays", updateInArray(site.weddingDays ?? [], di, { items: updateInArray(day.items, i, { hour: v }) }))} />
-                                <Field label="AM/PM" value={item.period} onChange={(v) => set("weddingDays", updateInArray(site.weddingDays ?? [], di, { items: updateInArray(day.items, i, { period: v }) }))} />
-                              </div>
+                              <TimePicker 
+                                label="Time" 
+                                hour={item.hour} 
+                                period={item.period} 
+                                onChange={(h, p) => set("weddingDays", updateInArray(site.weddingDays ?? [], di, { items: updateInArray(day.items, i, { hour: h, period: p }) }))} 
+                              />
                               <Field label="Event" value={item.event} onChange={(v) => set("weddingDays", updateInArray(site.weddingDays ?? [], di, { items: updateInArray(day.items, i, { event: v }) }))} />
                               <Field label="Venue" value={item.venue} onChange={(v) => set("weddingDays", updateInArray(site.weddingDays ?? [], di, { items: updateInArray(day.items, i, { venue: v }) }))} />
                               <Field label="Description" value={item.description} multiline rows={2} onChange={(v) => set("weddingDays", updateInArray(site.weddingDays ?? [], di, { items: updateInArray(day.items, i, { description: v }) }))} />
@@ -1590,6 +1690,23 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                     )}
                   </SortableList>
                   <AddButton label="Add Menu Item" onClick={() => set("menuItems", [...site.menuItems, { name: "", description: "" }])} />
+                </div>
+              );
+
+              if (type === "faqs") return (
+                <div>
+                  <SectionTitle>Frequently Asked Questions</SectionTitle>
+                  {renderBg("FAQs Background Image")}
+                  <Field label="Heading" value={site.faqHeading || "Frequently Asked Questions"} onChange={(v) => set("faqHeading", v)} />
+                  <SortableList items={site.faqs || []} prefix={`faqs-${id}`} onReorder={(items) => set("faqs", items)}>
+                    {(f, i, sid) => (
+                      <SortableCard key={sid} id={sid} title={f.question || `Question ${i + 1}`} onRemove={() => set("faqs", removeFromArray(site.faqs || [], i))}>
+                        <Field label="Question" value={f.question} onChange={(v) => set("faqs", updateInArray(site.faqs || [], i, { question: v }))} />
+                        <Field label="Answer" value={f.answer} onChange={(v) => set("faqs", updateInArray(site.faqs || [], i, { answer: v }))} multiline rows={3} />
+                      </SortableCard>
+                    )}
+                  </SortableList>
+                  <AddButton label="Add Question" onClick={() => set("faqs", [...(site.faqs || []), { question: "", answer: "" }])} />
                 </div>
               );
 
@@ -1644,12 +1761,13 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                       <SortableCard key={sid} id={sid} title={h.name || `Hotel ${i + 1}`} onRemove={() => set("accommodations", removeFromArray(site.accommodations, i))}>
                         <Field label="Name" value={h.name} onChange={(v) => set("accommodations", updateInArray(site.accommodations, i, { name: v }))} />
                         <Field label="Distance" value={h.distance} onChange={(v) => set("accommodations", updateInArray(site.accommodations, i, { distance: v }))} />
+                        <Field label="Discount Code" value={h.discountCode} onChange={(v) => set("accommodations", updateInArray(site.accommodations, i, { discountCode: v }))} />
                         <Field label="Description" value={h.description} onChange={(v) => set("accommodations", updateInArray(site.accommodations, i, { description: v }))} multiline rows={2} />
                         <Field label="Booking URL" value={h.bookingUrl} onChange={(v) => set("accommodations", updateInArray(site.accommodations, i, { bookingUrl: v }))} />
                       </SortableCard>
                     )}
                   </SortableList>
-                  <AddButton label="Add Accommodation" onClick={() => set("accommodations", [...site.accommodations, { name: "", distance: "", description: "", bookingUrl: "" }])} />
+                  <AddButton label="Add Accommodation" onClick={() => set("accommodations", [...site.accommodations, { name: "", distance: "", description: "", discountCode: "", bookingUrl: "" }])} />
                 </div>
               );
 
@@ -1657,8 +1775,8 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                 <div>
                   <SectionTitle>RSVP Settings</SectionTitle>
                   {renderBg("RSVP Background Image")}
-                  <Field label="Heading" value={d("heading", site.rsvpHeading)} onChange={(v) => update({ heading: v })} />
-                  <Field label="Deadline Text" value={d("deadline", site.rsvpDeadlineText)} onChange={(v) => update({ deadline: v })} />
+                  <Field label="Heading" value={site.rsvpHeading} onChange={(v) => set("rsvpHeading", v)} />
+                  <Field label="Deadline Text" value={site.rsvpDeadlineText} onChange={(v) => set("rsvpDeadlineText", v)} />
                   <Field 
                     label="Google Sheets Link" 
                     value={site.rsvpEmbedUrl || (site.googleSheetId ? `https://docs.google.com/spreadsheets/d/${site.googleSheetId}` : "")} 
@@ -1689,8 +1807,8 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                 <div>
                   <SectionTitle>Gift Registry</SectionTitle>
                   {renderBg("Gift Background Image")}
-                  <Field label="Heading" value={d("heading", site.giftHeading)} onChange={(v) => update({ heading: v })} />
-                  <Field label="Subheading" value={d("subheading", site.giftSubheading)} onChange={(v) => update({ subheading: v })} multiline rows={3} />
+                  <Field label="Heading" value={site.giftHeading} onChange={(v) => set("giftHeading", v)} />
+                  <Field label="Subheading" value={site.giftSubheading} onChange={(v) => set("giftSubheading", v)} multiline rows={3} />
                   
                   <div className="mt-8 mb-10">
                     <Label>External Registry Links</Label>
@@ -1750,7 +1868,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                 <div>
                   <SectionTitle>Contact Info</SectionTitle>
                   {renderBg("Contact Background Image")}
-                  <Field label="Contact Heading" value={d("heading", site.contactHeading || "")} onChange={(v) => update({ heading: v })} />
+                  <Field label="Contact Heading" value={site.contactHeading} onChange={(v) => set("contactHeading", v)} />
                   <SortableList items={site.contactEntries} prefix={`contacts-${id}`} onReorder={(items) => set("contactEntries", items)}>
                     {(c, i, sid) => (
                       <SortableCard key={sid} id={sid} onRemove={() => set("contactEntries", removeFromArray(site.contactEntries, i))}>
@@ -1767,9 +1885,9 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                 <div>
                   <SectionTitle>Footer</SectionTitle>
                   {renderBg("Footer Background Image")}
-                  <Field label="Names" value={d("names", site.footerNames)} onChange={(v) => update({ names: v })} />
-                  <Field label="Date Text" value={d("date", site.footerDateText)} onChange={(v) => update({ date: v })} />
-                  <Field label="Copyright" value={d("copy", site.footerCopyright)} onChange={(v) => update({ copy: v })} />
+                  <Field label="Names" value={site.footerNames} onChange={(v) => set("footerNames", v)} />
+                  <Field label="Date Text" value={site.footerDateText} onChange={(v) => set("footerDateText", v)} />
+                  <Field label="Copyright" value={site.footerCopyright} onChange={(v) => set("footerCopyright", v)} />
                 </div>
               );
 

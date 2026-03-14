@@ -10,4 +10,5 @@ export const r2 = new S3Client({
 });
 
 export const R2_BUCKET = process.env.R2_BUCKET!;
-export const R2_PUBLIC_URL = process.env.R2_PUBLIC_URL!; // e.g. https://assets.ithinkshewifey.com or https://pub-xxx.r2.dev
+export const R2_PUBLIC_URL = (process.env.R2_PUBLIC_URL || "").replace(/\/$/, ""); // Ensure no trailing slash
+

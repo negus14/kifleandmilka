@@ -1,24 +1,42 @@
 import * as dotenv from "dotenv";
 dotenv.config({ path: ".env.local" });
 
-import fs from "fs";
-import path from "path";
 import { DEFAULT_SECTION_ORDER } from "../src/lib/types/wedding-site";
 
 async function migrate() {
+  const dbUrl = process.env.DATABASE_URL || "";
+  const isProduction = ["rlwy.net", "railway.app", "neon.tech", "supabase.co", "render.com", "amazonaws.com"]
+    .some(host => dbUrl.includes(host)) || process.env.NODE_ENV === "production";
+
+  if (isProduction && !process.argv.includes("--force")) {
+    console.error("\n❌ SAFETY: You are about to migrate a PRODUCTION database.");
+    console.error("   This is a non-destructive migration (additive only), but please confirm.");
+    console.error("\n   Re-run with --force to proceed.\n");
+    process.exit(1);
+  }
+
   console.log("Starting data migration to latest structure...");
-  
+
   const poolModule = await import("../src/lib/db");
   const pool = poolModule.default;
-  
-  const sitesDir = path.join(process.cwd(), "data", "sites");
-  
+  const fs = await import("fs");
+  const path = await import("path");
+
   try {
     // 1. Fetch all sites from database
     const { rows } = await pool.query("SELECT slug, data FROM sites");
     
+    // --- BACKUP STEP ---
+    const backupDir = path.join(process.cwd(), "drizzle", "backups");
+    if (!fs.existsSync(backupDir)) fs.mkdirSync(backupDir, { recursive: true });
+    
+    const backupPath = path.join(backupDir, `sites_backup_${Date.now()}.json`);
+    fs.writeFileSync(backupPath, JSON.stringify(rows, null, 2));
+    console.log(`✅ Backup created: ${backupPath}`);
+    // -------------------
+
     for (const row of rows) {
-      const site = row.data;
+      const site = row.data as any; // Cast as any to access legacy fields for migration
       const slug = row.slug;
       let modified = false;
 
@@ -65,16 +83,52 @@ async function migrate() {
         }
       }
 
+      // 5. Cleanup: remove legacy fields after migration
+      const legacyFields = [
+        "venues", "venueInfoBlocks", "detailsStyle", "detailsDayLabel", 
+        "dayTwoEvent", "dayTwoDayLabel", "scheduleItems",
+        "giftPaymentUrl", "giftPaymentLabel", "giftNote", "giftBankName",
+        "giftAccountHolder", "giftAccountNumber", "giftSwiftCode"
+      ];
+
+      for (const field of legacyFields) {
+        if (site[field] !== undefined) {
+          delete site[field];
+          modified = true;
+        }
+      }
+
       // 5. Ensure all sections have a type
       if (site.sectionOrder) {
         const originalOrder = JSON.stringify(site.sectionOrder);
-        site.sectionOrder = site.sectionOrder.map((s: any) => ({
-          ...s,
-          type: s.type || s.id
-        }));
+        site.sectionOrder = site.sectionOrder
+          .filter((s: any) => s.id !== "day2" && s.type !== "day2")
+          .map((s: any) => ({
+            ...s,
+            type: s.type || s.id
+          }));
+
+        // Mandatory sections: Hero and Footer must exist
+        const hasHero = site.sectionOrder.some((s: any) => s.type === "hero");
+        if (!hasHero) {
+          site.sectionOrder.unshift({ id: "hero", type: "hero", visible: true });
+        }
+        
+        const hasFooter = site.sectionOrder.some((s: any) => s.type === "footer");
+        if (!hasFooter) {
+          site.sectionOrder.push({ id: "footer", type: "footer", visible: true });
+        }
+        
         if (JSON.stringify(site.sectionOrder) !== originalOrder) modified = true;
       } else {
         site.sectionOrder = DEFAULT_SECTION_ORDER;
+        modified = true;
+      }
+
+      // 6. Initialize empty containers for new features if missing
+      if (site.faqs === undefined) {
+        site.faqHeading = "";
+        site.faqs = [];
         modified = true;
       }
 
@@ -85,13 +139,6 @@ async function migrate() {
           [JSON.stringify(site), slug]
         );
         console.log(`Migrated database record for: ${slug}`);
-
-        // Update local JSON file if it exists
-        const jsonPath = path.join(sitesDir, `${slug}.json`);
-        if (fs.existsSync(jsonPath)) {
-          fs.writeFileSync(jsonPath, JSON.stringify(site, null, 2), "utf-8");
-          console.log(`Updated local JSON for: ${slug}`);
-        }
       } else {
         console.log(`No migration needed for: ${slug}`);
       }

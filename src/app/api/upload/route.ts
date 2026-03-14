@@ -27,10 +27,18 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "File too large (max 10MB)" }, { status: 400 });
   }
 
-  if (!R2_BUCKET || !process.env.R2_ACCOUNT_ID || !process.env.R2_ACCESS_KEY_ID || !process.env.R2_SECRET_ACCESS_KEY) {
-    console.error("R2 is not configured for upload. Missing environment variables.");
+  const missingVars = [];
+  if (!R2_BUCKET) missingVars.push("R2_BUCKET");
+  if (!process.env.R2_ACCOUNT_ID) missingVars.push("R2_ACCOUNT_ID");
+  if (!process.env.R2_ACCESS_KEY_ID) missingVars.push("R2_ACCESS_KEY_ID");
+  if (!process.env.R2_SECRET_ACCESS_KEY) missingVars.push("R2_SECRET_ACCESS_KEY");
+  if (!R2_PUBLIC_URL) missingVars.push("R2_PUBLIC_URL");
+
+  if (missingVars.length > 0) {
+    console.error("R2 is not configured for upload. Missing environment variables:", missingVars.join(", "));
     return NextResponse.json({ 
-      error: "Upload not configured. Please set R2 environment variables.",
+      error: `Upload not configured. Missing variables: ${missingVars.join(", ")}`,
+      missing: missingVars
     }, { status: 500 });
   }
 
