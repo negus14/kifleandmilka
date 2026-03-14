@@ -8,11 +8,11 @@ function extractSheetId(url: string) {
 
 export async function syncRSVPToGoogleSheets(
   site: any,
-  email: string,
+  email: string | null | undefined,
   guests: GuestInput[],
-  message: string | undefined,
+  message: string | null | undefined,
   rsvpId: string,
-  createdAt?: Date
+  createdAt?: Date | null
 ) {
   try {
     const googleSheetId = (site?.rsvpEmbedUrl ? extractSheetId(site.rsvpEmbedUrl) : null) || site?.googleSheetId;

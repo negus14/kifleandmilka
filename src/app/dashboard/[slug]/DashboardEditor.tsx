@@ -1761,7 +1761,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                       <SortableCard key={sid} id={sid} title={h.name || `Hotel ${i + 1}`} onRemove={() => set("accommodations", removeFromArray(site.accommodations, i))}>
                         <Field label="Name" value={h.name} onChange={(v) => set("accommodations", updateInArray(site.accommodations, i, { name: v }))} />
                         <Field label="Distance" value={h.distance} onChange={(v) => set("accommodations", updateInArray(site.accommodations, i, { distance: v }))} />
-                        <Field label="Discount Code" value={h.discountCode} onChange={(v) => set("accommodations", updateInArray(site.accommodations, i, { discountCode: v }))} />
+                        <Field label="Discount Code" value={h.discountCode || ""} onChange={(v) => set("accommodations", updateInArray(site.accommodations, i, { discountCode: v }))} />
                         <Field label="Description" value={h.description} onChange={(v) => set("accommodations", updateInArray(site.accommodations, i, { description: v }))} multiline rows={2} />
                         <Field label="Booking URL" value={h.bookingUrl} onChange={(v) => set("accommodations", updateInArray(site.accommodations, i, { bookingUrl: v }))} />
                       </SortableCard>
@@ -1868,7 +1868,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                 <div>
                   <SectionTitle>Contact Info</SectionTitle>
                   {renderBg("Contact Background Image")}
-                  <Field label="Contact Heading" value={site.contactHeading} onChange={(v) => set("contactHeading", v)} />
+                  <Field label="Contact Heading" value={site.contactHeading || ""} onChange={(v) => set("contactHeading", v)} />
                   <SortableList items={site.contactEntries} prefix={`contacts-${id}`} onReorder={(items) => set("contactEntries", items)}>
                     {(c, i, sid) => (
                       <SortableCard key={sid} id={sid} onRemove={() => set("contactEntries", removeFromArray(site.contactEntries, i))}>
