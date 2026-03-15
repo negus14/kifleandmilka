@@ -10,6 +10,7 @@ type Props = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
+  if (slug.includes(".") || !/^[a-z0-9][a-z0-9-]*$/.test(slug)) return {};
   const site = await getSiteBySlug(slug);
   if (!site) return {};
   return {
@@ -21,8 +22,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function WeddingSitePage({ params }: Props) {
   const { slug } = await params;
 
-  // Reserved slugs
-  const reserved = ["dashboard", "api", "login", "signup", "pricing", "about", "admin"];
+  // Block non-slug paths (files, reserved routes)
+  if (slug.includes(".") || !/^[a-z0-9][a-z0-9-]*$/.test(slug)) return notFound();
+  const reserved = ["dashboard", "api", "login", "signup", "pricing", "about", "admin", "logout", "auth", "preview"];
   if (reserved.includes(slug)) return notFound();
 
   const site = await getSiteBySlug(slug);
