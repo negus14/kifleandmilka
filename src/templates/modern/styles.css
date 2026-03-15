@@ -828,6 +828,7 @@
 .modern-section--has-bg {
   position: relative;
   min-height: 400px;
+  background-color: transparent !important;
 }
 
 .modern-section--has-bg::before {

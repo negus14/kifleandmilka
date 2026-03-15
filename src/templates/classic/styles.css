@@ -572,9 +572,9 @@
   background: transparent;
   color: var(--color-dark);
 }
-
 .section--has-bg {
   position: relative;
+  background-color: transparent !important;
   min-height: 400px;
 }
 

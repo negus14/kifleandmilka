@@ -1,6 +1,8 @@
 "use client";
 
-import { useState, useRef, useId, useEffect, useCallback } from "react";
+import { useState, useRef, useId, useEffect, useCallback, forwardRef } from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import { useRouter } from "next/navigation";
 import type {
   WeddingSite,
@@ -74,67 +76,24 @@ function Field({ label, value, onChange, placeholder, multiline, rows, type = "t
   );
 }
 
-function DateTimePicker({ label, value, onChange }: { 
-  label: string; 
-  value: string; 
-  onChange: (v: string) => void 
-}) {
-  const formatDateTime = (iso: string) => {
-    if (!iso) return { date: "", time: "" };
-    try {
-      const d = new Date(iso);
-      const date = d.toLocaleDateString("en-US", { 
-        month: "short", 
-        day: "numeric", 
-        year: "numeric" 
-      });
-      const time = d.toLocaleTimeString("en-US", { 
-        hour: "numeric", 
-        minute: "2-digit",
-        hour12: true
-      });
-      return { date, time };
-    } catch (e) {
-      return { date: "", time: "" };
-    }
-  };
+const DatePickerTrigger = forwardRef<HTMLDivElement, { value?: string; onClick?: () => void; hasValue: boolean }>(
+  ({ value: displayValue, onClick, hasValue }, ref) => {
+    const formatDisplay = (iso: string) => {
+      if (!iso) return { date: "", time: "" };
+      try {
+        const d = new Date(iso);
+        return {
+          date: d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+          time: d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true }),
+        };
+      } catch { return { date: "", time: "" }; }
+    };
 
-  const { date, time } = formatDateTime(value);
-  
-  // Format for datetime-local input (YYYY-MM-DDThh:mm) in LOCAL time
-  const getInputValue = (iso: string) => {
-    if (!iso) return "";
-    try {
-      const d = new Date(iso);
-      const z = d.getTimezoneOffset() * 60 * 1000;
-      const local = new Date(d.getTime() - z);
-      return local.toISOString().slice(0, 16);
-    } catch (e) { return ""; }
-  };
+    const { date, time } = formatDisplay(displayValue || "");
 
-  const inputValue = getInputValue(value);
-  
-  return (
-    <div className="mb-4">
-      <Label>{label}</Label>
-      <div className="relative group">
-        {/* Transparent input on top to capture clicks and trigger native picker */}
-        <input
-          type="datetime-local"
-          value={inputValue}
-          onChange={(e) => {
-            const val = e.target.value;
-            if (!val) {
-              onChange("");
-            } else {
-              // Convert the local time back to ISO string
-              onChange(new Date(val).toISOString());
-            }
-          }}
-          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-30 appearance-none"
-          style={{ WebkitAppearance: 'none' }}
-        />
-        <div className="flex items-center gap-3 w-full px-4 py-3.5 border border-[#2d2b25]/15 bg-white text-[#2d2b25] text-sm outline-none focus-within:border-[#2d2b25]/40 rounded-sm transition-all group-hover:border-[#2d2b25]/30 shadow-sm relative z-10">
+    return (
+      <div ref={ref} onClick={onClick} className="group cursor-pointer">
+        <div className="flex items-center gap-3 w-full px-4 py-3.5 border border-[#2d2b25]/15 bg-white text-[#2d2b25] text-sm outline-none group-focus-within:border-[#2d2b25]/40 rounded-sm transition-all group-hover:border-[#2d2b25]/30 shadow-sm">
           <div className="text-[#2d2b25]/30 group-hover:text-[#2d2b25]/50 transition-colors">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
@@ -144,15 +103,15 @@ function DateTimePicker({ label, value, onChange }: {
             </svg>
           </div>
           <div className="flex-1 flex flex-col items-start overflow-hidden">
-             <span className={`text-base font-serif italic leading-none ${value ? "text-[#2d2b25]" : "text-[#2d2b25]/20"}`}>
-               {value ? date : "Set Date & Time"}
-             </span>
-             {value && (
-               <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#2d2b25]/40 mt-1.5 flex items-center gap-1.5">
-                 <span className="w-1 h-1 rounded-full bg-[#2d2b25]/20" />
-                 {time}
-               </span>
-             )}
+            <span className={`text-base font-serif italic leading-none ${hasValue ? "text-[#2d2b25]" : "text-[#2d2b25]/20"}`}>
+              {hasValue ? date : "Set Date & Time"}
+            </span>
+            {hasValue && (
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#2d2b25]/40 mt-1.5 flex items-center gap-1.5">
+                <span className="w-1 h-1 rounded-full bg-[#2d2b25]/20" />
+                {time}
+              </span>
+            )}
           </div>
           <div className="text-[#2d2b25]/10 group-hover:text-[#2d2b25]/25 transition-colors">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -161,6 +120,38 @@ function DateTimePicker({ label, value, onChange }: {
           </div>
         </div>
       </div>
+    );
+  }
+);
+DatePickerTrigger.displayName = "DatePickerTrigger";
+
+function DateTimePicker({ label, value, onChange }: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void
+}) {
+  const selected = value ? new Date(value) : null;
+
+  return (
+    <div className="mb-4 wedding-datepicker">
+      <Label>{label}</Label>
+      <DatePicker
+        selected={selected}
+        onChange={(date: Date | null) => {
+          onChange(date ? date.toISOString() : "");
+        }}
+        showTimeSelect
+        timeFormat="h:mm aa"
+        timeIntervals={15}
+        timeCaption="Time"
+        dateFormat="MMMM d, yyyy h:mm aa"
+        placeholderText="Set Date & Time"
+        isClearable
+        popperPlacement="bottom-start"
+        customInput={
+          <DatePickerTrigger hasValue={!!value} value={value} />
+        }
+      />
     </div>
   );
 }

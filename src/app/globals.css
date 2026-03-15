@@ -1,5 +1,181 @@
 @import "tailwindcss";
 
+/* ─── react-datepicker overrides (wedding dashboard) ─── */
+
+.wedding-datepicker .react-datepicker-popper {
+  z-index: 50 !important;
+}
+
+.wedding-datepicker .react-datepicker {
+  font-family: inherit;
+  border: 1px solid rgba(45, 43, 37, 0.12);
+  border-radius: 2px;
+  box-shadow: 0 8px 30px rgba(45, 43, 37, 0.1), 0 2px 8px rgba(45, 43, 37, 0.06);
+  background: #fff;
+  overflow: hidden;
+}
+
+.wedding-datepicker .react-datepicker__triangle {
+  display: none;
+}
+
+/* Header */
+.wedding-datepicker .react-datepicker__header {
+  background: #fafaf8;
+  border-bottom: 1px solid rgba(45, 43, 37, 0.08);
+  padding-top: 12px;
+}
+
+.wedding-datepicker .react-datepicker__current-month {
+  font-family: Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 15px;
+  color: #2d2b25;
+  margin-bottom: 8px;
+}
+
+.wedding-datepicker .react-datepicker__day-name {
+  color: rgba(45, 43, 37, 0.4);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  width: 36px;
+  line-height: 36px;
+  margin: 0;
+}
+
+/* Navigation arrows */
+.wedding-datepicker .react-datepicker__navigation {
+  top: 12px;
+}
+
+.wedding-datepicker .react-datepicker__navigation-icon::before {
+  border-color: rgba(45, 43, 37, 0.35);
+  border-width: 2px 2px 0 0;
+  height: 8px;
+  width: 8px;
+}
+
+.wedding-datepicker .react-datepicker__navigation:hover .react-datepicker__navigation-icon::before {
+  border-color: #2d2b25;
+}
+
+/* Day cells */
+.wedding-datepicker .react-datepicker__day {
+  width: 36px;
+  line-height: 36px;
+  margin: 0;
+  border-radius: 0;
+  color: #2d2b25;
+  font-size: 13px;
+  transition: all 0.15s ease;
+}
+
+.wedding-datepicker .react-datepicker__day:hover {
+  background: rgba(45, 43, 37, 0.06);
+  border-radius: 0;
+}
+
+.wedding-datepicker .react-datepicker__day--selected,
+.wedding-datepicker .react-datepicker__day--keyboard-selected {
+  background: #2d2b25 !important;
+  color: #fff !important;
+  border-radius: 0;
+  font-weight: 500;
+}
+
+.wedding-datepicker .react-datepicker__day--today {
+  font-weight: 700;
+  color: #2d2b25;
+  background: transparent;
+  position: relative;
+}
+
+.wedding-datepicker .react-datepicker__day--today::after {
+  content: "";
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(45, 43, 37, 0.3);
+}
+
+.wedding-datepicker .react-datepicker__day--today.react-datepicker__day--selected::after {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.wedding-datepicker .react-datepicker__day--outside-month {
+  color: rgba(45, 43, 37, 0.2);
+}
+
+/* Time list */
+.wedding-datepicker .react-datepicker__time-container {
+  border-left: 1px solid rgba(45, 43, 37, 0.08);
+  width: 100px;
+}
+
+.wedding-datepicker .react-datepicker__time-container .react-datepicker__time {
+  background: #fff;
+}
+
+.wedding-datepicker .react-datepicker__header--time {
+  background: #fafaf8;
+  border-bottom: 1px solid rgba(45, 43, 37, 0.08);
+  padding: 12px 0 8px;
+}
+
+.wedding-datepicker .react-datepicker__header--time .react-datepicker-time__header {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: rgba(45, 43, 37, 0.4);
+}
+
+.wedding-datepicker .react-datepicker__time-list-item {
+  font-size: 12px !important;
+  color: #2d2b25;
+  height: auto !important;
+  padding: 6px 12px !important;
+  display: flex;
+  align-items: center;
+}
+
+.wedding-datepicker .react-datepicker__time-list-item:hover {
+  background: rgba(45, 43, 37, 0.05) !important;
+}
+
+.wedding-datepicker .react-datepicker__time-list-item--selected {
+  background: #2d2b25 !important;
+  color: #fff !important;
+  font-weight: 500;
+}
+
+/* Clear button */
+.wedding-datepicker .react-datepicker__close-icon {
+  right: 4px;
+  padding: 0;
+}
+
+.wedding-datepicker .react-datepicker__close-icon::after {
+  background: rgba(45, 43, 37, 0.15);
+  color: #2d2b25;
+  font-size: 14px;
+  height: 18px;
+  width: 18px;
+  line-height: 1;
+  padding: 0;
+}
+
+.wedding-datepicker .react-datepicker__close-icon:hover::after {
+  background: rgba(45, 43, 37, 0.25);
+}
+
 @layer utilities {
   .custom-scrollbar::-webkit-scrollbar {
     width: 4px;
