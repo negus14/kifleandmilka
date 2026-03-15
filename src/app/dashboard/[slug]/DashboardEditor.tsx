@@ -766,7 +766,7 @@ function GuestListPanel({ rsvpData, loadRSVPs }: {
       )}
 
       {/* Stats row */}
-      <div className="grid grid-cols-4 gap-2 mb-6 mt-6">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-6 mt-6">
         {[
           { label: "Responses", value: rsvps.length, color: "text-[#2d2b25]" },
           { label: "Total Guests", value: allGuests.length, color: "text-[#2d2b25]" },
@@ -1616,7 +1616,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
         </div>
       </header>
 
-      <div className={`mx-auto transition-all ${isPreview ? "max-w-[1600px] px-0 lg:px-4" : "max-w-6xl px-6"} py-4 lg:py-8 flex flex-col lg:flex-row gap-0 lg:gap-8`}>
+      <div className={`mx-auto transition-all ${isPreview ? "max-w-[1600px] px-0 lg:px-4" : "max-w-6xl px-3 sm:px-6"} py-4 lg:py-8 flex flex-col lg:flex-row gap-0 lg:gap-8`}>
         {/* Sidebar / Mobile Tabs */}
         <nav className={`shrink-0 lg:sticky lg:top-20 self-start transition-all ${isPreview ? "lg:w-36" : "lg:w-44"} w-full overflow-x-auto lg:overflow-x-visible no-scrollbar mb-6 lg:mb-0 px-4 lg:px-0 block`}>
           <div className="flex lg:flex-col gap-1 min-w-max lg:min-w-0">
@@ -1675,12 +1675,12 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
         </nav>
 
         {/* Content Wrapper */}
-        <div className={`flex flex-col lg:flex-row transition-all px-4 lg:px-0 ${isPreview ? "flex-1" : "flex-1 max-w-2xl lg:mx-auto"}`}>
+        <div className={`flex flex-col lg:flex-row transition-all px-0 lg:px-0 ${isPreview ? "flex-1" : "flex-1 max-w-2xl lg:mx-auto"}`}>
           
           {/* Editor Column */}
           <div 
             style={isPreview ? { width: undefined } : { width: '100%' }}
-            className={`transition-all ${isPreview ? "lg:flex-1 h-auto lg:h-[calc(100vh-10rem)] lg:overflow-y-auto lg:pr-6 custom-scrollbar hidden lg:block" : "w-full block"}`}
+            className={`transition-all min-w-0 overflow-x-hidden ${isPreview ? "lg:flex-1 h-auto lg:h-[calc(100vh-10rem)] lg:overflow-y-auto lg:pr-6 custom-scrollbar hidden lg:block" : "w-full block"}`}
           >
             {(() => {
               if (tab === "Basics") return (
@@ -1689,8 +1689,8 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                   
                   <div className="mb-6 p-4 bg-[#2d2b25]/5 border border-[#2d2b25]/10 rounded-sm">
                     <Label>Site URL</Label>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className="text-sm text-[#2d2b25]/40 shrink-0">ithinkshewifey.com/</span>
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 sm:gap-2 mt-1">
+                      <span className="text-xs sm:text-sm text-[#2d2b25]/40 shrink-0">ithinkshewifey.com/</span>
                       <input
                         type="text"
                         value={site.slug}
@@ -1755,7 +1755,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                     ))}
                   </div>
                   <Label>Color Palette</Label>
-                  <div className="grid grid-cols-3 gap-3 mt-2 mb-6">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-2 mb-6">
                     {themes.map((theme) => (
                       <button
                         key={theme.id}
@@ -2148,7 +2148,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                         onRemove={() => set("eventDays", removeFromArray(site.eventDays, di))}
                       >
                         <div className="space-y-6">
-                          <div className="grid grid-cols-2 gap-4">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <Field label="Event Day Label" value={day.label} onChange={(v) => set("eventDays", updateInArray(site.eventDays, di, { label: v }))} placeholder="e.g. Day One" />
                             <Field label="Date (Optional)" value={day.date || ""} onChange={(v) => set("eventDays", updateInArray(site.eventDays, di, { date: v }))} placeholder="e.g. Saturday, Aug 1st" />
                           </div>
@@ -2240,7 +2240,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                   <SortableList items={site.weddingDays ?? []} prefix={`schedule-${id}`} onReorder={(items) => set("weddingDays", items)}>
                     {(day, di, sid) => (
                       <SortableCard key={sid} id={sid} title={day.label || `Day ${di + 1}`} onRemove={() => set("weddingDays", removeFromArray(site.weddingDays ?? [], di))}>
-                        <div className="grid grid-cols-2 gap-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           <Field label="Label" value={day.label} onChange={(v) => set("weddingDays", updateInArray(site.weddingDays ?? [], di, { label: v }))} placeholder="e.g. Wedding Day" />
                           <Field label="Date" value={day.date || ""} onChange={(v) => set("weddingDays", updateInArray(site.weddingDays ?? [], di, { date: v }))} placeholder="August 1st" />
                         </div>
@@ -2417,7 +2417,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                     >
                       {(link, i, sid) => (
                         <SortableCard key={sid} id={sid} onRemove={() => set("giftPaymentLinks", removeFromArray(site.giftPaymentLinks || [], i))}>
-                          <div className="grid grid-cols-2 gap-3">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <Field label="Label" value={link.label} onChange={(v) => set("giftPaymentLinks", updateInArray(site.giftPaymentLinks || [], i, { label: v }))} placeholder="e.g. PayPal, Monzo, Revolut" />
                             <Field label="URL" value={link.url} onChange={(v) => set("giftPaymentLinks", updateInArray(site.giftPaymentLinks || [], i, { url: v }))} placeholder="https://..." />
                           </div>
@@ -2439,15 +2439,15 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                       {(bank, i, sid) => (
                         <SortableCard key={sid} id={sid} title={bank.label || `Option ${i + 1}`} onRemove={() => set("giftBankDetails", removeFromArray(site.giftBankDetails || [], i))}>
                           <Field label="Method Label" value={bank.label} onChange={(v) => set("giftBankDetails", updateInArray(site.giftBankDetails || [], i, { label: v }))} placeholder="e.g. Wise (International) or UK Bank" />
-                          <div className="grid grid-cols-2 gap-3">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <Field label="Account Holder" value={bank.accountHolder || ""} onChange={(v) => set("giftBankDetails", updateInArray(site.giftBankDetails || [], i, { accountHolder: v }))} />
                             <Field label="Bank Name" value={bank.bankName || ""} onChange={(v) => set("giftBankDetails", updateInArray(site.giftBankDetails || [], i, { bankName: v }))} />
                           </div>
-                          <div className="grid grid-cols-2 gap-3">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <Field label="Account Number" value={bank.accountNumber || ""} onChange={(v) => set("giftBankDetails", updateInArray(site.giftBankDetails || [], i, { accountNumber: v }))} />
                             <Field label="Sort Code" value={bank.sortCode || ""} onChange={(v) => set("giftBankDetails", updateInArray(site.giftBankDetails || [], i, { sortCode: v }))} />
                           </div>
-                          <div className="grid grid-cols-2 gap-3">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <Field label="SWIFT/BIC" value={bank.swiftCode || ""} onChange={(v) => set("giftBankDetails", updateInArray(site.giftBankDetails || [], i, { swiftCode: v }))} />
                             <Field label="Email (for e-transfer)" value={bank.email || ""} onChange={(v) => set("giftBankDetails", updateInArray(site.giftBankDetails || [], i, { email: v }))} />
                           </div>
