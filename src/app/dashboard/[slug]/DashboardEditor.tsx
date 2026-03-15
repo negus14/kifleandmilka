@@ -37,7 +37,7 @@ import { CSS } from "@dnd-kit/utilities";
 import ClassicTemplate from "@/templates/classic/Template";
 import ModernTemplate from "@/templates/modern/Template";
 
-const STATIC_TABS = ["Basics", "Layout"] as const;
+const STATIC_TABS = ["Basics", "Layout", "Guests"] as const;
 type Tab = string; // Allows dynamic tabs like "story-123"
 
 // ─── Primitives ───
@@ -639,7 +639,41 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
   const [future, setFuture] = useState<WeddingSite[]>([]);
 
   const [tab, setTab] = useState<Tab>("Basics");
-  
+
+  // RSVP guest list state
+  const [rsvpData, setRsvpData] = useState<{
+    rsvps: {
+      id: string;
+      email: string | null;
+      message: string | null;
+      guests: { name: string; attending: boolean; mealChoice?: string; isHalal?: boolean }[];
+      created_at: string | null;
+    }[];
+    loaded: boolean;
+    loading: boolean;
+    error: string | null;
+  }>({ rsvps: [], loaded: false, loading: false, error: null });
+
+  const loadRSVPs = useCallback(async () => {
+    setRsvpData(prev => ({ ...prev, loading: true, error: null }));
+    try {
+      const res = await fetch(`/api/sites/${initial.slug}/rsvps`);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to load RSVPs");
+      setRsvpData({ rsvps: data.rsvps, loaded: true, loading: false, error: null });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Failed to load RSVPs";
+      setRsvpData(prev => ({ ...prev, loading: false, error: message }));
+    }
+  }, [initial.slug]);
+
+  // Load RSVPs when Guests tab is first selected
+  useEffect(() => {
+    if (tab === "Guests" && !rsvpData.loaded && !rsvpData.loading) {
+      loadRSVPs();
+    }
+  }, [tab, rsvpData.loaded, rsvpData.loading, loadRSVPs]);
+
   // Persist and restore tab state safely
   useEffect(() => {
     const saved = localStorage.getItem(`itsw_active_tab_${site.slug}`);
@@ -1181,7 +1215,8 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
               const order = site.sectionOrder ?? DEFAULT_SECTION_ORDER;
               const dynamicTabs: { label: string, id: string, type: string }[] = [
                 { label: "Basics", id: "Basics", type: "static" },
-                { label: "Layout", id: "Layout", type: "static" }
+                { label: "Layout", id: "Layout", type: "static" },
+                { label: "Guest List", id: "Guests", type: "static" }
               ];
               
               const typeCounts: Record<string, number> = {};
@@ -1469,6 +1504,152 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                   </div>
                 </div>
               );
+
+              if (tab === "Guests") {
+                const { rsvps, loading: rsvpLoading, error: rsvpError } = rsvpData;
+                const totalGuests = rsvps.reduce((sum, r) => sum + r.guests.length, 0);
+                const attending = rsvps.reduce((sum, r) => sum + r.guests.filter(g => g.attending).length, 0);
+                const declined = rsvps.reduce((sum, r) => sum + r.guests.filter(g => !g.attending).length, 0);
+                const mealCounts: Record<string, number> = {};
+                let halalCount = 0;
+                rsvps.forEach(r => r.guests.forEach(g => {
+                  if (g.attending && g.mealChoice) {
+                    mealCounts[g.mealChoice] = (mealCounts[g.mealChoice] || 0) + 1;
+                  }
+                  if (g.attending && g.isHalal) halalCount++;
+                }));
+
+                return (
+                  <div>
+                    <div className="flex items-center justify-between mb-6">
+                      <SectionTitle>Guest List</SectionTitle>
+                      <button
+                        onClick={loadRSVPs}
+                        disabled={rsvpLoading}
+                        className="text-[10px] font-bold uppercase tracking-widest text-[#2d2b25]/40 hover:text-[#2d2b25] transition-colors flex items-center gap-1.5"
+                      >
+                        <svg className={`w-3.5 h-3.5 ${rsvpLoading ? "animate-spin" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        Refresh
+                      </button>
+                    </div>
+
+                    {rsvpError && (
+                      <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-sm">
+                        <p className="text-sm text-red-600">{rsvpError}</p>
+                      </div>
+                    )}
+
+                    {/* Stats */}
+                    <div className="grid grid-cols-3 gap-3 mb-8">
+                      <div className="p-4 bg-white border border-[#2d2b25]/10 rounded-sm text-center">
+                        <p className="text-2xl font-serif italic text-[#2d2b25]">{rsvps.length}</p>
+                        <p className="text-[9px] font-bold uppercase tracking-widest text-[#2d2b25]/40 mt-1">Responses</p>
+                      </div>
+                      <div className="p-4 bg-white border border-[#2d2b25]/10 rounded-sm text-center">
+                        <p className="text-2xl font-serif italic text-green-700">{attending}</p>
+                        <p className="text-[9px] font-bold uppercase tracking-widest text-[#2d2b25]/40 mt-1">Attending</p>
+                      </div>
+                      <div className="p-4 bg-white border border-[#2d2b25]/10 rounded-sm text-center">
+                        <p className="text-2xl font-serif italic text-[#2d2b25]/40">{declined}</p>
+                        <p className="text-[9px] font-bold uppercase tracking-widest text-[#2d2b25]/40 mt-1">Declined</p>
+                      </div>
+                    </div>
+
+                    {/* Meal breakdown */}
+                    {Object.keys(mealCounts).length > 0 && (
+                      <div className="mb-8">
+                        <Label>Meal Breakdown</Label>
+                        <div className="flex flex-wrap gap-2">
+                          {Object.entries(mealCounts).sort((a, b) => b[1] - a[1]).map(([meal, count]) => (
+                            <span key={meal} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-[#2d2b25]/10 rounded-sm text-xs text-[#2d2b25]">
+                              <span className="font-medium">{meal}</span>
+                              <span className="text-[#2d2b25]/40">{count}</span>
+                            </span>
+                          ))}
+                          {halalCount > 0 && (
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-50 border border-green-200 rounded-sm text-xs text-green-700">
+                              <span className="font-medium">Halal</span>
+                              <span className="text-green-500">{halalCount}</span>
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Loading state */}
+                    {rsvpLoading && !rsvpData.loaded && (
+                      <div className="flex items-center justify-center py-16">
+                        <svg className="w-6 h-6 animate-spin text-[#2d2b25]/30" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                        </svg>
+                      </div>
+                    )}
+
+                    {/* Empty state */}
+                    {!rsvpLoading && rsvps.length === 0 && !rsvpError && (
+                      <div className="flex flex-col items-center justify-center py-16 text-center">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-[#2d2b25]/15 mb-4">
+                          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                          <circle cx="9" cy="7" r="4" />
+                          <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                        </svg>
+                        <p className="text-sm text-[#2d2b25]/40">No RSVPs yet</p>
+                        <p className="text-xs text-[#2d2b25]/25 mt-1">Responses will appear here as guests RSVP</p>
+                      </div>
+                    )}
+
+                    {/* RSVP list */}
+                    {rsvps.length > 0 && (
+                      <div className="space-y-3">
+                        <Label>All Responses ({rsvps.length})</Label>
+                        {rsvps.map((rsvp) => (
+                          <div key={rsvp.id} className="bg-white border border-[#2d2b25]/10 rounded-sm overflow-hidden">
+                            <div className="px-4 py-3 flex items-center justify-between border-b border-[#2d2b25]/5 bg-[#2d2b25]/[0.02]">
+                              <div className="flex items-center gap-2 min-w-0">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-[#2d2b25]/30 shrink-0">
+                                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                                  <polyline points="22,6 12,13 2,6" />
+                                </svg>
+                                <span className="text-sm text-[#2d2b25]/70 truncate">{rsvp.email || "No email"}</span>
+                              </div>
+                              <span className="text-[9px] font-bold uppercase tracking-widest text-[#2d2b25]/30 shrink-0 ml-2">
+                                {rsvp.created_at ? new Date(rsvp.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : ""}
+                              </span>
+                            </div>
+                            <div className="px-4 py-3">
+                              {rsvp.guests.map((guest, gi) => (
+                                <div key={gi} className={`flex items-center justify-between py-2 ${gi > 0 ? "border-t border-[#2d2b25]/5" : ""}`}>
+                                  <div className="flex items-center gap-2">
+                                    <span className={`w-1.5 h-1.5 rounded-full ${guest.attending ? "bg-green-500" : "bg-[#2d2b25]/20"}`} />
+                                    <span className="text-sm text-[#2d2b25]">{guest.name}</span>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    {guest.attending && guest.mealChoice && (
+                                      <span className="text-[10px] font-medium uppercase tracking-wider text-[#2d2b25]/40">{guest.mealChoice}{guest.isHalal ? " (H)" : ""}</span>
+                                    )}
+                                    <span className={`text-[10px] font-bold uppercase tracking-widest ${guest.attending ? "text-green-600" : "text-[#2d2b25]/30"}`}>
+                                      {guest.attending ? "Yes" : "No"}
+                                    </span>
+                                  </div>
+                                </div>
+                              ))}
+                              {rsvp.message && (
+                                <div className="mt-2 pt-2 border-t border-[#2d2b25]/5">
+                                  <p className="text-xs text-[#2d2b25]/50 italic">"{rsvp.message}"</p>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              }
 
               // --- Dynamic Sections ---
               const order = site.sectionOrder ?? DEFAULT_SECTION_ORDER;
