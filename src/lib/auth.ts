@@ -39,7 +39,13 @@ export async function getSession(): Promise<SessionPayload | null> {
 
   try {
     const { payload } = await jwtVerify(token, SECRET);
-    return payload as unknown as SessionPayload;
+
+    // Validate payload structure
+    if (typeof payload.slug !== "string" || !payload.slug) {
+      return null;
+    }
+
+    return { slug: payload.slug, isPaid: !!payload.isPaid };
   } catch {
     return null;
   }

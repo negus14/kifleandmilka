@@ -54,7 +54,11 @@ export async function POST(request: NextRequest) {
   }
 
   // Key: sites/{slug}/{timestamp}-{filename}
-  const ext = fileName.split(".").pop() || "jpg";
+  const ALLOWED_EXTENSIONS = ["jpg", "jpeg", "png", "webp", "avif", "gif"];
+  const ext = (fileName.split(".").pop() || "").toLowerCase();
+  if (!ext || !ALLOWED_EXTENSIONS.includes(ext)) {
+    return NextResponse.json({ error: "Invalid file extension" }, { status: 400 });
+  }
   const key = `sites/${session.slug}/${Date.now()}.${ext}`;
 
   const command = new PutObjectCommand({

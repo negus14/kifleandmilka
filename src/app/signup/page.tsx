@@ -19,6 +19,10 @@ async function signupAction(formData: FormData) {
 
   if (!slug || !password) return { error: "Please fill in all fields." };
 
+  if (password.length < 8) {
+    return { error: "Password must be at least 8 characters long." };
+  }
+
   if (!/^[a-z0-9-]+$/.test(slug)) {
     return { error: "URL can only contain lowercase letters, numbers, and hyphens." };
   }

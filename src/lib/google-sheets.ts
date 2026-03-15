@@ -7,7 +7,7 @@ function extractSheetId(url: string) {
 }
 
 export async function syncRSVPToGoogleSheets(
-  site: any,
+  site: { slug: string; rsvpEmbedUrl?: string; googleSheetId?: string; googleSheetName?: string },
   email: string | null | undefined,
   guests: GuestInput[],
   message: string | null | undefined,
@@ -42,7 +42,7 @@ export async function syncRSVPToGoogleSheets(
     const range = `'${sheetName}'!A:G`;
 
     const timestamp = createdAt ? createdAt.toISOString() : new Date().toISOString();
-    const values = guests.map((guest: any) => [
+    const values = guests.map((guest) => [
       timestamp,
       email || "",
       guest.name || "Unknown",

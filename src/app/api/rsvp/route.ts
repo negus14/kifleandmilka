@@ -26,6 +26,23 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Slug and at least one guest are required" }, { status: 400 });
     }
 
+    if (!email || typeof email !== "string" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return NextResponse.json({ error: "A valid email address is required" }, { status: 400 });
+    }
+
+    if (guests.length > 10) {
+      return NextResponse.json({ error: "Maximum 10 guests per RSVP" }, { status: 400 });
+    }
+
+    for (const guest of guests) {
+      if (!guest.name || typeof guest.name !== "string" || guest.name.trim().length === 0) {
+        return NextResponse.json({ error: "Each guest must have a name" }, { status: 400 });
+      }
+      if (guest.name.length > 100) {
+        return NextResponse.json({ error: "Guest name is too long" }, { status: 400 });
+      }
+    }
+
     const site = await getSiteBySlug(slug);
     if (!site) {
       return NextResponse.json({ error: "Site not found" }, { status: 404 });
@@ -42,6 +59,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true, rsvpId: rsvp.id });
   } catch (error: any) {
     console.error("RSVP Error:", error);
-    return NextResponse.json({ error: error.message || "Failed to submit RSVP" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to submit RSVP. Please try again." }, { status: 500 });
   }
 }

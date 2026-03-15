@@ -15,7 +15,17 @@ export default async function(request: NextRequest) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
     try {
-      await jwtVerify(token, SECRET);
+      const { payload } = await jwtVerify(token, SECRET);
+      const sessionSlug = payload.slug as string;
+
+      // Extract the slug from /dashboard/{slug}/...
+      const pathParts = pathname.split("/");
+      const requestedSlug = pathParts[2]; // ["", "dashboard", "{slug}", ...]
+
+      // If accessing a specific dashboard, verify ownership
+      if (requestedSlug && sessionSlug !== requestedSlug) {
+        return NextResponse.redirect(new URL(`/dashboard/${sessionSlug}`, request.url));
+      }
     } catch {
       return NextResponse.redirect(new URL("/login", request.url));
     }

@@ -54,12 +54,17 @@ export async function POST(req: NextRequest) {
       
       const site = await getSiteBySlug(siteSlug, true);
       if (site) {
-        await updateSite(siteSlug, {
-          ...site,
-          isPaid: new Date(),
-          stripeCustomerId: session.customer as string,
-        });
-        console.log(`[Stripe] Site ${siteSlug} marked as paid.`);
+        // Idempotency: skip if already paid
+        if (site.isPaid) {
+          console.log(`[Stripe] Site ${siteSlug} is already marked as paid. Skipping duplicate webhook.`);
+        } else {
+          await updateSite(siteSlug, {
+            ...site,
+            isPaid: new Date(),
+            stripeCustomerId: session.customer as string,
+          });
+          console.log(`[Stripe] Site ${siteSlug} marked as paid.`);
+        }
       }
     }
   }

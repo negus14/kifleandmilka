@@ -297,6 +297,7 @@ async function uploadFile(file: File): Promise<string> {
 function MediaLibrary({ onSelect, onClose, recentLinks = [] }: { onSelect: (url: string) => void; onClose: () => void; recentLinks?: string[] }) {
   const [images, setImages] = useState<{ url: string; key: string }[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [libTab, setLibTab] = useState<"uploads" | "recent">("uploads");
 
   useEffect(() => {
@@ -307,7 +308,7 @@ function MediaLibrary({ onSelect, onClose, recentLinks = [] }: { onSelect: (url:
         const data = await res.json();
         
         if (data.error) {
-          console.error("Library API error:", data.error);
+          setError("Media library is not available. Please check your storage configuration.");
           return;
         }
 
@@ -348,12 +349,14 @@ function MediaLibrary({ onSelect, onClose, recentLinks = [] }: { onSelect: (url:
               </button>
               <button 
                 onClick={() => {
+                  setError(null);
                   setImages([]);
                   setLoading(true);
                   async function refresh() {
                     try {
                       const res = await fetch("/api/media");
                       const data = await res.json();
+                      if (data.error) { setError("Media library is not available. Please check your storage configuration."); return; }
                       if (data.images) setImages(data.images);
                     } catch (err) {
                       console.error("Refresh failed", err);
@@ -379,6 +382,15 @@ function MediaLibrary({ onSelect, onClose, recentLinks = [] }: { onSelect: (url:
           {libTab === "uploads" ? (
             loading ? (
               <div className="flex items-center justify-center h-64 text-[#2d2b25]/40 italic uppercase tracking-widest text-xs">Loading your media...</div>
+            ) : error && !loading ? (
+              <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-[#2d2b25]/20 mb-4">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                  <circle cx="8.5" cy="8.5" r="1.5"/>
+                  <path d="M21 15l-5-5L5 21"/>
+                </svg>
+                <p className="text-sm text-[#2d2b25]/50 max-w-xs">{error}</p>
+              </div>
             ) : images.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-64 text-[#2d2b25]/40 gap-4">
                 <p className="italic">Your library is empty.</p>
@@ -686,7 +698,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
       iframeRef.current.contentWindow?.postMessage({
         type: "SCROLL_TO_SECTION",
         sectionId: newTab
-      }, "*");
+      }, window.location.origin);
     }
   }
 
@@ -744,21 +756,22 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
   // Send updates to preview iframe
   useEffect(() => {
     if (isPreview && iframeRef.current) {
-      iframeRef.current.contentWindow?.postMessage({ 
-        type: "UPDATE_SITE", 
-        site 
-      }, "*");
+      iframeRef.current.contentWindow?.postMessage({
+        type: "UPDATE_SITE",
+        site
+      }, window.location.origin);
     }
   }, [site, isPreview]);
 
   // Handle messages from iframe
   useEffect(() => {
     function handleMessage(event: MessageEvent) {
+      if (event.origin !== window.location.origin) return;
       if (event.data?.type === "PREVIEW_READY") {
         iframeRef.current?.contentWindow?.postMessage({
           type: "UPDATE_SITE",
           site
-        }, "*");
+        }, window.location.origin);
 
         // NEW: Scroll to current tab on load if it's a dynamic section
         const isStatic = (STATIC_TABS as readonly string[]).includes(tab);
@@ -768,7 +781,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
             iframeRef.current?.contentWindow?.postMessage({
               type: "SCROLL_TO_SECTION",
               sectionId: tab.toLowerCase() === "hero" ? "hero" : tab
-            }, "*");
+            }, window.location.origin);
           }, 100);
         }
       }

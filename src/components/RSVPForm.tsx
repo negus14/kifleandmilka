@@ -42,7 +42,10 @@ export default function RSVPForm({ slug, mealOptions, showHalalOption = true }: 
     );
   };
 
+  const MAX_GUESTS = 10;
+
   const addGuest = () => {
+    if (guests.length >= MAX_GUESTS) return;
     setGuests((prev) => [...prev, createEmptyGuest()]);
   };
 
@@ -220,14 +223,16 @@ export default function RSVPForm({ slug, mealOptions, showHalalOption = true }: 
         </div>
       ))}
 
-      <button 
-        type="button" 
-        onClick={addGuest}
-        className="rsvp__button rsvp__button--outline"
-        style={{ width: "100%", marginBottom: "2rem", padding: "0.8rem", borderStyle: "dashed" }}
-      >
-        + Add Partner / Family Member
-      </button>
+      {guests.length < MAX_GUESTS && (
+        <button
+          type="button"
+          onClick={addGuest}
+          className="rsvp__button rsvp__button--outline"
+          style={{ width: "100%", marginBottom: "2rem", padding: "0.8rem", borderStyle: "dashed" }}
+        >
+          + Add Partner / Family Member
+        </button>
+      )}
 
       <div className="rsvp__field">
         <label htmlFor="message" className="rsvp__label">Message to the Couple (Optional)</label>

@@ -10,6 +10,7 @@ export default function PreviewPage() {
 
   useEffect(() => {
     function handleMessage(event: MessageEvent) {
+      if (event.origin !== window.location.origin) return;
       if (event.data?.type === "UPDATE_SITE") {
         setSite(event.data.site);
       }
@@ -17,7 +18,7 @@ export default function PreviewPage() {
 
     window.addEventListener("message", handleMessage);
     // Notify parent that we are ready
-    window.parent.postMessage({ type: "PREVIEW_READY" }, "*");
+    window.parent.postMessage({ type: "PREVIEW_READY" }, window.location.origin);
 
     return () => window.removeEventListener("message", handleMessage);
   }, []);
