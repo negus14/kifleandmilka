@@ -627,6 +627,434 @@ function SortableList<T>({ items, prefix, onReorder, children }: {
   );
 }
 
+// ─── Guest List Panel ───
+
+type GuestRow = {
+  name: string;
+  attending: boolean;
+  mealChoice: string;
+  isHalal: boolean;
+  email: string;
+  message: string;
+  date: string;
+  rsvpId: string;
+};
+
+type GuestFilter = "all" | "attending" | "declined";
+type GuestView = "table" | "cards";
+
+function GuestListPanel({ rsvpData, loadRSVPs }: {
+  rsvpData: {
+    rsvps: {
+      id: string;
+      email: string | null;
+      message: string | null;
+      guests: { name: string; attending: boolean; mealChoice?: string; isHalal?: boolean }[];
+      created_at: string | null;
+    }[];
+    loaded: boolean;
+    loading: boolean;
+    error: string | null;
+  };
+  loadRSVPs: () => void;
+}) {
+  const [filter, setFilter] = useState<GuestFilter>("all");
+  const [view, setView] = useState<GuestView>("table");
+  const [search, setSearch] = useState("");
+  const [expandedRsvp, setExpandedRsvp] = useState<string | null>(null);
+
+  const { rsvps, loading: rsvpLoading, error: rsvpError } = rsvpData;
+
+  // Flatten all guests into rows for table view
+  const allGuests: GuestRow[] = rsvps.flatMap(r =>
+    r.guests.map(g => ({
+      name: g.name,
+      attending: g.attending,
+      mealChoice: g.mealChoice || "",
+      isHalal: g.isHalal || false,
+      email: r.email || "",
+      message: r.message || "",
+      date: r.created_at || "",
+      rsvpId: r.id,
+    }))
+  );
+
+  // Compute stats
+  const attending = allGuests.filter(g => g.attending).length;
+  const declined = allGuests.filter(g => !g.attending).length;
+  const mealCounts: Record<string, number> = {};
+  let halalCount = 0;
+  allGuests.forEach(g => {
+    if (g.attending && g.mealChoice) {
+      mealCounts[g.mealChoice] = (mealCounts[g.mealChoice] || 0) + 1;
+    }
+    if (g.attending && g.isHalal) halalCount++;
+  });
+
+  // Filter + search
+  const filtered = allGuests.filter(g => {
+    if (filter === "attending" && !g.attending) return false;
+    if (filter === "declined" && g.attending) return false;
+    if (search) {
+      const q = search.toLowerCase();
+      return g.name.toLowerCase().includes(q) || g.email.toLowerCase().includes(q);
+    }
+    return true;
+  });
+
+  // CSV export
+  const exportCSV = () => {
+    const headers = ["Name", "Email", "Attending", "Meal", "Halal", "Message", "Date"];
+    const rows = allGuests.map(g => [
+      g.name,
+      g.email,
+      g.attending ? "Yes" : "No",
+      g.mealChoice,
+      g.isHalal ? "Yes" : "No",
+      g.message.replace(/"/g, '""'),
+      g.date ? new Date(g.date).toLocaleDateString() : "",
+    ]);
+    const csv = [headers, ...rows].map(r => r.map(c => `"${c}"`).join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `guest-list-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  return (
+    <div>
+      {/* Header */}
+      <div className="flex items-start justify-between mb-2">
+        <div>
+          <h2 className="text-lg" style={{ fontFamily: "'Playfair Display', serif" }}>Guest List</h2>
+          <p className="text-xs text-[#2d2b25]/40 mt-1">Track RSVPs and manage your guest list</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={loadRSVPs}
+            disabled={rsvpLoading}
+            className="p-2 text-[#2d2b25]/40 hover:text-[#2d2b25] hover:bg-[#2d2b25]/5 rounded-sm transition-all"
+            title="Refresh"
+          >
+            <svg className={`w-4 h-4 ${rsvpLoading ? "animate-spin" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+          </button>
+          {allGuests.length > 0 && (
+            <button
+              onClick={exportCSV}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-[#2d2b25]/60 hover:text-[#2d2b25] border border-[#2d2b25]/10 hover:border-[#2d2b25]/25 rounded-sm transition-all"
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" y1="15" x2="12" y2="3" />
+              </svg>
+              Export CSV
+            </button>
+          )}
+        </div>
+      </div>
+
+      {rsvpError && (
+        <div className="mb-6 p-3 bg-red-50 border border-red-200 rounded-sm">
+          <p className="text-sm text-red-600">{rsvpError}</p>
+        </div>
+      )}
+
+      {/* Stats row */}
+      <div className="grid grid-cols-4 gap-2 mb-6 mt-6">
+        {[
+          { label: "Responses", value: rsvps.length, color: "text-[#2d2b25]" },
+          { label: "Total Guests", value: allGuests.length, color: "text-[#2d2b25]" },
+          { label: "Attending", value: attending, color: "text-green-700" },
+          { label: "Declined", value: declined, color: "text-[#2d2b25]/40" },
+        ].map((stat) => (
+          <div key={stat.label} className="p-3 bg-white border border-[#2d2b25]/8 rounded-sm text-center">
+            <p className={`text-xl font-serif italic ${stat.color}`}>{stat.value}</p>
+            <p className="text-[8px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/35 mt-0.5">{stat.label}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Meal breakdown bar */}
+      {attending > 0 && Object.keys(mealCounts).length > 0 && (
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/50">Meals</span>
+            {halalCount > 0 && (
+              <span className="text-[10px] font-medium text-green-600">{halalCount} halal</span>
+            )}
+          </div>
+          <div className="flex h-2 rounded-full overflow-hidden bg-[#2d2b25]/5">
+            {Object.entries(mealCounts).map(([meal, count], i) => {
+              const colors = ["bg-[#2d2b25]", "bg-[#2d2b25]/60", "bg-[#2d2b25]/35", "bg-[#2d2b25]/20", "bg-[#2d2b25]/10"];
+              return (
+                <div
+                  key={meal}
+                  className={`${colors[i % colors.length]} transition-all`}
+                  style={{ width: `${(count / attending) * 100}%` }}
+                  title={`${meal}: ${count}`}
+                />
+              );
+            })}
+          </div>
+          <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2">
+            {Object.entries(mealCounts).sort((a, b) => b[1] - a[1]).map(([meal, count], i) => {
+              const dots = ["bg-[#2d2b25]", "bg-[#2d2b25]/60", "bg-[#2d2b25]/35", "bg-[#2d2b25]/20", "bg-[#2d2b25]/10"];
+              return (
+                <span key={meal} className="flex items-center gap-1.5 text-[10px] text-[#2d2b25]/60">
+                  <span className={`w-2 h-2 rounded-full ${dots[i % dots.length]}`} />
+                  {meal} <span className="text-[#2d2b25]/30">{count}</span>
+                </span>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Loading state */}
+      {rsvpLoading && !rsvpData.loaded && (
+        <div className="flex items-center justify-center py-20">
+          <div className="flex flex-col items-center gap-3">
+            <svg className="w-6 h-6 animate-spin text-[#2d2b25]/25" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+            </svg>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-[#2d2b25]/30">Loading responses</span>
+          </div>
+        </div>
+      )}
+
+      {/* Empty state */}
+      {!rsvpLoading && rsvps.length === 0 && !rsvpError && (
+        <div className="flex flex-col items-center justify-center py-20 text-center">
+          <div className="w-16 h-16 rounded-full bg-[#2d2b25]/[0.04] flex items-center justify-center mb-4">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-[#2d2b25]/20">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg>
+          </div>
+          <p className="text-sm font-medium text-[#2d2b25]/50">No RSVPs yet</p>
+          <p className="text-xs text-[#2d2b25]/30 mt-1 max-w-[200px]">Once guests respond to your invitation, their details will appear here</p>
+        </div>
+      )}
+
+      {/* Toolbar: search, filter, view toggle */}
+      {rsvps.length > 0 && (
+        <>
+          <div className="flex items-center gap-2 mb-4">
+            {/* Search */}
+            <div className="relative flex-1">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="absolute left-3 top-1/2 -translate-y-1/2 text-[#2d2b25]/25">
+                <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search by name or email..."
+                className="w-full pl-9 pr-3 py-2 text-sm border border-[#2d2b25]/10 bg-white rounded-sm outline-none focus:border-[#2d2b25]/30 transition-colors placeholder:text-[#2d2b25]/20"
+              />
+            </div>
+
+            {/* Filter pills */}
+            <div className="flex bg-[#2d2b25]/5 rounded-sm p-0.5 shrink-0">
+              {([
+                { key: "all" as const, label: "All" },
+                { key: "attending" as const, label: "Yes" },
+                { key: "declined" as const, label: "No" },
+              ]).map(f => (
+                <button
+                  key={f.key}
+                  onClick={() => setFilter(f.key)}
+                  className={`px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-sm transition-all ${
+                    filter === f.key
+                      ? "bg-[#2d2b25] text-white shadow-sm"
+                      : "text-[#2d2b25]/40 hover:text-[#2d2b25]/60"
+                  }`}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>
+
+            {/* View toggle */}
+            <div className="flex bg-[#2d2b25]/5 rounded-sm p-0.5 shrink-0">
+              <button
+                onClick={() => setView("table")}
+                className={`p-1.5 rounded-sm transition-all ${view === "table" ? "bg-white shadow-sm text-[#2d2b25]" : "text-[#2d2b25]/30"}`}
+                title="Table view"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+              </button>
+              <button
+                onClick={() => setView("cards")}
+                className={`p-1.5 rounded-sm transition-all ${view === "cards" ? "bg-white shadow-sm text-[#2d2b25]" : "text-[#2d2b25]/30"}`}
+                title="Card view"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+              </button>
+            </div>
+          </div>
+
+          {/* Results count */}
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/35">
+              {filtered.length} guest{filtered.length !== 1 ? "s" : ""}{filter !== "all" ? ` (${filter})` : ""}{search ? ` matching "${search}"` : ""}
+            </span>
+          </div>
+
+          {/* Table view */}
+          {view === "table" && (
+            <div className="bg-white border border-[#2d2b25]/10 rounded-sm overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead>
+                    <tr className="border-b border-[#2d2b25]/8 bg-[#2d2b25]/[0.02]">
+                      <th className="px-4 py-2.5 text-[9px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/40">Guest</th>
+                      <th className="px-4 py-2.5 text-[9px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/40 hidden sm:table-cell">Email</th>
+                      <th className="px-4 py-2.5 text-[9px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/40 text-center">RSVP</th>
+                      <th className="px-4 py-2.5 text-[9px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/40 hidden sm:table-cell">Meal</th>
+                      <th className="px-4 py-2.5 text-[9px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/40 text-right">Date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filtered.map((guest, i) => (
+                      <tr key={`${guest.rsvpId}-${i}`} className="border-b border-[#2d2b25]/5 last:border-0 hover:bg-[#2d2b25]/[0.015] transition-colors">
+                        <td className="px-4 py-2.5">
+                          <div className="flex items-center gap-2">
+                            <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${guest.attending ? "bg-green-500" : "bg-[#2d2b25]/15"}`} />
+                            <span className="text-sm text-[#2d2b25] font-medium">{guest.name}</span>
+                          </div>
+                        </td>
+                        <td className="px-4 py-2.5 hidden sm:table-cell">
+                          <span className="text-xs text-[#2d2b25]/45 truncate block max-w-[180px]">{guest.email || "\u2014"}</span>
+                        </td>
+                        <td className="px-4 py-2.5 text-center">
+                          <span className={`inline-flex px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest rounded-full ${
+                            guest.attending
+                              ? "bg-green-50 text-green-700"
+                              : "bg-[#2d2b25]/5 text-[#2d2b25]/35"
+                          }`}>
+                            {guest.attending ? "Attending" : "Declined"}
+                          </span>
+                        </td>
+                        <td className="px-4 py-2.5 hidden sm:table-cell">
+                          {guest.attending && guest.mealChoice ? (
+                            <span className="text-xs text-[#2d2b25]/50">
+                              {guest.mealChoice}{guest.isHalal ? <span className="text-green-600 ml-1 text-[9px] font-bold">(H)</span> : ""}
+                            </span>
+                          ) : (
+                            <span className="text-xs text-[#2d2b25]/15">{"\u2014"}</span>
+                          )}
+                        </td>
+                        <td className="px-4 py-2.5 text-right">
+                          <span className="text-[10px] text-[#2d2b25]/30">
+                            {guest.date ? new Date(guest.date).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : ""}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              {filtered.length === 0 && (
+                <div className="py-8 text-center text-sm text-[#2d2b25]/30">No guests match your search</div>
+              )}
+            </div>
+          )}
+
+          {/* Card view — grouped by RSVP submission */}
+          {view === "cards" && (
+            <div className="space-y-3">
+              {rsvps.filter(r => {
+                if (!search && filter === "all") return true;
+                return r.guests.some(g => {
+                  const matchFilter = filter === "all" || (filter === "attending" ? g.attending : !g.attending);
+                  const matchSearch = !search || g.name.toLowerCase().includes(search.toLowerCase()) || (r.email || "").toLowerCase().includes(search.toLowerCase());
+                  return matchFilter && matchSearch;
+                });
+              }).map((rsvp) => {
+                const isExpanded = expandedRsvp === rsvp.id;
+                const guestCount = rsvp.guests.length;
+                const attendingCount = rsvp.guests.filter(g => g.attending).length;
+
+                return (
+                  <div key={rsvp.id} className="bg-white border border-[#2d2b25]/10 rounded-sm overflow-hidden">
+                    <button
+                      onClick={() => setExpandedRsvp(isExpanded ? null : rsvp.id)}
+                      className="w-full px-4 py-3 flex items-center justify-between hover:bg-[#2d2b25]/[0.02] transition-colors text-left"
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-8 h-8 rounded-full bg-[#2d2b25]/[0.06] flex items-center justify-center shrink-0">
+                          <span className="text-xs font-bold text-[#2d2b25]/50">{guestCount}</span>
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-sm text-[#2d2b25] font-medium truncate">{rsvp.email || "No email"}</p>
+                          <p className="text-[10px] text-[#2d2b25]/35 mt-0.5">
+                            {attendingCount === guestCount ? (
+                              <span className="text-green-600">All attending</span>
+                            ) : attendingCount === 0 ? (
+                              <span>All declined</span>
+                            ) : (
+                              <span>{attendingCount} attending, {guestCount - attendingCount} declined</span>
+                            )}
+                            {rsvp.created_at && (
+                              <span className="ml-2">{new Date(rsvp.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
+                            )}
+                          </p>
+                        </div>
+                      </div>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={`text-[#2d2b25]/20 shrink-0 transition-transform ${isExpanded ? "rotate-180" : ""}`}>
+                        <polyline points="6 9 12 15 18 9" />
+                      </svg>
+                    </button>
+
+                    {isExpanded && (
+                      <div className="border-t border-[#2d2b25]/8">
+                        {rsvp.guests.map((guest, gi) => (
+                          <div key={gi} className={`px-4 py-3 flex items-center justify-between ${gi > 0 ? "border-t border-[#2d2b25]/5" : ""}`}>
+                            <div className="flex items-center gap-2.5">
+                              <span className={`w-2 h-2 rounded-full ${guest.attending ? "bg-green-500" : "bg-[#2d2b25]/15"}`} />
+                              <div>
+                                <p className="text-sm text-[#2d2b25] font-medium">{guest.name}</p>
+                                {guest.attending && guest.mealChoice && (
+                                  <p className="text-[10px] text-[#2d2b25]/40 mt-0.5">
+                                    {guest.mealChoice}{guest.isHalal ? " \u00b7 Halal" : ""}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                            <span className={`text-[9px] font-bold uppercase tracking-widest ${guest.attending ? "text-green-600" : "text-[#2d2b25]/25"}`}>
+                              {guest.attending ? "Yes" : "No"}
+                            </span>
+                          </div>
+                        ))}
+                        {rsvp.message && (
+                          <div className="px-4 py-3 border-t border-[#2d2b25]/5 bg-[#2d2b25]/[0.015]">
+                            <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/30 mb-1">Message</p>
+                            <p className="text-xs text-[#2d2b25]/60 italic leading-relaxed">&ldquo;{rsvp.message}&rdquo;</p>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+}
+
 // ─── Main Editor ───
 
 export default function DashboardEditor({ site: initial }: { site: WeddingSite }) {
@@ -1505,151 +1933,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                 </div>
               );
 
-              if (tab === "Guests") {
-                const { rsvps, loading: rsvpLoading, error: rsvpError } = rsvpData;
-                const totalGuests = rsvps.reduce((sum, r) => sum + r.guests.length, 0);
-                const attending = rsvps.reduce((sum, r) => sum + r.guests.filter(g => g.attending).length, 0);
-                const declined = rsvps.reduce((sum, r) => sum + r.guests.filter(g => !g.attending).length, 0);
-                const mealCounts: Record<string, number> = {};
-                let halalCount = 0;
-                rsvps.forEach(r => r.guests.forEach(g => {
-                  if (g.attending && g.mealChoice) {
-                    mealCounts[g.mealChoice] = (mealCounts[g.mealChoice] || 0) + 1;
-                  }
-                  if (g.attending && g.isHalal) halalCount++;
-                }));
-
-                return (
-                  <div>
-                    <div className="flex items-center justify-between mb-6">
-                      <SectionTitle>Guest List</SectionTitle>
-                      <button
-                        onClick={loadRSVPs}
-                        disabled={rsvpLoading}
-                        className="text-[10px] font-bold uppercase tracking-widest text-[#2d2b25]/40 hover:text-[#2d2b25] transition-colors flex items-center gap-1.5"
-                      >
-                        <svg className={`w-3.5 h-3.5 ${rsvpLoading ? "animate-spin" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                        </svg>
-                        Refresh
-                      </button>
-                    </div>
-
-                    {rsvpError && (
-                      <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-sm">
-                        <p className="text-sm text-red-600">{rsvpError}</p>
-                      </div>
-                    )}
-
-                    {/* Stats */}
-                    <div className="grid grid-cols-3 gap-3 mb-8">
-                      <div className="p-4 bg-white border border-[#2d2b25]/10 rounded-sm text-center">
-                        <p className="text-2xl font-serif italic text-[#2d2b25]">{rsvps.length}</p>
-                        <p className="text-[9px] font-bold uppercase tracking-widest text-[#2d2b25]/40 mt-1">Responses</p>
-                      </div>
-                      <div className="p-4 bg-white border border-[#2d2b25]/10 rounded-sm text-center">
-                        <p className="text-2xl font-serif italic text-green-700">{attending}</p>
-                        <p className="text-[9px] font-bold uppercase tracking-widest text-[#2d2b25]/40 mt-1">Attending</p>
-                      </div>
-                      <div className="p-4 bg-white border border-[#2d2b25]/10 rounded-sm text-center">
-                        <p className="text-2xl font-serif italic text-[#2d2b25]/40">{declined}</p>
-                        <p className="text-[9px] font-bold uppercase tracking-widest text-[#2d2b25]/40 mt-1">Declined</p>
-                      </div>
-                    </div>
-
-                    {/* Meal breakdown */}
-                    {Object.keys(mealCounts).length > 0 && (
-                      <div className="mb-8">
-                        <Label>Meal Breakdown</Label>
-                        <div className="flex flex-wrap gap-2">
-                          {Object.entries(mealCounts).sort((a, b) => b[1] - a[1]).map(([meal, count]) => (
-                            <span key={meal} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-[#2d2b25]/10 rounded-sm text-xs text-[#2d2b25]">
-                              <span className="font-medium">{meal}</span>
-                              <span className="text-[#2d2b25]/40">{count}</span>
-                            </span>
-                          ))}
-                          {halalCount > 0 && (
-                            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-50 border border-green-200 rounded-sm text-xs text-green-700">
-                              <span className="font-medium">Halal</span>
-                              <span className="text-green-500">{halalCount}</span>
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Loading state */}
-                    {rsvpLoading && !rsvpData.loaded && (
-                      <div className="flex items-center justify-center py-16">
-                        <svg className="w-6 h-6 animate-spin text-[#2d2b25]/30" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                        </svg>
-                      </div>
-                    )}
-
-                    {/* Empty state */}
-                    {!rsvpLoading && rsvps.length === 0 && !rsvpError && (
-                      <div className="flex flex-col items-center justify-center py-16 text-center">
-                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-[#2d2b25]/15 mb-4">
-                          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                          <circle cx="9" cy="7" r="4" />
-                          <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                        </svg>
-                        <p className="text-sm text-[#2d2b25]/40">No RSVPs yet</p>
-                        <p className="text-xs text-[#2d2b25]/25 mt-1">Responses will appear here as guests RSVP</p>
-                      </div>
-                    )}
-
-                    {/* RSVP list */}
-                    {rsvps.length > 0 && (
-                      <div className="space-y-3">
-                        <Label>All Responses ({rsvps.length})</Label>
-                        {rsvps.map((rsvp) => (
-                          <div key={rsvp.id} className="bg-white border border-[#2d2b25]/10 rounded-sm overflow-hidden">
-                            <div className="px-4 py-3 flex items-center justify-between border-b border-[#2d2b25]/5 bg-[#2d2b25]/[0.02]">
-                              <div className="flex items-center gap-2 min-w-0">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-[#2d2b25]/30 shrink-0">
-                                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                                  <polyline points="22,6 12,13 2,6" />
-                                </svg>
-                                <span className="text-sm text-[#2d2b25]/70 truncate">{rsvp.email || "No email"}</span>
-                              </div>
-                              <span className="text-[9px] font-bold uppercase tracking-widest text-[#2d2b25]/30 shrink-0 ml-2">
-                                {rsvp.created_at ? new Date(rsvp.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : ""}
-                              </span>
-                            </div>
-                            <div className="px-4 py-3">
-                              {rsvp.guests.map((guest, gi) => (
-                                <div key={gi} className={`flex items-center justify-between py-2 ${gi > 0 ? "border-t border-[#2d2b25]/5" : ""}`}>
-                                  <div className="flex items-center gap-2">
-                                    <span className={`w-1.5 h-1.5 rounded-full ${guest.attending ? "bg-green-500" : "bg-[#2d2b25]/20"}`} />
-                                    <span className="text-sm text-[#2d2b25]">{guest.name}</span>
-                                  </div>
-                                  <div className="flex items-center gap-2">
-                                    {guest.attending && guest.mealChoice && (
-                                      <span className="text-[10px] font-medium uppercase tracking-wider text-[#2d2b25]/40">{guest.mealChoice}{guest.isHalal ? " (H)" : ""}</span>
-                                    )}
-                                    <span className={`text-[10px] font-bold uppercase tracking-widest ${guest.attending ? "text-green-600" : "text-[#2d2b25]/30"}`}>
-                                      {guest.attending ? "Yes" : "No"}
-                                    </span>
-                                  </div>
-                                </div>
-                              ))}
-                              {rsvp.message && (
-                                <div className="mt-2 pt-2 border-t border-[#2d2b25]/5">
-                                  <p className="text-xs text-[#2d2b25]/50 italic">"{rsvp.message}"</p>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                );
-              }
+              if (tab === "Guests") return <GuestListPanel rsvpData={rsvpData} loadRSVPs={loadRSVPs} />;
 
               // --- Dynamic Sections ---
               const order = site.sectionOrder ?? DEFAULT_SECTION_ORDER;
