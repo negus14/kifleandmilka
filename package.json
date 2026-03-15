@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start -p ${PORT:-3000}",
     "lint": "next lint",
-    "db:migrate": "npx tsx drizzle/migrate_to_latest.ts",
+    "db:migrate": "tsx scripts/migrate.ts",
+    "db:migrate:data": "tsx drizzle/migrate_to_latest.ts",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:integration": "dotenv -e .env.test -- vitest run tests/integration",
@@ -57,6 +58,7 @@
     "dotenv-cli": "^11.0.0",
     "drizzle-kit": "^0.31.9",
     "jsdom": "^28.1.0",
+    "tsx": "^4.21.0",
     "vitest": "^4.0.18"
   },
   "engines": {
