@@ -1,3 +1,8 @@
+import dotenv from "dotenv";
+// Load .env.local for local runs, Railway sets env vars directly
+dotenv.config({ path: ".env.local" });
+dotenv.config({ path: ".env" });
+
 import pg from "pg";
 import fs from "fs";
 import path from "path";
