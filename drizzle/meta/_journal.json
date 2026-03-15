@@ -15,6 +15,13 @@
       "when": 1773578950334,
       "tag": "0001_lowly_beast",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1773588000000,
+      "tag": "0002_create_rsvps_if_missing",
+      "breakpoints": true
     }
   ]
 }
