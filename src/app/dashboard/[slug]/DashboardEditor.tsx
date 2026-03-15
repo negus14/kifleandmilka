@@ -1500,41 +1500,20 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
     <div className="min-h-screen bg-[#faf1e1]" style={{ fontFamily: "'DM Sans', sans-serif" }}>
       {/* ... Existing Head/Scripts ... */}
       
+      {/* Upgrade banner for unpaid sites */}
       {!site.isPaid && (
-        <div className="fixed inset-0 z-[200] bg-[#faf1e1]/80 backdrop-blur-md flex items-center justify-center p-6 text-center">
-          <div className="max-w-md bg-white p-8 rounded-sm shadow-2xl border border-[#2d2b25]/10">
-            <h2 className="text-2xl font-serif italic mb-4">Complete your setup</h2>
-            <p className="text-[#2d2b25]/60 mb-8 leading-relaxed">
-              Your wedding site is ready to be built! To publish your site and access all features, 
-              there is a one-time fee of <strong>$29.00</strong>.
-            </p>
-            <ul className="text-left text-sm text-[#2d2b25]/70 space-y-3 mb-8 px-4">
-              <li className="flex gap-3 items-start">
-                <svg className="shrink-0 text-green-600 mt-0.5" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
-                Unlimited image uploads & media library
-              </li>
-              <li className="flex gap-3 items-start">
-                <svg className="shrink-0 text-green-600 mt-0.5" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
-                Custom URL (e.g. ithinkshewifey.com/amyandjack)
-              </li>
-              <li className="flex gap-3 items-start">
-                <svg className="shrink-0 text-green-600 mt-0.5" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
-                Google Sheets RSVP synchronization
-              </li>
-            </ul>
-            <button
-              onClick={handleCheckout}
-              disabled={isPaying}
-              className="w-full py-4 bg-[#2d2b25] text-[#faf1e1] font-bold uppercase tracking-widest text-xs rounded-sm hover:opacity-90 disabled:opacity-50 transition-all shadow-lg"
-            >
-              {isPaying ? "Preparing Checkout..." : "Unlock Full Access — $29"}
-            </button>
-            <form action="/api/auth/logout" method="POST" className="mt-6">
-              <button type="submit" className="text-[10px] uppercase tracking-widest font-bold text-[#2d2b25]/30 hover:text-[#2d2b25] transition-colors">
-                Sign Out
-              </button>
-            </form>
-          </div>
+        <div className="sticky top-0 z-[60] bg-[#2d2b25] text-[#faf1e1] px-4 py-2.5 flex items-center justify-between">
+          <p className="text-xs">
+            <span className="font-bold uppercase tracking-wider">Free plan</span>
+            <span className="opacity-60 ml-2">Upgrade to publish your site and go live</span>
+          </p>
+          <button
+            onClick={handleCheckout}
+            disabled={isPaying}
+            className="px-4 py-1.5 bg-white text-[#2d2b25] text-[10px] font-bold uppercase tracking-widest rounded-sm hover:bg-white/90 disabled:opacity-50 transition-all"
+          >
+            {isPaying ? "Loading..." : "Upgrade — $29"}
+          </button>
         </div>
       )}
 
@@ -1576,10 +1555,12 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
               </span>
             </div>
 
-            <a href={`/${site.slug}`} target="_blank"
-              className="hidden sm:block text-xs tracking-wide uppercase text-[#2d2b25]/50 hover:text-[#2d2b25] transition-colors">
-              View
-            </a>
+            {site.isPaid && site.isPublished && (
+              <a href={`/${site.slug}`} target="_blank"
+                className="hidden sm:block text-xs tracking-wide uppercase text-[#2d2b25]/50 hover:text-[#2d2b25] transition-colors">
+                View Live
+              </a>
+            )}
             
             <div className="flex bg-[#2d2b25]/5 rounded-sm p-1">
               <button 
@@ -1823,6 +1804,58 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                         )}
                       </button>
                     ))}
+                  </div>
+
+                  {/* Publish Section */}
+                  <div className="mt-10 pt-8 border-t border-[#2d2b25]/10">
+                    <Label>Publish Your Site</Label>
+                    {site.isPaid ? (
+                      <div className="flex items-center justify-between p-4 bg-white border border-[#2d2b25]/10 rounded-sm">
+                        <div>
+                          <p className="text-sm font-medium text-[#2d2b25]">
+                            {site.isPublished ? "Your site is live" : "Your site is hidden"}
+                          </p>
+                          <p className="text-[10px] text-[#2d2b25]/40 mt-0.5">
+                            {site.isPublished
+                              ? `Visible at ithinkshewifey.com/${site.slug}`
+                              : "Toggle to make your site visible to guests"}
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => set("isPublished", !site.isPublished)}
+                          className={`relative w-12 h-7 rounded-full transition-colors ${site.isPublished ? "bg-green-500" : "bg-[#2d2b25]/15"}`}
+                        >
+                          <span className={`absolute top-1 w-5 h-5 bg-white rounded-full shadow-sm transition-transform ${site.isPublished ? "left-6" : "left-1"}`} />
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="p-5 bg-white border border-[#2d2b25]/10 rounded-sm">
+                        <p className="text-sm text-[#2d2b25]/60 mb-4 leading-relaxed">
+                          Upgrade to publish your wedding site and share it with your guests.
+                        </p>
+                        <ul className="text-sm text-[#2d2b25]/70 space-y-2 mb-5">
+                          <li className="flex gap-2.5 items-center">
+                            <svg className="shrink-0 text-green-600" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
+                            Publish & share your site
+                          </li>
+                          <li className="flex gap-2.5 items-center">
+                            <svg className="shrink-0 text-green-600" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
+                            Collect RSVPs from guests
+                          </li>
+                          <li className="flex gap-2.5 items-center">
+                            <svg className="shrink-0 text-green-600" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
+                            Unlimited uploads & media library
+                          </li>
+                        </ul>
+                        <button
+                          onClick={handleCheckout}
+                          disabled={isPaying}
+                          className="w-full py-3 bg-[#2d2b25] text-[#faf1e1] font-bold uppercase tracking-widest text-[10px] rounded-sm hover:opacity-90 disabled:opacity-50 transition-all"
+                        >
+                          {isPaying ? "Preparing Checkout..." : "Upgrade — $29 one-time"}
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               );
