@@ -22,6 +22,13 @@
       "when": 1773588000000,
       "tag": "0002_create_rsvps_if_missing",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1773589000000,
+      "tag": "0003_mark_existing_customers_paid",
+      "breakpoints": true
     }
   ]
 }

@@ -1,0 +1,1 @@
+UPDATE sites SET is_paid = NOW() WHERE slug IN ('demo', 'meronandadiam', 'kifleandmilka') AND is_paid IS NULL;
