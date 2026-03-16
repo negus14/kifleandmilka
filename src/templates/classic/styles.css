@@ -1214,6 +1214,40 @@
   gap: 1.5rem;
 }
 
+/* Phone number field with country code picker */
+.rsvp__phone-row {
+  display: flex;
+  align-items: stretch;
+}
+
+.rsvp__phone-row .rsvp__phone-picker > button {
+  height: 100%;
+  border: 1px solid color-mix(in srgb, var(--color-dark), transparent 85%) !important;
+  border-right: none !important;
+  border-radius: 0 !important;
+  background: color-mix(in srgb, var(--color-dark), transparent 96%) !important;
+  font-family: var(--font-serif);
+  font-size: 0.9rem;
+  min-width: 110px !important;
+  padding: 0.85rem 0.75rem !important;
+}
+
+.rsvp__phone-input {
+  flex: 1;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+}
+
+.section--dark .rsvp__phone-row .rsvp__phone-picker > button {
+  border-color: rgba(212, 189, 172, 0.2) !important;
+  background: rgba(255, 255, 255, 0.03) !important;
+  color: var(--color-primary) !important;
+}
+
+.section--dark .rsvp__phone-row .rsvp__phone-picker > button span {
+  color: var(--color-primary);
+}
+
 .rsvp__button {
   width: 100%;
   padding: 1rem;

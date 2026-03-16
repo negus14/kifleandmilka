@@ -145,22 +145,22 @@ export default function RSVPForm({ slug, mealOptions, showHalalOption = true, me
 
       <div className="rsvp__field">
         <label htmlFor="phone" className="rsvp__label">WhatsApp Number (Optional)</label>
-        <div style={{ display: "flex", alignItems: "stretch", gap: 0 }}>
+        <div className="rsvp__phone-row">
           <CountryCodePicker
             value={dialCode}
             onChange={setDialCode}
+            className="rsvp__phone-picker"
           />
           <input
             id="phone"
             type="tel"
-            className="rsvp__input"
+            className="rsvp__input rsvp__phone-input"
             value={phoneLocal}
             onChange={(e) => {
               const val = e.target.value.replace(/[^0-9\s\-]/g, "");
               setPhoneLocal(val);
             }}
             placeholder="7123 456789"
-            style={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0, flex: 1 }}
           />
         </div>
         <p style={{ fontSize: "0.8rem", opacity: 0.7, marginTop: "0.2rem" }}>For WhatsApp updates and calendar invites.</p>

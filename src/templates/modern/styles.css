@@ -1250,6 +1250,190 @@
   color: var(--color-primary);
 }
 
+/* ===== RSVP FORM ===== */
+.rsvp__heading {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 3vw, 2.3rem);
+  color: var(--color-dark);
+  margin-bottom: 0.5rem;
+}
+
+.rsvp__subheading {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-weight: 300;
+  color: var(--color-dark);
+  opacity: 0.6;
+  margin-bottom: 2.5rem;
+}
+
+.rsvp__form {
+  text-align: left;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.rsvp__field {
+  margin-bottom: 1.5rem;
+}
+
+.rsvp__label {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-dark);
+  margin-bottom: 0.75rem;
+  opacity: 0.5;
+}
+
+.rsvp__input,
+.rsvp__select,
+.rsvp__textarea {
+  width: 100%;
+  padding: 1.1rem 1.25rem;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  border: 1px solid color-mix(in srgb, var(--color-dark), transparent 85%);
+  background: white;
+  color: var(--color-dark);
+  border-radius: 0;
+  transition: all 0.3s ease;
+}
+
+.rsvp__input:focus,
+.rsvp__select:focus,
+.rsvp__textarea:focus {
+  outline: none;
+  border-color: var(--color-dark);
+  background: #fff;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.02);
+}
+
+.rsvp__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+/* Phone number field with country code picker */
+.rsvp__phone-row {
+  display: flex;
+  align-items: stretch;
+}
+
+.rsvp__phone-row .rsvp__phone-picker > button {
+  height: 100%;
+  border: 1px solid color-mix(in srgb, var(--color-dark), transparent 85%) !important;
+  border-right: none !important;
+  border-radius: 0 !important;
+  background: color-mix(in srgb, var(--color-dark), transparent 96%) !important;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  min-width: 110px !important;
+  padding: 1.1rem 0.75rem !important;
+}
+
+.rsvp__phone-input {
+  flex: 1;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+}
+
+.modern-section--dark .rsvp__label { color: var(--color-accent); }
+.modern-section--dark .rsvp__input,
+.modern-section--dark .rsvp__select,
+.modern-section--dark .rsvp__textarea {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: var(--color-primary);
+}
+
+.modern-section--dark .rsvp__input:focus,
+.modern-section--dark .rsvp__select:focus,
+.modern-section--dark .rsvp__textarea:focus {
+  border-color: var(--color-primary);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.modern-section--dark .rsvp__phone-row .rsvp__phone-picker > button {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  background: rgba(255, 255, 255, 0.03) !important;
+  color: var(--color-primary) !important;
+}
+
+.modern-section--dark .rsvp__phone-row .rsvp__phone-picker > button span {
+  color: var(--color-primary);
+}
+
+.rsvp__button {
+  width: 100%;
+  padding: 1.25rem;
+  background: var(--color-dark);
+  color: var(--color-primary);
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  border: 2px solid var(--color-dark);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+}
+
+.rsvp__button:hover {
+  background: transparent;
+  color: var(--color-dark);
+}
+
+.rsvp__button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.rsvp__button--outline {
+  background: transparent;
+  color: var(--color-dark);
+}
+
+.rsvp__button--outline:hover {
+  background: var(--color-dark);
+  color: var(--color-primary);
+}
+
+.modern-section--dark .rsvp__button {
+  background: var(--color-primary);
+  color: var(--color-dark);
+  border-color: var(--color-primary);
+}
+
+.modern-section--dark .rsvp__button:hover {
+  background: transparent;
+  color: var(--color-primary);
+}
+
+.rsvp__success {
+  padding: 3rem 2rem;
+  background: color-mix(in srgb, var(--color-primary), transparent 50%);
+  border: 1px dashed color-mix(in srgb, var(--color-dark), transparent 70%);
+}
+
+.rsvp__success-title {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  color: var(--color-dark);
+  margin-bottom: 0.5rem;
+}
+
+.rsvp__error {
+  color: #c0392b;
+  font-size: 0.85rem;
+  margin-top: 1rem;
+}
+
 /* Animations */
 .reveal {
   opacity: 0;
