@@ -89,6 +89,19 @@ export default function WeddingSiteClient({
       sectionObserver.observe(el);
     });
 
+    // Click-to-select section (for dashboard preview sync)
+    const allSections = document.querySelectorAll("section[id], header[id], footer[id]");
+    function onSectionClick(e: Event) {
+      const section = (e.currentTarget as HTMLElement);
+      if (section.id) {
+        window.parent.postMessage({
+          type: "SECTION_CLICK",
+          sectionId: section.id
+        }, "*");
+      }
+    }
+    allSections.forEach((el) => el.addEventListener("click", onSectionClick));
+
     // Handle messages from parent (Dashboard)
     const nav = document.querySelector(".nav");
     let ticking = false;
@@ -328,6 +341,7 @@ export default function WeddingSiteClient({
       lb?.removeEventListener("click", closeLb);
       document.removeEventListener("keydown", onKey);
       sectionObserver.disconnect();
+      allSections.forEach((el) => el.removeEventListener("click", onSectionClick));
       window.removeEventListener("message", handleMessage);
     };
   }, [weddingDate, scheduleStyle, sectionOrder]);

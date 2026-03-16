@@ -1732,13 +1732,20 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
         }
       }
 
+      if (event.data?.type === "SECTION_CLICK") {
+        const sectionId = event.data.sectionId;
+        if (sectionId) {
+          handleTabChange(sectionId);
+        }
+      }
+
       if (event.data?.type === "SECTION_IN_VIEW") {
-        // If we recently clicked a tab OR if we are still initializing, 
+        // If we recently clicked a tab OR if we are still initializing,
         // ignore scroll-sync messages to prevent hijacking the user's view
         if (isInitialMount.current) return;
         if (Date.now() - lastManualTabClick.current < 1000) return;
 
-        // NEW: If we're on a static tab (Basics, Layout), don't allow scroll-sync to change it.
+        // If we're on a static tab (Basics, Layout), don't allow scroll-sync to change it.
         const isStatic = (STATIC_TABS as readonly string[]).includes(tab);
         if (isStatic) return;
 
@@ -2102,7 +2109,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
 
       <div className={`mx-auto transition-all ${isPreview ? "max-w-[1600px] px-0 lg:px-4" : "max-w-6xl px-3 sm:px-6"} py-4 lg:py-8 flex flex-col lg:flex-row gap-0 lg:gap-8`}>
         {/* Sidebar / Mobile Tabs */}
-        <nav className={`shrink-0 lg:sticky lg:top-20 self-start transition-all ${isPreview ? "lg:w-36" : "lg:w-44"} w-full overflow-x-auto lg:overflow-x-visible no-scrollbar mb-6 lg:mb-0 px-4 lg:px-0 block`}>
+        <nav className={`shrink-0 sticky top-14 lg:top-20 z-40 self-start transition-all ${isPreview ? "lg:w-36" : "lg:w-44"} w-full overflow-x-auto lg:overflow-x-visible no-scrollbar mb-6 lg:mb-0 px-4 lg:px-0 block bg-[#faf1e1]/95 backdrop-blur-sm lg:bg-transparent lg:backdrop-blur-none py-2 lg:py-0 -mx-0 border-b border-[#2d2b25]/[0.06] lg:border-b-0`}>
           <div className="flex lg:flex-col gap-1 min-w-max lg:min-w-0">
             {(() => {
               const order = site.sectionOrder ?? DEFAULT_SECTION_ORDER;

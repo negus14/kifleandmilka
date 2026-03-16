@@ -113,6 +113,19 @@ export default function WeddingSiteClient({
       sectionObserver.observe(el);
     });
 
+    // Click-to-select section (for dashboard preview sync)
+    const allSections = document.querySelectorAll("section[id], header[id], footer[id]");
+    function onSectionClick(e: Event) {
+      const section = (e.currentTarget as HTMLElement);
+      if (section.id) {
+        window.parent.postMessage({
+          type: "SECTION_CLICK",
+          sectionId: section.id
+        }, "*");
+      }
+    }
+    allSections.forEach((el) => el.addEventListener("click", onSectionClick));
+
     // Handle messages from parent (Dashboard)
     function handleMessage(event: MessageEvent) {
       if (event.data?.type === "SCROLL_TO_SECTION") {
@@ -290,6 +303,7 @@ export default function WeddingSiteClient({
       clearInterval(interval);
       observer.disconnect();
       sectionObserver.disconnect();
+      allSections.forEach((el) => el.removeEventListener("click", onSectionClick));
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("message", handleMessage);
       zoomables.forEach((img) => img.removeEventListener("click", openLb));
