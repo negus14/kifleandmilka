@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import CountryCodePicker from "./CountryCodePicker";
 
 interface Guest {
   id: string;
@@ -8,28 +9,40 @@ interface Guest {
   attending: "yes" | "no";
   mealChoice: string;
   isHalal: boolean;
+  dietaryPreference: string;
 }
 
 interface RSVPFormProps {
   slug: string;
   mealOptions?: string[];
   showHalalOption?: boolean;
+  /** Map of meal name → available dietary options, e.g. { "Chicken": ["Halal", "Kosher"] } */
+  mealDietaryOptions?: Record<string, string[]>;
 }
 
-export default function RSVPForm({ slug, mealOptions, showHalalOption = true }: RSVPFormProps) {
+export default function RSVPForm({ slug, mealOptions, showHalalOption = true, mealDietaryOptions }: RSVPFormProps) {
   const [email, setEmail] = useState("");
+  const [dialCode, setDialCode] = useState("+44");
+  const [phoneLocal, setPhoneLocal] = useState("");
   const [message, setMessage] = useState("");
   
   const options = (mealOptions && mealOptions.length > 0) 
     ? mealOptions 
     : ["Chicken", "Beef", "Fish", "Vegetarian"];
   
+  // Collect all unique dietary options across all menu items
+  const allDietaryOptions = mealDietaryOptions
+    ? [...new Set(Object.values(mealDietaryOptions).flat())]
+    : [];
+  const hasDietaryOptions = allDietaryOptions.length > 0;
+
   const createEmptyGuest = (): Guest => ({
     id: crypto.randomUUID(),
     name: "",
     attending: "yes",
     mealChoice: "",
     isHalal: false,
+    dietaryPreference: "",
   });
 
   const [guests, setGuests] = useState<Guest[]>([createEmptyGuest()]);
@@ -64,7 +77,8 @@ export default function RSVPForm({ slug, mealOptions, showHalalOption = true }: 
       name: g.name,
       attending: g.attending === "yes",
       mealChoice: g.mealChoice,
-      isHalal: g.isHalal,
+      isHalal: hasDietaryOptions ? g.dietaryPreference === "Halal" : g.isHalal,
+      dietaryPreference: g.dietaryPreference || undefined,
     }));
 
     try {
@@ -74,6 +88,7 @@ export default function RSVPForm({ slug, mealOptions, showHalalOption = true }: 
         body: JSON.stringify({
           slug,
           email,
+          phone: phoneLocal ? `${dialCode}${phoneLocal.replace(/[^0-9]/g, "")}` : undefined,
           message,
           guests: formattedGuests,
         }),
@@ -100,6 +115,7 @@ export default function RSVPForm({ slug, mealOptions, showHalalOption = true }: 
             setStatus("idle");
             setGuests([createEmptyGuest()]);
             setEmail("");
+            setPhoneLocal("");
             setMessage("");
           }} 
           className="rsvp__button rsvp__button--outline"
@@ -125,6 +141,29 @@ export default function RSVPForm({ slug, mealOptions, showHalalOption = true }: 
           placeholder="your.email@example.com"
         />
         <p style={{ fontSize: "0.8rem", opacity: 0.7, marginTop: "0.2rem" }}>We will send any updates here.</p>
+      </div>
+
+      <div className="rsvp__field">
+        <label htmlFor="phone" className="rsvp__label">WhatsApp Number (Optional)</label>
+        <div style={{ display: "flex", alignItems: "stretch", gap: 0 }}>
+          <CountryCodePicker
+            value={dialCode}
+            onChange={setDialCode}
+          />
+          <input
+            id="phone"
+            type="tel"
+            className="rsvp__input"
+            value={phoneLocal}
+            onChange={(e) => {
+              const val = e.target.value.replace(/[^0-9\s\-]/g, "");
+              setPhoneLocal(val);
+            }}
+            placeholder="7123 456789"
+            style={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0, flex: 1 }}
+          />
+        </div>
+        <p style={{ fontSize: "0.8rem", opacity: 0.7, marginTop: "0.2rem" }}>For WhatsApp updates and calendar invites.</p>
       </div>
 
       <div style={{ marginTop: "2rem", marginBottom: "1rem" }}>
@@ -208,11 +247,30 @@ export default function RSVPForm({ slug, mealOptions, showHalalOption = true }: 
             )}
           </div>
 
-          {guest.attending === "yes" && showHalalOption && (
+          {guest.attending === "yes" && hasDietaryOptions && (() => {
+            const availableForMeal = guest.mealChoice && mealDietaryOptions?.[guest.mealChoice];
+            if (!availableForMeal || availableForMeal.length === 0) return null;
+            return (
+              <div className="rsvp__field" style={{ marginTop: "0.5rem" }}>
+                <label className="rsvp__label">Dietary Requirement</label>
+                <select
+                  className="rsvp__select"
+                  value={guest.dietaryPreference}
+                  onChange={(e) => updateGuest(guest.id, "dietaryPreference", e.target.value)}
+                >
+                  <option value="">None</option>
+                  {availableForMeal.map((opt) => (
+                    <option key={opt} value={opt}>{opt}</option>
+                  ))}
+                </select>
+              </div>
+            );
+          })()}
+          {guest.attending === "yes" && !hasDietaryOptions && showHalalOption && (
             <div style={{ display: "flex", gap: "1.5rem", marginTop: "0.5rem" }}>
               <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer", fontSize: "0.9rem" }}>
-                <input 
-                  type="checkbox" 
+                <input
+                  type="checkbox"
                   checked={guest.isHalal}
                   onChange={(e) => updateGuest(guest.id, "isHalal", e.target.checked)}
                 />

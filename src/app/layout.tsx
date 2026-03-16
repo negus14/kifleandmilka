@@ -4,7 +4,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "I Think She Wifey — Wedding Website Builder",
   description:
-    "Design in Canva. Launch your wedding website. Import your Canva designs and turn them into beautiful, interactive wedding websites.",
+    "Create a fully customisable wedding website in minutes — with RSVP, gallery, schedule, and everything your guests need.",
 };
 
 export default function RootLayout({

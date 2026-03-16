@@ -20,6 +20,7 @@ export const rsvps = pgTable("rsvps", {
   id: uuid("id").defaultRandom().primaryKey(),
   siteSlug: text("site_slug").references(() => sites.slug, { onDelete: 'cascade' }),
   email: text("email"),
+  phone: text("phone"),
   message: text("message"),
   guests: jsonb("guests").notNull(),
   syncedAt: timestamp("synced_at", { withTimezone: true }),
@@ -27,6 +28,24 @@ export const rsvps = pgTable("rsvps", {
 }, (table) => {
   return [
     index("idx_rsvps_site_slug").on(table.siteSlug),
+  ];
+});
+
+// 2b. Gift Contributions Table
+export const giftContributions = pgTable("gift_contributions", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  siteSlug: text("site_slug").references(() => sites.slug, { onDelete: 'cascade' }),
+  giftName: text("gift_name").notNull(),
+  guestName: text("guest_name").notNull(),
+  amount: text("amount"),
+  currency: text("currency").default("GBP"),
+  message: text("message"),
+  paymentMethod: text("payment_method"),
+  status: text("status").default("pending"),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+}, (table) => {
+  return [
+    index("idx_gift_contributions_site_slug").on(table.siteSlug),
   ];
 });
 

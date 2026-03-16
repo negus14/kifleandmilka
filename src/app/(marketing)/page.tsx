@@ -98,28 +98,28 @@ export default function LandingPage() {
 
               <h1 className="font-['Playfair_Display',serif] leading-[0.95] tracking-[-0.02em] mb-8">
                 <span className="block text-[clamp(2.8rem,7vw,5.5rem)] animate-[fadeUp_0.8s_ease_0.2s_both]">
-                  Design in Canva.
+                  Create your
                 </span>
                 <span className="block text-[clamp(2.8rem,7vw,5.5rem)] animate-[fadeUp_0.8s_ease_0.35s_both]">
-                  Launch your
+                  wedding website
                 </span>
                 <span className="block text-[clamp(2.8rem,7vw,5.5rem)] italic font-light text-[#b5a992] animate-[fadeUp_0.8s_ease_0.5s_both]">
-                  wedding website.
+                  in minutes.
                 </span>
               </h1>
 
               <p className="font-['DM_Sans',sans-serif] text-base md:text-lg text-[#2d2b25]/60 max-w-md leading-relaxed mb-10 animate-[fadeUp_0.8s_ease_0.6s_both]">
-                Import your Canva designs and turn them into beautiful,
-                interactive wedding websites — with RSVP, gallery, and
-                everything your guests need.
+                Fully customisable, beautifully designed, and ready to share.
+                RSVP tracking, gallery, schedule, gifts — everything your
+                guests need, built in.
               </p>
 
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 animate-[fadeUp_0.8s_ease_0.7s_both]">
-                <Link 
+                <Link
                   href="/signup"
                   className="group relative inline-flex items-center gap-3 bg-[#2d2b25] text-[#faf1e1] px-8 py-4 font-['DM_Sans',sans-serif] text-[13px] font-semibold tracking-[0.12em] uppercase hover:bg-[#1a1812] transition-colors duration-300"
                 >
-                  Import Your Canva Design
+                  Start Building Free
                   <ArrowIcon className="transition-transform duration-300 group-hover:translate-x-1" />
                 </Link>
                 <Link
@@ -146,7 +146,7 @@ export default function LandingPage() {
                     fill
                     priority
                     sizes="(max-width: 768px) 100vw, 380px"
-                    className="object-cover filter sepia-[0.05]"
+                    className="object-cover filter sepia-[0.05] blur-[3px] scale-105"
                   />
                   {/* Overlay label */}
                   <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#2d2b25]/70 to-transparent p-6 pt-16">
@@ -166,7 +166,7 @@ export default function LandingPage() {
                     alt="Couple detail"
                     fill
                     sizes="160px"
-                    className="object-cover"
+                    className="object-cover blur-[3px] scale-105"
                   />
                 </div>
               </div>
@@ -187,11 +187,11 @@ export default function LandingPage() {
       <div className="border-y border-[#2d2b25]/[0.06] py-6 bg-[#cdc1ab]/10">
         <div className="max-w-7xl mx-auto px-6 md:px-10 flex flex-wrap justify-center gap-x-12 gap-y-3">
           {[
+            "Fully customisable",
             "Beautiful templates",
-            "Canva integration",
             "Built-in RSVP",
             "Mobile responsive",
-            "Custom domains",
+            "Free to start",
           ].map((item) => (
             <span
               key={item}
@@ -212,7 +212,7 @@ export default function LandingPage() {
               How It Works
             </p>
             <h2 className="font-['Playfair_Display',serif] text-[clamp(2rem,4.5vw,3.5rem)] leading-tight tracking-tight">
-              From Canva to live website
+              Your site, live
               <br />
               <span className="italic font-light text-[#b5a992]">
                 in three steps
@@ -225,20 +225,20 @@ export default function LandingPage() {
             {[
               {
                 num: "01",
-                title: "Design in Canva",
-                desc: "Use Canva's free tools to design your dream wedding invite or website — just like you already do. Choose any template, customize colors, fonts, and photos.",
+                title: "Pick a Template",
+                desc: "Choose from beautifully crafted templates designed for weddings. Each one is fully customisable — colours, fonts, photos, layout — make it yours.",
                 accent: "bg-[#cdc1ab]/20",
               },
               {
                 num: "02",
-                title: "Import & Customize",
-                desc: "Connect your Canva account, select your design, and map pages to website sections. Add your wedding details, guest list, and RSVP form.",
+                title: "Add Your Details",
+                desc: "Fill in your wedding info, upload photos, set up your schedule, and enable RSVP. The live preview updates as you type — no code needed.",
                 accent: "bg-[#2d2b25]/[0.04]",
               },
               {
                 num: "03",
-                title: "Share Your Site",
-                desc: "Your wedding website is live with a shareable link. Guests can RSVP, view the schedule, find venues, and explore your gallery — all from your Canva design.",
+                title: "Share With Guests",
+                desc: "Publish your site and share the link. Guests can RSVP, view the schedule, find venues, and explore your gallery — all from any device.",
                 accent: "bg-[#cdc1ab]/15",
               },
             ].map((step) => (
@@ -281,7 +281,7 @@ export default function LandingPage() {
                       alt="Wedding website preview"
                       fill
                       sizes="(max-width: 1024px) 100vw, 500px"
-                      className="object-cover"
+                      className="object-cover blur-[3px] scale-105"
                     />
                   </div>
                 </div>
@@ -334,16 +334,16 @@ export default function LandingPage() {
                     desc: "Guests RSVP directly on your site. Track responses, meal choices, and plus-ones from your dashboard.",
                   },
                   {
-                    title: "Beautiful Templates",
-                    desc: "Start with a curated template or import your own Canva design. Every site is mobile-responsive and fast.",
+                    title: "Fully Customisable",
+                    desc: "Change colours, fonts, backgrounds, and layout for every section. Drag and drop to reorder. Make it truly yours.",
                   },
                   {
-                    title: "Custom Domains",
-                    desc: "Share a memorable link like yournames.ithinkshewifey.com — or connect your own custom domain.",
+                    title: "Your Own Link",
+                    desc: "Share a memorable link like yournames.ithinkshewifey.com that guests will actually remember.",
                   },
                   {
                     title: "Guest Management",
-                    desc: "Import your guest list, send access codes, and manage RSVPs for multiple events — ceremony, reception, brunch.",
+                    desc: "Track RSVPs, meal choices, and dietary requirements in real time — no spreadsheets needed.",
                   },
                 ].map((feature) => (
                   <div
@@ -408,7 +408,7 @@ export default function LandingPage() {
                   alt="Adam & Eve wedding website demo"
                   fill
                   sizes="(max-width: 1024px) 100vw, 896px"
-                  className="object-cover object-top transition-transform duration-700 group-hover:scale-[1.02]"
+                  className="object-cover object-top transition-transform duration-700 group-hover:scale-[1.02] blur-[3px] scale-105"
                 />
                 {/* Overlay on hover */}
                 <div className="absolute inset-0 bg-[#2d2b25]/0 group-hover:bg-[#2d2b25]/40 transition-colors duration-500 flex items-center justify-center">
@@ -430,16 +430,15 @@ export default function LandingPage() {
 
         <div className="relative max-w-3xl mx-auto px-6 md:px-10 text-center">
           <h2 className="font-['Playfair_Display',serif] text-[clamp(2rem,5vw,3.5rem)] leading-tight text-[#faf1e1] mb-6">
-            Your love story deserves
+            Your wedding website,
             <br />
             <span className="italic font-light text-[#cdc1ab]">
-              more than a template
+              ready in minutes
             </span>
           </h2>
           <p className="font-['DM_Sans',sans-serif] text-sm text-[#faf1e1]/50 max-w-md mx-auto mb-10 leading-relaxed">
-            Start with the design you already love from Canva. We&apos;ll
-            turn it into a wedding website your guests will actually enjoy
-            using.
+            Build for free, customise everything, and publish when
+            you&apos;re ready. Your guests will love it.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link 

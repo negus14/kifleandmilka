@@ -4,6 +4,8 @@ import { getTheme, getFontStyle } from "@/lib/themes";
 import { toEmbedUrl, generateThemeVars, getSectionData } from "@/lib/template-utils";
 import WeddingSiteClient from "./WeddingSiteClient";
 import RSVPForm from "@/components/RSVPForm";
+import AccommodationActions from "@/components/AccommodationActions";
+import GiftContributionForm from "@/components/GiftContributionForm";
 import "./styles.css";
 
 export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPreview?: boolean }) {
@@ -489,9 +491,13 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
                       <p className="font-bold tracking-wider">{hotel.discountCode}</p>
                     </div>
                   )}
-                  <a href={hotel.bookingUrl} target="_blank" rel="noopener noreferrer" className="modern-btn modern-btn--primary text-center">
-                    Book Your Stay
-                  </a>
+                  <AccommodationActions
+                    phone={hotel.phone}
+                    email={hotel.email}
+                    bookingUrl={hotel.bookingUrl}
+                    buttonLabel={hotel.buttonLabel}
+                    variant="modern"
+                  />
                 </div>
               ))}
             </div>
@@ -504,6 +510,12 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
       if (!site.rsvpHeading) return null;
       const menuMeals = site.menuItems?.map(m => m.name) || [];
       const mealOptions = menuMeals.length > 0 ? menuMeals : site.rsvpMealOptions;
+      const mealDietaryOptions: Record<string, string[]> = {};
+      site.menuItems?.forEach(m => {
+        if (m.dietaryOptions && m.dietaryOptions.length > 0) {
+          mealDietaryOptions[m.name] = m.dietaryOptions;
+        }
+      });
 
       return (
         <section className={`modern-section ${cls}`} id={id} style={style}>
@@ -511,7 +523,7 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
             <div className="modern-card modern-card--flat reveal">
               <h2 className="modern-title modern-title--center">{site.rsvpHeading}</h2>
               <p className="modern-subtitle modern-subtitle--center">{site.rsvpDeadlineText}</p>
-              <RSVPForm slug={site.slug} mealOptions={mealOptions} showHalalOption={site.showHalalOption ?? true} />
+              <RSVPForm slug={site.slug} mealOptions={mealOptions} showHalalOption={site.showHalalOption ?? true} mealDietaryOptions={mealDietaryOptions} />
             </div>
           </div>
         </section>
@@ -523,102 +535,25 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
 
       const paymentLinks = site.giftPaymentLinks || [];
       const bankDetails = site.giftBankDetails || [];
-      const hasAnyGifts = paymentLinks.length > 0 || bankDetails.length > 0;
-
-      if (!hasAnyGifts) return null;
+      const giftItems = site.giftItems || [];
+      const paymentOptions = [
+        ...paymentLinks.map(l => ({ label: l.label, url: l.url })),
+        ...bankDetails.filter(b => b.payLink).map(b => ({ label: b.label, url: b.payLink })),
+      ];
 
       return (
         <section className={`modern-section ${cls}`} id={id} style={style}>
           <div className="modern-container modern-container--narrow reveal text-center">
             <h2 className="modern-title">{site.giftHeading}</h2>
             <p className="modern-text">{site.giftSubheading}</p>
-            
-            <div className="gift__dropdown-wrap">
-              <div className="gift__dropdown">
-                <button className="gift__dropdown-toggle" aria-haspopup="true" aria-expanded="false">
-                  Choose a Gift Method
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="6 9 12 15 18 9"/></svg>
-                </button>
-                
-                <div className="gift__dropdown-menu">
-                  {paymentLinks.map((link, i) => (
-                    <a key={`link-${i}`} href={link.url} target="_blank" rel="noopener noreferrer" className="gift__dropdown-item gift__dropdown-item--link">
-                      <span className="gift__item-icon">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-                      </span>
-                      {link.label}
-                    </a>
-                  ))}
 
-                  {bankDetails.map((bank, i) => {
-                    const allDetails = [
-                      bank.accountHolder ? `Account Holder: ${bank.accountHolder}` : null,
-                      bank.email ? `Email: ${bank.email}` : null,
-                      bank.sortCode ? `Sort Code: ${bank.sortCode}` : null,
-                      bank.accountNumber ? `Account Number: ${bank.accountNumber}` : null,
-                      bank.swiftCode ? `SWIFT Code: ${bank.swiftCode}` : null,
-                    ].filter(Boolean).join('\n');
-
-                    return (
-                      <div key={`bank-${i}`} className="gift__dropdown-item gift__dropdown-item--bank text-left">
-                        <div className="gift__bank-header">
-                          <span className="gift__item-icon">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-                          </span>
-                          {bank.label}
-                          <div className="gift__bank-actions">
-                            {bank.payLink && (
-                              <a 
-                                href={bank.payLink} 
-                                target="_blank" 
-                                rel="noopener" 
-                                className="bank-copy-btn bank-copy-btn--pay"
-                              >
-                                Pay Now
-                              </a>
-                            )}
-                            <button 
-                              className="bank-copy-btn bank-copy-btn--all" 
-                              data-copy={allDetails} 
-                              title="Copy all details"
-                            >
-                              Copy All
-                            </button>
-                          </div>
-                        </div>
-                        <div className="gift__bank-details-mini">
-                          {bank.accountHolder && <div className="gift__mini-row"><span>Holder:</span> <strong>{bank.accountHolder}</strong></div>}
-                          {bank.email && (
-                            <div className="gift__mini-row">
-                              <span>Email:</span> 
-                              <strong>{bank.email}</strong>
-                            </div>
-                          )}
-                          {bank.sortCode && (
-                            <div className="gift__mini-row">
-                              <span>Sort:</span> 
-                              <strong>{bank.sortCode}</strong>
-                            </div>
-                          )}
-                          {bank.accountNumber && (
-                            <div className="gift__mini-row">
-                              <span>Account:</span> 
-                              <strong>{bank.accountNumber}</strong>
-                            </div>
-                          )}
-                          {bank.swiftCode && (
-                            <div className="gift__mini-row">
-                              <span>SWIFT:</span> 
-                              <strong>{bank.swiftCode}</strong>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
+            <GiftContributionForm
+              slug={site.slug}
+              giftItems={giftItems}
+              currency={site.giftCurrency || "GBP"}
+              acceptedCurrencies={site.giftAcceptedCurrencies || ["GBP"]}
+              paymentOptions={paymentOptions}
+            />
 
             {site.giftNote && <p className="modern-text modern-text--small">{site.giftNote}</p>}
           </div>

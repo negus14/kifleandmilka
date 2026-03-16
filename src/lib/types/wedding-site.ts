@@ -49,6 +49,7 @@ export interface WeddingDay {
 export interface MenuItem {
   name: string;
   description: string;
+  dietaryOptions?: string[]; // e.g. ["Halal", "Kosher", "Vegan", "Gluten-Free"]
 }
 
 export interface GalleryImage {
@@ -69,6 +70,9 @@ export interface AccommodationItem {
   bookingUrl: string;
   badge?: string;
   discountCode?: string;
+  phone?: string;
+  email?: string;
+  buttonLabel?: string;
 }
 
 export interface BankDetail {
@@ -90,6 +94,14 @@ export interface ContactEntry {
 export interface FAQItem {
   question: string;
   answer: string;
+}
+
+export interface GiftItem {
+  id: string;
+  name: string;
+  description: string;
+  suggestedAmount?: string;
+  imageUrl?: string;
 }
 
 export interface SectionConfig {
@@ -200,6 +212,10 @@ export interface WeddingSite {
   giftPaymentLinks?: { label: string; url: string }[];
   giftNote: string;
   giftBankDetails?: BankDetail[];
+  giftItems?: GiftItem[];
+  giftCurrency?: string;
+  giftAcceptedCurrencies?: string[];
+  giftEnableContributions?: boolean;
 
   // Footer
   footerNames: string;
@@ -209,6 +225,7 @@ export interface WeddingSite {
 
   // Contact
   contactHeading?: string;
+  contactSubheading?: string;
 
   // Structured sections
   eventDays: EventDay[];

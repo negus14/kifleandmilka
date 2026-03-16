@@ -8,11 +8,13 @@ interface GuestInput {
   attending: boolean;
   mealChoice?: string;
   isHalal?: boolean;
+  dietaryPreference?: string;
 }
 
 interface RSVPPayload {
   slug: string;
   email: string;
+  phone?: string;
   message?: string;
   guests: GuestInput[];
 }
@@ -20,7 +22,7 @@ interface RSVPPayload {
 export async function POST(request: NextRequest) {
   try {
     const body = (await request.json()) as RSVPPayload;
-    const { slug, email, guests, message } = body;
+    const { slug, email, phone, guests, message } = body;
 
     if (!slug || !guests || !Array.isArray(guests) || guests.length === 0) {
       return NextResponse.json({ error: "Slug and at least one guest are required" }, { status: 400 });
@@ -49,7 +51,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 1. Save to PostgreSQL (Primary Data Store)
-    const rsvp = await createRSVP(slug, email, guests, message);
+    const rsvp = await createRSVP(slug, email, guests, message, phone);
 
     // 2. Attempt Sync to Google Sheets (Secondary/Legacy Store)
     // We await this to ensure we try at least once, but failure won't break the response

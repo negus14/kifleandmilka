@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
-import { getRSVPsBySite, updateRSVP, deleteRSVP } from "@/lib/data/rsvps";
+import { getGiftContributionsBySite, updateGiftContribution, deleteGiftContribution } from "@/lib/data/gift-contributions";
 
 export async function GET(
   request: Request,
@@ -13,11 +13,11 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const rsvps = await getRSVPsBySite(slug);
-    return NextResponse.json({ rsvps });
+    const contributions = await getGiftContributionsBySite(slug);
+    return NextResponse.json({ contributions });
   } catch (error) {
-    console.error("[API] GET RSVPs Error:", error);
-    return NextResponse.json({ error: "Failed to load RSVPs" }, { status: 500 });
+    console.error("[API] GET Gift Contributions Error:", error);
+    return NextResponse.json({ error: "Failed to load" }, { status: 500 });
   }
 }
 
@@ -32,18 +32,14 @@ export async function PUT(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await request.json();
-    const { id, email, phone, message, guests } = body;
+    const { id, status } = await request.json();
+    if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
 
-    if (!id || typeof id !== "string") {
-      return NextResponse.json({ error: "Missing RSVP id" }, { status: 400 });
-    }
-
-    await updateRSVP(id, { email, phone, message, guests });
+    await updateGiftContribution(id, { status });
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("[API] PUT RSVP Error:", error);
-    return NextResponse.json({ error: "Failed to update RSVP" }, { status: 500 });
+    console.error("[API] PUT Gift Contribution Error:", error);
+    return NextResponse.json({ error: "Failed to update" }, { status: 500 });
   }
 }
 
@@ -58,17 +54,13 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await request.json();
-    const { id } = body;
+    const { id } = await request.json();
+    if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
 
-    if (!id || typeof id !== "string") {
-      return NextResponse.json({ error: "Missing RSVP id" }, { status: 400 });
-    }
-
-    await deleteRSVP(id);
+    await deleteGiftContribution(id);
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("[API] DELETE RSVP Error:", error);
-    return NextResponse.json({ error: "Failed to delete RSVP" }, { status: 500 });
+    console.error("[API] DELETE Gift Contribution Error:", error);
+    return NextResponse.json({ error: "Failed to delete" }, { status: 500 });
   }
 }
