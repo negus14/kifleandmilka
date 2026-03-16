@@ -537,8 +537,8 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
       const bankDetails = site.giftBankDetails || [];
       const giftItems = site.giftItems || [];
       const paymentOptions = [
-        ...paymentLinks.map(l => ({ label: l.label, url: l.url })),
-        ...bankDetails.filter(b => b.payLink).map(b => ({ label: b.label, url: b.payLink })),
+        ...paymentLinks.map(l => ({ label: l.label, url: l.url, currencies: l.currencies })),
+        ...bankDetails.filter(b => b.payLink).map(b => ({ label: b.label, url: b.payLink, currencies: b.currencies })),
       ];
 
       return (
@@ -551,7 +551,6 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
               slug={site.slug}
               giftItems={giftItems}
               currency={site.giftCurrency || "GBP"}
-              acceptedCurrencies={site.giftAcceptedCurrencies || ["GBP"]}
               paymentOptions={paymentOptions}
             />
 

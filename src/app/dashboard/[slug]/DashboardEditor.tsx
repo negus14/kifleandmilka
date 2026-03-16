@@ -19,6 +19,7 @@ import type {
 import { DEFAULT_SECTION_ORDER, SECTION_LABELS, type SectionConfig } from "@/lib/types/wedding-site";
 import { themes, fontStyles } from "@/lib/themes";
 import CountryCodePicker, { matchCountry } from "@/components/CountryCodePicker";
+import CurrencyPicker, { getCurrencySymbol } from "@/components/CurrencyPicker";
 import {
   DndContext,
   closestCenter,
@@ -649,7 +650,7 @@ function GiftTrackerPanel({ giftData, loadGifts, site }: {
   const totalAmount = contributions.reduce((sum, c) => sum + (c.amount ? parseFloat(c.amount) : 0), 0);
   const confirmed = contributions.filter(c => c.status === "confirmed").length;
   const pending = contributions.filter(c => c.status === "pending").length;
-  const currencySymbol = { GBP: "£", USD: "$", EUR: "€", CAD: "C$", AUD: "A$", ETB: "Br", KES: "KSh", NGN: "₦", ZAR: "R", INR: "₹", CHF: "CHF", SEK: "kr", NOK: "kr", DKK: "kr", JPY: "¥", CNY: "¥", BRL: "R$", MXN: "MX$", AED: "د.إ", SAR: "﷼", NZD: "NZ$" }[site.giftCurrency || "GBP"] || "£";
+  const currencySymbol = getCurrencySymbol(site.giftCurrency || "GBP");
 
   const toggleStatus = async (id: string, current: string | null) => {
     const newStatus = current === "confirmed" ? "pending" : "confirmed";
@@ -762,7 +763,7 @@ function GiftTrackerPanel({ giftData, loadGifts, site }: {
                       <span className="text-xs text-[#2d2b25]/50">{c.gift_name}</span>
                     </td>
                     <td className="px-4 py-2.5 text-right">
-                      <span className="text-sm font-medium text-[#2d2b25]">{c.amount ? `${({ GBP: "£", USD: "$", EUR: "€", CAD: "C$", AUD: "A$", ETB: "Br", KES: "KSh", NGN: "₦", ZAR: "R", INR: "₹", CHF: "CHF", SEK: "kr", NOK: "kr", DKK: "kr", JPY: "¥", CNY: "¥", BRL: "R$", MXN: "MX$", AED: "د.إ", SAR: "﷼", NZD: "NZ$" } as Record<string, string>)[c.currency || site.giftCurrency || "GBP"] || "£"}${c.amount}` : "\u2014"}</span>
+                      <span className="text-sm font-medium text-[#2d2b25]">{c.amount ? `${getCurrencySymbol(c.currency || site.giftCurrency || "GBP")}${c.amount}` : "\u2014"}</span>
                     </td>
                     <td className="px-4 py-2.5 hidden sm:table-cell">
                       <span className="text-xs text-[#2d2b25]/45 truncate block max-w-[200px]">{c.message || "\u2014"}</span>
@@ -2920,126 +2921,9 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                     </button>
                   </div>
 
-                  {/* Currency Selector */}
-                  {site.giftEnableContributions && (() => {
-                    const allCurrencies = [
-                      { code: "GBP", label: "£ GBP — British Pound" },
-                      { code: "USD", label: "$ USD — US Dollar" },
-                      { code: "EUR", label: "€ EUR — Euro" },
-                      { code: "CAD", label: "C$ CAD — Canadian Dollar" },
-                      { code: "AUD", label: "A$ AUD — Australian Dollar" },
-                      { code: "NZD", label: "NZ$ NZD — New Zealand Dollar" },
-                      { code: "CHF", label: "CHF — Swiss Franc" },
-                      { code: "SEK", label: "kr SEK — Swedish Krona" },
-                      { code: "NOK", label: "kr NOK — Norwegian Krone" },
-                      { code: "DKK", label: "kr DKK — Danish Krone" },
-                      { code: "ETB", label: "Br ETB — Ethiopian Birr" },
-                      { code: "KES", label: "KSh KES — Kenyan Shilling" },
-                      { code: "NGN", label: "₦ NGN — Nigerian Naira" },
-                      { code: "ZAR", label: "R ZAR — South African Rand" },
-                      { code: "INR", label: "₹ INR — Indian Rupee" },
-                      { code: "JPY", label: "¥ JPY — Japanese Yen" },
-                      { code: "CNY", label: "¥ CNY — Chinese Yuan" },
-                      { code: "BRL", label: "R$ BRL — Brazilian Real" },
-                      { code: "MXN", label: "MX$ MXN — Mexican Peso" },
-                      { code: "AED", label: "د.إ AED — UAE Dirham" },
-                      { code: "SAR", label: "﷼ SAR — Saudi Riyal" },
-                      { code: "TRY", label: "₺ TRY — Turkish Lira" },
-                      { code: "PLN", label: "zł PLN — Polish Zloty" },
-                      { code: "HUF", label: "Ft HUF — Hungarian Forint" },
-                      { code: "CZK", label: "Kč CZK — Czech Koruna" },
-                      { code: "RON", label: "lei RON — Romanian Leu" },
-                      { code: "BGN", label: "лв BGN — Bulgarian Lev" },
-                      { code: "HRK", label: "kn HRK — Croatian Kuna" },
-                      { code: "RUB", label: "₽ RUB — Russian Ruble" },
-                      { code: "UAH", label: "₴ UAH — Ukrainian Hryvnia" },
-                      { code: "GEL", label: "₾ GEL — Georgian Lari" },
-                      { code: "ILS", label: "₪ ILS — Israeli Shekel" },
-                      { code: "EGP", label: "E£ EGP — Egyptian Pound" },
-                      { code: "MAD", label: "MAD — Moroccan Dirham" },
-                      { code: "GHS", label: "₵ GHS — Ghanaian Cedi" },
-                      { code: "TZS", label: "TSh TZS — Tanzanian Shilling" },
-                      { code: "UGX", label: "USh UGX — Ugandan Shilling" },
-                      { code: "RWF", label: "RF RWF — Rwandan Franc" },
-                      { code: "XOF", label: "CFA XOF — West African CFA" },
-                      { code: "XAF", label: "CFA XAF — Central African CFA" },
-                      { code: "PKR", label: "₨ PKR — Pakistani Rupee" },
-                      { code: "BDT", label: "৳ BDT — Bangladeshi Taka" },
-                      { code: "LKR", label: "Rs LKR — Sri Lankan Rupee" },
-                      { code: "THB", label: "฿ THB — Thai Baht" },
-                      { code: "VND", label: "₫ VND — Vietnamese Dong" },
-                      { code: "MYR", label: "RM MYR — Malaysian Ringgit" },
-                      { code: "SGD", label: "S$ SGD — Singapore Dollar" },
-                      { code: "PHP", label: "₱ PHP — Philippine Peso" },
-                      { code: "IDR", label: "Rp IDR — Indonesian Rupiah" },
-                      { code: "KRW", label: "₩ KRW — South Korean Won" },
-                      { code: "TWD", label: "NT$ TWD — Taiwan Dollar" },
-                      { code: "HKD", label: "HK$ HKD — Hong Kong Dollar" },
-                      { code: "ARS", label: "AR$ ARS — Argentine Peso" },
-                      { code: "CLP", label: "CL$ CLP — Chilean Peso" },
-                      { code: "COP", label: "CO$ COP — Colombian Peso" },
-                      { code: "PEN", label: "S/ PEN — Peruvian Sol" },
-                      { code: "JMD", label: "J$ JMD — Jamaican Dollar" },
-                      { code: "TTD", label: "TT$ TTD — Trinidad Dollar" },
-                    ];
-                    const accepted = site.giftAcceptedCurrencies || ["GBP"];
-                    const available = allCurrencies.filter(c => !accepted.includes(c.code));
-
-                    return (
-                    <div className="mb-8 animate-in fade-in slide-in-from-top-2 duration-300">
-                      <Label>Accepted Currencies</Label>
-                      <p className="text-[10px] text-[#2d2b25]/40 mb-3 uppercase tracking-wider">Select the currencies you are willing to receive</p>
-
-                      {/* Selected currencies */}
-                      {accepted.length > 0 && (
-                        <div className="flex flex-wrap gap-2 mt-3 mb-3">
-                          {accepted.map(code => {
-                            const c = allCurrencies.find(x => x.code === code);
-                            return (
-                              <span key={code} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#2d2b25] text-white text-xs font-bold rounded-sm">
-                                {c ? c.label.split(" — ")[0] : code}
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    const updated = accepted.filter(x => x !== code);
-                                    if (updated.length === 0) return;
-                                    set("giftAcceptedCurrencies", updated);
-                                    if ((site.giftCurrency || "GBP") === code) {
-                                      set("giftCurrency", updated[0]);
-                                    }
-                                  }}
-                                  className="ml-0.5 opacity-60 hover:opacity-100 transition-opacity"
-                                >
-                                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                                </button>
-                              </span>
-                            );
-                          })}
-                        </div>
-                      )}
-
-                      {/* Dropdown to add */}
-                      <select
-                        value=""
-                        onChange={(e) => {
-                          if (!e.target.value) return;
-                          const updated = [...accepted, e.target.value];
-                          set("giftAcceptedCurrencies", updated);
-                        }}
-                        className="w-full px-3 py-2.5 text-sm border border-[#2d2b25]/15 bg-white rounded-sm outline-none focus:border-[#2d2b25]/40 transition-colors text-[#2d2b25]"
-                      >
-                        <option value="">Add a currency...</option>
-                        {available.map(c => (
-                          <option key={c.code} value={c.code}>{c.label}</option>
-                        ))}
-                      </select>
-                    </div>
-                    );
-                  })()}
-
-                  {/* Gift Items */}
+                  {/* Gift Items — only when contributions enabled */}
                   {site.giftEnableContributions && (
-                    <div className="mt-4 mb-10">
+                    <div className="mt-4 mb-10 animate-in fade-in slide-in-from-top-2 duration-300">
                       <Label>Gift Items</Label>
                       <p className="text-[10px] text-[#2d2b25]/40 mb-4 uppercase tracking-wider">Add gifts guests can contribute towards</p>
 
@@ -3065,37 +2949,49 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
 
                   <div className="mt-8 mb-10">
                     <Label>External Registry Links</Label>
-                    <p className="text-[10px] text-[#2d2b25]/40 mb-4 uppercase tracking-wider">Simple links for PayPal, Monzo, Revolut, Wise, or Store Registries</p>
-                    
-                    <SortableList 
-                      items={site.giftPaymentLinks || []} 
-                      prefix={`reg-${id}`} 
+                    <p className="text-[10px] text-[#2d2b25]/40 mb-4 uppercase tracking-wider">Link each account to the currencies it accepts</p>
+
+                    <SortableList
+                      items={site.giftPaymentLinks || []}
+                      prefix={`reg-${id}`}
                       onReorder={(items) => set("giftPaymentLinks", items)}
                     >
                       {(link, i, sid) => (
                         <SortableCard key={sid} id={sid} onRemove={() => set("giftPaymentLinks", removeFromArray(site.giftPaymentLinks || [], i))}>
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <Field label="Label" value={link.label} onChange={(v) => set("giftPaymentLinks", updateInArray(site.giftPaymentLinks || [], i, { label: v }))} placeholder="e.g. PayPal, Monzo, Revolut" />
+                            <Field label="Label" value={link.label} onChange={(v) => set("giftPaymentLinks", updateInArray(site.giftPaymentLinks || [], i, { label: v }))} placeholder="e.g. PayPal, Revolut" />
                             <Field label="URL" value={link.url} onChange={(v) => set("giftPaymentLinks", updateInArray(site.giftPaymentLinks || [], i, { url: v }))} placeholder="https://..." />
+                          </div>
+                          <div className="mt-3">
+                            <CurrencyPicker
+                              selected={link.currencies || []}
+                              onChange={(currencies) => set("giftPaymentLinks", updateInArray(site.giftPaymentLinks || [], i, { currencies }))}
+                            />
                           </div>
                         </SortableCard>
                       )}
                     </SortableList>
-                    <AddButton label="Add Registry/Payment Link" onClick={() => set("giftPaymentLinks", [...(site.giftPaymentLinks || []), { label: "", url: "" }])} />
+                    <AddButton label="Add Registry/Payment Link" onClick={() => set("giftPaymentLinks", [...(site.giftPaymentLinks || []), { label: "", url: "", currencies: [] }])} />
                   </div>
 
                   <div className="mt-8">
                     <Label>Bank & Payment Options</Label>
-                    <p className="text-[10px] text-[#2d2b25]/40 mb-4 uppercase tracking-wider">Add bank details here</p>
-                    
-                    <SortableList 
-                      items={site.giftBankDetails || []} 
-                      prefix={`banks-${id}`} 
+                    <p className="text-[10px] text-[#2d2b25]/40 mb-4 uppercase tracking-wider">Add bank details with their accepted currencies</p>
+
+                    <SortableList
+                      items={site.giftBankDetails || []}
+                      prefix={`banks-${id}`}
                       onReorder={(items) => set("giftBankDetails", items)}
                     >
                       {(bank, i, sid) => (
                         <SortableCard key={sid} id={sid} title={bank.label || `Option ${i + 1}`} onRemove={() => set("giftBankDetails", removeFromArray(site.giftBankDetails || [], i))}>
                           <Field label="Method Label" value={bank.label} onChange={(v) => set("giftBankDetails", updateInArray(site.giftBankDetails || [], i, { label: v }))} placeholder="e.g. Wise (International) or UK Bank" />
+                          <div className="mt-3 mb-3">
+                            <CurrencyPicker
+                              selected={bank.currencies || []}
+                              onChange={(currencies) => set("giftBankDetails", updateInArray(site.giftBankDetails || [], i, { currencies }))}
+                            />
+                          </div>
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <Field label="Account Holder" value={bank.accountHolder || ""} onChange={(v) => set("giftBankDetails", updateInArray(site.giftBankDetails || [], i, { accountHolder: v }))} />
                             <Field label="Bank Name" value={bank.bankName || ""} onChange={(v) => set("giftBankDetails", updateInArray(site.giftBankDetails || [], i, { bankName: v }))} />

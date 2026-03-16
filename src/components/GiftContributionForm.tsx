@@ -2,38 +2,48 @@
 
 import { useState } from "react";
 import type { GiftItem } from "@/lib/types/wedding-site";
+import { getCurrencySymbol } from "@/components/CurrencyPicker";
 
 interface PaymentOption {
   label: string;
   url?: string;
+  currencies?: string[];
 }
 
 interface GiftContributionFormProps {
   slug: string;
   giftItems: GiftItem[];
   currency: string;
-  acceptedCurrencies: string[];
   paymentOptions: PaymentOption[];
 }
 
-export default function GiftContributionForm({ slug, giftItems, currency, acceptedCurrencies, paymentOptions }: GiftContributionFormProps) {
+export default function GiftContributionForm({ slug, giftItems, currency, paymentOptions }: GiftContributionFormProps) {
+  // Derive accepted currencies from payment options that have currencies set
+  const acceptedCurrencies = [...new Set(
+    paymentOptions.flatMap(o => o.currencies || [])
+  )];
+  // Fall back to the site default if no payment options have currencies
+  const effectiveCurrencies = acceptedCurrencies.length > 0 ? acceptedCurrencies : [currency];
+
   const noItems = giftItems.length === 0;
   const [selectedGift, setSelectedGift] = useState<GiftItem | null>(
     noItems ? { id: "general", name: "General Contribution", description: "" } : null
   );
   const [guestName, setGuestName] = useState("");
   const [amount, setAmount] = useState("");
-  const [selectedCurrency, setSelectedCurrency] = useState(currency);
+  const [selectedCurrency, setSelectedCurrency] = useState(effectiveCurrencies[0]);
   const [message, setMessage] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("");
   const [status, setStatus] = useState<"idle" | "selecting" | "form" | "loading" | "success" | "error">(noItems ? "form" : "idle");
   const [errorMessage, setErrorMessage] = useState("");
 
-  const getCurrencySymbol = (code: string) => {
-    return { GBP: "£", USD: "$", EUR: "€", CAD: "C$", AUD: "A$", ETB: "Br", KES: "KSh", NGN: "₦", ZAR: "R", INR: "₹", CHF: "CHF", SEK: "kr", NOK: "kr", DKK: "kr", JPY: "¥", CNY: "¥", BRL: "R$", MXN: "MX$", AED: "د.إ", SAR: "﷼", NZD: "NZ$" }[code] || code;
-  };
-
   const currencySymbol = getCurrencySymbol(selectedCurrency);
+
+  // Filter payment options to only show those matching the selected currency
+  // Options without currencies set are shown for all currencies (backwards compat)
+  const filteredPaymentOptions = paymentOptions.filter(
+    o => !o.currencies || o.currencies.length === 0 || o.currencies.includes(selectedCurrency)
+  );
 
   const selectGift = (gift: GiftItem) => {
     setSelectedGift(gift);
@@ -43,10 +53,15 @@ export default function GiftContributionForm({ slug, giftItems, currency, accept
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
-    // Only allow whole numbers
     if (val === "" || /^\d+$/.test(val)) {
       setAmount(val);
     }
+  };
+
+  const handleCurrencyChange = (code: string) => {
+    setSelectedCurrency(code);
+    // Reset payment method when switching currency since the options change
+    setPaymentMethod("");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -71,7 +86,6 @@ export default function GiftContributionForm({ slug, giftItems, currency, accept
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Something went wrong");
 
-      // Redirect to payment if URL returned
       if (data.redirectUrl) {
         window.open(data.redirectUrl, "_blank");
       }
@@ -174,15 +188,15 @@ export default function GiftContributionForm({ slug, giftItems, currency, accept
           />
         </div>
 
-        {acceptedCurrencies.length > 1 && (
+        {effectiveCurrencies.length > 1 && (
           <div className="gift-contrib__field">
             <label className="gift-contrib__label">Select Currency</label>
             <div className="gift-contrib__currency-grid">
-              {acceptedCurrencies.map((code) => (
+              {effectiveCurrencies.map((code) => (
                 <button
                   key={code}
                   type="button"
-                  onClick={() => setSelectedCurrency(code)}
+                  onClick={() => handleCurrencyChange(code)}
                   className={`gift-contrib__currency-btn ${selectedCurrency === code ? "gift-contrib__currency-btn--active" : ""}`}
                 >
                   {getCurrencySymbol(code)} {code}
@@ -221,7 +235,7 @@ export default function GiftContributionForm({ slug, giftItems, currency, accept
           />
         </div>
 
-        {paymentOptions.length > 0 && (
+        {filteredPaymentOptions.length > 0 && (
           <div className="gift-contrib__field">
             <label className="gift-contrib__label">Payment Method</label>
             <select
@@ -230,7 +244,7 @@ export default function GiftContributionForm({ slug, giftItems, currency, accept
               onChange={(e) => setPaymentMethod(e.target.value)}
             >
               <option value="">Select payment method...</option>
-              {paymentOptions.map((opt) => (
+              {filteredPaymentOptions.map((opt) => (
                 <option key={opt.label} value={opt.label}>{opt.label}</option>
               ))}
             </select>

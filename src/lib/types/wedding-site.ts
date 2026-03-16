@@ -77,6 +77,7 @@ export interface AccommodationItem {
 
 export interface BankDetail {
   label: string; // e.g. "Canada (Interac e-Transfer)", "UK (Bank Transfer)"
+  currencies?: string[];
   bankName?: string;
   accountHolder?: string;
   accountNumber?: string;
@@ -209,7 +210,7 @@ export interface WeddingSite {
   // Gift
   giftHeading: string;
   giftSubheading: string;
-  giftPaymentLinks?: { label: string; url: string }[];
+  giftPaymentLinks?: { label: string; url: string; currencies?: string[] }[];
   giftNote: string;
   giftBankDetails?: BankDetail[];
   giftItems?: GiftItem[];

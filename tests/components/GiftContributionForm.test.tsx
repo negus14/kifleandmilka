@@ -10,7 +10,6 @@ const defaultProps = {
   slug: "test-wedding",
   giftItems: [],
   currency: "GBP",
-  acceptedCurrencies: ["GBP"],
   paymentOptions: [],
 };
 
@@ -25,16 +24,21 @@ describe('GiftContributionForm', () => {
     expect(screen.getByText(/Amount \(GBP\)/)).toBeInTheDocument();
   });
 
-  it('does not show currency selector with single currency', () => {
-    render(<GiftContributionForm {...defaultProps} />);
+  it('does not show currency selector with single currency payment options', () => {
+    render(<GiftContributionForm {...defaultProps} paymentOptions={[
+      { label: "PayPal", url: "https://paypal.me/test", currencies: ["GBP"] },
+    ]} />);
     expect(screen.queryByText('Select Currency')).not.toBeInTheDocument();
   });
 
-  it('shows currency selector when multiple currencies accepted', () => {
+  it('derives currencies from payment options and shows selector', () => {
     render(
       <GiftContributionForm
         {...defaultProps}
-        acceptedCurrencies={["GBP", "USD", "EUR"]}
+        paymentOptions={[
+          { label: "PayPal", url: "https://paypal.me/test", currencies: ["GBP", "USD"] },
+          { label: "Wise", url: "https://wise.com/pay", currencies: ["EUR", "GBP"] },
+        ]}
       />
     );
     expect(screen.getByText('Select Currency')).toBeInTheDocument();
@@ -43,58 +47,128 @@ describe('GiftContributionForm', () => {
     expect(screen.getByText('€ EUR')).toBeInTheDocument();
   });
 
-  it('switches currency when a currency button is clicked', async () => {
+  it('filters payment methods by selected currency', async () => {
     render(
       <GiftContributionForm
         {...defaultProps}
-        acceptedCurrencies={["GBP", "USD"]}
+        paymentOptions={[
+          { label: "PayPal", url: "https://paypal.me/gbp", currencies: ["GBP", "USD"] },
+          { label: "Monzo", url: "https://monzo.me/test", currencies: ["GBP"] },
+          { label: "Wise", url: "https://wise.com/eur", currencies: ["EUR"] },
+        ]}
       />
     );
-    const usdBtn = screen.getByText('$ USD');
-    fireEvent.click(usdBtn);
-    expect(screen.getByText(/Amount \(USD\)/)).toBeInTheDocument();
+
+    // Default is GBP — PayPal and Monzo accept GBP
+    const select = screen.getByRole('combobox');
+    let options = Array.from(select.querySelectorAll('option')).map(o => o.textContent);
+    expect(options).toContain("PayPal");
+    expect(options).toContain("Monzo");
+    expect(options).not.toContain("Wise");
+
+    // Switch to USD — only PayPal accepts USD
+    fireEvent.click(screen.getByText('$ USD'));
+    options = Array.from(select.querySelectorAll('option')).map(o => o.textContent);
+    expect(options).toContain("PayPal");
+    expect(options).not.toContain("Monzo");
+    expect(options).not.toContain("Wise");
+
+    // Switch to EUR — only Wise accepts EUR
+    fireEvent.click(screen.getByText('€ EUR'));
+    options = Array.from(select.querySelectorAll('option')).map(o => o.textContent);
+    expect(options).toContain("Wise");
+    expect(options).not.toContain("PayPal");
+    expect(options).not.toContain("Monzo");
   });
 
-  it('marks the active currency button with active class', () => {
+  it('resets payment method when switching currency', () => {
     render(
       <GiftContributionForm
         {...defaultProps}
-        acceptedCurrencies={["GBP", "ETB"]}
+        paymentOptions={[
+          { label: "PayPal", currencies: ["GBP"] },
+          { label: "Wise", currencies: ["USD"] },
+        ]}
       />
     );
-    const gbpBtn = screen.getByText('£ GBP');
-    expect(gbpBtn.className).toContain('gift-contrib__currency-btn--active');
-    const etbBtn = screen.getByText('Br ETB');
-    expect(etbBtn.className).not.toContain('gift-contrib__currency-btn--active');
+
+    const select = screen.getByRole('combobox') as HTMLSelectElement;
+    fireEvent.change(select, { target: { value: "PayPal" } });
+    expect(select.value).toBe("PayPal");
+
+    // Switch currency — payment method should reset
+    fireEvent.click(screen.getByText('$ USD'));
+    expect(select.value).toBe("");
+  });
+
+  it('shows payment options without currencies for all currencies (backwards compat)', () => {
+    render(
+      <GiftContributionForm
+        {...defaultProps}
+        paymentOptions={[
+          { label: "PayPal", url: "https://paypal.me/gbp", currencies: ["GBP"] },
+          { label: "Wise", url: "https://wise.com/usd", currencies: ["USD"] },
+          { label: "Legacy Link", url: "https://old.com" }, // no currencies
+        ]}
+      />
+    );
+
+    // Legacy link should show for GBP (default)
+    const select = screen.getByRole('combobox');
+    let options = Array.from(select.querySelectorAll('option')).map(o => o.textContent);
+    expect(options).toContain("Legacy Link");
+    expect(options).toContain("PayPal");
+
+    // Switch to USD — legacy link should still show
+    fireEvent.click(screen.getByText('$ USD'));
+    options = Array.from(select.querySelectorAll('option')).map(o => o.textContent);
+    expect(options).toContain("Legacy Link");
+    expect(options).toContain("Wise");
+  });
+
+  it('deduplicates currencies across multiple payment options', () => {
+    render(
+      <GiftContributionForm
+        {...defaultProps}
+        paymentOptions={[
+          { label: "PayPal", currencies: ["GBP", "USD"] },
+          { label: "Revolut", currencies: ["GBP", "EUR", "USD"] },
+        ]}
+      />
+    );
+    // Should have 3 unique currencies, not 5
+    const buttons = screen.getAllByRole('button').filter(b => b.className.includes('gift-contrib__currency-btn'));
+    expect(buttons).toHaveLength(3);
   });
 
   it('displays correct symbols for various currencies', () => {
-    const currencies = ["GBP", "USD", "EUR", "ETB", "NGN", "INR", "JPY", "NZD"];
     render(
       <GiftContributionForm
         {...defaultProps}
-        acceptedCurrencies={currencies}
+        paymentOptions={[
+          { label: "ETB Pay", currencies: ["ETB"] },
+          { label: "NGN Pay", currencies: ["NGN"] },
+          { label: "INR Pay", currencies: ["INR"] },
+        ]}
       />
     );
-    expect(screen.getByText('£ GBP')).toBeInTheDocument();
-    expect(screen.getByText('$ USD')).toBeInTheDocument();
-    expect(screen.getByText('€ EUR')).toBeInTheDocument();
     expect(screen.getByText('Br ETB')).toBeInTheDocument();
     expect(screen.getByText('₦ NGN')).toBeInTheDocument();
     expect(screen.getByText('₹ INR')).toBeInTheDocument();
-    expect(screen.getByText('¥ JPY')).toBeInTheDocument();
-    expect(screen.getByText('NZ$ NZD')).toBeInTheDocument();
   });
 
-  it('falls back to currency code for unknown currencies', () => {
+  it('falls back to site default currency when no payment options have currencies', () => {
     render(
       <GiftContributionForm
         {...defaultProps}
-        currency="XYZ"
-        acceptedCurrencies={["XYZ", "GBP"]}
+        currency="ETB"
+        paymentOptions={[
+          { label: "PayPal", url: "https://paypal.me/test" }, // no currencies
+        ]}
       />
     );
-    expect(screen.getByText('XYZ XYZ')).toBeInTheDocument();
+    expect(screen.getByText(/Amount \(ETB\)/)).toBeInTheDocument();
+    expect(screen.queryByText('Select Currency')).not.toBeInTheDocument();
   });
 
   it('submits the selected currency with the form', async () => {
@@ -106,18 +180,18 @@ describe('GiftContributionForm', () => {
     render(
       <GiftContributionForm
         {...defaultProps}
-        acceptedCurrencies={["GBP", "ETB"]}
+        paymentOptions={[
+          { label: "PayPal (GBP)", currencies: ["GBP"] },
+          { label: "PayPal (ETB)", currencies: ["ETB"] },
+        ]}
       />
     );
 
-    // Switch to ETB
     fireEvent.click(screen.getByText('Br ETB'));
 
-    // Fill form
     await userEvent.type(screen.getByPlaceholderText('Your full name'), 'Test User');
     await userEvent.type(screen.getByPlaceholderText('0'), '100');
 
-    // Submit
     fireEvent.click(screen.getByText('Send Well Wishes'));
 
     await waitFor(() => {
@@ -138,7 +212,6 @@ describe('GiftContributionForm', () => {
         {...defaultProps}
         giftItems={items}
         currency="ETB"
-        acceptedCurrencies={["ETB"]}
       />
     );
     expect(screen.getByText('Honeymoon Fund')).toBeInTheDocument();
