@@ -8,11 +8,11 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { slug, giftName, guestName, amount, currency: bodyCurrency, message, paymentMethod } = body;
 
-    if (!slug || !giftName || !guestName) {
-      return NextResponse.json({ error: "Slug, gift name, and your name are required" }, { status: 400 });
+    if (!slug || !giftName) {
+      return NextResponse.json({ error: "Slug and gift name are required" }, { status: 400 });
     }
 
-    if (guestName.length > 100) {
+    if (guestName && guestName.length > 100) {
       return NextResponse.json({ error: "Name is too long" }, { status: 400 });
     }
 

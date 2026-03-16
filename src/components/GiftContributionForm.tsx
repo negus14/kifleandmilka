@@ -79,7 +79,7 @@ export default function GiftContributionForm({ slug, giftItems, currency, paymen
         body: JSON.stringify({
           slug,
           giftName: selectedGift?.name || "General Contribution",
-          guestName,
+          guestName: guestName || "Anonymous",
           amount: amount ? `${amount}.00` : undefined,
           currency: selectedCurrency,
           message: message || undefined,
