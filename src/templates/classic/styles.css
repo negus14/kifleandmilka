@@ -1678,6 +1678,50 @@
   border-color: var(--color-dark);
 }
 
+.hotel-card__link--dropdown {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.hotel-card__dropdown {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  margin-bottom: 4px;
+  background: var(--color-primary, #faf1e1);
+  border: 1px solid var(--color-dark, #2d2b25);
+  display: flex;
+  flex-direction: column;
+}
+
+.hotel-card__dropdown-item {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.65rem 1rem;
+  color: var(--color-dark, #2d2b25);
+  text-decoration: none;
+  transition: background 0.2s;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hotel-card__dropdown-item:hover {
+  background: var(--color-dark, #2d2b25);
+  color: var(--color-primary, #faf1e1);
+}
+
+.hotel-card__dropdown-item + .hotel-card__dropdown-item {
+  border-top: 1px solid rgba(0,0,0,0.08);
+}
+
 /* ===== GIFT ===== */
 .gift-section {
   text-align: center;
@@ -1946,6 +1990,332 @@
   font-style: italic;
   color: var(--color-dark);
   opacity: 0.7;
+}
+
+/* ===== GIFT CONTRIBUTION FORM ===== */
+.gift-contrib {
+  margin-top: 3rem;
+  text-align: left;
+}
+
+.gift-contrib__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.gift-contrib__card {
+  background: color-mix(in srgb, var(--color-dark), transparent 97%);
+  border: 1px solid color-mix(in srgb, var(--color-dark), transparent 90%);
+  padding: 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.gift-contrib__card:hover {
+  background: var(--color-primary);
+  border-color: var(--color-dark);
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.gift-contrib__card-img {
+  width: 100%;
+  aspect-ratio: 1;
+  margin-bottom: 1.25rem;
+  overflow: hidden;
+  background: #fff;
+}
+
+.gift-contrib__card-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.gift-contrib__card:hover .gift-contrib__card-img img {
+  transform: scale(1.05);
+}
+
+.gift-contrib__card-name {
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  font-weight: 400;
+  margin-bottom: 0.5rem;
+  color: var(--color-dark);
+}
+
+.gift-contrib__card-desc {
+  font-size: 0.85rem;
+  opacity: 0.6;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.gift-contrib__card-amount {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-dark);
+  margin-top: auto;
+  padding: 0.4rem 1rem;
+  background: color-mix(in srgb, var(--color-dark), transparent 94%);
+  border-radius: 20px;
+}
+
+.gift-contrib__card--general {
+  border-style: dashed;
+  justify-content: center;
+  background: transparent;
+}
+
+.gift-contrib__back {
+  background: none;
+  border: none;
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--color-dark);
+  opacity: 0.5;
+  cursor: pointer;
+  margin-bottom: 2rem;
+  transition: opacity 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.gift-contrib__back:hover {
+  opacity: 1;
+}
+
+.gift-contrib__selected {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.gift-contrib__selected h4 {
+  font-family: var(--font-serif);
+  font-size: 1.8rem;
+  font-weight: 300;
+  font-style: italic;
+  color: var(--color-dark);
+}
+
+.gift-contrib__form {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.gift-contrib__field {
+  margin-bottom: 1.5rem;
+}
+
+.gift-contrib__label {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-dark);
+  margin-bottom: 0.6rem;
+  opacity: 0.8;
+}
+
+.gift-contrib__input,
+.gift-contrib__select,
+.gift-contrib__textarea {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  border: 1px solid color-mix(in srgb, var(--color-dark), transparent 85%);
+  background: white;
+  color: var(--color-dark);
+  border-radius: 0;
+  transition: border-color 0.3s ease;
+}
+
+.gift-contrib__input:focus,
+.gift-contrib__select:focus,
+.gift-contrib__textarea:focus {
+  outline: none;
+  border-color: var(--color-dark);
+}
+
+.gift-contrib__btn {
+  width: 100%;
+  padding: 1.1rem;
+  background: var(--color-dark);
+  color: var(--color-primary);
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  border: 2px solid var(--color-dark);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+}
+
+.gift-contrib__btn:hover {
+  background: transparent;
+  color: var(--color-dark);
+}
+
+.gift-contrib__btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.gift-contrib__btn--outline {
+  background: transparent;
+  color: var(--color-dark);
+}
+
+.gift-contrib__btn--outline:hover {
+  background: var(--color-dark);
+  color: var(--color-primary);
+}
+
+.gift-contrib__success {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: color-mix(in srgb, var(--color-primary), transparent 50%);
+  border: 1px dashed color-mix(in srgb, var(--color-dark), transparent 70%);
+}
+
+.gift-contrib__success-title {
+  font-family: var(--font-script);
+  font-size: 3rem;
+  color: var(--color-dark);
+  margin-bottom: 0.5rem;
+}
+
+.gift-contrib__success-text {
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  font-style: italic;
+  opacity: 0.7;
+}
+
+.gift-contrib__error {
+  color: #c0392b;
+  font-size: 0.85rem;
+  margin-top: 1rem;
+  font-style: italic;
+  text-align: center;
+}
+
+/* Currency selector */
+.gift-contrib__currency-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+}
+
+.gift-contrib__currency-btn {
+  padding: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border: 1px solid rgba(45, 43, 37, 0.15);
+  background: transparent;
+  color: var(--color-dark, #2d2b25);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  letter-spacing: 0.03em;
+}
+
+.gift-contrib__currency-btn:hover {
+  border-color: rgba(45, 43, 37, 0.4);
+}
+
+.gift-contrib__currency-btn--active {
+  background: var(--color-dark, #2d2b25);
+  color: var(--color-primary, #fff);
+  border-color: var(--color-dark, #2d2b25);
+}
+
+/* Dark mode overrides for gift contrib */
+.section--dark .gift-contrib__currency-btn {
+  border-color: rgba(212, 189, 172, 0.2);
+  color: var(--color-accent);
+}
+
+.section--dark .gift-contrib__currency-btn:hover {
+  border-color: rgba(212, 189, 172, 0.4);
+}
+
+.section--dark .gift-contrib__currency-btn--active {
+  background: var(--color-accent);
+  color: var(--color-dark);
+  border-color: var(--color-accent);
+}
+
+.section--dark .gift-contrib__card {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(212, 189, 172, 0.2);
+}
+
+.section--dark .gift-contrib__card:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--color-accent);
+}
+
+.section--dark .gift-contrib__card-name,
+.section--dark .gift-contrib__selected h4,
+.section--dark .gift-contrib__success-title {
+  color: var(--color-primary);
+}
+
+.section--dark .gift-contrib__card-desc,
+.section--dark .gift-contrib__success-text,
+.section--dark .gift-contrib__back,
+.section--dark .gift-contrib__label {
+  color: var(--color-accent);
+}
+
+.section--dark .gift-contrib__card-amount {
+  background: rgba(212, 189, 172, 0.1);
+  color: var(--color-accent);
+}
+
+.section--dark .gift-contrib__input,
+.section--dark .gift-contrib__select,
+.section--dark .gift-contrib__textarea {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(212, 189, 172, 0.2);
+  color: var(--color-primary);
+}
+
+.section--dark .gift-contrib__input:focus,
+.section--dark .gift-contrib__select:focus,
+.section--dark .gift-contrib__textarea:focus {
+  border-color: var(--color-accent);
+}
+
+.section--dark .gift-contrib__btn {
+  background: var(--color-accent);
+  color: var(--color-dark);
+  border-color: var(--color-accent);
+}
+
+.section--dark .gift-contrib__btn:hover {
+  background: transparent;
+  color: var(--color-accent);
 }
 
 /* ===== CONTACT ===== */

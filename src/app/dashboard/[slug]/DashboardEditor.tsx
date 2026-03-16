@@ -18,6 +18,7 @@ import type {
 } from "@/lib/types/wedding-site";
 import { DEFAULT_SECTION_ORDER, SECTION_LABELS, type SectionConfig } from "@/lib/types/wedding-site";
 import { themes, fontStyles } from "@/lib/themes";
+import CountryCodePicker, { matchCountry } from "@/components/CountryCodePicker";
 import {
   DndContext,
   closestCenter,
@@ -37,7 +38,8 @@ import { CSS } from "@dnd-kit/utilities";
 import ClassicTemplate from "@/templates/classic/Template";
 import ModernTemplate from "@/templates/modern/Template";
 
-const STATIC_TABS = ["Basics", "Layout", "Guests"] as const;
+const STATIC_TABS = ["Basics", "Layout", "Guests", "Gifts"] as const;
+
 type Tab = string; // Allows dynamic tabs like "story-123"
 
 // ─── Primitives ───
@@ -627,6 +629,184 @@ function SortableList<T>({ items, prefix, onReorder, children }: {
   );
 }
 
+// ─── Gift Tracker Panel ───
+
+function GiftTrackerPanel({ giftData, loadGifts, site }: {
+  giftData: {
+    contributions: {
+      id: string; gift_name: string; guest_name: string; amount: string | null;
+      currency: string | null; message: string | null; payment_method: string | null;
+      status: string | null; created_at: string | null;
+    }[];
+    loaded: boolean; loading: boolean; error: string | null;
+  };
+  loadGifts: () => void;
+  site: WeddingSite;
+}) {
+  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const { contributions, loading, error } = giftData;
+
+  const totalAmount = contributions.reduce((sum, c) => sum + (c.amount ? parseFloat(c.amount) : 0), 0);
+  const confirmed = contributions.filter(c => c.status === "confirmed").length;
+  const pending = contributions.filter(c => c.status === "pending").length;
+  const currencySymbol = { GBP: "£", USD: "$", EUR: "€", CAD: "C$", AUD: "A$", ETB: "Br", KES: "KSh", NGN: "₦", ZAR: "R", INR: "₹", CHF: "CHF", SEK: "kr", NOK: "kr", DKK: "kr", JPY: "¥", CNY: "¥", BRL: "R$", MXN: "MX$", AED: "د.إ", SAR: "﷼", NZD: "NZ$" }[site.giftCurrency || "GBP"] || "£";
+
+  const toggleStatus = async (id: string, current: string | null) => {
+    const newStatus = current === "confirmed" ? "pending" : "confirmed";
+    try {
+      await fetch(`/api/sites/${site.slug}/gift-contributions`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, status: newStatus }),
+      });
+      loadGifts();
+    } catch { /* silently fail */ }
+  };
+
+  const deleteGift = async (id: string) => {
+    try {
+      await fetch(`/api/sites/${site.slug}/gift-contributions`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      setDeleteConfirm(null);
+      loadGifts();
+    } catch { /* silently fail */ }
+  };
+
+  return (
+    <div>
+      <div className="flex items-start justify-between mb-2">
+        <div>
+          <h2 className="text-lg" style={{ fontFamily: "'Playfair Display', serif" }}>Gift Tracker</h2>
+          <p className="text-xs text-[#2d2b25]/40 mt-1">Track contributions and well wishes from guests</p>
+        </div>
+        <button onClick={loadGifts} disabled={loading} className="p-2 text-[#2d2b25]/40 hover:text-[#2d2b25] hover:bg-[#2d2b25]/5 rounded-sm transition-all" title="Refresh">
+          <svg className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+        </button>
+      </div>
+
+      {error && (
+        <div className="mb-6 p-3 bg-red-50 border border-red-200 rounded-sm">
+          <p className="text-sm text-red-600">{error}</p>
+        </div>
+      )}
+
+      {/* Stats */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-6 mt-6">
+        {[
+          { label: "Gifts", value: contributions.length, color: "text-[#2d2b25]" },
+          { label: "Total", value: `${currencySymbol}${totalAmount.toFixed(0)}`, color: "text-[#2d2b25]" },
+          { label: "Confirmed", value: confirmed, color: "text-green-700" },
+          { label: "Pending", value: pending, color: "text-[#2d2b25]/40" },
+        ].map((stat) => (
+          <div key={stat.label} className="p-3 bg-white border border-[#2d2b25]/8 rounded-sm text-center">
+            <p className={`text-xl font-serif italic ${stat.color}`}>{stat.value}</p>
+            <p className="text-[8px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/35 mt-0.5">{stat.label}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Loading */}
+      {loading && !giftData.loaded && (
+        <div className="flex items-center justify-center py-20">
+          <div className="flex flex-col items-center gap-3">
+            <svg className="w-6 h-6 animate-spin text-[#2d2b25]/25" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+            </svg>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-[#2d2b25]/30">Loading gifts</span>
+          </div>
+        </div>
+      )}
+
+      {/* Empty */}
+      {!loading && contributions.length === 0 && !error && (
+        <div className="flex flex-col items-center justify-center py-20 text-center">
+          <div className="w-16 h-16 rounded-full bg-[#2d2b25]/[0.04] flex items-center justify-center mb-4">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-[#2d2b25]/20">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+          </div>
+          <p className="text-sm font-medium text-[#2d2b25]/50">No gifts yet</p>
+          <p className="text-xs text-[#2d2b25]/30 mt-1 max-w-[220px]">When guests send gifts and well wishes, they will appear here</p>
+        </div>
+      )}
+
+      {/* Table */}
+      {contributions.length > 0 && (
+        <div className="bg-white border border-[#2d2b25]/10 rounded-sm overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead>
+                <tr className="border-b border-[#2d2b25]/8 bg-[#2d2b25]/[0.02]">
+                  <th className="px-4 py-2.5 text-[9px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/40">From</th>
+                  <th className="px-4 py-2.5 text-[9px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/40 hidden sm:table-cell">Gift</th>
+                  <th className="px-4 py-2.5 text-[9px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/40 text-right">Amount</th>
+                  <th className="px-4 py-2.5 text-[9px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/40 hidden sm:table-cell">Message</th>
+                  <th className="px-4 py-2.5 text-[9px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/40 text-center">Status</th>
+                  <th className="px-4 py-2.5 w-16"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {contributions.map((c) => (
+                  <tr key={c.id} className="border-b border-[#2d2b25]/5 last:border-0 hover:bg-[#2d2b25]/[0.015] transition-colors">
+                    <td className="px-4 py-2.5">
+                      <p className="text-sm text-[#2d2b25] font-medium">{c.guest_name}</p>
+                      <p className="text-[10px] text-[#2d2b25]/30">{c.created_at ? new Date(c.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : ""}</p>
+                    </td>
+                    <td className="px-4 py-2.5 hidden sm:table-cell">
+                      <span className="text-xs text-[#2d2b25]/50">{c.gift_name}</span>
+                    </td>
+                    <td className="px-4 py-2.5 text-right">
+                      <span className="text-sm font-medium text-[#2d2b25]">{c.amount ? `${({ GBP: "£", USD: "$", EUR: "€", CAD: "C$", AUD: "A$", ETB: "Br", KES: "KSh", NGN: "₦", ZAR: "R", INR: "₹", CHF: "CHF", SEK: "kr", NOK: "kr", DKK: "kr", JPY: "¥", CNY: "¥", BRL: "R$", MXN: "MX$", AED: "د.إ", SAR: "﷼", NZD: "NZ$" } as Record<string, string>)[c.currency || site.giftCurrency || "GBP"] || "£"}${c.amount}` : "\u2014"}</span>
+                    </td>
+                    <td className="px-4 py-2.5 hidden sm:table-cell">
+                      <span className="text-xs text-[#2d2b25]/45 truncate block max-w-[200px]">{c.message || "\u2014"}</span>
+                    </td>
+                    <td className="px-4 py-2.5 text-center">
+                      <button
+                        onClick={() => toggleStatus(c.id, c.status)}
+                        className={`inline-flex px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest rounded-full cursor-pointer transition-colors ${
+                          c.status === "confirmed" ? "bg-green-50 text-green-700 hover:bg-green-100" : "bg-amber-50 text-amber-600 hover:bg-amber-100"
+                        }`}
+                      >
+                        {c.status === "confirmed" ? "Confirmed" : "Pending"}
+                      </button>
+                    </td>
+                    <td className="px-4 py-2.5 text-right">
+                      <button onClick={() => setDeleteConfirm(c.id)} className="p-1 text-[#2d2b25]/20 hover:text-red-500 transition-colors" title="Delete">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* Delete modal */}
+      {deleteConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setDeleteConfirm(null)}>
+          <div className="bg-[#faf1e1] border border-[#2d2b25]/15 rounded-sm p-6 max-w-sm mx-4 shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-base font-medium mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>Delete Gift</h3>
+            <p className="text-sm text-[#2d2b25]/60 mb-6">Are you sure? This cannot be undone.</p>
+            <div className="flex items-center justify-end gap-3">
+              <button onClick={() => setDeleteConfirm(null)} className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-[#2d2b25]/50 hover:text-[#2d2b25] transition-colors">Cancel</button>
+              <button onClick={() => deleteGift(deleteConfirm)} className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest bg-red-600 text-white rounded-sm hover:bg-red-700 transition-colors">Delete</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Guest List Panel ───
 
 type GuestRow = {
@@ -634,7 +814,9 @@ type GuestRow = {
   attending: boolean;
   mealChoice: string;
   isHalal: boolean;
+  dietaryPreference: string;
   email: string;
+  phone: string;
   message: string;
   date: string;
   rsvpId: string;
@@ -643,13 +825,14 @@ type GuestRow = {
 type GuestFilter = "all" | "attending" | "declined";
 type GuestView = "table" | "cards";
 
-function GuestListPanel({ rsvpData, loadRSVPs }: {
+function GuestListPanel({ rsvpData, loadRSVPs, site, set }: {
   rsvpData: {
     rsvps: {
       id: string;
       email: string | null;
+      phone: string | null;
       message: string | null;
-      guests: { name: string; attending: boolean; mealChoice?: string; isHalal?: boolean }[];
+      guests: { name: string; attending: boolean; mealChoice?: string; isHalal?: boolean; dietaryPreference?: string }[];
       created_at: string | null;
     }[];
     loaded: boolean;
@@ -657,11 +840,91 @@ function GuestListPanel({ rsvpData, loadRSVPs }: {
     error: string | null;
   };
   loadRSVPs: () => void;
+  site: WeddingSite;
+  set: <K extends keyof WeddingSite>(key: K, value: WeddingSite[K]) => void;
 }) {
   const [filter, setFilter] = useState<GuestFilter>("all");
   const [view, setView] = useState<GuestView>("table");
   const [search, setSearch] = useState("");
   const [expandedRsvp, setExpandedRsvp] = useState<string | null>(null);
+  const [editingRsvp, setEditingRsvp] = useState<string | null>(null);
+  const [editData, setEditData] = useState<{
+    email: string;
+    phone: string;
+    message: string;
+    guests: { name: string; attending: boolean; mealChoice?: string; isHalal?: boolean; dietaryPreference?: string }[];
+  } | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+
+  const startEdit = (rsvp: typeof rsvps[0]) => {
+    setEditingRsvp(rsvp.id);
+    setExpandedRsvp(rsvp.id);
+    setView("cards");
+    setEditData({
+      email: rsvp.email || "",
+      phone: rsvp.phone || "",
+      message: rsvp.message || "",
+      guests: rsvp.guests.map(g => ({ ...g })),
+    });
+  };
+
+  const cancelEdit = () => {
+    setEditingRsvp(null);
+    setEditData(null);
+  };
+
+  const saveEdit = async () => {
+    if (!editingRsvp || !editData) return;
+    setSaving(true);
+    try {
+      const res = await fetch(`/api/sites/${site.slug}/rsvps`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: editingRsvp, ...editData }),
+      });
+      if (!res.ok) throw new Error("Failed to save");
+      cancelEdit();
+      loadRSVPs();
+    } catch {
+      alert("Failed to save changes");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const deleteRsvp = async (id: string) => {
+    try {
+      const res = await fetch(`/api/sites/${site.slug}/rsvps`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      if (!res.ok) throw new Error("Failed to delete");
+      setDeleteConfirm(null);
+      loadRSVPs();
+    } catch {
+      alert("Failed to delete RSVP");
+    }
+  };
+
+  const updateEditGuest = (index: number, updates: Partial<{ name: string; attending: boolean; mealChoice: string; isHalal: boolean; dietaryPreference: string }>) => {
+    if (!editData) return;
+    const guests = [...editData.guests];
+    guests[index] = { ...guests[index], ...updates };
+    setEditData({ ...editData, guests });
+  };
+
+  const removeEditGuest = (index: number) => {
+    if (!editData || editData.guests.length <= 1) return;
+    const guests = editData.guests.filter((_, i) => i !== index);
+    setEditData({ ...editData, guests });
+  };
+
+  const addEditGuest = () => {
+    if (!editData) return;
+    setEditData({ ...editData, guests: [...editData.guests, { name: "", attending: true }] });
+  };
 
   const { rsvps, loading: rsvpLoading, error: rsvpError } = rsvpData;
 
@@ -672,7 +935,9 @@ function GuestListPanel({ rsvpData, loadRSVPs }: {
       attending: g.attending,
       mealChoice: g.mealChoice || "",
       isHalal: g.isHalal || false,
+      dietaryPreference: g.dietaryPreference || "",
       email: r.email || "",
+      phone: r.phone || "",
       message: r.message || "",
       date: r.created_at || "",
       rsvpId: r.id,
@@ -683,12 +948,15 @@ function GuestListPanel({ rsvpData, loadRSVPs }: {
   const attending = allGuests.filter(g => g.attending).length;
   const declined = allGuests.filter(g => !g.attending).length;
   const mealCounts: Record<string, number> = {};
-  let halalCount = 0;
+  const dietaryCounts: Record<string, number> = {};
   allGuests.forEach(g => {
     if (g.attending && g.mealChoice) {
       mealCounts[g.mealChoice] = (mealCounts[g.mealChoice] || 0) + 1;
     }
-    if (g.attending && g.isHalal) halalCount++;
+    const dietary = g.dietaryPreference || (g.isHalal ? "Halal" : "");
+    if (g.attending && dietary) {
+      dietaryCounts[dietary] = (dietaryCounts[dietary] || 0) + 1;
+    }
   });
 
   // Filter + search
@@ -702,26 +970,25 @@ function GuestListPanel({ rsvpData, loadRSVPs }: {
     return true;
   });
 
-  // CSV export
-  const exportCSV = () => {
-    const headers = ["Name", "Email", "Attending", "Meal", "Halal", "Message", "Date"];
+  const [copied, setCopied] = useState(false);
+
+  // Copy guest data as tab-separated text (pastes directly into Google Sheets)
+  const copyToClipboard = async () => {
+    const headers = ["Name", "Email", "WhatsApp", "Attending", "Meal", "Dietary", "Message", "Date"];
     const rows = allGuests.map(g => [
       g.name,
       g.email,
+      g.phone,
       g.attending ? "Yes" : "No",
       g.mealChoice,
-      g.isHalal ? "Yes" : "No",
-      g.message.replace(/"/g, '""'),
+      g.dietaryPreference || (g.isHalal ? "Halal" : ""),
+      g.message,
       g.date ? new Date(g.date).toLocaleDateString() : "",
     ]);
-    const csv = [headers, ...rows].map(r => r.map(c => `"${c}"`).join(",")).join("\n");
-    const blob = new Blob([csv], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `guest-list-${new Date().toISOString().slice(0, 10)}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
+    const tsv = [headers, ...rows].map(r => r.join("\t")).join("\n");
+    await navigator.clipboard.writeText(tsv);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
@@ -733,6 +1000,23 @@ function GuestListPanel({ rsvpData, loadRSVPs }: {
           <p className="text-xs text-[#2d2b25]/40 mt-1">Track RSVPs and manage your guest list</p>
         </div>
         <div className="flex items-center gap-2">
+          {allGuests.length > 0 && (
+            <button
+              onClick={copyToClipboard}
+              className={`flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest rounded-sm border transition-all ${
+                copied
+                  ? "text-green-700 bg-green-50 border-green-200"
+                  : "text-[#2d2b25]/60 hover:text-[#2d2b25] border-[#2d2b25]/10 hover:border-[#2d2b25]/25"
+              }`}
+            >
+              {copied ? (
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              ) : (
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              )}
+              {copied ? "Copied!" : "Copy All"}
+            </button>
+          )}
           <button
             onClick={loadRSVPs}
             disabled={rsvpLoading}
@@ -743,21 +1027,9 @@ function GuestListPanel({ rsvpData, loadRSVPs }: {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
           </button>
-          {allGuests.length > 0 && (
-            <button
-              onClick={exportCSV}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-[#2d2b25]/60 hover:text-[#2d2b25] border border-[#2d2b25]/10 hover:border-[#2d2b25]/25 rounded-sm transition-all"
-            >
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                <polyline points="7 10 12 15 17 10" />
-                <line x1="12" y1="15" x2="12" y2="3" />
-              </svg>
-              Export CSV
-            </button>
-          )}
         </div>
       </div>
+
 
       {rsvpError && (
         <div className="mb-6 p-3 bg-red-50 border border-red-200 rounded-sm">
@@ -785,8 +1057,10 @@ function GuestListPanel({ rsvpData, loadRSVPs }: {
         <div className="mb-6">
           <div className="flex items-center justify-between mb-2">
             <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/50">Meals</span>
-            {halalCount > 0 && (
-              <span className="text-[10px] font-medium text-green-600">{halalCount} halal</span>
+            {Object.keys(dietaryCounts).length > 0 && (
+              <span className="text-[10px] font-medium text-green-600">
+                {Object.entries(dietaryCounts).map(([d, c]) => `${c} ${d}`).join(", ")}
+              </span>
             )}
           </div>
           <div className="flex h-2 rounded-full overflow-hidden bg-[#2d2b25]/5">
@@ -919,48 +1193,71 @@ function GuestListPanel({ rsvpData, loadRSVPs }: {
                     <tr className="border-b border-[#2d2b25]/8 bg-[#2d2b25]/[0.02]">
                       <th className="px-4 py-2.5 text-[9px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/40">Guest</th>
                       <th className="px-4 py-2.5 text-[9px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/40 hidden sm:table-cell">Email</th>
+                      <th className="px-4 py-2.5 text-[9px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/40 hidden sm:table-cell">Phone</th>
                       <th className="px-4 py-2.5 text-[9px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/40 text-center">RSVP</th>
                       <th className="px-4 py-2.5 text-[9px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/40 hidden sm:table-cell">Meal</th>
                       <th className="px-4 py-2.5 text-[9px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/40 text-right">Date</th>
+                      <th className="px-4 py-2.5 text-[9px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/40 w-16"></th>
                     </tr>
                   </thead>
                   <tbody>
-                    {filtered.map((guest, i) => (
-                      <tr key={`${guest.rsvpId}-${i}`} className="border-b border-[#2d2b25]/5 last:border-0 hover:bg-[#2d2b25]/[0.015] transition-colors">
-                        <td className="px-4 py-2.5">
-                          <div className="flex items-center gap-2">
-                            <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${guest.attending ? "bg-green-500" : "bg-[#2d2b25]/15"}`} />
-                            <span className="text-sm text-[#2d2b25] font-medium">{guest.name}</span>
-                          </div>
-                        </td>
-                        <td className="px-4 py-2.5 hidden sm:table-cell">
-                          <span className="text-xs text-[#2d2b25]/45 truncate block max-w-[180px]">{guest.email || "\u2014"}</span>
-                        </td>
-                        <td className="px-4 py-2.5 text-center">
-                          <span className={`inline-flex px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest rounded-full ${
-                            guest.attending
-                              ? "bg-green-50 text-green-700"
-                              : "bg-[#2d2b25]/5 text-[#2d2b25]/35"
-                          }`}>
-                            {guest.attending ? "Attending" : "Declined"}
-                          </span>
-                        </td>
-                        <td className="px-4 py-2.5 hidden sm:table-cell">
-                          {guest.attending && guest.mealChoice ? (
-                            <span className="text-xs text-[#2d2b25]/50">
-                              {guest.mealChoice}{guest.isHalal ? <span className="text-green-600 ml-1 text-[9px] font-bold">(H)</span> : ""}
+                    {filtered.map((guest, i) => {
+                      // Find original rsvp for this guest row
+                      const rsvp = rsvps.find(r => r.id === guest.rsvpId);
+                      return (
+                        <tr key={`${guest.rsvpId}-${i}`} className="border-b border-[#2d2b25]/5 last:border-0 hover:bg-[#2d2b25]/[0.015] transition-colors">
+                          <td className="px-4 py-2.5">
+                            <div className="flex items-center gap-2">
+                              <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${guest.attending ? "bg-green-500" : "bg-[#2d2b25]/15"}`} />
+                              <span className="text-sm text-[#2d2b25] font-medium">{guest.name}</span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-2.5 hidden sm:table-cell">
+                            <span className="text-xs text-[#2d2b25]/45 truncate block max-w-[180px]">{guest.email || "\u2014"}</span>
+                          </td>
+                          <td className="px-4 py-2.5 hidden sm:table-cell">
+                            <span className="text-xs text-[#2d2b25]/45 truncate block max-w-[140px]">{guest.phone || "\u2014"}</span>
+                          </td>
+                          <td className="px-4 py-2.5 text-center">
+                            <span className={`inline-flex px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest rounded-full ${
+                              guest.attending
+                                ? "bg-green-50 text-green-700"
+                                : "bg-[#2d2b25]/5 text-[#2d2b25]/35"
+                            }`}>
+                              {guest.attending ? "Attending" : "Declined"}
                             </span>
-                          ) : (
-                            <span className="text-xs text-[#2d2b25]/15">{"\u2014"}</span>
-                          )}
-                        </td>
-                        <td className="px-4 py-2.5 text-right">
-                          <span className="text-[10px] text-[#2d2b25]/30">
-                            {guest.date ? new Date(guest.date).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : ""}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
+                          </td>
+                          <td className="px-4 py-2.5 hidden sm:table-cell">
+                            {guest.attending && guest.mealChoice ? (
+                              <span className="text-xs text-[#2d2b25]/50">
+                                {guest.mealChoice}{(guest.dietaryPreference || guest.isHalal) ? <span className="text-green-600 ml-1 text-[9px] font-bold">({guest.dietaryPreference || "Halal"})</span> : ""}
+                              </span>
+                            ) : (
+                              <span className="text-xs text-[#2d2b25]/15">{"\u2014"}</span>
+                            )}
+                          </td>
+                          <td className="px-4 py-2.5 text-right">
+                            <span className="text-[10px] text-[#2d2b25]/30">
+                              {guest.date ? new Date(guest.date).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : ""}
+                            </span>
+                          </td>
+                          <td className="px-4 py-2.5 text-right">
+                            <div className="flex items-center justify-end gap-1">
+                              {rsvp && (
+                                <>
+                                  <button onClick={() => startEdit(rsvp)} className="p-1 text-[#2d2b25]/20 hover:text-[#2d2b25]/60 transition-colors" title="Edit">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                  </button>
+                                  <button onClick={() => setDeleteConfirm(rsvp.id)} className="p-1 text-[#2d2b25]/20 hover:text-red-500 transition-colors" title="Delete">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                  </button>
+                                </>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
@@ -982,41 +1279,52 @@ function GuestListPanel({ rsvpData, loadRSVPs }: {
                 });
               }).map((rsvp) => {
                 const isExpanded = expandedRsvp === rsvp.id;
+                const isEditing = editingRsvp === rsvp.id;
                 const guestCount = rsvp.guests.length;
                 const attendingCount = rsvp.guests.filter(g => g.attending).length;
 
                 return (
-                  <div key={rsvp.id} className="bg-white border border-[#2d2b25]/10 rounded-sm overflow-hidden">
-                    <button
-                      onClick={() => setExpandedRsvp(isExpanded ? null : rsvp.id)}
-                      className="w-full px-4 py-3 flex items-center justify-between hover:bg-[#2d2b25]/[0.02] transition-colors text-left"
-                    >
-                      <div className="flex items-center gap-3 min-w-0">
-                        <div className="w-8 h-8 rounded-full bg-[#2d2b25]/[0.06] flex items-center justify-center shrink-0">
-                          <span className="text-xs font-bold text-[#2d2b25]/50">{guestCount}</span>
+                  <div key={rsvp.id} className={`bg-white border rounded-sm overflow-hidden ${isEditing ? "border-[#2d2b25]/30 ring-1 ring-[#2d2b25]/10" : "border-[#2d2b25]/10"}`}>
+                    <div className="flex items-center">
+                      <button
+                        onClick={() => { setExpandedRsvp(isExpanded ? null : rsvp.id); if (isEditing && isExpanded) cancelEdit(); }}
+                        className="flex-1 px-4 py-3 flex items-center justify-between hover:bg-[#2d2b25]/[0.02] transition-colors text-left"
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="w-8 h-8 rounded-full bg-[#2d2b25]/[0.06] flex items-center justify-center shrink-0">
+                            <span className="text-xs font-bold text-[#2d2b25]/50">{guestCount}</span>
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-sm text-[#2d2b25] font-medium truncate">{rsvp.email || "No email"}</p>
+                            <p className="text-[10px] text-[#2d2b25]/35 mt-0.5">
+                              {attendingCount === guestCount ? (
+                                <span className="text-green-600">All attending</span>
+                              ) : attendingCount === 0 ? (
+                                <span>All declined</span>
+                              ) : (
+                                <span>{attendingCount} attending, {guestCount - attendingCount} declined</span>
+                              )}
+                              {rsvp.created_at && (
+                                <span className="ml-2">{new Date(rsvp.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
+                              )}
+                            </p>
+                          </div>
                         </div>
-                        <div className="min-w-0">
-                          <p className="text-sm text-[#2d2b25] font-medium truncate">{rsvp.email || "No email"}</p>
-                          <p className="text-[10px] text-[#2d2b25]/35 mt-0.5">
-                            {attendingCount === guestCount ? (
-                              <span className="text-green-600">All attending</span>
-                            ) : attendingCount === 0 ? (
-                              <span>All declined</span>
-                            ) : (
-                              <span>{attendingCount} attending, {guestCount - attendingCount} declined</span>
-                            )}
-                            {rsvp.created_at && (
-                              <span className="ml-2">{new Date(rsvp.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
-                            )}
-                          </p>
-                        </div>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={`text-[#2d2b25]/20 shrink-0 transition-transform ${isExpanded ? "rotate-180" : ""}`}>
+                          <polyline points="6 9 12 15 18 9" />
+                        </svg>
+                      </button>
+                      <div className="flex items-center gap-0.5 pr-3">
+                        <button onClick={() => isEditing ? cancelEdit() : startEdit(rsvp)} className={`p-1.5 rounded-sm transition-colors ${isEditing ? "text-[#2d2b25] bg-[#2d2b25]/10" : "text-[#2d2b25]/20 hover:text-[#2d2b25]/60"}`} title={isEditing ? "Cancel" : "Edit"}>
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        </button>
+                        <button onClick={() => setDeleteConfirm(rsvp.id)} className="p-1.5 text-[#2d2b25]/20 hover:text-red-500 rounded-sm transition-colors" title="Delete">
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                        </button>
                       </div>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={`text-[#2d2b25]/20 shrink-0 transition-transform ${isExpanded ? "rotate-180" : ""}`}>
-                        <polyline points="6 9 12 15 18 9" />
-                      </svg>
-                    </button>
+                    </div>
 
-                    {isExpanded && (
+                    {isExpanded && !isEditing && (
                       <div className="border-t border-[#2d2b25]/8">
                         {rsvp.guests.map((guest, gi) => (
                           <div key={gi} className={`px-4 py-3 flex items-center justify-between ${gi > 0 ? "border-t border-[#2d2b25]/5" : ""}`}>
@@ -1026,7 +1334,7 @@ function GuestListPanel({ rsvpData, loadRSVPs }: {
                                 <p className="text-sm text-[#2d2b25] font-medium">{guest.name}</p>
                                 {guest.attending && guest.mealChoice && (
                                   <p className="text-[10px] text-[#2d2b25]/40 mt-0.5">
-                                    {guest.mealChoice}{guest.isHalal ? " \u00b7 Halal" : ""}
+                                    {guest.mealChoice}{(guest.dietaryPreference || guest.isHalal) ? ` \u00b7 ${guest.dietaryPreference || "Halal"}` : ""}
                                   </p>
                                 )}
                               </div>
@@ -1044,12 +1352,152 @@ function GuestListPanel({ rsvpData, loadRSVPs }: {
                         )}
                       </div>
                     )}
+
+                    {/* Edit form */}
+                    {isExpanded && isEditing && editData && (
+                      <div className="border-t border-[#2d2b25]/8 bg-[#2d2b25]/[0.02] p-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                          <div>
+                            <label className="text-[9px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/40 block mb-1">Email</label>
+                            <input
+                              type="email"
+                              value={editData.email}
+                              onChange={(e) => setEditData({ ...editData, email: e.target.value })}
+                              className="w-full px-3 py-2 text-sm border border-[#2d2b25]/10 bg-white rounded-sm outline-none focus:border-[#2d2b25]/30"
+                              placeholder="guest@email.com"
+                            />
+                          </div>
+                          <div>
+                            <label className="text-[9px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/40 block mb-1">WhatsApp</label>
+                            <div className="flex">
+                              <CountryCodePicker
+                                compact
+                                value={matchCountry(editData.phone)?.code || "+44"}
+                                onChange={(code) => {
+                                  const current = matchCountry(editData.phone);
+                                  const local = current ? editData.phone.slice(current.code.length) : editData.phone.replace(/^\+?\d{1,4}/, "");
+                                  setEditData({ ...editData, phone: code + local });
+                                }}
+                              />
+                              <input
+                                type="tel"
+                                value={(() => {
+                                  if (!editData.phone) return "";
+                                  const match = matchCountry(editData.phone);
+                                  return match ? editData.phone.slice(match.code.length) : editData.phone;
+                                })()}
+                                onChange={(e) => {
+                                  const local = e.target.value.replace(/[^0-9]/g, "");
+                                  const code = matchCountry(editData.phone)?.code || "+44";
+                                  setEditData({ ...editData, phone: code + local });
+                                }}
+                                className="flex-1 min-w-0 px-3 py-2 text-sm border border-[#2d2b25]/10 bg-white rounded-r-sm outline-none focus:border-[#2d2b25]/30"
+                                placeholder="7123456789"
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                        <label className="text-[9px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/40 block mb-2">Guests</label>
+                        <div className="space-y-2 mb-4">
+                          {editData.guests.map((g, gi) => (
+                            <div key={gi} className="flex items-center gap-2 bg-white border border-[#2d2b25]/10 rounded-sm p-2">
+                              <input
+                                type="text"
+                                value={g.name}
+                                onChange={(e) => updateEditGuest(gi, { name: e.target.value })}
+                                className="flex-1 min-w-0 px-2 py-1 text-sm border border-[#2d2b25]/10 rounded-sm outline-none focus:border-[#2d2b25]/30"
+                                placeholder="Guest name"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => updateEditGuest(gi, { attending: !g.attending })}
+                                className={`shrink-0 px-2 py-1 text-[9px] font-bold uppercase tracking-widest rounded-sm border transition-colors ${
+                                  g.attending
+                                    ? "bg-green-50 text-green-700 border-green-200"
+                                    : "bg-[#2d2b25]/5 text-[#2d2b25]/35 border-[#2d2b25]/10"
+                                }`}
+                              >
+                                {g.attending ? "Yes" : "No"}
+                              </button>
+                              <input
+                                type="text"
+                                value={g.mealChoice || ""}
+                                onChange={(e) => updateEditGuest(gi, { mealChoice: e.target.value })}
+                                className="w-24 shrink-0 px-2 py-1 text-xs border border-[#2d2b25]/10 rounded-sm outline-none focus:border-[#2d2b25]/30 hidden sm:block"
+                                placeholder="Meal"
+                              />
+                              <select
+                                value={g.dietaryPreference || (g.isHalal ? "Halal" : "")}
+                                onChange={(e) => updateEditGuest(gi, { dietaryPreference: e.target.value, isHalal: e.target.value === "Halal" })}
+                                className="w-24 shrink-0 px-1 py-1 text-[10px] border border-[#2d2b25]/10 rounded-sm outline-none focus:border-[#2d2b25]/30 hidden sm:block"
+                              >
+                                <option value="">No dietary</option>
+                                {["Halal", "Kosher", "Vegan", "Vegetarian", "Gluten-Free", "Dairy-Free", "Nut-Free"].map(opt => (
+                                  <option key={opt} value={opt}>{opt}</option>
+                                ))}
+                              </select>
+                              {editData.guests.length > 1 && (
+                                <button onClick={() => removeEditGuest(gi)} className="p-1 text-[#2d2b25]/20 hover:text-red-500 shrink-0" title="Remove guest">
+                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                </button>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                        <button onClick={addEditGuest} className="text-[10px] font-bold uppercase tracking-widest text-[#2d2b25]/40 hover:text-[#2d2b25]/60 mb-4 block">+ Add guest</button>
+
+                        <div className="mb-4">
+                          <label className="text-[9px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/40 block mb-1">Message</label>
+                          <textarea
+                            value={editData.message}
+                            onChange={(e) => setEditData({ ...editData, message: e.target.value })}
+                            rows={2}
+                            className="w-full px-3 py-2 text-sm border border-[#2d2b25]/10 bg-white rounded-sm outline-none focus:border-[#2d2b25]/30 resize-none"
+                            placeholder="Optional message"
+                          />
+                        </div>
+
+                        <div className="flex items-center justify-end gap-2">
+                          <button onClick={cancelEdit} className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-[#2d2b25]/40 hover:text-[#2d2b25] transition-colors">
+                            Cancel
+                          </button>
+                          <button onClick={saveEdit} disabled={saving} className="px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest bg-[#2d2b25] text-[#faf1e1] rounded-sm hover:bg-[#1a1812] transition-colors disabled:opacity-50">
+                            {saving ? "Saving..." : "Save"}
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 );
               })}
             </div>
           )}
         </>
+      )}
+
+      {/* Delete confirmation modal */}
+      {deleteConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setDeleteConfirm(null)}>
+          <div className="bg-[#faf1e1] border border-[#2d2b25]/15 rounded-sm p-6 max-w-sm mx-4 shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-base font-medium mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>Delete RSVP</h3>
+            <p className="text-sm text-[#2d2b25]/60 mb-6">Are you sure you want to delete this RSVP? This action cannot be undone.</p>
+            <div className="flex items-center justify-end gap-3">
+              <button
+                onClick={() => setDeleteConfirm(null)}
+                className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-[#2d2b25]/50 hover:text-[#2d2b25] transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => deleteRsvp(deleteConfirm)}
+                className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest bg-red-600 text-white rounded-sm hover:bg-red-700 transition-colors"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
@@ -1073,8 +1521,9 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
     rsvps: {
       id: string;
       email: string | null;
+      phone: string | null;
       message: string | null;
-      guests: { name: string; attending: boolean; mealChoice?: string; isHalal?: boolean }[];
+      guests: { name: string; attending: boolean; mealChoice?: string; isHalal?: boolean; dietaryPreference?: string }[];
       created_at: string | null;
     }[];
     loaded: boolean;
@@ -1095,12 +1544,46 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
     }
   }, [initial.slug]);
 
+  // Gift contributions state
+  const [giftData, setGiftData] = useState<{
+    contributions: {
+      id: string;
+      gift_name: string;
+      guest_name: string;
+      amount: string | null;
+      currency: string | null;
+      message: string | null;
+      payment_method: string | null;
+      status: string | null;
+      created_at: string | null;
+    }[];
+    loaded: boolean;
+    loading: boolean;
+    error: string | null;
+  }>({ contributions: [], loaded: false, loading: false, error: null });
+
+  const loadGifts = useCallback(async () => {
+    setGiftData(prev => ({ ...prev, loading: true, error: null }));
+    try {
+      const res = await fetch(`/api/sites/${initial.slug}/gift-contributions`);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to load");
+      setGiftData({ contributions: data.contributions, loaded: true, loading: false, error: null });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Failed to load gift contributions";
+      setGiftData(prev => ({ ...prev, loading: false, error: message }));
+    }
+  }, [initial.slug]);
+
   // Load RSVPs when Guests tab is first selected
   useEffect(() => {
     if (tab === "Guests" && !rsvpData.loaded && !rsvpData.loading) {
       loadRSVPs();
     }
-  }, [tab, rsvpData.loaded, rsvpData.loading, loadRSVPs]);
+    if (tab === "Gifts" && !giftData.loaded && !giftData.loading) {
+      loadGifts();
+    }
+  }, [tab, rsvpData.loaded, rsvpData.loading, loadRSVPs, giftData.loaded, giftData.loading, loadGifts]);
 
   // Persist and restore tab state safely
   useEffect(() => {
@@ -1625,7 +2108,8 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
               const dynamicTabs: { label: string, id: string, type: string }[] = [
                 { label: "Basics", id: "Basics", type: "static" },
                 { label: "Layout", id: "Layout", type: "static" },
-                { label: "Guest List", id: "Guests", type: "static" }
+                { label: "Guest List", id: "Guests", type: "static" },
+                { label: "Gift Tracker", id: "Gifts", type: "static" }
               ];
               
               const typeCounts: Record<string, number> = {};
@@ -1966,7 +2450,8 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                 </div>
               );
 
-              if (tab === "Guests") return <GuestListPanel rsvpData={rsvpData} loadRSVPs={loadRSVPs} />;
+              if (tab === "Guests") return <GuestListPanel rsvpData={rsvpData} loadRSVPs={loadRSVPs} site={site} set={set} />;
+              if (tab === "Gifts") return <GiftTrackerPanel giftData={giftData} loadGifts={loadGifts} site={site} />;
 
               // --- Dynamic Sections ---
               const order = site.sectionOrder ?? DEFAULT_SECTION_ORDER;
@@ -2280,8 +2765,35 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                   <SortableList items={site.menuItems} prefix={`menu-${id}`} onReorder={(items) => set("menuItems", items)}>
                     {(m, i, sid) => (
                       <SortableCard key={sid} id={sid} onRemove={() => set("menuItems", removeFromArray(site.menuItems, i))}>
-                        <Field label="Name" value={m.name} onChange={(v) => set("menuItems", updateInArray(site.menuItems, i, { name: v }))} />
+                        <Field label="Name" value={m.name} onChange={(v) => set("menuItems", updateInArray(site.menuItems, i, { name: v }))} placeholder="e.g. Chicken, Beef, Vegetarian" />
                         <Field label="Description" value={m.description} onChange={(v) => set("menuItems", updateInArray(site.menuItems, i, { description: v }))} multiline rows={2} />
+                        <div className="mt-2">
+                          <label className="text-[9px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/40 block mb-2">Dietary Options Available</label>
+                          <div className="flex flex-wrap gap-1.5">
+                            {["Halal", "Kosher", "Vegan", "Vegetarian", "Gluten-Free", "Dairy-Free", "Nut-Free"].map(opt => {
+                              const active = m.dietaryOptions?.includes(opt);
+                              return (
+                                <button
+                                  key={opt}
+                                  type="button"
+                                  onClick={() => {
+                                    const current = m.dietaryOptions || [];
+                                    const updated = active ? current.filter(o => o !== opt) : [...current, opt];
+                                    set("menuItems", updateInArray(site.menuItems, i, { dietaryOptions: updated }));
+                                  }}
+                                  className={`px-2.5 py-1 text-[10px] font-medium rounded-sm border transition-all ${
+                                    active
+                                      ? "bg-[#2d2b25] text-white border-[#2d2b25]"
+                                      : "text-[#2d2b25]/40 border-[#2d2b25]/10 hover:border-[#2d2b25]/25"
+                                  }`}
+                                >
+                                  {opt}
+                                </button>
+                              );
+                            })}
+                          </div>
+                          <p className="text-[9px] text-[#2d2b25]/30 mt-1.5">Select which dietary options are available for this dish. These appear in the RSVP form.</p>
+                        </div>
                       </SortableCard>
                     )}
                   </SortableList>
@@ -2356,10 +2868,20 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                     {(h, i, sid) => (
                       <SortableCard key={sid} id={sid} title={h.name || `Hotel ${i + 1}`} onRemove={() => set("accommodations", removeFromArray(site.accommodations, i))}>
                         <Field label="Name" value={h.name} onChange={(v) => set("accommodations", updateInArray(site.accommodations, i, { name: v }))} />
-                        <Field label="Distance" value={h.distance} onChange={(v) => set("accommodations", updateInArray(site.accommodations, i, { distance: v }))} />
-                        <Field label="Discount Code" value={h.discountCode || ""} onChange={(v) => set("accommodations", updateInArray(site.accommodations, i, { discountCode: v }))} />
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <Field label="Distance" value={h.distance} onChange={(v) => set("accommodations", updateInArray(site.accommodations, i, { distance: v }))} />
+                          <Field label="Discount Code" value={h.discountCode || ""} onChange={(v) => set("accommodations", updateInArray(site.accommodations, i, { discountCode: v }))} />
+                        </div>
                         <Field label="Description" value={h.description} onChange={(v) => set("accommodations", updateInArray(site.accommodations, i, { description: v }))} multiline rows={2} />
-                        <Field label="Booking URL" value={h.bookingUrl} onChange={(v) => set("accommodations", updateInArray(site.accommodations, i, { bookingUrl: v }))} />
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <Field label="Phone" value={h.phone || ""} onChange={(v) => set("accommodations", updateInArray(site.accommodations, i, { phone: v }))} placeholder="+44 123 456 7890" />
+                          <Field label="Email" value={h.email || ""} onChange={(v) => set("accommodations", updateInArray(site.accommodations, i, { email: v }))} placeholder="reservations@hotel.com" />
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <Field label="Website URL" value={h.bookingUrl} onChange={(v) => set("accommodations", updateInArray(site.accommodations, i, { bookingUrl: v }))} placeholder="https://hotel.com/book" />
+                          <Field label="Website Button Label" value={h.buttonLabel || ""} onChange={(v) => set("accommodations", updateInArray(site.accommodations, i, { buttonLabel: v }))} placeholder="Visit Website" />
+                        </div>
+                        <p className="text-[10px] text-[#2d2b25]/40 mt-1">Fill in phone, email, or website to show a contact button. Multiple options create a dropdown.</p>
                       </SortableCard>
                     )}
                   </SortableList>
@@ -2373,29 +2895,6 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                   {renderBg("RSVP Background Image")}
                   <Field label="Heading" value={site.rsvpHeading} onChange={(v) => set("rsvpHeading", v)} />
                   <Field label="Deadline Text" value={site.rsvpDeadlineText} onChange={(v) => set("rsvpDeadlineText", v)} />
-                  <Field 
-                    label="Google Sheets Link" 
-                    value={site.rsvpEmbedUrl || (site.googleSheetId ? `https://docs.google.com/spreadsheets/d/${site.googleSheetId}` : "")} 
-                    onChange={(v) => {
-                      set("rsvpEmbedUrl", v);
-                      // Try to extract and save the ID automatically
-                      const match = v.match(/\/d\/([a-zA-Z0-9-_]+)/);
-                      if (match && match[1]) set("googleSheetId", match[1]);
-                    }} 
-                    placeholder="Paste full Google Sheets URL here" 
-                  />
-                  {(site.rsvpEmbedUrl || site.googleSheetId) && (
-                    <a 
-                      href={site.rsvpEmbedUrl || `https://docs.google.com/spreadsheets/d/${site.googleSheetId}`} 
-                      target="_blank" 
-                      rel="noopener"
-                      className="inline-flex items-center gap-2 px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-[#2d2b25]/60 hover:text-[#2d2b25] border border-[#2d2b25]/10 hover:border-[#2d2b25]/30 rounded-sm transition-all mb-6"
-                    >
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-                      Open Google Sheet
-                    </a>
-                  )}
-                  <Field label="Google Sheet Tab Name" value={site.googleSheetName || "Sheet1"} onChange={(v) => set("googleSheetName", v)} placeholder="e.g. Sheet1 or RSVPs" />
                 </div>
               );
 
@@ -2405,7 +2904,165 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                   {renderBg("Gift Background Image")}
                   <Field label="Heading" value={site.giftHeading} onChange={(v) => set("giftHeading", v)} />
                   <Field label="Subheading" value={site.giftSubheading} onChange={(v) => set("giftSubheading", v)} multiline rows={3} />
-                  
+
+                  <div className="mt-8 mb-8 p-4 bg-[#2d2b25]/5 border border-[#2d2b25]/10 rounded-sm flex items-center justify-between">
+                    <div>
+                      <Label>Accept Gift Contributions</Label>
+                      <p className="text-[10px] text-[#2d2b25]/40 mt-1 uppercase tracking-wider">
+                        Allow guests to contribute money towards specific gifts
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => set("giftEnableContributions", !site.giftEnableContributions)}
+                      className={`relative w-12 h-7 rounded-full transition-colors ${site.giftEnableContributions ? "bg-[#2d2b25]" : "bg-[#2d2b25]/15"}`}
+                    >
+                      <span className={`absolute top-1 w-5 h-5 bg-white rounded-full shadow-sm transition-transform ${site.giftEnableContributions ? "left-6" : "left-1"}`} />
+                    </button>
+                  </div>
+
+                  {/* Currency Selector */}
+                  {site.giftEnableContributions && (() => {
+                    const allCurrencies = [
+                      { code: "GBP", label: "£ GBP — British Pound" },
+                      { code: "USD", label: "$ USD — US Dollar" },
+                      { code: "EUR", label: "€ EUR — Euro" },
+                      { code: "CAD", label: "C$ CAD — Canadian Dollar" },
+                      { code: "AUD", label: "A$ AUD — Australian Dollar" },
+                      { code: "NZD", label: "NZ$ NZD — New Zealand Dollar" },
+                      { code: "CHF", label: "CHF — Swiss Franc" },
+                      { code: "SEK", label: "kr SEK — Swedish Krona" },
+                      { code: "NOK", label: "kr NOK — Norwegian Krone" },
+                      { code: "DKK", label: "kr DKK — Danish Krone" },
+                      { code: "ETB", label: "Br ETB — Ethiopian Birr" },
+                      { code: "KES", label: "KSh KES — Kenyan Shilling" },
+                      { code: "NGN", label: "₦ NGN — Nigerian Naira" },
+                      { code: "ZAR", label: "R ZAR — South African Rand" },
+                      { code: "INR", label: "₹ INR — Indian Rupee" },
+                      { code: "JPY", label: "¥ JPY — Japanese Yen" },
+                      { code: "CNY", label: "¥ CNY — Chinese Yuan" },
+                      { code: "BRL", label: "R$ BRL — Brazilian Real" },
+                      { code: "MXN", label: "MX$ MXN — Mexican Peso" },
+                      { code: "AED", label: "د.إ AED — UAE Dirham" },
+                      { code: "SAR", label: "﷼ SAR — Saudi Riyal" },
+                      { code: "TRY", label: "₺ TRY — Turkish Lira" },
+                      { code: "PLN", label: "zł PLN — Polish Zloty" },
+                      { code: "HUF", label: "Ft HUF — Hungarian Forint" },
+                      { code: "CZK", label: "Kč CZK — Czech Koruna" },
+                      { code: "RON", label: "lei RON — Romanian Leu" },
+                      { code: "BGN", label: "лв BGN — Bulgarian Lev" },
+                      { code: "HRK", label: "kn HRK — Croatian Kuna" },
+                      { code: "RUB", label: "₽ RUB — Russian Ruble" },
+                      { code: "UAH", label: "₴ UAH — Ukrainian Hryvnia" },
+                      { code: "GEL", label: "₾ GEL — Georgian Lari" },
+                      { code: "ILS", label: "₪ ILS — Israeli Shekel" },
+                      { code: "EGP", label: "E£ EGP — Egyptian Pound" },
+                      { code: "MAD", label: "MAD — Moroccan Dirham" },
+                      { code: "GHS", label: "₵ GHS — Ghanaian Cedi" },
+                      { code: "TZS", label: "TSh TZS — Tanzanian Shilling" },
+                      { code: "UGX", label: "USh UGX — Ugandan Shilling" },
+                      { code: "RWF", label: "RF RWF — Rwandan Franc" },
+                      { code: "XOF", label: "CFA XOF — West African CFA" },
+                      { code: "XAF", label: "CFA XAF — Central African CFA" },
+                      { code: "PKR", label: "₨ PKR — Pakistani Rupee" },
+                      { code: "BDT", label: "৳ BDT — Bangladeshi Taka" },
+                      { code: "LKR", label: "Rs LKR — Sri Lankan Rupee" },
+                      { code: "THB", label: "฿ THB — Thai Baht" },
+                      { code: "VND", label: "₫ VND — Vietnamese Dong" },
+                      { code: "MYR", label: "RM MYR — Malaysian Ringgit" },
+                      { code: "SGD", label: "S$ SGD — Singapore Dollar" },
+                      { code: "PHP", label: "₱ PHP — Philippine Peso" },
+                      { code: "IDR", label: "Rp IDR — Indonesian Rupiah" },
+                      { code: "KRW", label: "₩ KRW — South Korean Won" },
+                      { code: "TWD", label: "NT$ TWD — Taiwan Dollar" },
+                      { code: "HKD", label: "HK$ HKD — Hong Kong Dollar" },
+                      { code: "ARS", label: "AR$ ARS — Argentine Peso" },
+                      { code: "CLP", label: "CL$ CLP — Chilean Peso" },
+                      { code: "COP", label: "CO$ COP — Colombian Peso" },
+                      { code: "PEN", label: "S/ PEN — Peruvian Sol" },
+                      { code: "JMD", label: "J$ JMD — Jamaican Dollar" },
+                      { code: "TTD", label: "TT$ TTD — Trinidad Dollar" },
+                    ];
+                    const accepted = site.giftAcceptedCurrencies || ["GBP"];
+                    const available = allCurrencies.filter(c => !accepted.includes(c.code));
+
+                    return (
+                    <div className="mb-8 animate-in fade-in slide-in-from-top-2 duration-300">
+                      <Label>Accepted Currencies</Label>
+                      <p className="text-[10px] text-[#2d2b25]/40 mb-3 uppercase tracking-wider">Select the currencies you are willing to receive</p>
+
+                      {/* Selected currencies */}
+                      {accepted.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mt-3 mb-3">
+                          {accepted.map(code => {
+                            const c = allCurrencies.find(x => x.code === code);
+                            return (
+                              <span key={code} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#2d2b25] text-white text-xs font-bold rounded-sm">
+                                {c ? c.label.split(" — ")[0] : code}
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const updated = accepted.filter(x => x !== code);
+                                    if (updated.length === 0) return;
+                                    set("giftAcceptedCurrencies", updated);
+                                    if ((site.giftCurrency || "GBP") === code) {
+                                      set("giftCurrency", updated[0]);
+                                    }
+                                  }}
+                                  className="ml-0.5 opacity-60 hover:opacity-100 transition-opacity"
+                                >
+                                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                </button>
+                              </span>
+                            );
+                          })}
+                        </div>
+                      )}
+
+                      {/* Dropdown to add */}
+                      <select
+                        value=""
+                        onChange={(e) => {
+                          if (!e.target.value) return;
+                          const updated = [...accepted, e.target.value];
+                          set("giftAcceptedCurrencies", updated);
+                        }}
+                        className="w-full px-3 py-2.5 text-sm border border-[#2d2b25]/15 bg-white rounded-sm outline-none focus:border-[#2d2b25]/40 transition-colors text-[#2d2b25]"
+                      >
+                        <option value="">Add a currency...</option>
+                        {available.map(c => (
+                          <option key={c.code} value={c.code}>{c.label}</option>
+                        ))}
+                      </select>
+                    </div>
+                    );
+                  })()}
+
+                  {/* Gift Items */}
+                  {site.giftEnableContributions && (
+                    <div className="mt-4 mb-10">
+                      <Label>Gift Items</Label>
+                      <p className="text-[10px] text-[#2d2b25]/40 mb-4 uppercase tracking-wider">Add gifts guests can contribute towards</p>
+
+                      <SortableList
+                        items={site.giftItems || []}
+                        prefix={`gifts-${id}`}
+                        onReorder={(items) => set("giftItems", items)}
+                      >
+                        {(item, i, sid) => (
+                          <SortableCard key={sid} id={sid} title={item.name || `Gift ${i + 1}`} onRemove={() => set("giftItems", removeFromArray(site.giftItems || [], i))}>
+                            <Field label="Name" value={item.name} onChange={(v) => set("giftItems", updateInArray(site.giftItems || [], i, { name: v }))} placeholder="e.g. Honeymoon Fund, KitchenAid Mixer" />
+                            <Field label="Description" value={item.description} onChange={(v) => set("giftItems", updateInArray(site.giftItems || [], i, { description: v }))} placeholder="A short note about this gift" multiline rows={2} />
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                              <Field label="Suggested Amount" value={item.suggestedAmount || ""} onChange={(v) => set("giftItems", updateInArray(site.giftItems || [], i, { suggestedAmount: v }))} placeholder="e.g. 50" />
+                              <Field label="Image URL (optional)" value={item.imageUrl || ""} onChange={(v) => set("giftItems", updateInArray(site.giftItems || [], i, { imageUrl: v }))} placeholder="https://..." />
+                            </div>
+                          </SortableCard>
+                        )}
+                      </SortableList>
+                      <AddButton label="Add Gift Item" onClick={() => set("giftItems", [...(site.giftItems || []), { id: `gift-${Date.now()}`, name: "", description: "", suggestedAmount: "" }])} />
+                    </div>
+                  )}
+
                   <div className="mt-8 mb-10">
                     <Label>External Registry Links</Label>
                     <p className="text-[10px] text-[#2d2b25]/40 mb-4 uppercase tracking-wider">Simple links for PayPal, Monzo, Revolut, Wise, or Store Registries</p>

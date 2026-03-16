@@ -97,6 +97,42 @@
   color: var(--color-dark);
 }
 
+.modern-dropdown {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  margin-bottom: 4px;
+  background: var(--color-primary, #fff);
+  border: 1px solid var(--color-dark, #000);
+  display: flex;
+  flex-direction: column;
+}
+
+.modern-dropdown__item {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.65rem 1rem;
+  color: var(--color-dark, #000);
+  text-decoration: none;
+  transition: background 0.2s;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.modern-dropdown__item:hover {
+  background: var(--color-dark, #000);
+  color: var(--color-primary, #fff);
+}
+
+.modern-dropdown__item + .modern-dropdown__item {
+  border-top: 1px solid rgba(0,0,0,0.08);
+}
+
 /* Nav */
 .modern-nav {
   position: fixed;
@@ -890,6 +926,328 @@
 .modern-footer__dev a {
   color: inherit;
   text-decoration: underline;
+}
+
+/* ===== GIFT CONTRIBUTION FORM ===== */
+.gift-contrib {
+  margin-top: 4rem;
+  text-align: left;
+}
+
+.gift-contrib__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2.5rem;
+  margin-top: 3rem;
+}
+
+.gift-contrib__card {
+  background: white;
+  border: 1px solid color-mix(in srgb, var(--color-dark), transparent 90%);
+  padding: 2.5rem 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.gift-contrib__card:hover {
+  border-color: var(--color-dark);
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+}
+
+.gift-contrib__card-img {
+  width: 100%;
+  aspect-ratio: 1;
+  margin-bottom: 2rem;
+  overflow: hidden;
+  background: #fcfcfc;
+}
+
+.gift-contrib__card-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.gift-contrib__card:hover .gift-contrib__card-img img {
+  transform: scale(1.08);
+}
+
+.gift-contrib__card-name {
+  font-family: var(--font-serif);
+  font-size: 1.4rem;
+  font-weight: 400;
+  margin-bottom: 0.75rem;
+  color: var(--color-dark);
+  letter-spacing: -0.01em;
+}
+
+.gift-contrib__card-desc {
+  font-size: 0.95rem;
+  opacity: 0.6;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.gift-contrib__card-amount {
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-dark);
+  margin-top: auto;
+  padding: 0.5rem 1.25rem;
+  background: color-mix(in srgb, var(--color-dark), transparent 95%);
+  border: 1px solid color-mix(in srgb, var(--color-dark), transparent 90%);
+}
+
+.gift-contrib__card--general {
+  border-style: dashed;
+  background: transparent;
+  justify-content: center;
+}
+
+.gift-contrib__back {
+  background: none;
+  border: none;
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--color-dark);
+  opacity: 0.4;
+  cursor: pointer;
+  margin-bottom: 3rem;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.gift-contrib__back:hover {
+  opacity: 1;
+  transform: translateX(-5px);
+}
+
+.gift-contrib__selected {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.gift-contrib__selected h4 {
+  font-family: var(--font-serif);
+  font-size: 2.5rem;
+  font-weight: 400;
+  color: var(--color-dark);
+  letter-spacing: -0.02em;
+}
+
+.gift-contrib__form {
+  max-width: 550px;
+  margin: 0 auto;
+}
+
+.gift-contrib__field {
+  margin-bottom: 2rem;
+}
+
+.gift-contrib__label {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-dark);
+  margin-bottom: 0.75rem;
+  opacity: 0.5;
+}
+
+.gift-contrib__input,
+.gift-contrib__select,
+.gift-contrib__textarea {
+  width: 100%;
+  padding: 1.1rem 1.25rem;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  border: 1px solid color-mix(in srgb, var(--color-dark), transparent 85%);
+  background: white;
+  color: var(--color-dark);
+  border-radius: 0;
+  transition: all 0.3s ease;
+}
+
+.gift-contrib__input:focus,
+.gift-contrib__select:focus,
+.gift-contrib__textarea:focus {
+  outline: none;
+  border-color: var(--color-dark);
+  background: #fff;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.02);
+}
+
+.gift-contrib__btn {
+  width: 100%;
+  padding: 1.25rem;
+  background: var(--color-dark);
+  color: var(--color-primary);
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  border: 2px solid var(--color-dark);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+}
+
+.gift-contrib__btn:hover {
+  background: transparent;
+  color: var(--color-dark);
+}
+
+.gift-contrib__btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.gift-contrib__success {
+  text-align: center;
+  padding: 6rem 2rem;
+  background: color-mix(in srgb, var(--color-accent), transparent 60%);
+  border: 1px solid color-mix(in srgb, var(--color-dark), transparent 85%);
+}
+
+.gift-contrib__success-title {
+  font-family: var(--font-serif);
+  font-size: 3.5rem;
+  color: var(--color-dark);
+  margin-bottom: 1rem;
+  letter-spacing: -0.02em;
+}
+
+.gift-contrib__success-text {
+  font-family: var(--font-sans);
+  font-size: 1.2rem;
+  opacity: 0.6;
+}
+
+.gift-contrib__error {
+  color: #e74c3c;
+  font-size: 0.9rem;
+  margin-top: 1.5rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Currency selector */
+.gift-contrib__currency-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+}
+
+.gift-contrib__currency-btn {
+  padding: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: transparent;
+  color: var(--color-dark, #1a1a1a);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  letter-spacing: 0.05em;
+}
+
+.gift-contrib__currency-btn:hover {
+  border-color: rgba(0, 0, 0, 0.3);
+}
+
+.gift-contrib__currency-btn--active {
+  background: var(--color-dark, #1a1a1a);
+  color: var(--color-primary, #fff);
+  border-color: var(--color-dark, #1a1a1a);
+}
+
+/* Modern Dark mode overrides for gift contrib */
+.modern-section--dark .gift-contrib__currency-btn {
+  border-color: rgba(255, 255, 255, 0.1);
+  color: var(--color-accent);
+}
+
+.modern-section--dark .gift-contrib__currency-btn:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.modern-section--dark .gift-contrib__currency-btn--active {
+  background: var(--color-primary);
+  color: var(--color-dark);
+  border-color: var(--color-primary);
+}
+
+.modern-section--dark .gift-contrib__card {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.modern-section--dark .gift-contrib__card:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: var(--color-primary);
+}
+
+.modern-section--dark .gift-contrib__card-name,
+.modern-section--dark .gift-contrib__selected h4,
+.modern-section--dark .gift-contrib__success-title {
+  color: var(--color-primary);
+}
+
+.modern-section--dark .gift-contrib__card-desc,
+.modern-section--dark .gift-contrib__success-text,
+.modern-section--dark .gift-contrib__back,
+.modern-section--dark .gift-contrib__label {
+  color: var(--color-accent);
+  opacity: 0.9;
+}
+
+.modern-section--dark .gift-contrib__card-amount {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--color-accent);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.modern-section--dark .gift-contrib__input,
+.modern-section--dark .gift-contrib__select,
+.modern-section--dark .gift-contrib__textarea {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: var(--color-primary);
+}
+
+.modern-section--dark .gift-contrib__input:focus,
+.modern-section--dark .gift-contrib__select:focus,
+.modern-section--dark .gift-contrib__textarea:focus {
+  border-color: var(--color-primary);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.modern-section--dark .gift-contrib__btn {
+  background: var(--color-primary);
+  color: var(--color-dark);
+  border-color: var(--color-primary);
+}
+
+.modern-section--dark .gift-contrib__btn:hover {
+  background: transparent;
+  color: var(--color-primary);
 }
 
 /* Animations */
