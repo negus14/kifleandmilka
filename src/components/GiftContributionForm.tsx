@@ -68,6 +68,9 @@ export default function GiftContributionForm({ slug, giftItems, currency, paymen
     e.preventDefault();
     setStatus("loading");
 
+    // Open window synchronously so iOS Safari doesn't block it as a popup
+    const payWindow = paymentMethod ? window.open("about:blank", "_blank") : null;
+
     try {
       const res = await fetch("/api/gift-contribution", {
         method: "POST",
@@ -86,12 +89,15 @@ export default function GiftContributionForm({ slug, giftItems, currency, paymen
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Something went wrong");
 
-      if (data.redirectUrl) {
-        window.open(data.redirectUrl, "_blank");
+      if (data.redirectUrl && payWindow) {
+        payWindow.location.href = data.redirectUrl;
+      } else if (payWindow) {
+        payWindow.close();
       }
 
       setStatus("success");
     } catch (err: unknown) {
+      payWindow?.close();
       setStatus("error");
       setErrorMessage(err instanceof Error ? err.message : "Failed to submit. Please try again.");
     }

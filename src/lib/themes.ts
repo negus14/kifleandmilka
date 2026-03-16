@@ -451,6 +451,123 @@ export const themes: Theme[] = [
     googleFontsUrl:
       "https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Josefin+Sans:wght@300;400;500;600&display=swap",
   },
+
+  // ─── Luxury Palettes ───
+
+  {
+    id: "black-tie-gold",
+    name: "Black Tie Gold",
+    colors: {
+      dark: "#1a1a1a",
+      accent: "#c9a84c",
+      primary: "#faf8f4",
+      accentLight: "#dcc477",
+      accentDark: "#a68a2e",
+      primaryDark: "#f0ece4",
+    },
+    fonts: {
+      script: "'Pinyon Script', cursive",
+      serif: "'Cormorant Garamond', Georgia, serif",
+      sans: "'Josefin Sans', system-ui, sans-serif",
+    },
+    googleFontsUrl:
+      "https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Josefin+Sans:wght@300;400;500;600&display=swap",
+  },
+  {
+    id: "champagne-noir",
+    name: "Champagne Noir",
+    colors: {
+      dark: "#0d0d0d",
+      accent: "#d4af37",
+      primary: "#f5f0e8",
+      accentLight: "#e2c864",
+      accentDark: "#b8941e",
+      primaryDark: "#e8e0d2",
+    },
+    fonts: {
+      script: "'Mrs Saint Delafield', cursive",
+      serif: "'Libre Baskerville', Georgia, serif",
+      sans: "'Raleway', system-ui, sans-serif",
+    },
+    googleFontsUrl:
+      "https://fonts.googleapis.com/css2?family=Mrs+Saint+Delafield&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Raleway:wght@300;400;500;600&display=swap",
+  },
+  {
+    id: "burgundy-gold",
+    name: "Burgundy & Gold",
+    colors: {
+      dark: "#4a0e1a",
+      accent: "#b8860b",
+      primary: "#fdf8f5",
+      accentLight: "#d4a830",
+      accentDark: "#8c6508",
+      primaryDark: "#f5ece6",
+    },
+    fonts: {
+      script: "'Alex Brush', cursive",
+      serif: "'Playfair Display', Georgia, serif",
+      sans: "'Lato', system-ui, sans-serif",
+    },
+    googleFontsUrl:
+      "https://fonts.googleapis.com/css2?family=Alex+Brush&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Lato:wght@300;400;700&display=swap",
+  },
+  {
+    id: "emerald-luxe",
+    name: "Emerald Luxe",
+    colors: {
+      dark: "#0b3d2e",
+      accent: "#d4af37",
+      primary: "#f5f9f6",
+      accentLight: "#e2c864",
+      accentDark: "#b8941e",
+      primaryDark: "#e4ede8",
+    },
+    fonts: {
+      script: "'Great Vibes', cursive",
+      serif: "'EB Garamond', Georgia, serif",
+      sans: "'Inter', system-ui, sans-serif",
+    },
+    googleFontsUrl:
+      "https://fonts.googleapis.com/css2?family=Great+Vibes&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap",
+  },
+  {
+    id: "marble-onyx",
+    name: "Marble & Onyx",
+    colors: {
+      dark: "#121212",
+      accent: "#c0b283",
+      primary: "#fafafa",
+      accentLight: "#d4c9a0",
+      accentDark: "#9e9060",
+      primaryDark: "#eeeeee",
+    },
+    fonts: {
+      script: "'Monsieur La Doulaise', cursive",
+      serif: "'Tenor Sans', sans-serif",
+      sans: "'Montserrat', sans-serif",
+    },
+    googleFontsUrl:
+      "https://fonts.googleapis.com/css2?family=Monsieur+La+Doulaise&family=Tenor+Sans&family=Montserrat:wght@200;300;400&display=swap",
+  },
+  {
+    id: "rose-champagne",
+    name: "Rosé Champagne",
+    colors: {
+      dark: "#2e1a1a",
+      accent: "#c4956a",
+      primary: "#fdf6f2",
+      accentLight: "#d8b48e",
+      accentDark: "#a87548",
+      primaryDark: "#f5e8e0",
+    },
+    fonts: {
+      script: "'Dancing Script', cursive",
+      serif: "'Cormorant Garamond', Georgia, serif",
+      sans: "'Josefin Sans', system-ui, sans-serif",
+    },
+    googleFontsUrl:
+      "https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Josefin+Sans:wght@300;400;500;600&display=swap",
+  },
 ];
 
 export function getTheme(templateId: string): Theme {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useId, useEffect, useCallback, forwardRef } from "react";
+import React, { useState, useRef, useId, useEffect, useCallback, forwardRef } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useRouter } from "next/navigation";
@@ -39,8 +39,8 @@ import { CSS } from "@dnd-kit/utilities";
 import ClassicTemplate from "@/templates/classic/Template";
 import ModernTemplate from "@/templates/modern/Template";
 
-const STATIC_TABS = ["Basics", "Layout", "Guests", "Gifts"] as const;
-
+const STATIC_TABS = ["Basics", "Layout", "Guests", "Messages", "Gifts"] as const;
+type View = "website" | "guests" | "gifts" | "messages";
 type Tab = string; // Allows dynamic tabs like "story-123"
 
 // ─── Primitives ───
@@ -225,6 +225,36 @@ function AddButton({ onClick, label }: { onClick: () => void; label: string }) {
 
 function SectionTitle({ children }: { children: React.ReactNode }) {
   return <h2 className="text-lg mb-6" style={{ fontFamily: "'Playfair Display', serif" }}>{children}</h2>;
+}
+
+function DomainStatus({ slug, domain }: { slug: string; domain: string }) {
+  const [status, setStatus] = useState<"idle" | "checking" | "configured" | "pending" | "error">("idle");
+  const [message, setMessage] = useState("");
+
+  const check = async () => {
+    setStatus("checking");
+    try {
+      const res = await fetch(`/api/sites/${slug}/domain`);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      setStatus(data.configured ? "configured" : "pending");
+      setMessage(data.configured ? "Domain is configured and active" : "Waiting for DNS propagation...");
+    } catch (err) {
+      setStatus("error");
+      setMessage(err instanceof Error ? err.message : "Failed to check status");
+    }
+  };
+
+  return (
+    <div className="mt-3 flex items-center gap-2">
+      <button onClick={check} className="text-[10px] font-bold uppercase tracking-wider text-[#2d2b25]/60 hover:text-[#2d2b25] transition-colors">
+        {status === "checking" ? "Checking..." : "Verify DNS"}
+      </button>
+      {status === "configured" && <span className="text-[10px] text-green-600 font-medium">{message}</span>}
+      {status === "pending" && <span className="text-[10px] text-yellow-600 font-medium">{message}</span>}
+      {status === "error" && <span className="text-[10px] text-red-600 font-medium">{message}</span>}
+    </div>
+  );
 }
 
 function ColorPicker({ label, value, onChange, themeColors }: { 
@@ -822,6 +852,287 @@ type GuestRow = {
   date: string;
   rsvpId: string;
 };
+
+// ─── Messages Panel ───
+
+function MessagesPanel({ msgData, loadMessages, site }: {
+  msgData: {
+    groups: { id: string; name: string; type: string; filter: any; members: any }[];
+    broadcasts: { id: string; groupId: string | null; subject: string; body: string; status: string; recipientCount: string | null; sentAt: string | null; createdAt: string | null }[];
+    loaded: boolean; loading: boolean; error: string | null;
+  };
+  loadMessages: () => void;
+  site: WeddingSite;
+}) {
+  const [activeView, setActiveView] = useState<"compose" | "history" | "groups">("compose");
+  const [subject, setSubject] = useState("");
+  const [body, setBody] = useState("");
+  const [selectedGroup, setSelectedGroup] = useState("");
+  const [sending, setSending] = useState(false);
+  const [sendResult, setSendResult] = useState<{ ok: boolean; message: string } | null>(null);
+  const [newGroupName, setNewGroupName] = useState("");
+  const [creatingGroup, setCreatingGroup] = useState(false);
+
+  if (!msgData.loaded) {
+    return (
+      <div className="flex flex-col items-center justify-center pt-20">
+        {msgData.loading ? (
+          <p className="text-[11px] font-bold uppercase tracking-widest text-[#2d2b25]/40 animate-pulse">Loading messages...</p>
+        ) : msgData.error ? (
+          <div className="text-center">
+            <p className="text-[11px] text-red-600 mb-4">{msgData.error}</p>
+            <button onClick={loadMessages} className="text-[10px] font-bold uppercase tracking-wider px-4 py-2 border border-[#2d2b25]/15 hover:border-[#2d2b25]/30 rounded-sm">Retry</button>
+          </div>
+        ) : (
+          <button onClick={loadMessages} className="text-[10px] font-bold uppercase tracking-wider px-6 py-3 border border-[#2d2b25]/15 hover:border-[#2d2b25]/30 rounded-sm transition-all">Load Messages</button>
+        )}
+      </div>
+    );
+  }
+
+  const handleSend = async () => {
+    if (!selectedGroup || !subject.trim() || !body.trim()) return;
+    setSending(true);
+    setSendResult(null);
+    try {
+      // Create broadcast
+      const createRes = await fetch(`/api/sites/${site.slug}/broadcasts`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ groupId: selectedGroup, subject, body }),
+      });
+      const createData = await createRes.json();
+      if (!createRes.ok) throw new Error(createData.error);
+
+      // Send it
+      const sendRes = await fetch(`/api/sites/${site.slug}/broadcasts/${createData.broadcast.id}/send`, {
+        method: "POST",
+      });
+      const sendData = await sendRes.json();
+      if (!sendRes.ok) throw new Error(sendData.error);
+
+      setSendResult({ ok: true, message: `Sent to ${sendData.recipientCount} recipient${sendData.recipientCount === 1 ? "" : "s"}` });
+      setSubject("");
+      setBody("");
+      setSelectedGroup("");
+      loadMessages();
+    } catch (err) {
+      setSendResult({ ok: false, message: err instanceof Error ? err.message : "Failed to send" });
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const handleCreateGroup = async () => {
+    if (!newGroupName.trim()) return;
+    setCreatingGroup(true);
+    try {
+      const res = await fetch(`/api/sites/${site.slug}/broadcast-groups`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: newGroupName, members: [] }),
+      });
+      if (!res.ok) throw new Error("Failed to create group");
+      setNewGroupName("");
+      loadMessages();
+    } catch (err) {
+      // silent
+    } finally {
+      setCreatingGroup(false);
+    }
+  };
+
+  const handleDeleteGroup = async (groupId: string) => {
+    try {
+      await fetch(`/api/sites/${site.slug}/broadcast-groups`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: groupId }),
+      });
+      loadMessages();
+    } catch {
+      // silent
+    }
+  };
+
+  const smartGroups = msgData.groups.filter((g) => g.type === "smart");
+  const customGroups = msgData.groups.filter((g) => g.type === "custom");
+  const sentBroadcasts = msgData.broadcasts
+    .filter((b) => b.status === "sent")
+    .sort((a, b) => new Date(b.sentAt || b.createdAt || 0).getTime() - new Date(a.sentAt || a.createdAt || 0).getTime());
+
+  return (
+    <div className="p-6 max-w-2xl mx-auto">
+      <h2 className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#2d2b25]/60 mb-6">Messages</h2>
+
+      {/* View Tabs */}
+      <div className="flex gap-1 mb-8 border-b border-[#2d2b25]/10 pb-px">
+        {(["compose", "history", "groups"] as const).map((v) => (
+          <button
+            key={v}
+            onClick={() => setActiveView(v)}
+            className={`text-[10px] font-bold uppercase tracking-wider px-4 py-2.5 transition-all border-b-2 -mb-px ${activeView === v ? "border-[#2d2b25] text-[#2d2b25]" : "border-transparent text-[#2d2b25]/40 hover:text-[#2d2b25]/60"}`}
+          >
+            {v === "compose" ? "Compose" : v === "history" ? "History" : "Groups"}
+          </button>
+        ))}
+      </div>
+
+      {/* Compose View */}
+      {activeView === "compose" && (
+        <div>
+          <div className="mb-4">
+            <label className="block text-[11px] font-semibold tracking-[0.15em] uppercase text-[#2d2b25]/60 mb-3">Send To</label>
+            <select
+              value={selectedGroup}
+              onChange={(e) => setSelectedGroup(e.target.value)}
+              className="w-full px-3 py-2 border border-[#2d2b25]/15 bg-white/50 text-[#2d2b25] text-sm outline-none focus:border-[#2d2b25]/40 rounded-sm"
+            >
+              <option value="">Select a group...</option>
+              {smartGroups.length > 0 && (
+                <optgroup label="Smart Groups">
+                  {smartGroups.map((g) => <option key={g.id} value={g.id}>{g.name}</option>)}
+                </optgroup>
+              )}
+              {customGroups.length > 0 && (
+                <optgroup label="Custom Groups">
+                  {customGroups.map((g) => <option key={g.id} value={g.id}>{g.name} ({((g.members as string[]) || []).length})</option>)}
+                </optgroup>
+              )}
+            </select>
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-[11px] font-semibold tracking-[0.15em] uppercase text-[#2d2b25]/60 mb-3">Subject</label>
+            <input
+              value={subject}
+              onChange={(e) => setSubject(e.target.value)}
+              placeholder="e.g. Important Update"
+              className="w-full px-3 py-2 border border-[#2d2b25]/15 bg-white/50 text-[#2d2b25] text-sm outline-none focus:border-[#2d2b25]/40 rounded-sm"
+            />
+          </div>
+
+          <div className="mb-6">
+            <label className="block text-[11px] font-semibold tracking-[0.15em] uppercase text-[#2d2b25]/60 mb-3">Message</label>
+            <textarea
+              value={body}
+              onChange={(e) => setBody(e.target.value)}
+              placeholder="Write your message here..."
+              rows={8}
+              className="w-full px-3 py-2 border border-[#2d2b25]/15 bg-white/50 text-[#2d2b25] text-sm outline-none focus:border-[#2d2b25]/40 resize-y rounded-sm"
+            />
+          </div>
+
+          {sendResult && (
+            <div className={`mb-4 p-3 rounded-sm text-sm ${sendResult.ok ? "bg-green-50 text-green-700 border border-green-200" : "bg-red-50 text-red-700 border border-red-200"}`}>
+              {sendResult.message}
+            </div>
+          )}
+
+          <button
+            onClick={handleSend}
+            disabled={sending || !selectedGroup || !subject.trim() || !body.trim()}
+            className="w-full py-3 text-[11px] font-bold uppercase tracking-[0.2em] bg-[#2d2b25] text-white rounded-sm hover:bg-[#2d2b25]/90 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+          >
+            {sending ? "Sending..." : "Send Email"}
+          </button>
+        </div>
+      )}
+
+      {/* History View */}
+      {activeView === "history" && (
+        <div>
+          {sentBroadcasts.length === 0 ? (
+            <p className="text-center text-[#2d2b25]/40 text-sm pt-8">No messages sent yet</p>
+          ) : (
+            <div className="space-y-3">
+              {sentBroadcasts.map((b) => {
+                const group = msgData.groups.find((g) => g.id === b.groupId);
+                return (
+                  <div key={b.id} className="p-4 border border-[#2d2b25]/10 rounded-sm">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium text-[#2d2b25] truncate">{b.subject}</p>
+                        <p className="text-[11px] text-[#2d2b25]/50 mt-1">
+                          To: {group?.name || "Unknown group"} &middot; {b.recipientCount || "?"} recipient{b.recipientCount === "1" ? "" : "s"}
+                        </p>
+                      </div>
+                      <div className="text-right flex-shrink-0">
+                        <span className={`inline-block text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-sm ${b.status === "sent" ? "bg-green-50 text-green-700" : b.status === "failed" ? "bg-red-50 text-red-700" : "bg-yellow-50 text-yellow-700"}`}>
+                          {b.status}
+                        </span>
+                        {b.sentAt && (
+                          <p className="text-[10px] text-[#2d2b25]/40 mt-1">
+                            {new Date(b.sentAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Groups View */}
+      {activeView === "groups" && (
+        <div>
+          {smartGroups.length > 0 && (
+            <div className="mb-8">
+              <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#2d2b25]/40 mb-3">Smart Groups (auto-updated)</h3>
+              <div className="space-y-2">
+                {smartGroups.map((g) => (
+                  <div key={g.id} className="flex items-center justify-between p-3 border border-[#2d2b25]/10 rounded-sm">
+                    <span className="text-sm text-[#2d2b25]">{g.name}</span>
+                    <span className="text-[10px] text-[#2d2b25]/40 uppercase tracking-wider">Auto</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="mb-6">
+            <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#2d2b25]/40 mb-3">Custom Groups</h3>
+            {customGroups.length > 0 ? (
+              <div className="space-y-2 mb-4">
+                {customGroups.map((g) => (
+                  <div key={g.id} className="flex items-center justify-between p-3 border border-[#2d2b25]/10 rounded-sm">
+                    <div>
+                      <span className="text-sm text-[#2d2b25]">{g.name}</span>
+                      <span className="text-[10px] text-[#2d2b25]/40 ml-2">({((g.members as string[]) || []).length} members)</span>
+                    </div>
+                    <button onClick={() => handleDeleteGroup(g.id)} className="text-[10px] text-red-500 hover:text-red-700 uppercase tracking-wider font-bold">Remove</button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-[#2d2b25]/40 mb-4">No custom groups yet</p>
+            )}
+
+            <div className="flex gap-2">
+              <input
+                value={newGroupName}
+                onChange={(e) => setNewGroupName(e.target.value)}
+                placeholder="New group name"
+                className="flex-1 px-3 py-2 border border-[#2d2b25]/15 bg-white/50 text-[#2d2b25] text-sm outline-none focus:border-[#2d2b25]/40 rounded-sm"
+                onKeyDown={(e) => e.key === "Enter" && handleCreateGroup()}
+              />
+              <button
+                onClick={handleCreateGroup}
+                disabled={creatingGroup || !newGroupName.trim()}
+                className="px-4 py-2 text-[10px] font-bold uppercase tracking-wider bg-[#2d2b25] text-white rounded-sm hover:bg-[#2d2b25]/90 disabled:opacity-30"
+              >
+                {creatingGroup ? "..." : "Add"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 type GuestFilter = "all" | "attending" | "declined";
 type GuestView = "table" | "cards";
@@ -1516,6 +1827,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
   const [future, setFuture] = useState<WeddingSite[]>([]);
 
   const [tab, setTab] = useState<Tab>("Basics");
+  const [view, setView] = useState<View>("website");
 
   // RSVP guest list state
   const [rsvpData, setRsvpData] = useState<{
@@ -1576,15 +1888,43 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
     }
   }, [initial.slug]);
 
+  // Broadcast / messages state
+  const [msgData, setMsgData] = useState<{
+    groups: { id: string; name: string; type: string; filter: any; members: any }[];
+    broadcasts: { id: string; groupId: string | null; subject: string; body: string; status: string; recipientCount: string | null; sentAt: string | null; createdAt: string | null }[];
+    loaded: boolean; loading: boolean; error: string | null;
+  }>({ groups: [], broadcasts: [], loaded: false, loading: false, error: null });
+
+  const loadMessages = useCallback(async () => {
+    setMsgData(prev => ({ ...prev, loading: true, error: null }));
+    try {
+      const [gRes, bRes] = await Promise.all([
+        fetch(`/api/sites/${initial.slug}/broadcast-groups`),
+        fetch(`/api/sites/${initial.slug}/broadcasts`),
+      ]);
+      const gData = await gRes.json();
+      const bData = await bRes.json();
+      if (!gRes.ok) throw new Error(gData.error || "Failed to load groups");
+      if (!bRes.ok) throw new Error(bData.error || "Failed to load broadcasts");
+      setMsgData({ groups: gData.groups, broadcasts: bData.broadcasts, loaded: true, loading: false, error: null });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Failed to load messages";
+      setMsgData(prev => ({ ...prev, loading: false, error: message }));
+    }
+  }, [initial.slug]);
+
   // Load RSVPs when Guests tab is first selected
   useEffect(() => {
-    if (tab === "Guests" && !rsvpData.loaded && !rsvpData.loading) {
+    if ((tab === "Guests" || view === "guests") && !rsvpData.loaded && !rsvpData.loading) {
       loadRSVPs();
     }
-    if (tab === "Gifts" && !giftData.loaded && !giftData.loading) {
+    if ((tab === "Messages" || view === "messages") && !msgData.loaded && !msgData.loading) {
+      loadMessages();
+    }
+    if ((tab === "Gifts" || view === "gifts") && !giftData.loaded && !giftData.loading) {
       loadGifts();
     }
-  }, [tab, rsvpData.loaded, rsvpData.loading, loadRSVPs, giftData.loaded, giftData.loading, loadGifts]);
+  }, [tab, view, rsvpData.loaded, rsvpData.loading, loadRSVPs, msgData.loaded, msgData.loading, loadMessages, giftData.loaded, giftData.loading, loadGifts]);
 
   // Persist and restore tab state safely
   useEffect(() => {
@@ -2052,27 +2392,52 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                 View Live
               </a>
             )}
-            
+
             <div className="flex bg-[#2d2b25]/5 rounded-sm p-1">
-              <button 
-                onClick={() => setIsPreview(false)}
+              <button
+                onClick={() => { setView("website"); setIsPreview(false); }}
                 className={`px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-sm transition-all ${
-                  !isPreview 
-                  ? "bg-[#2d2b25] text-white shadow-sm" 
+                  view === "website" && !isPreview
+                  ? "bg-[#2d2b25] text-white shadow-sm"
                   : "text-[#2d2b25]/40 hover:text-[#2d2b25]/60"
                 }`}
               >
                 Edit
               </button>
-              <button 
-                onClick={() => setIsPreview(true)}
+              <button
+                onClick={() => { setView("website"); setIsPreview(true); }}
                 className={`px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-sm transition-all ${
-                  isPreview 
-                  ? "bg-[#2d2b25] text-white shadow-sm" 
+                  view === "website" && isPreview
+                  ? "bg-[#2d2b25] text-white shadow-sm"
                   : "text-[#2d2b25]/40 hover:text-[#2d2b25]/60"
                 }`}
               >
                 Live
+              </button>
+            </div>
+
+            <div className="hidden sm:block w-px h-5 bg-[#2d2b25]/10" />
+
+            <div className="flex bg-[#2d2b25]/5 rounded-sm p-1 gap-0.5">
+              <button
+                onClick={() => setView("guests")}
+                className={`px-2.5 py-1.5 rounded-sm transition-all flex items-center gap-1.5 ${
+                  view === "guests" ? "bg-[#2d2b25] text-white shadow-sm" : "text-[#2d2b25]/40 hover:text-[#2d2b25]/60"
+                }`}
+                title="Guest List"
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                <span className="text-[10px] font-bold uppercase tracking-wider hidden md:inline">Guests</span>
+              </button>
+              <button
+                onClick={() => setView("gifts")}
+                className={`px-2.5 py-1.5 rounded-sm transition-all flex items-center gap-1.5 ${
+                  view === "gifts" ? "bg-[#2d2b25] text-white shadow-sm" : "text-[#2d2b25]/40 hover:text-[#2d2b25]/60"
+                }`}
+                title="Gift Tracker"
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+                <span className="text-[10px] font-bold uppercase tracking-wider hidden md:inline">Gifts</span>
               </button>
             </div>
 
@@ -2107,33 +2472,56 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
         </div>
       </header>
 
+      {/* Management Panels */}
+      {view === "guests" && (
+        <div className="max-w-6xl mx-auto px-3 sm:px-6 py-4 lg:py-8">
+          <GuestListPanel rsvpData={rsvpData} loadRSVPs={loadRSVPs} site={site} set={set} />
+        </div>
+      )}
+      {view === "messages" && (
+        <div className="max-w-6xl mx-auto px-3 sm:px-6 py-4 lg:py-8">
+          <MessagesPanel msgData={msgData} loadMessages={loadMessages} site={site} />
+        </div>
+      )}
+      {view === "gifts" && (
+        <div className="max-w-6xl mx-auto px-3 sm:px-6 py-4 lg:py-8">
+          <GiftTrackerPanel giftData={giftData} loadGifts={loadGifts} site={site} />
+        </div>
+      )}
+
+      {/* Website Editor */}
+      {view === "website" && (
       <div className={`mx-auto transition-all ${isPreview ? "max-w-[1600px] px-0 lg:px-4" : "max-w-6xl px-3 sm:px-6"} py-4 lg:py-8 flex flex-col lg:flex-row gap-0 lg:gap-8`}>
         {/* Sidebar / Mobile Tabs */}
         <nav className={`shrink-0 sticky top-14 lg:top-20 z-40 self-start transition-all ${isPreview ? "lg:w-36" : "lg:w-44"} w-full overflow-x-auto lg:overflow-x-visible no-scrollbar mb-6 lg:mb-0 px-4 lg:px-0 block bg-[#faf1e1]/95 backdrop-blur-sm lg:bg-transparent lg:backdrop-blur-none py-2 lg:py-0 -mx-0 border-b border-[#2d2b25]/[0.06] lg:border-b-0`}>
           <div className="flex lg:flex-col gap-1 min-w-max lg:min-w-0">
             {(() => {
               const order = site.sectionOrder ?? DEFAULT_SECTION_ORDER;
-              const dynamicTabs: { label: string, id: string, type: string }[] = [
+              const dynamicTabs: { label: string, id: string, type: string, divider?: boolean }[] = [
                 { label: "Basics", id: "Basics", type: "static" },
                 { label: "Layout", id: "Layout", type: "static" },
-                { label: "Guest List", id: "Guests", type: "static" },
-                { label: "Gift Tracker", id: "Gifts", type: "static" }
               ];
-              
+
               const typeCounts: Record<string, number> = {};
-              order.forEach(s => {
+              order.forEach((s, i) => {
                 const baseLabel = SECTION_LABELS[s.type] || SECTION_LABELS[s.id] || s.type;
                 typeCounts[s.type] = (typeCounts[s.type] || 0) + 1;
                 const label = typeCounts[s.type] > 1 ? `${baseLabel} ${typeCounts[s.type]}` : baseLabel;
-                dynamicTabs.push({ label, id: s.id, type: s.type });
+                dynamicTabs.push({ label, id: s.id, type: s.type, divider: i === 0 });
               });
 
               return dynamicTabs.map((t) => {
                 const isHidden = t.type !== "static" && order.find(s => s.id === t.id)?.visible === false;
 
                 return (
-                  <button 
-                    key={t.id} 
+                  <React.Fragment key={t.id}>
+                  {t.divider && (
+                    <div className="hidden lg:block w-full h-px bg-[#2d2b25]/8 my-1" />
+                  )}
+                  {t.divider && (
+                    <span className="hidden lg:block text-[8px] font-bold uppercase tracking-[0.2em] text-[#2d2b25]/25 px-3 mt-1 mb-0.5">Sections</span>
+                  )}
+                  <button
                     onClick={() => {
                       if (isHidden) {
                         alert(`The "${t.label}" section is currently hidden. Enable it in the "Layout" tab to edit its content and see it in the preview.`);
@@ -2160,6 +2548,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                       )}
                     </div>
                   </button>
+                  </React.Fragment>
                 );
               });
             })()}
@@ -2297,6 +2686,28 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                       </button>
                     ))}
                   </div>
+
+                  {/* Custom Domain */}
+                  {site.isPaid && (
+                    <div className="mt-10 pt-8 border-t border-[#2d2b25]/10">
+                      <Label>Custom Domain</Label>
+                      <p className="text-[10px] text-[#2d2b25]/40 mb-4 uppercase tracking-wider">Use your own domain instead of ithinkshewifey.com/{site.slug}</p>
+                      <Field
+                        label="Domain"
+                        value={site.customDomain || ""}
+                        onChange={(v) => set("customDomain", v.toLowerCase().replace(/[^a-z0-9.-]/g, "") || null)}
+                        placeholder="e.g. wedding.smith.com"
+                      />
+                      {site.customDomain && (
+                        <div className="mt-3 p-4 bg-[#f7f6f3] border border-[#2d2b25]/10 rounded-sm">
+                          <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/60 mb-2">DNS Setup</p>
+                          <p className="text-xs text-[#2d2b25]/70 mb-2">Add a CNAME record pointing to:</p>
+                          <code className="block text-xs bg-white px-3 py-2 border border-[#2d2b25]/10 rounded-sm text-[#2d2b25] select-all">cname.vercel-dns.com</code>
+                          <DomainStatus slug={site.slug} domain={site.customDomain} />
+                        </div>
+                      )}
+                    </div>
+                  )}
 
                   {/* Publish Section */}
                   <div className="mt-10 pt-8 border-t border-[#2d2b25]/10">
@@ -2458,8 +2869,6 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                 </div>
               );
 
-              if (tab === "Guests") return <GuestListPanel rsvpData={rsvpData} loadRSVPs={loadRSVPs} site={site} set={set} />;
-              if (tab === "Gifts") return <GiftTrackerPanel giftData={giftData} loadGifts={loadGifts} site={site} />;
 
               // --- Dynamic Sections ---
               const order = site.sectionOrder ?? DEFAULT_SECTION_ORDER;
@@ -2903,6 +3312,13 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                   {renderBg("RSVP Background Image")}
                   <Field label="Heading" value={site.rsvpHeading} onChange={(v) => set("rsvpHeading", v)} />
                   <Field label="Deadline Text" value={site.rsvpDeadlineText} onChange={(v) => set("rsvpDeadlineText", v)} />
+
+                  <div className="mt-10 pt-8 border-t border-[#2d2b25]/10">
+                    <Label>Email Notifications</Label>
+                    <p className="text-[10px] text-[#2d2b25]/40 mb-4 uppercase tracking-wider">Get notified when guests RSVP and send them a confirmation</p>
+                    <Field label="Your Email" value={site.coupleEmail || ""} onChange={(v) => set("coupleEmail", v)} placeholder="you@example.com — receive RSVP notifications" />
+                    <Field label="Custom Confirmation Message" value={site.rsvpConfirmationMessage || ""} onChange={(v) => set("rsvpConfirmationMessage", v)} placeholder="Optional message to include in the guest's confirmation email" multiline rows={3} />
+                  </div>
                 </div>
               );
 
@@ -3096,6 +3512,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
           )}
         </div>
       </div>
+      )}
     </div>
   );
 }
