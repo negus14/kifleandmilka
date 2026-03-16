@@ -15,12 +15,11 @@ interface Guest {
 interface RSVPFormProps {
   slug: string;
   mealOptions?: string[];
-  showHalalOption?: boolean;
   /** Map of meal name → available dietary options, e.g. { "Chicken": ["Halal", "Kosher"] } */
   mealDietaryOptions?: Record<string, string[]>;
 }
 
-export default function RSVPForm({ slug, mealOptions, showHalalOption = true, mealDietaryOptions }: RSVPFormProps) {
+export default function RSVPForm({ slug, mealOptions, mealDietaryOptions }: RSVPFormProps) {
   const [email, setEmail] = useState("");
   const [dialCode, setDialCode] = useState("+44");
   const [phoneLocal, setPhoneLocal] = useState("");
@@ -266,18 +265,6 @@ export default function RSVPForm({ slug, mealOptions, showHalalOption = true, me
               </div>
             );
           })()}
-          {guest.attending === "yes" && !hasDietaryOptions && showHalalOption && (
-            <div style={{ display: "flex", gap: "1.5rem", marginTop: "0.5rem" }}>
-              <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer", fontSize: "0.9rem" }}>
-                <input
-                  type="checkbox"
-                  checked={guest.isHalal}
-                  onChange={(e) => updateGuest(guest.id, "isHalal", e.target.checked)}
-                />
-                Halal
-              </label>
-            </div>
-          )}
         </div>
       ))}
 

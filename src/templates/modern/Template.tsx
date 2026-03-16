@@ -523,7 +523,7 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
             <div className="modern-card modern-card--flat reveal">
               <h2 className="modern-title modern-title--center">{site.rsvpHeading}</h2>
               <p className="modern-subtitle modern-subtitle--center">{site.rsvpDeadlineText}</p>
-              <RSVPForm slug={site.slug} mealOptions={mealOptions} showHalalOption={site.showHalalOption ?? true} mealDietaryOptions={mealDietaryOptions} />
+              <RSVPForm slug={site.slug} mealOptions={mealOptions} mealDietaryOptions={mealDietaryOptions} />
             </div>
           </div>
         </section>
