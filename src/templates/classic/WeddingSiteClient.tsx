@@ -137,12 +137,30 @@ export default function WeddingSiteClient({
     }
     navLinks?.forEach((l) => l.addEventListener("click", closeMenu));
 
-    // Lightbox
+    // Lightbox with navigation
     const lb = document.getElementById("lightbox");
     const lbImg = document.getElementById("lightbox-img") as HTMLImageElement;
+    const lbPrev = document.getElementById("lightbox-prev");
+    const lbNext = document.getElementById("lightbox-next");
+    const lbCounter = document.getElementById("lightbox-counter");
+    const zoomables = document.querySelectorAll("img[data-zoomable]");
+    const zoomableArr = Array.from(zoomables) as HTMLImageElement[];
+    let currentIndex = 0;
+
+    function showImage(index: number) {
+      if (index < 0) index = zoomableArr.length - 1;
+      if (index >= zoomableArr.length) index = 0;
+      currentIndex = index;
+      const img = zoomableArr[currentIndex];
+      if (lbImg) { lbImg.src = img.src; lbImg.alt = img.alt; }
+      if (lbCounter) lbCounter.textContent = `${currentIndex + 1} / ${zoomableArr.length}`;
+    }
+
     function openLb(e: Event) {
       const img = e.currentTarget as HTMLImageElement;
-      if (lbImg) { lbImg.src = img.src; lbImg.alt = img.alt; }
+      currentIndex = zoomableArr.indexOf(img);
+      if (currentIndex === -1) currentIndex = 0;
+      showImage(currentIndex);
       lb?.classList.add("open");
       document.body.style.overflow = "hidden";
     }
@@ -150,11 +168,19 @@ export default function WeddingSiteClient({
       lb?.classList.remove("open");
       document.body.style.overflow = "";
     }
-    const zoomables = document.querySelectorAll("img[data-zoomable]");
+    function prevImg(e: Event) { e.stopPropagation(); showImage(currentIndex - 1); }
+    function nextImg(e: Event) { e.stopPropagation(); showImage(currentIndex + 1); }
+
     zoomables.forEach((img) => img.addEventListener("click", openLb));
+    lbPrev?.addEventListener("click", prevImg);
+    lbNext?.addEventListener("click", nextImg);
+    lbImg?.addEventListener("click", (e) => e.stopPropagation());
     lb?.addEventListener("click", closeLb);
     function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape" && lb?.classList.contains("open")) closeLb();
+      if (!lb?.classList.contains("open")) return;
+      if (e.key === "Escape") closeLb();
+      if (e.key === "ArrowLeft") showImage(currentIndex - 1);
+      if (e.key === "ArrowRight") showImage(currentIndex + 1);
     }
     document.addEventListener("keydown", onKey);
 
@@ -297,6 +323,8 @@ export default function WeddingSiteClient({
       toggle?.removeEventListener("click", onToggle);
       navLinks?.forEach((l) => l.removeEventListener("click", closeMenu));
       zoomables.forEach((img) => img.removeEventListener("click", openLb));
+      lbPrev?.removeEventListener("click", prevImg);
+      lbNext?.removeEventListener("click", nextImg);
       lb?.removeEventListener("click", closeLb);
       document.removeEventListener("keydown", onKey);
       sectionObserver.disconnect();

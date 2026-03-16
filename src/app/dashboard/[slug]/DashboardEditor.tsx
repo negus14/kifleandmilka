@@ -2906,23 +2906,25 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                   <Field label="Heading" value={site.giftHeading} onChange={(v) => set("giftHeading", v)} />
                   <Field label="Subheading" value={site.giftSubheading} onChange={(v) => set("giftSubheading", v)} multiline rows={3} />
 
-                  <div className="mt-8 mb-8 p-4 bg-[#2d2b25]/5 border border-[#2d2b25]/10 rounded-sm flex items-center justify-between">
+                  <div className="mt-8 mb-4 p-4 bg-[#2d2b25]/5 border border-[#2d2b25]/10 rounded-sm flex items-center justify-between">
                     <div>
-                      <Label>Accept Gift Contributions</Label>
+                      <Label>Add Gift Items</Label>
                       <p className="text-[10px] text-[#2d2b25]/40 mt-1 uppercase tracking-wider">
-                        Allow guests to contribute money towards specific gifts
+                        {(site.giftEnableContributions ?? true)
+                          ? "Guests pick from your gift list, then contribute an amount"
+                          : "Guests go straight to the contribution form"}
                       </p>
                     </div>
                     <button
-                      onClick={() => set("giftEnableContributions", !site.giftEnableContributions)}
-                      className={`relative w-12 h-7 rounded-full transition-colors ${site.giftEnableContributions ? "bg-[#2d2b25]" : "bg-[#2d2b25]/15"}`}
+                      onClick={() => set("giftEnableContributions", !(site.giftEnableContributions ?? true))}
+                      className={`relative w-12 h-7 rounded-full transition-colors flex-shrink-0 ${(site.giftEnableContributions ?? true) ? "bg-[#2d2b25]" : "bg-[#2d2b25]/15"}`}
                     >
-                      <span className={`absolute top-1 w-5 h-5 bg-white rounded-full shadow-sm transition-transform ${site.giftEnableContributions ? "left-6" : "left-1"}`} />
+                      <span className={`absolute top-1 w-5 h-5 bg-white rounded-full shadow-sm transition-transform ${(site.giftEnableContributions ?? true) ? "left-6" : "left-1"}`} />
                     </button>
                   </div>
 
-                  {/* Gift Items — only when contributions enabled */}
-                  {site.giftEnableContributions && (
+                  {/* Gift Items — only when toggle is on */}
+                  {(site.giftEnableContributions ?? true) && (
                     <div className="mt-4 mb-10 animate-in fade-in slide-in-from-top-2 duration-300">
                       <Label>Gift Items</Label>
                       <p className="text-[10px] text-[#2d2b25]/40 mb-4 uppercase tracking-wider">Add gifts guests can contribute towards</p>

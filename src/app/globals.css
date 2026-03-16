@@ -231,6 +231,12 @@
   width: 100%; padding: 0.75rem; border: 1px solid rgba(0,0,0,0.12); background: transparent;
   font: inherit; font-size: 0.95rem; outline: none; transition: border-color 0.2s;
 }
+.gift-contrib__select {
+  appearance: none; -webkit-appearance: none; -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23333' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 12px;
+  padding-right: 2.5rem; cursor: pointer;
+}
 .gift-contrib__input:focus, .gift-contrib__textarea:focus, .gift-contrib__select:focus { border-color: rgba(0,0,0,0.35); }
 .gift-contrib__textarea { resize: vertical; min-height: 80px; }
 .gift-contrib__error { color: #dc2626; font-size: 0.85rem; }

@@ -132,6 +132,53 @@ export default function WeddingSiteClient({
       if (el) setTimeout(() => el.scrollIntoView({ behavior: "smooth", block: "start" }), 500);
     }
 
+    // Lightbox with navigation
+    const lb = document.getElementById("lightbox");
+    const lbImg = document.getElementById("lightbox-img") as HTMLImageElement;
+    const lbPrev = document.getElementById("lightbox-prev");
+    const lbNext = document.getElementById("lightbox-next");
+    const lbCounter = document.getElementById("lightbox-counter");
+    const zoomables = document.querySelectorAll("img[data-zoomable]");
+    const zoomableArr = Array.from(zoomables) as HTMLImageElement[];
+    let currentIndex = 0;
+
+    function showImage(index: number) {
+      if (index < 0) index = zoomableArr.length - 1;
+      if (index >= zoomableArr.length) index = 0;
+      currentIndex = index;
+      const img = zoomableArr[currentIndex];
+      if (lbImg) { lbImg.src = img.src; lbImg.alt = img.alt; }
+      if (lbCounter) lbCounter.textContent = `${currentIndex + 1} / ${zoomableArr.length}`;
+    }
+
+    function openLb(e: Event) {
+      const img = e.currentTarget as HTMLImageElement;
+      currentIndex = zoomableArr.indexOf(img);
+      if (currentIndex === -1) currentIndex = 0;
+      showImage(currentIndex);
+      lb?.classList.add("open");
+      document.body.style.overflow = "hidden";
+    }
+    function closeLb() {
+      lb?.classList.remove("open");
+      document.body.style.overflow = "";
+    }
+    function prevImgLb(e: Event) { e.stopPropagation(); showImage(currentIndex - 1); }
+    function nextImgLb(e: Event) { e.stopPropagation(); showImage(currentIndex + 1); }
+
+    zoomables.forEach((img) => img.addEventListener("click", openLb));
+    lbPrev?.addEventListener("click", prevImgLb);
+    lbNext?.addEventListener("click", nextImgLb);
+    lbImg?.addEventListener("click", (e) => e.stopPropagation());
+    lb?.addEventListener("click", closeLb);
+    function onKeyLb(e: KeyboardEvent) {
+      if (!lb?.classList.contains("open")) return;
+      if (e.key === "Escape") closeLb();
+      if (e.key === "ArrowLeft") showImage(currentIndex - 1);
+      if (e.key === "ArrowRight") showImage(currentIndex + 1);
+    }
+    document.addEventListener("keydown", onKeyLb);
+
     // Gift dropdown logic
     function setupGiftDropdowns() {
       const toggles = document.querySelectorAll(".gift__dropdown-toggle");
@@ -245,6 +292,11 @@ export default function WeddingSiteClient({
       sectionObserver.disconnect();
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("message", handleMessage);
+      zoomables.forEach((img) => img.removeEventListener("click", openLb));
+      lbPrev?.removeEventListener("click", prevImgLb);
+      lbNext?.removeEventListener("click", nextImgLb);
+      lb?.removeEventListener("click", closeLb);
+      document.removeEventListener("keydown", onKeyLb);
     };
   }, [weddingDate, scheduleStyle, sectionOrder]);
 

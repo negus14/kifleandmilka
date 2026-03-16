@@ -549,7 +549,7 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
 
             <GiftContributionForm
               slug={site.slug}
-              giftItems={giftItems}
+              giftItems={site.giftEnableContributions ? giftItems : []}
               currency={site.giftCurrency || "GBP"}
               paymentOptions={paymentOptions}
             />
@@ -601,9 +601,18 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
 
   return (
     <div className="modern-site" style={themeVars}>
-      <WeddingSiteClient 
-        weddingDate={site.weddingDate} 
-        scheduleStyle={site.scheduleStyle} 
+      {/* Lightbox */}
+      <div className="lightbox" id="lightbox">
+        <button className="lightbox__close" aria-label="Close">&times;</button>
+        <button className="lightbox__nav lightbox__nav--prev" id="lightbox-prev" aria-label="Previous">&#8249;</button>
+        <img className="lightbox__img" id="lightbox-img" alt="" />
+        <button className="lightbox__nav lightbox__nav--next" id="lightbox-next" aria-label="Next">&#8250;</button>
+        <span className="lightbox__counter" id="lightbox-counter"></span>
+      </div>
+
+      <WeddingSiteClient
+        weddingDate={site.weddingDate}
+        scheduleStyle={site.scheduleStyle}
         sectionOrder={site.sectionOrder}
       />
 
