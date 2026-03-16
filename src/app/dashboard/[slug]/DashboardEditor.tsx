@@ -3281,6 +3281,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                 <div>
                   <SectionTitle>Accommodations</SectionTitle>
                   {renderBg("Accommodations Background Image")}
+                  <Field label="Recommendations / Tips" value={site.accommodationNote || ""} onChange={(v) => set("accommodationNote", v)} multiline rows={3} placeholder="e.g. Book early for the best rates! We recommend staying at..." />
                   <SortableList items={site.accommodations} prefix={`hotels-${id}`} onReorder={(items) => set("accommodations", items)}>
                     {(h, i, sid) => (
                       <SortableCard key={sid} id={sid} title={h.name || `Hotel ${i + 1}`} onRemove={() => set("accommodations", removeFromArray(site.accommodations, i))}>
@@ -3343,6 +3344,19 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                       className={`relative w-12 h-7 rounded-full transition-colors flex-shrink-0 ${(site.giftEnableContributions ?? true) ? "bg-[#2d2b25]" : "bg-[#2d2b25]/15"}`}
                     >
                       <span className={`absolute top-1 w-5 h-5 bg-white rounded-full shadow-sm transition-transform ${(site.giftEnableContributions ?? true) ? "left-6" : "left-1"}`} />
+                    </button>
+                  </div>
+
+                  <div className="mb-4 p-4 bg-[#2d2b25]/5 border border-[#2d2b25]/10 rounded-sm flex items-center justify-between">
+                    <div>
+                      <Label>Show Guest Name Field</Label>
+                      <p className="text-[10px] text-[#2d2b25]/40 mt-1 uppercase tracking-wider">Ask guests for their name on the contribution form</p>
+                    </div>
+                    <button
+                      onClick={() => set("giftShowName", !(site.giftShowName ?? false))}
+                      className={`relative w-12 h-7 rounded-full transition-colors flex-shrink-0 ${(site.giftShowName ?? false) ? "bg-[#2d2b25]" : "bg-[#2d2b25]/15"}`}
+                    >
+                      <span className={`absolute top-1 w-5 h-5 bg-white rounded-full shadow-sm transition-transform ${(site.giftShowName ?? false) ? "left-6" : "left-1"}`} />
                     </button>
                   </div>
 

@@ -138,6 +138,7 @@ async function signupAction(formData: FormData) {
     galleryImages: [],
     exploreGroups: [],
     accommodations: [],
+    accommodationNote: "",
     contactEntries: [],
     sectionOrder: DEFAULT_SECTION_ORDER
   };

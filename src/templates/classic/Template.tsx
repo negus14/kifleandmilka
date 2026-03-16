@@ -556,6 +556,11 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
                 </div>
               ))}
             </div>
+            {site.accommodationNote && (
+              <div className="hotel-card__note reveal">
+                <p>{site.accommodationNote}</p>
+              </div>
+            )}
           </div>
         </div>
       );
@@ -608,6 +613,7 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
                 giftItems={site.giftEnableContributions ? giftItems : []}
                 currency={site.giftCurrency || "GBP"}
                 paymentOptions={paymentOptions}
+                showName={site.giftShowName ?? false}
               />
 
               {site.giftNote && <p className="gift__note">{site.giftNote}</p>}

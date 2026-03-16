@@ -1704,6 +1704,21 @@
   color: var(--color-dark);
 }
 
+.hotel-card__note {
+  max-width: 900px;
+  margin: 2.5rem auto 0;
+  padding: 1.25rem 1.5rem;
+  background: color-mix(in srgb, var(--color-dark), transparent 96%);
+  border-left: 3px solid color-mix(in srgb, var(--color-dark), transparent 70%);
+  border-radius: 0 4px 4px 0;
+  font-family: var(--font-serif);
+  font-size: 0.92rem;
+  line-height: 1.7;
+  color: var(--color-dark);
+  opacity: 0.8;
+  white-space: pre-line;
+}
+
 .hotel-card__link {
   display: inline-block;
   font-family: var(--font-sans);

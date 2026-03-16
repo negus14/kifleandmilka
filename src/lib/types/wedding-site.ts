@@ -200,6 +200,8 @@ export interface WeddingSite {
   rsvpEmbedUrl: string;
   rsvpMealOptions?: string[];
   showHalalOption?: boolean;
+  rsvpConfirmationMessage?: string;
+  coupleEmail?: string;
   googleSheetId?: string;
   googleSheetName?: string;
 
@@ -217,6 +219,7 @@ export interface WeddingSite {
   giftCurrency?: string;
   giftAcceptedCurrencies?: string[];
   giftEnableContributions?: boolean;
+  giftShowName?: boolean;
 
   // Footer
   footerNames: string;
@@ -238,10 +241,12 @@ export interface WeddingSite {
   galleryImages: GalleryImage[];
   exploreGroups: ExploreGroup[];
   accommodations: AccommodationItem[];
+  accommodationNote: string;
   contactEntries: ContactEntry[];
   navBrand: string;
   sectionBackgrounds?: Record<string, string>;
   sectionBackgroundColors?: Record<string, "primary" | "accent" | "dark" | "transparent">;
   sectionData?: Record<string, any>; // Instance-specific data for duplicate sections
   recentlyUsedLinks?: string[];
+  customDomain?: string | null;
 }

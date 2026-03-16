@@ -501,6 +501,11 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
                 </div>
               ))}
             </div>
+            {site.accommodationNote && (
+              <div className={`modern-card__note reveal ${isPrv ? "visible" : ""}`}>
+                <p>{site.accommodationNote}</p>
+              </div>
+            )}
           </div>
         </div>
       );
@@ -552,6 +557,7 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
               giftItems={site.giftEnableContributions ? giftItems : []}
               currency={site.giftCurrency || "GBP"}
               paymentOptions={paymentOptions}
+              showName={site.giftShowName ?? false}
             />
 
             {site.giftNote && <p className="modern-text modern-text--small">{site.giftNote}</p>}

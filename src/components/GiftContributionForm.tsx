@@ -15,9 +15,10 @@ interface GiftContributionFormProps {
   giftItems: GiftItem[];
   currency: string;
   paymentOptions: PaymentOption[];
+  showName?: boolean;
 }
 
-export default function GiftContributionForm({ slug, giftItems, currency, paymentOptions }: GiftContributionFormProps) {
+export default function GiftContributionForm({ slug, giftItems, currency, paymentOptions, showName = false }: GiftContributionFormProps) {
   // Derive accepted currencies from payment options that have currencies set
   const acceptedCurrencies = [...new Set(
     paymentOptions.flatMap(o => o.currencies || [])
@@ -182,17 +183,19 @@ export default function GiftContributionForm({ slug, giftItems, currency, paymen
       )}
 
       <form onSubmit={handleSubmit} className="gift-contrib__form">
-        <div className="gift-contrib__field">
-          <label className="gift-contrib__label">Your Name</label>
-          <input
-            type="text"
-            required
-            className="gift-contrib__input"
-            value={guestName}
-            onChange={(e) => setGuestName(e.target.value)}
-            placeholder="Your full name"
-          />
-        </div>
+        {showName && (
+          <div className="gift-contrib__field">
+            <label className="gift-contrib__label">Your Name</label>
+            <input
+              type="text"
+              required
+              className="gift-contrib__input"
+              value={guestName}
+              onChange={(e) => setGuestName(e.target.value)}
+              placeholder="Your full name"
+            />
+          </div>
+        )}
 
         {effectiveCurrencies.length > 1 && (
           <div className="gift-contrib__field">
