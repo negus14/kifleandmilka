@@ -534,6 +534,11 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
               <h2 className="section__title">Accommodations</h2>
               <div className="section__line"></div>
             </div>
+            {site.accommodationNote && (
+              <div className="hotel-card__note reveal">
+                <p>{site.accommodationNote}</p>
+              </div>
+            )}
             <div className="hotels-grid">
               {(site.accommodations || []).map((hotel, i) => (
                 <div key={i} className={`hotel-card reveal${i > 0 ? ` reveal-delay-${i}` : ""}`}>
@@ -556,11 +561,6 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
                 </div>
               ))}
             </div>
-            {site.accommodationNote && (
-              <div className="hotel-card__note reveal">
-                <p>{site.accommodationNote}</p>
-              </div>
-            )}
           </div>
         </div>
       );

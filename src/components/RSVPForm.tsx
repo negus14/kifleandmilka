@@ -87,7 +87,7 @@ export default function RSVPForm({ slug, mealOptions, mealDietaryOptions }: RSVP
         body: JSON.stringify({
           slug,
           email,
-          phone: phoneLocal ? `${dialCode}${phoneLocal.replace(/[^0-9]/g, "")}` : undefined,
+          phone: phoneLocal ? `${dialCode}${phoneLocal.replace(/[^0-9]/g, "").replace(/^0/, "")}` : undefined,
           message,
           guests: formattedGuests,
         }),

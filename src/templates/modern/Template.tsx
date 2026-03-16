@@ -479,6 +479,11 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
         <div className={`w-full ${cls}`} id={id} style={style}>
           <div className="modern-container">
             <h2 className={`modern-title modern-title--center reveal ${isPrv ? "visible" : ""}`}>Where to Stay</h2>
+            {site.accommodationNote && (
+              <div className={`modern-card__note reveal ${isPrv ? "visible" : ""}`}>
+                <p>{site.accommodationNote}</p>
+              </div>
+            )}
             <div className="modern-grid modern-grid--2col">
               {(site.accommodations || []).map((hotel, i) => (
                 <div key={i} className={`modern-card reveal ${isPrv ? "visible" : ""}`}>
@@ -501,11 +506,6 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
                 </div>
               ))}
             </div>
-            {site.accommodationNote && (
-              <div className={`modern-card__note reveal ${isPrv ? "visible" : ""}`}>
-                <p>{site.accommodationNote}</p>
-              </div>
-            )}
           </div>
         </div>
       );
