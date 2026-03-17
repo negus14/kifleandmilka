@@ -11,6 +11,7 @@ const PLATFORM_HOSTS = [
   "www.ithinkshewifey.com",
   "localhost",
   "127.0.0.1",
+  "up.railway.app",
 ];
 
 export default async function(request: NextRequest) {
