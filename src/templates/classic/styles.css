@@ -574,16 +574,8 @@
 }
 .section--has-bg {
   position: relative;
-  background-color: transparent !important;
+  background-color: var(--color-dark) !important;
   min-height: 400px;
-}
-
-.section--has-bg::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  z-index: 1;
 }
 
 .section--has-bg > div {

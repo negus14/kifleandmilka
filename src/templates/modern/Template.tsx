@@ -243,7 +243,7 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
             
             let finalCls = `modern-section `;
             if (bgUrl) {
-              finalCls += "modern-section--has-bg";
+              finalCls += "modern-section--has-bg modern-section--dark";
             } else if (dayBgColor && dayBgColor !== "transparent") {
               finalCls += `modern-section--${dayBgColor}`;
             } else if (cls.includes('modern-section--')) {
@@ -253,36 +253,31 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
               finalCls += (di % 2 === 0 ? "modern-section--tan" : "");
             }
 
-            const finalStyle = { ...style, ...(bgUrl ? { backgroundImage: `url('${bgUrl}')` } : {}) };
+            const sectionBaseStyle: React.CSSProperties = {
+              ...style,
+              position: 'relative',
+              overflow: 'hidden',
+              background: bgUrl ? 'var(--color-dark)' : undefined
+            };
 
-            if (dayStyle === "split") {
-              return (
-                <section key={day.id} id={id} className={finalCls} style={finalStyle}>
-                  <div className="modern-container">
-                    <p className={`modern-subtitle modern-subtitle--center reveal ${isPrv ? "visible" : ""}`}>{day.label}</p>
-                    {day.date && <p className={`modern-text modern-text--small text-center mb-10 reveal ${isPrv ? "visible" : ""}`}>{day.date}</p>}
-                    <div className={`modern-grid modern-grid--2col reveal ${isPrv ? "visible" : ""}`} style={{ alignItems: "start" }}>
-                      <div className="flex flex-col gap-6">
-                        <h2 className="modern-title">The Venues</h2>
-                        {day.venues.map(renderVenueCard)}
-                      </div>
-                      <div className="flex flex-col gap-6">
-                        <h2 className="modern-title">Good to Know</h2>
-                        {day.infoBlocks.map(renderInfoBlock)}
-                      </div>
+            const dayContent = (
+              <div className="modern-container" style={{ position: 'relative', zIndex: 2 }}>
+                <p className={`modern-subtitle modern-subtitle--center reveal ${isPrv ? "visible" : ""}`}>{day.label}</p>
+                {day.date && <p className={`modern-text modern-text--small text-center mb-10 reveal ${isPrv ? "visible" : ""}`}>{day.date}</p>}
+                
+                {dayStyle === "split" ? (
+                  <div className={`modern-grid modern-grid--2col reveal ${isPrv ? "visible" : ""}`} style={{ alignItems: "start" }}>
+                    <div className="flex flex-col gap-6">
+                      <h2 className="modern-title">The Venues</h2>
+                      {day.venues.map(renderVenueCard)}
                     </div>
-                    {day.note && <p className={`modern-text modern-text--small text-center mt-10 reveal ${isPrv ? "visible" : ""}`}>{day.note}</p>}
+                    <div className="flex flex-col gap-6">
+                      <h2 className="modern-title">Good to Know</h2>
+                      {day.infoBlocks.map(renderInfoBlock)}
+                    </div>
                   </div>
-                </section>
-              );
-            }
-
-            if (dayStyle === "minimal") {
-              return (
-                <section key={day.id} id={id} className={finalCls} style={finalStyle}>
-                  <div className="modern-container modern-container--narrow">
-                    <p className={`modern-subtitle modern-subtitle--center reveal ${isPrv ? "visible" : ""}`}>{day.label}</p>
-                    {day.date && <p className={`modern-text modern-text--small text-center mb-6 reveal ${isPrv ? "visible" : ""}`}>{day.date}</p>}
+                ) : dayStyle === "minimal" ? (
+                  <div className="modern-container modern-container--narrow p-0">
                     <h2 className={`modern-title modern-title--center reveal ${isPrv ? "visible" : ""}`}>Essential Information</h2>
                     <div className="modern-details-minimal">
                       {day.venues.map((v, i) => (
@@ -301,25 +296,51 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
                         {day.infoBlocks.map(renderInfoBlock)}
                       </div>
                     )}
-                    {day.note && <p className={`modern-text modern-text--small text-center mt-10 reveal ${isPrv ? "visible" : ""}`}>{day.note}</p>}
                   </div>
-                </section>
-              );
-            }
+                ) : (
+                  <>
+                    <h2 className={`modern-title modern-title--center reveal ${isPrv ? "visible" : ""}`}>The Details</h2>
+                    <div className={`modern-grid modern-grid--3col reveal ${isPrv ? "visible" : ""}`}>
+                      {day.venues.map(renderVenueCard)}
+                      {day.infoBlocks.map(renderInfoBlock)}
+                    </div>
+                  </>
+                )}
+                
+                {day.note && <p className={`modern-text modern-text--small text-center mt-10 reveal ${isPrv ? "visible" : ""}`}>{day.note}</p>}
+              </div>
+            );
 
-            // Default: Grid
             return (
-              <section key={day.id} id={id} className={finalCls} style={finalStyle}>
-                <div className="modern-container">
-                  <p className={`modern-subtitle modern-subtitle--center reveal ${isPrv ? "visible" : ""}`}>{day.label}</p>
-                  {day.date && <p className={`modern-text modern-text--small text-center mb-6 reveal ${isPrv ? "visible" : ""}`}>{day.date}</p>}
-                  <h2 className={`modern-title modern-title--center reveal ${isPrv ? "visible" : ""}`}>The Details</h2>
-                  <div className={`modern-grid modern-grid--3col reveal ${isPrv ? "visible" : ""}`}>
-                    {day.venues.map(renderVenueCard)}
-                    {day.infoBlocks.map(renderInfoBlock)}
-                  </div>
-                  {day.note && <p className={`modern-text modern-text--small text-center mt-10 reveal ${isPrv ? "visible" : ""}`}>{day.note}</p>}
-                </div>
+              <section key={day.id} id={di === 0 ? id : undefined} className={finalCls} style={sectionBaseStyle}>
+                {bgUrl && (
+                  <>
+                    <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
+                      <SafeImage 
+                        src={bgUrl} 
+                        alt="" 
+                        fill 
+                        quality={100}
+                        priority
+                        sizes="100vw"
+                        style={{ 
+                          objectFit: 'cover',
+                          opacity: 0.5,
+                          mixBlendMode: 'luminosity',
+                          transform: 'scale(1.1)'
+                        }} 
+                      />
+                    </div>
+                    <div style={{
+                      position: 'absolute',
+                      inset: 0,
+                      zIndex: 1,
+                      background: 'linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, transparent 50%, rgba(0,0,0,0.4) 100%)',
+                      pointerEvents: 'none'
+                    }} />
+                  </>
+                )}
+                {dayContent}
               </section>
             );
           })}
@@ -443,7 +464,7 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
       
       const isPrv = cls.includes("preview");
       return (
-        <div id={id} className={`w-full ${cls}`} style={style}>
+        <section id={id} className={`modern-section ${cls}`} style={style}>
           <div className="modern-container">
             <h2 className={`modern-title modern-title--center reveal ${isPrv ? "visible" : ""}`}>Things to Do</h2>
             <div className="modern-grid modern-grid--3col">
@@ -464,7 +485,7 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
               ))}
             </div>
           </div>
-        </div>
+        </section>
       );
     },
 
@@ -476,7 +497,7 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
       
       const isPrv = cls.includes("preview");
       return (
-        <div className={`w-full ${cls}`} id={id} style={style}>
+        <section id={id} className={`modern-section ${cls}`} style={style}>
           <div className="modern-container">
             <h2 className={`modern-title modern-title--center reveal ${isPrv ? "visible" : ""}`}>Where to Stay</h2>
             {site.accommodationNote && (
@@ -507,7 +528,7 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
               ))}
             </div>
           </div>
-        </div>
+        </section>
       );
     },
 
@@ -545,6 +566,7 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
         ...paymentLinks.map(l => ({ label: l.label, url: l.url, currencies: l.currencies })),
         ...bankDetails.filter(b => b.payLink).map(b => ({ label: b.label, url: b.payLink, currencies: b.currencies })),
       ];
+      const displayBankDetails = bankDetails.filter(b => !b.payLink);
 
       return (
         <section className={`modern-section ${cls}`} id={id} style={style}>
@@ -557,6 +579,7 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
               giftItems={site.giftEnableContributions ? giftItems : []}
               currency={site.giftCurrency || "GBP"}
               paymentOptions={paymentOptions}
+              bankDetails={displayBankDetails}
               showName={site.giftShowName ?? false}
             />
 
@@ -661,7 +684,7 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
         
         let extraClass = "";
         if (bgUrl) {
-          extraClass = "modern-section--has-bg";
+          extraClass = "modern-section--has-bg modern-section--dark";
         } else if (bgColor && bgColor !== "transparent") {
           extraClass = `modern-section--${bgColor}`;
         } else if (isContent && !isSelfStyling) {
@@ -672,20 +695,45 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
         const extraStyle = {}; // Reset style as we use Image component for backgrounds
 
         return (
-          <div key={section.id} style={{ position: 'relative', zIndex: order.length - i }}>
+          <div 
+            key={section.id} 
+            className={extraClass}
+            style={{ 
+              position: 'relative', 
+              zIndex: order.length - i, 
+              background: bgUrl ? 'var(--color-dark)' : 'transparent',
+              overflow: 'hidden'
+            }}
+          >
             {bgUrl && (
-              <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
-                <SafeImage 
-                  src={bgUrl} 
-                  alt="" 
-                  fill 
-                  sizes="100vw"
-                  style={{ objectFit: 'cover' }} 
-                />
-              </div>
+              <>
+                <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
+                  <SafeImage 
+                    src={bgUrl} 
+                    alt="" 
+                    fill 
+                    quality={100}
+                    priority
+                    sizes="100vw"
+                    style={{ 
+                      objectFit: 'cover',
+                      opacity: 0.5,
+                      mixBlendMode: 'luminosity',
+                      transform: 'scale(1.1)'
+                    }} 
+                  />
+                </div>
+                <div style={{
+                  position: 'absolute',
+                  inset: 0,
+                  zIndex: 1,
+                  background: 'linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, transparent 50%, rgba(0,0,0,0.4) 100%)',
+                  pointerEvents: 'none'
+                }} />
+              </>
             )}
-            <div style={{ position: 'relative', zIndex: 1 }}>
-              {render(section.id, extraClass, extraStyle)}
+            <div style={{ position: 'relative', zIndex: 2 }}>
+              {render(section.id, "", {})}
             </div>
           </div>
         );

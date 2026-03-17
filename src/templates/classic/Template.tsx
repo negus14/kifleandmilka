@@ -164,36 +164,33 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
               finalCls += (di % 2 === 0 ? "section--tan" : "section--cream");
             }
 
-            const finalStyle = { ...style, ...(bgUrl ? { backgroundImage: `url('${bgUrl}')` } : {}) };
+            const sectionBaseStyle: React.CSSProperties = {
+              ...style,
+              position: 'relative',
+              overflow: 'hidden',
+              background: bgUrl ? 'var(--color-dark)' : undefined
+            };
 
-            if (dayStyle === "split") {
-              return (
-                <section key={day.id} id={id} className={finalCls} style={finalStyle}>
-                  <div className="container">
-                    <div className="details-split-layout">
-                      <div className="details-split__venues">
-                        {day.venues.map(renderVenueCard)}
+            const dayContent = (
+              <div className="container" style={{ position: 'relative', zIndex: 2 }}>
+                {dayStyle === "split" ? (
+                  <div className="details-split-layout">
+                    <div className="details-split__venues">
+                      {day.venues.map(renderVenueCard)}
+                    </div>
+                    <div className="details-split__info">
+                      <div className="section__header reveal" style={{ textAlign: "left", marginBottom: "2rem" }}>
+                        <p className="section__subtitle">{day.label}</p>
+                        {day.date && <p className="section__date">{day.date}</p>}
+                        <h2 className="section__title">Essential Info</h2>
+                        <div className="section__line" style={{ margin: "1.25rem 0 0" }}></div>
                       </div>
-                      <div className="details-split__info">
-                        <div className="section__header reveal" style={{ textAlign: "left", marginBottom: "2rem" }}>
-                          <p className="section__subtitle">{day.label}</p>
-                          {day.date && <p className="section__date">{day.date}</p>}
-                          <h2 className="section__title">Essential Info</h2>
-                          <div className="section__line" style={{ margin: "1.25rem 0 0" }}></div>
-                        </div>
-                        {day.infoBlocks.map(renderInfoBlock)}
-                        {day.note && <p className="info-block__text mt-8" style={{ fontStyle: "italic", opacity: 0.8 }}>{day.note}</p>}
-                      </div>
+                      {day.infoBlocks.map(renderInfoBlock)}
+                      {day.note && <p className="info-block__text mt-8" style={{ fontStyle: "italic", opacity: 0.8 }}>{day.note}</p>}
                     </div>
                   </div>
-                </section>
-              );
-            }
-
-            if (dayStyle === "minimal") {
-              return (
-                <section key={day.id} id={id} className={finalCls} style={finalStyle}>
-                  <div className="container">
+                ) : dayStyle === "minimal" ? (
+                  <>
                     <div className="section__header reveal">
                       <p className="section__subtitle">{day.label}</p>
                       {day.date && <p className="section__date text-center mb-4">{day.date}</p>}
@@ -218,31 +215,59 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
                       </div>
                     )}
                     {day.note && <p className="text-center mt-10 opacity-70 italic">{day.note}</p>}
-                  </div>
-                </section>
-              );
-            }
-
-            // Default: Grid
-            return (
-              <section key={day.id} id={id} className={finalCls} style={finalStyle}>
-                <div className="container">
-                  <div className="section__header reveal">
-                    <p className="section__subtitle">{day.label}</p>
-                    {day.date && <p className="section__date text-center mb-4">{day.date}</p>}
-                    <h2 className="section__title">Wedding Details</h2>
-                    <div className="section__line"></div>
-                  </div>
-                  <div className="info-grid">
-                    {day.venues.map(renderVenueCard)}
-                  </div>
-                  {day.infoBlocks.length > 0 && (
-                    <div className="details-split reveal">
-                      {day.infoBlocks.map(renderInfoBlock)}
+                  </>
+                ) : (
+                  <>
+                    <div className="section__header reveal">
+                      <p className="section__subtitle">{day.label}</p>
+                      {day.date && <p className="section__date text-center mb-4">{day.date}</p>}
+                      <h2 className="section__title">Wedding Details</h2>
+                      <div className="section__line"></div>
                     </div>
-                  )}
-                  {day.note && <p className="text-center mt-10 opacity-70 italic">{day.note}</p>}
-                </div>
+                    <div className="info-grid">
+                      {day.venues.map(renderVenueCard)}
+                    </div>
+                    {day.infoBlocks.length > 0 && (
+                      <div className="details-split reveal">
+                        {day.infoBlocks.map(renderInfoBlock)}
+                      </div>
+                    )}
+                    {day.note && <p className="text-center mt-10 opacity-70 italic">{day.note}</p>}
+                  </>
+                )}
+              </div>
+            );
+
+            return (
+              <section key={day.id} id={di === 0 ? id : undefined} className={finalCls} style={sectionBaseStyle}>
+                {bgUrl && (
+                  <>
+                    <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
+                      <SafeImage 
+                        src={bgUrl} 
+                        alt="" 
+                        fill 
+                        quality={100}
+                        priority
+                        sizes="100vw"
+                        style={{ 
+                          objectFit: 'cover',
+                          opacity: 0.5,
+                          mixBlendMode: 'luminosity',
+                          transform: 'scale(1.1)'
+                        }} 
+                      />
+                    </div>
+                    <div style={{
+                      position: 'absolute',
+                      inset: 0,
+                      zIndex: 1,
+                      background: `linear-gradient(180deg, color-mix(in srgb, var(--color-dark), transparent 40%) 0%, transparent 50%, color-mix(in srgb, var(--color-dark), transparent 40%) 100%)`,
+                      pointerEvents: 'none'
+                    }} />
+                  </>
+                )}
+                {dayContent}
               </section>
             );
           })}
@@ -600,6 +625,7 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
         ...paymentLinks.map(l => ({ label: l.label, url: l.url, currencies: l.currencies })),
         ...bankDetails.filter(b => b.payLink).map(b => ({ label: b.label, url: b.payLink, currencies: b.currencies })),
       ];
+      const displayBankDetails = bankDetails.filter(b => !b.payLink);
 
       return (
         <section className={`section ${cls}`} id={id} style={style}>
@@ -613,6 +639,7 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
                 giftItems={site.giftEnableContributions ? giftItems : []}
                 currency={site.giftCurrency || "GBP"}
                 paymentOptions={paymentOptions}
+                bankDetails={displayBankDetails}
                 showName={site.giftShowName ?? false}
               />
 
@@ -744,20 +771,45 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
         const extraStyle = {};
 
         return (
-          <div key={section.id} style={{ position: 'relative', zIndex: order.length - i }}>
+          <div 
+            key={section.id} 
+            className={extraClass}
+            style={{ 
+              position: 'relative', 
+              zIndex: order.length - i, 
+              background: bgUrl ? 'var(--color-dark)' : 'transparent',
+              overflow: 'hidden'
+            }}
+          >
             {bgUrl && (
-              <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
-                <SafeImage 
-                  src={bgUrl} 
-                  alt="" 
-                  fill 
-                  sizes="100vw"
-                  style={{ objectFit: 'cover' }} 
-                />
-              </div>
+              <>
+                <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
+                  <SafeImage 
+                    src={bgUrl} 
+                    alt="" 
+                    fill 
+                    quality={100}
+                    priority
+                    sizes="100vw"
+                    style={{ 
+                      objectFit: 'cover',
+                      opacity: 0.5,
+                      mixBlendMode: 'luminosity',
+                      transform: 'scale(1.1)'
+                    }} 
+                  />
+                </div>
+                <div style={{
+                  position: 'absolute',
+                  inset: 0,
+                  zIndex: 1,
+                  background: `linear-gradient(180deg, color-mix(in srgb, var(--color-dark), transparent 40%) 0%, transparent 50%, color-mix(in srgb, var(--color-dark), transparent 40%) 100%)`,
+                  pointerEvents: 'none'
+                }} />
+              </>
             )}
-            <div style={{ position: 'relative', zIndex: 1 }}>
-              {render(section.id, extraClass, extraStyle)}
+            <div style={{ position: 'relative', zIndex: 2 }}>
+              {render(section.id, "", {})}
             </div>
           </div>
         );
