@@ -1591,9 +1591,73 @@ img[data-zoomable] {
   transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.reveal.visible {
+.reveal.visible,
+.preview .reveal {
   opacity: 1;
   transform: none;
+}
+
+/* Preview mode: constrain viewport-relative sizing to container, not browser viewport */
+.preview .modern-hero {
+  min-height: 100cqh;
+}
+.preview .modern-nav {
+  display: none;
+}
+
+/* Preview container queries: replicate @media (max-width: 768px) for inline preview */
+@container (max-width: 768px) {
+  .preview {
+    --section-padding: clamp(3rem, 8vw, 5rem);
+  }
+  .preview .modern-container {
+    width: 92%;
+  }
+  .preview .modern-grid {
+    gap: 2.5rem;
+  }
+  .preview .modern-grid--2col {
+    grid-template-columns: 1fr;
+  }
+  .preview .modern-nav__links {
+    display: none;
+  }
+  .preview .modern-hero {
+    padding-top: 60px;
+    text-align: center;
+    justify-content: center;
+  }
+  .preview .modern-hero__names {
+    font-size: clamp(3rem, 15vw, 4.5rem);
+    line-height: 1;
+  }
+  .preview .modern-hero__pretext {
+    font-size: 0.8rem;
+    letter-spacing: 0.3em;
+  }
+  .preview .modern-hero__date-loc {
+    justify-content: center;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .preview .modern-schedule__item {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+  .preview .modern-schedule__time {
+    min-width: 0;
+  }
+  .preview .modern-gallery {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1rem;
+  }
+  .preview .modern-letter__opening {
+    font-size: 2.2rem;
+  }
+  .preview .modern-letter__body {
+    font-size: 1.1rem;
+  }
 }
 
 /* Responsive */

@@ -3,6 +3,7 @@ import type { WeddingSite, VenueItem, VenueInfoBlock } from "@/lib/types/wedding
 import { getTheme, getFontStyle } from "@/lib/themes";
 import { toEmbedUrl, generateThemeVars, getSectionData } from "@/lib/template-utils";
 import WeddingSiteClient from "./WeddingSiteClient";
+import CountdownClient from "@/templates/CountdownClient";
 import RSVPForm from "@/components/RSVPForm";
 import AccommodationActions from "@/components/AccommodationActions";
 import GiftContributionForm from "@/components/GiftContributionForm";
@@ -605,7 +606,7 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
             <div className="rsvp__form-wrap reveal" style={{ maxWidth: 700, margin: "0 auto", textAlign: "center" }}>
               <h2 className="rsvp__heading">{site.rsvpHeading}</h2>
               <p className="rsvp__subheading">{site.rsvpDeadlineText}</p>
-              <RSVPForm slug={site.slug} mealOptions={mealOptions} mealDietaryOptions={mealDietaryOptions} />
+              <RSVPForm slug={site.slug} mealOptions={mealOptions} mealDietaryOptions={mealDietaryOptions} calendarInfo={site.weddingDate ? { partner1Name: site.partner1Name, partner2Name: site.partner2Name, weddingDate: site.weddingDate, weddingEndDate: site.weddingEndDate, dateDisplayText: site.dateDisplayText, locationText: site.locationText, siteSlug: site.slug } : undefined} />
             </div>
           </div>
         </section>
@@ -615,15 +616,6 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
     gift: (id, cls = "", style = {}) => {
       if (!site.giftHeading) return null;
 
-      const paymentLinks = site.giftPaymentLinks || [];
-      const bankDetails = site.giftBankDetails || [];
-      const giftItems = site.giftItems || [];
-      const paymentOptions = [
-        ...paymentLinks.map(l => ({ label: l.label, url: l.url, currencies: l.currencies })),
-        ...bankDetails.filter(b => b.payLink).map(b => ({ label: b.label, url: b.payLink, currencies: b.currencies })),
-      ];
-      const displayBankDetails = bankDetails.filter(b => !b.payLink);
-
       return (
         <section className={`section ${cls}`} id={id} style={style}>
           <div className="container">
@@ -631,14 +623,26 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
               <h2 className="gift__heading">{site.giftHeading}</h2>
               <p className="gift__subheading">{site.giftSubheading}</p>
 
-              <GiftContributionForm
-                slug={site.slug}
-                giftItems={site.giftEnableContributions ? giftItems : []}
-                currency={site.giftCurrency || "GBP"}
-                paymentOptions={paymentOptions}
-                bankDetails={displayBankDetails}
-                showName={site.giftShowName ?? false}
-              />
+              {(() => {
+                const paymentLinks = site.giftPaymentLinks || [];
+                const bankDetails = site.giftBankDetails || [];
+                const giftItems = site.giftItems || [];
+                const paymentOptions = [
+                  ...paymentLinks.map(l => ({ label: l.label, url: l.url, currencies: l.currencies })),
+                  ...bankDetails.filter(b => b.payLink).map(b => ({ label: b.label, url: b.payLink, currencies: b.currencies })),
+                ];
+                const displayBankDetails = bankDetails.filter(b => !b.payLink);
+                return (
+                  <GiftContributionForm
+                    slug={site.slug}
+                    giftItems={site.giftEnableContributions ? giftItems : []}
+                    currency={site.giftCurrency || "GBP"}
+                    paymentOptions={paymentOptions}
+                    bankDetails={displayBankDetails}
+                    showName={site.giftShowName ?? false}
+                  />
+                );
+              })()}
 
               {site.giftNote && <p className="gift__note">{site.giftNote}</p>}
             </div>
@@ -699,38 +703,47 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
 
   return (
     <div className="wedding-site" style={themeVars}>
-      <WeddingSiteClient 
-        weddingDate={site.weddingDate} 
-        scheduleStyle={site.scheduleStyle} 
-        sectionOrder={site.sectionOrder}
-      />
+      {!isPreview && (
+        <WeddingSiteClient
+          weddingDate={site.weddingDate}
+          scheduleStyle={site.scheduleStyle}
+          sectionOrder={site.sectionOrder}
+        />
+      )}
+      {isPreview && site.weddingDate && (
+        <CountdownClient weddingDate={site.weddingDate} />
+      )}
 
       {/* Fonts */}
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       <link href={fontStyle.googleFontsUrl} rel="stylesheet" />
 
-      {/* Lightbox */}
-      <div className="lightbox" id="lightbox">
-        <button className="lightbox__close" aria-label="Close">&times;</button>
-        <button className="lightbox__nav lightbox__nav--prev" id="lightbox-prev" aria-label="Previous">&#8249;</button>
-        <img className="lightbox__img" id="lightbox-img" alt="" />
-        <button className="lightbox__nav lightbox__nav--next" id="lightbox-next" aria-label="Next">&#8250;</button>
-        <span className="lightbox__counter" id="lightbox-counter"></span>
-      </div>
+      {!isPreview && (
+        <>
+          {/* Lightbox */}
+          <div className="lightbox" id="lightbox">
+            <button className="lightbox__close" aria-label="Close">&times;</button>
+            <button className="lightbox__nav lightbox__nav--prev" id="lightbox-prev" aria-label="Previous">&#8249;</button>
+            <img className="lightbox__img" id="lightbox-img" alt="" />
+            <button className="lightbox__nav lightbox__nav--next" id="lightbox-next" aria-label="Next">&#8250;</button>
+            <span className="lightbox__counter" id="lightbox-counter"></span>
+          </div>
 
-      {/* Navigation */}
-      <nav className="nav" role="navigation" aria-label="Main navigation">
-        <a href="#hero" className="nav__brand">{site.navBrand}</a>
-        <button className="nav__toggle" aria-label="Toggle menu" aria-expanded="false">
-          <span></span><span></span><span></span>
-        </button>
-        <ul className="nav__links">
-          {navItems.map((item) => (
-            <li key={item.id}><a href={`#${item.id}`} className="nav__link">{item.label}</a></li>
-          ))}
-        </ul>
-      </nav>
+          {/* Navigation */}
+          <nav className="nav" role="navigation" aria-label="Main navigation">
+            <a href="#hero" className="nav__brand">{site.navBrand}</a>
+            <button className="nav__toggle" aria-label="Toggle menu" aria-expanded="false">
+              <span></span><span></span><span></span>
+            </button>
+            <ul className="nav__links">
+              {navItems.map((item) => (
+                <li key={item.id}><a href={`#${item.id}`} className="nav__link">{item.label}</a></li>
+              ))}
+            </ul>
+          </nav>
+        </>
+      )}
 
       {/* Render sections in order */}
       {order.filter(s => s.visible).map((section, i) => {
@@ -777,7 +790,7 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
               zIndex: order.length - i,
               background: bgUrl ? 'var(--color-dark)' : 'transparent',
               overflow: 'hidden',
-              ...(bgUrl && textColorOverride ? { color: textColorOverride } : {}),
+              ...(bgUrl && textColorOverride ? { '--color-primary': textColorOverride, '--color-accent': textColorOverride } as React.CSSProperties : {}),
             }}
           >
             {bgUrl && (

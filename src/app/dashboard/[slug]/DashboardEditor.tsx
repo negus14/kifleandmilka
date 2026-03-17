@@ -39,7 +39,7 @@ import { CSS } from "@dnd-kit/utilities";
 import ClassicTemplate from "@/templates/classic/Template";
 import ModernTemplate from "@/templates/modern/Template";
 
-const STATIC_TABS = ["Basics", "Layout", "Guests", "Messages", "Gifts"] as const;
+const STATIC_TABS = ["Basics", "Layout"] as const;
 type View = "website" | "guests" | "gifts" | "messages";
 type Tab = string; // Allows dynamic tabs like "story-123"
 
@@ -1913,18 +1913,18 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
     }
   }, [initial.slug]);
 
-  // Load RSVPs when Guests tab is first selected
+  // Load data when management views are first selected
   useEffect(() => {
-    if ((tab === "Guests" || view === "guests") && !rsvpData.loaded && !rsvpData.loading) {
+    if (view === "guests" && !rsvpData.loaded && !rsvpData.loading) {
       loadRSVPs();
     }
-    if ((tab === "Messages" || view === "messages") && !msgData.loaded && !msgData.loading) {
+    if (view === "messages" && !msgData.loaded && !msgData.loading) {
       loadMessages();
     }
-    if ((tab === "Gifts" || view === "gifts") && !giftData.loaded && !giftData.loading) {
+    if (view === "gifts" && !giftData.loaded && !giftData.loading) {
       loadGifts();
     }
-  }, [tab, view, rsvpData.loaded, rsvpData.loading, loadRSVPs, msgData.loaded, msgData.loading, loadMessages, giftData.loaded, giftData.loading, loadGifts]);
+  }, [view, rsvpData.loaded, rsvpData.loading, loadRSVPs, msgData.loaded, msgData.loading, loadMessages, giftData.loaded, giftData.loading, loadGifts]);
 
   // Persist and restore tab state safely
   useEffect(() => {
@@ -1947,7 +1947,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
   useEffect(() => {
     const timer = setTimeout(() => {
       isInitialMount.current = false;
-    }, 3000); // 3 second lock to allow preview to settle
+    }, 500); // Brief lock to allow initial render to settle
     return () => clearTimeout(timer);
   }, []);
 
@@ -1958,10 +1958,22 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
   const MAX_SAVE_RETRIES = 2;
   const [isPreview, setIsPreview] = useState(true);
   const [previewDevice, setPreviewDevice] = useState<"desktop" | "mobile">("desktop");
-  const [editorWidth, setEditorWidth] = useState(40); // percentage
+
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect mobile viewport
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 1023px)");
+    const handler = (e: MediaQueryListEvent | MediaQueryList) => setIsMobile(e.matches);
+    handler(mq);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+  const [editorWidth, setEditorWidth] = useState(30); // percentage of content wrapper
+  const contentWrapperRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const isResizing = useRef(false);
-  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const previewContainerRef = useRef<HTMLDivElement>(null);
   const autoSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
   const lastManualTabClick = useRef<number>(0);
 
@@ -1975,16 +1987,15 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
 
   function handleTabChange(newTab: string) {
     setTab(newTab);
+    setView("website");
     lastManualTabClick.current = Date.now();
-    
+
     // Static tabs (Basics, Layout) don't correspond to a specific scrollable section
     const isStatic = (STATIC_TABS as readonly string[]).includes(newTab);
 
-    if (!isStatic && isPreview && iframeRef.current) {
-      iframeRef.current.contentWindow?.postMessage({
-        type: "SCROLL_TO_SECTION",
-        sectionId: newTab
-      }, window.location.origin);
+    if (!isStatic && isPreview && previewContainerRef.current) {
+      const sectionEl = previewContainerRef.current.querySelector(`[id="${newTab}"]`) as HTMLElement;
+      sectionEl?.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   }
 
@@ -2039,66 +2050,31 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
     };
   }, [site, saved, saving]);
 
-  // Send updates to preview iframe
+  // Scroll-sync: observe which section is in view in the inline preview
   useEffect(() => {
-    if (isPreview && iframeRef.current) {
-      iframeRef.current.contentWindow?.postMessage({
-        type: "UPDATE_SITE",
-        site
-      }, window.location.origin);
-    }
-  }, [site, isPreview]);
+    if (!isPreview || !previewContainerRef.current) return;
+    const container = previewContainerRef.current;
+    const sectionIds = (site.sectionOrder ?? []).filter(s => s.visible).map(s => s.id);
+    const elements = sectionIds.map(id => container.querySelector(`[id="${id}"]`)).filter(Boolean) as HTMLElement[];
+    if (elements.length === 0) return;
 
-  // Handle messages from iframe
-  useEffect(() => {
-    function handleMessage(event: MessageEvent) {
-      if (event.origin !== window.location.origin) return;
-      if (event.data?.type === "PREVIEW_READY") {
-        iframeRef.current?.contentWindow?.postMessage({
-          type: "UPDATE_SITE",
-          site
-        }, window.location.origin);
+    const observer = new IntersectionObserver((entries) => {
+      if (isInitialMount.current) return;
+      if (Date.now() - lastManualTabClick.current < 1000) return;
+      const isStatic = (STATIC_TABS as readonly string[]).includes(tab);
+      if (isStatic) return;
 
-        // NEW: Scroll to current tab on load if it's a dynamic section
-        const isStatic = (STATIC_TABS as readonly string[]).includes(tab);
-        if (!isStatic && isPreview) {
-          // Add a small delay to ensure iframe layout is fully settled
-          setTimeout(() => {
-            iframeRef.current?.contentWindow?.postMessage({
-              type: "SCROLL_TO_SECTION",
-              sectionId: tab.toLowerCase() === "hero" ? "hero" : tab
-            }, window.location.origin);
-          }, 100);
+      for (const entry of entries) {
+        if (entry.isIntersecting && entry.target.id && entry.target.id !== tab) {
+          setTab(entry.target.id);
+          break;
         }
       }
+    }, { root: container, threshold: 0.3 });
 
-      if (event.data?.type === "SECTION_CLICK") {
-        const sectionId = event.data.sectionId;
-        if (sectionId) {
-          handleTabChange(sectionId);
-        }
-      }
-
-      if (event.data?.type === "SECTION_IN_VIEW") {
-        // If we recently clicked a tab OR if we are still initializing,
-        // ignore scroll-sync messages to prevent hijacking the user's view
-        if (isInitialMount.current) return;
-        if (Date.now() - lastManualTabClick.current < 1000) return;
-
-        // If we're on a static tab (Basics, Layout), don't allow scroll-sync to change it.
-        const isStatic = (STATIC_TABS as readonly string[]).includes(tab);
-        if (isStatic) return;
-
-        const sectionId = event.data.sectionId;
-        // In the standardized system, the sectionId IS the tab ID
-        if (sectionId && sectionId !== tab) {
-          setTab(sectionId);
-        }
-      }
-    }
-    window.addEventListener("message", handleMessage);
-    return () => window.removeEventListener("message", handleMessage);
-  }, [site, tab]);
+    elements.forEach(el => observer.observe(el));
+    return () => observer.disconnect();
+  }, [site.sectionOrder, isPreview, tab]);
   function startResizing(e: React.MouseEvent | React.TouchEvent) {
     isResizing.current = true;
     setIsDragging(true);
@@ -2121,18 +2097,25 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
     document.body.style.userSelect = "auto";
   }
 
+  function clientXToEditorPercent(clientX: number): number {
+    const wrapper = contentWrapperRef.current;
+    if (!wrapper) return editorWidth;
+    const rect = wrapper.getBoundingClientRect();
+    return ((clientX - rect.left) / rect.width) * 100;
+  }
+
   function handleMouseMove(e: MouseEvent) {
     if (!isResizing.current) return;
-    const newWidth = (e.clientX / window.innerWidth) * 100;
-    if (newWidth > 20 && newWidth < 80) {
+    const newWidth = clientXToEditorPercent(e.clientX);
+    if (newWidth > 20 && newWidth < 65) {
       setEditorWidth(newWidth);
     }
   }
 
   function handleTouchMove(e: TouchEvent) {
     if (!isResizing.current) return;
-    const newWidth = (e.touches[0].clientX / window.innerWidth) * 100;
-    if (newWidth > 20 && newWidth < 80) {
+    const newWidth = clientXToEditorPercent(e.touches[0].clientX);
+    if (newWidth > 20 && newWidth < 65) {
       setEditorWidth(newWidth);
     }
   }
@@ -2416,30 +2399,6 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
               </button>
             </div>
 
-            <div className="hidden sm:block w-px h-5 bg-[#2d2b25]/10" />
-
-            <div className="flex bg-[#2d2b25]/5 rounded-sm p-1 gap-0.5">
-              <button
-                onClick={() => setView("guests")}
-                className={`px-2.5 py-1.5 rounded-sm transition-all flex items-center gap-1.5 ${
-                  view === "guests" ? "bg-[#2d2b25] text-white shadow-sm" : "text-[#2d2b25]/40 hover:text-[#2d2b25]/60"
-                }`}
-                title="Guest List"
-              >
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                <span className="text-[10px] font-bold uppercase tracking-wider hidden md:inline">Guests</span>
-              </button>
-              <button
-                onClick={() => setView("gifts")}
-                className={`px-2.5 py-1.5 rounded-sm transition-all flex items-center gap-1.5 ${
-                  view === "gifts" ? "bg-[#2d2b25] text-white shadow-sm" : "text-[#2d2b25]/40 hover:text-[#2d2b25]/60"
-                }`}
-                title="Gift Tracker"
-              >
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
-                <span className="text-[10px] font-bold uppercase tracking-wider hidden md:inline">Gifts</span>
-              </button>
-            </div>
 
             <div className="hidden lg:flex bg-[#2d2b25]/5 rounded-sm p-1">
               <button 
@@ -2472,28 +2431,10 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
         </div>
       </header>
 
-      {/* Management Panels */}
-      {view === "guests" && (
-        <div className="max-w-6xl mx-auto px-3 sm:px-6 py-4 lg:py-8">
-          <GuestListPanel rsvpData={rsvpData} loadRSVPs={loadRSVPs} site={site} set={set} />
-        </div>
-      )}
-      {view === "messages" && (
-        <div className="max-w-6xl mx-auto px-3 sm:px-6 py-4 lg:py-8">
-          <MessagesPanel msgData={msgData} loadMessages={loadMessages} site={site} />
-        </div>
-      )}
-      {view === "gifts" && (
-        <div className="max-w-6xl mx-auto px-3 sm:px-6 py-4 lg:py-8">
-          <GiftTrackerPanel giftData={giftData} loadGifts={loadGifts} site={site} />
-        </div>
-      )}
-
-      {/* Website Editor */}
-      {view === "website" && (
-      <div className={`mx-auto transition-all ${isPreview ? "max-w-[1600px] px-0 lg:px-4" : "max-w-6xl px-3 sm:px-6"} py-4 lg:py-8 flex flex-col lg:flex-row gap-0 lg:gap-8`}>
+      {/* Main Layout with Sidebar */}
+      <div className={`mx-auto transition-all ${view === "website" && isPreview ? "max-w-[1800px] px-0 lg:px-3" : "max-w-6xl px-3 sm:px-6"} py-4 lg:py-8 flex flex-col lg:flex-row gap-0 ${view === "website" && isPreview ? "lg:gap-4" : "lg:gap-8"}`}>
         {/* Sidebar / Mobile Tabs */}
-        <nav className={`shrink-0 sticky top-14 lg:top-20 z-40 self-start transition-all ${isPreview ? "lg:w-36" : "lg:w-44"} w-full overflow-x-auto lg:overflow-x-visible no-scrollbar mb-6 lg:mb-0 px-4 lg:px-0 block bg-[#faf1e1]/95 backdrop-blur-sm lg:bg-transparent lg:backdrop-blur-none py-2 lg:py-0 -mx-0 border-b border-[#2d2b25]/[0.06] lg:border-b-0`}>
+        <nav className={`shrink-0 sticky top-14 lg:top-20 z-40 self-start transition-all ${view === "website" && isPreview ? "lg:w-28" : "lg:w-44"} w-full overflow-x-auto lg:overflow-x-visible no-scrollbar mb-6 lg:mb-0 px-4 lg:px-0 block bg-[#faf1e1]/95 backdrop-blur-sm lg:bg-transparent lg:backdrop-blur-none py-2 lg:py-0 -mx-0 border-b border-[#2d2b25]/[0.06] lg:border-b-0`}>
           <div className="flex lg:flex-col gap-1 min-w-max lg:min-w-0">
             {(() => {
               const order = site.sectionOrder ?? DEFAULT_SECTION_ORDER;
@@ -2530,8 +2471,8 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                       handleTabChange(t.id);
                     }}
                     className={`whitespace-nowrap px-4 lg:px-3 py-2 text-[11px] lg:text-sm rounded-sm transition-all ${
-                      tab === t.id 
-                        ? "bg-[#2d2b25] text-[#faf1e1] shadow-sm font-bold" 
+                      view === "website" && tab === t.id
+                        ? "bg-[#2d2b25] text-[#faf1e1] shadow-sm font-bold"
                         : isHidden
                           ? "text-[#2d2b25]/20 cursor-not-allowed italic"
                           : "text-[#2d2b25]/60 hover:text-[#2d2b25] hover:bg-[#2d2b25]/5"
@@ -2552,16 +2493,58 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                 );
               });
             })()}
+
+            {/* Management */}
+            <div className="hidden lg:block w-full h-px bg-[#2d2b25]/8 my-1" />
+            <span className="hidden lg:block text-[8px] font-bold uppercase tracking-[0.2em] text-[#2d2b25]/25 px-3 mt-1 mb-0.5">Management</span>
+            {([
+              { id: "guests" as View, label: "Guests", icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> },
+              { id: "gifts" as View, label: "Gifts", icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg> },
+              { id: "messages" as View, label: "Broadcast", icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 2L11 13"/><path d="M22 2L15 22L11 13L2 9L22 2Z"/></svg> },
+            ]).map((item) => (
+              <button
+                key={item.id}
+                onClick={() => setView(item.id)}
+                className={`whitespace-nowrap px-4 lg:px-3 py-2 text-[11px] lg:text-sm rounded-sm transition-all w-full text-left ${
+                  view === item.id
+                    ? "bg-[#2d2b25] text-[#faf1e1] shadow-sm font-bold"
+                    : "text-[#2d2b25]/60 hover:text-[#2d2b25] hover:bg-[#2d2b25]/5"
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  {item.icon}
+                  <span>{item.label}</span>
+                </div>
+              </button>
+            ))}
           </div>
         </nav>
 
+        {/* Management Panels */}
+        {view === "guests" && (
+          <div className="flex-1 min-w-0 py-0 lg:py-0">
+            <GuestListPanel rsvpData={rsvpData} loadRSVPs={loadRSVPs} site={site} set={set} />
+          </div>
+        )}
+        {view === "messages" && (
+          <div className="flex-1 min-w-0 py-0 lg:py-0">
+            <MessagesPanel msgData={msgData} loadMessages={loadMessages} site={site} />
+          </div>
+        )}
+        {view === "gifts" && (
+          <div className="flex-1 min-w-0 py-0 lg:py-0">
+            <GiftTrackerPanel giftData={giftData} loadGifts={loadGifts} site={site} />
+          </div>
+        )}
+
         {/* Content Wrapper */}
-        <div className={`flex flex-col lg:flex-row transition-all px-0 lg:px-0 ${isPreview ? "flex-1" : "flex-1 max-w-2xl lg:mx-auto"}`}>
+        {view === "website" && (
+        <div ref={contentWrapperRef} className={`flex flex-col lg:flex-row transition-all px-0 lg:px-0 ${isPreview ? "flex-1 min-w-0 overflow-hidden" : "flex-1 max-w-2xl lg:mx-auto"}`}>
           
           {/* Editor Column */}
-          <div 
-            style={isPreview ? { width: undefined } : { width: '100%' }}
-            className={`transition-all min-w-0 overflow-x-hidden ${isPreview ? "lg:flex-1 h-auto lg:h-[calc(100vh-10rem)] lg:overflow-y-auto lg:pr-6 custom-scrollbar hidden lg:block" : "w-full block"}`}
+          <div
+            style={isPreview ? { width: `${editorWidth}%`, maxWidth: `${editorWidth}%` } : { width: '100%' }}
+            className={`transition-all min-w-0 overflow-x-hidden ${isPreview ? "h-auto lg:h-[calc(100vh-10rem)] lg:overflow-y-auto lg:pr-6 custom-scrollbar block shrink-0 max-lg:!w-full max-lg:!max-w-full" : "w-full block"}`}
           >
             {(() => {
               if (tab === "Basics") return (
@@ -3525,35 +3508,67 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
 
           {/* Preview Column */}
           {isPreview && (
-            <div 
-              style={{ width: undefined }}
-              className={`sticky top-20 h-[calc(100vh-10rem)] border border-[#2d2b25]/10 bg-white rounded-sm overflow-hidden flex flex-col shadow-xl transition-all w-full lg:w-[var(--preview-width)]`}
-              ref={(el) => {
-                if (el) el.style.setProperty('--preview-width', `${100 - editorWidth}%`);
-              }}
+            <div
+              style={{ width: `${100 - editorWidth}%`, maxWidth: `${100 - editorWidth}%` }}
+              className="sticky top-20 h-[calc(100vh-6rem)] border border-[#2d2b25]/10 bg-white rounded-sm overflow-hidden flex flex-col shadow-xl transition-all min-w-0 shrink-0 hidden lg:flex"
             >
               <div className="bg-[#2d2b25]/[0.02] border-b border-[#2d2b25]/10 px-4 py-2 flex items-center justify-between">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-[#2d2b25]/40">Real-time Preview</span>
                 <span className="text-[10px] text-[#2d2b25]/30">{previewDevice === "desktop" ? "Desktop Mode" : "Mobile View"} &bull; Auto-syncing</span>
               </div>
-              <div className="flex-1 bg-[#f0f0f0] overflow-hidden flex justify-center p-0 lg:p-4">
-                <div 
-                  className={`bg-white shadow-2xl transition-all h-full origin-top ${
+              <div className="flex-1 bg-[#f0f0f0] overflow-hidden flex justify-center p-0 lg:p-4 min-w-0">
+                <div
+                  ref={previewContainerRef}
+                  style={{ containerType: "inline-size" }}
+                  className={`bg-white shadow-2xl transition-all h-full origin-top overflow-y-auto overflow-x-hidden ${
                     previewDevice === "mobile" ? "w-full max-w-[375px]" : "w-full"
                   } ${isDragging ? "pointer-events-none" : ""}`}
+                  onClick={(e) => {
+                    // Intercept anchor clicks in preview to prevent navigation
+                    const target = (e.target as HTMLElement).closest("a");
+                    if (target) {
+                      e.preventDefault();
+                      const href = target.getAttribute("href");
+                      if (href?.startsWith("#")) {
+                        const sectionId = href.slice(1);
+                        handleTabChange(sectionId);
+                      }
+                    }
+                  }}
                 >
-                  <iframe
-                    ref={iframeRef}
-                    src={`/${site.slug}/preview`}
-                    className="w-full h-full border-none"
-                    title="Site Preview"
-                  />
+                  {site.layoutId === "modern" ? (
+                    <ModernTemplate site={site} isPreview />
+                  ) : (
+                    <ClassicTemplate site={site} isPreview />
+                  )}
                 </div>
               </div>
             </div>
           )}
         </div>
+        )}
       </div>
+
+      {/* Mobile full-screen preview overlay */}
+      {isMobile && isPreview && view === "website" && (
+        <div className="fixed inset-0 z-[100] bg-white flex flex-col">
+          <div className="flex items-center justify-between px-4 py-2 border-b border-[#2d2b25]/10 bg-[#faf1e1]">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[#2d2b25]/40">Preview</span>
+            <button
+              onClick={() => setIsPreview(false)}
+              className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider bg-[#2d2b25] text-white rounded-sm"
+            >
+              Back to Edit
+            </button>
+          </div>
+          <div className="flex-1 overflow-y-auto" style={{ containerType: "inline-size" }}>
+            {site.layoutId === "modern" ? (
+              <ModernTemplate site={site} isPreview />
+            ) : (
+              <ClassicTemplate site={site} isPreview />
+            )}
+          </div>
+        </div>
       )}
     </div>
   );

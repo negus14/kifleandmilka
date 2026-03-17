@@ -20,6 +20,29 @@ vi.mock('@/templates/modern/Template', () => ({
   ),
 }));
 
+const ORIGIN = window.location.origin; // "http://localhost:3000" in jsdom
+
+function dispatchSiteMessage(site: any) {
+  act(() => {
+    window.dispatchEvent(new MessageEvent('message', {
+      origin: ORIGIN,
+      data: { type: 'UPDATE_SITE', site },
+    }));
+  });
+}
+
+const baseSite = {
+  templateId: 'classic-cream',
+  sectionOrder: DEFAULT_SECTION_ORDER,
+  scheduleItems: [],
+  galleryImages: [],
+  exploreGroups: [],
+  accommodations: [],
+  contactEntries: [],
+  menuItems: [],
+  eventDays: [],
+};
+
 describe('PreviewPage', () => {
   let postMessageSpy: ReturnType<typeof vi.spyOn>;
 
@@ -38,31 +61,19 @@ describe('PreviewPage', () => {
 
   it('sends PREVIEW_READY message on mount', () => {
     render(<PreviewPage />);
-    expect(postMessageSpy).toHaveBeenCalledWith({ type: 'PREVIEW_READY' }, '*');
+    expect(postMessageSpy).toHaveBeenCalledWith(
+      { type: 'PREVIEW_READY' },
+      ORIGIN
+    );
   });
 
   it('renders classic template when site has classic layout', () => {
     render(<PreviewPage />);
 
-    act(() => {
-      window.dispatchEvent(new MessageEvent('message', {
-        data: {
-          type: 'UPDATE_SITE',
-          site: {
-            layoutId: 'classic',
-            partner1Name: 'Alice',
-            templateId: 'classic-cream',
-            sectionOrder: DEFAULT_SECTION_ORDER,
-            scheduleItems: [],
-            galleryImages: [],
-            exploreGroups: [],
-            accommodations: [],
-            contactEntries: [],
-            menuItems: [],
-            eventDays: [],
-          },
-        },
-      }));
+    dispatchSiteMessage({
+      ...baseSite,
+      layoutId: 'classic',
+      partner1Name: 'Alice',
     });
 
     expect(screen.getByTestId('classic-template')).toBeInTheDocument();
@@ -72,25 +83,11 @@ describe('PreviewPage', () => {
   it('renders modern template when site has modern layout', () => {
     render(<PreviewPage />);
 
-    act(() => {
-      window.dispatchEvent(new MessageEvent('message', {
-        data: {
-          type: 'UPDATE_SITE',
-          site: {
-            layoutId: 'modern',
-            partner1Name: 'Bob',
-            templateId: 'modern-dark',
-            sectionOrder: DEFAULT_SECTION_ORDER,
-            scheduleItems: [],
-            galleryImages: [],
-            exploreGroups: [],
-            accommodations: [],
-            contactEntries: [],
-            menuItems: [],
-            eventDays: [],
-          },
-        },
-      }));
+    dispatchSiteMessage({
+      ...baseSite,
+      layoutId: 'modern',
+      partner1Name: 'Bob',
+      templateId: 'modern-dark',
     });
 
     expect(screen.getByTestId('modern-template')).toBeInTheDocument();
@@ -99,25 +96,10 @@ describe('PreviewPage', () => {
   it('passes isPreview prop to template', () => {
     render(<PreviewPage />);
 
-    act(() => {
-      window.dispatchEvent(new MessageEvent('message', {
-        data: {
-          type: 'UPDATE_SITE',
-          site: {
-            layoutId: 'classic',
-            partner1Name: 'Test',
-            templateId: 'classic-cream',
-            sectionOrder: DEFAULT_SECTION_ORDER,
-            scheduleItems: [],
-            galleryImages: [],
-            exploreGroups: [],
-            accommodations: [],
-            contactEntries: [],
-            menuItems: [],
-            eventDays: [],
-          },
-        },
-      }));
+    dispatchSiteMessage({
+      ...baseSite,
+      layoutId: 'classic',
+      partner1Name: 'Test',
     });
 
     expect(screen.getByTestId('classic-template')).toHaveAttribute('data-preview', 'true');
@@ -128,7 +110,21 @@ describe('PreviewPage', () => {
 
     act(() => {
       window.dispatchEvent(new MessageEvent('message', {
+        origin: ORIGIN,
         data: { type: 'SOME_OTHER_MESSAGE' },
+      }));
+    });
+
+    expect(screen.getByText('Loading real-time preview...')).toBeInTheDocument();
+  });
+
+  it('ignores messages from different origins', () => {
+    render(<PreviewPage />);
+
+    act(() => {
+      window.dispatchEvent(new MessageEvent('message', {
+        origin: 'https://evil.com',
+        data: { type: 'UPDATE_SITE', site: { ...baseSite, partner1Name: 'Evil' } },
       }));
     });
 

@@ -684,9 +684,77 @@
   transition: opacity 0.8s ease, transform 0.8s ease;
 }
 
-.reveal.visible {
+.reveal.visible,
+.preview .reveal {
   opacity: 1;
   transform: none;
+}
+
+/* Preview mode: constrain viewport-relative sizing to container, not browser viewport */
+.preview .hero {
+  min-height: 100cqh;
+}
+.preview .nav {
+  display: none;
+}
+
+/* Preview container queries: replicate @media (max-width: 768px) for inline preview */
+@container (max-width: 768px) {
+  .preview .story {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+  .preview .story__img {
+    aspect-ratio: 4 / 3;
+    order: -1;
+  }
+  .preview .info-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  .preview .gallery {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  .preview .gallery__hero,
+  .preview .gallery__thumb {
+    aspect-ratio: 16 / 9;
+  }
+  .preview .details-split {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+  .preview .details-split-layout {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  .preview .explore-grid {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+  .preview .gallery-float {
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  }
+  .preview .hotels-grid {
+    grid-template-columns: 1fr;
+  }
+  .preview .timeline__item {
+    grid-template-columns: 75px 1px 1fr;
+    gap: 1.25rem;
+  }
+  .preview .hero__countdown {
+    gap: 1.25rem;
+  }
+}
+
+@container (max-width: 480px) {
+  .preview .hero__countdown {
+    gap: 0.75rem;
+  }
+  .preview .countdown__number {
+    font-size: 1.4rem;
+  }
 }
 
 .reveal-delay-1 { transition-delay: 0.15s; }

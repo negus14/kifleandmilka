@@ -3,6 +3,7 @@ import type { WeddingSite, VenueItem, VenueInfoBlock, ScheduleItem } from "@/lib
 import { getTheme, getFontStyle } from "@/lib/themes";
 import { toEmbedUrl, generateThemeVars, getSectionData } from "@/lib/template-utils";
 import WeddingSiteClient from "./WeddingSiteClient";
+import CountdownClient from "@/templates/CountdownClient";
 import RSVPForm from "@/components/RSVPForm";
 import AccommodationActions from "@/components/AccommodationActions";
 import GiftContributionForm from "@/components/GiftContributionForm";
@@ -546,7 +547,7 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
             <div className="modern-card modern-card--flat reveal">
               <h2 className="modern-title modern-title--center">{site.rsvpHeading}</h2>
               <p className="modern-subtitle modern-subtitle--center">{site.rsvpDeadlineText}</p>
-              <RSVPForm slug={site.slug} mealOptions={mealOptions} mealDietaryOptions={mealDietaryOptions} />
+              <RSVPForm slug={site.slug} mealOptions={mealOptions} mealDietaryOptions={mealDietaryOptions} calendarInfo={site.weddingDate ? { partner1Name: site.partner1Name, partner2Name: site.partner2Name, weddingDate: site.weddingDate, weddingEndDate: site.weddingEndDate, dateDisplayText: site.dateDisplayText, locationText: site.locationText, siteSlug: site.slug } : undefined} />
             </div>
           </div>
         </section>
@@ -556,29 +557,32 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
     gift: (id, cls = "", style = {}) => {
       if (!site.giftHeading) return null;
 
-      const paymentLinks = site.giftPaymentLinks || [];
-      const bankDetails = site.giftBankDetails || [];
-      const giftItems = site.giftItems || [];
-      const paymentOptions = [
-        ...paymentLinks.map(l => ({ label: l.label, url: l.url, currencies: l.currencies })),
-        ...bankDetails.filter(b => b.payLink).map(b => ({ label: b.label, url: b.payLink, currencies: b.currencies })),
-      ];
-      const displayBankDetails = bankDetails.filter(b => !b.payLink);
-
       return (
         <section className={`modern-section ${cls}`} id={id} style={style}>
           <div className="modern-container modern-container--narrow reveal text-center">
             <h2 className="modern-title">{site.giftHeading}</h2>
             <p className="modern-text">{site.giftSubheading}</p>
 
-            <GiftContributionForm
-              slug={site.slug}
-              giftItems={site.giftEnableContributions ? giftItems : []}
-              currency={site.giftCurrency || "GBP"}
-              paymentOptions={paymentOptions}
-              bankDetails={displayBankDetails}
-              showName={site.giftShowName ?? false}
-            />
+            {(() => {
+              const paymentLinks = site.giftPaymentLinks || [];
+              const bankDetails = site.giftBankDetails || [];
+              const giftItems = site.giftItems || [];
+              const paymentOptions = [
+                ...paymentLinks.map(l => ({ label: l.label, url: l.url, currencies: l.currencies })),
+                ...bankDetails.filter(b => b.payLink).map(b => ({ label: b.label, url: b.payLink, currencies: b.currencies })),
+              ];
+              const displayBankDetails = bankDetails.filter(b => !b.payLink);
+              return (
+                <GiftContributionForm
+                  slug={site.slug}
+                  giftItems={site.giftEnableContributions ? giftItems : []}
+                  currency={site.giftCurrency || "GBP"}
+                  paymentOptions={paymentOptions}
+                  bankDetails={displayBankDetails}
+                  showName={site.giftShowName ?? false}
+                />
+              );
+            })()}
 
             {site.giftNote && <p className="modern-text modern-text--small">{site.giftNote}</p>}
           </div>
@@ -627,36 +631,43 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
 
   return (
     <div className="modern-site" style={themeVars}>
-      {/* Lightbox */}
-      <div className="lightbox" id="lightbox">
-        <button className="lightbox__close" aria-label="Close">&times;</button>
-        <button className="lightbox__nav lightbox__nav--prev" id="lightbox-prev" aria-label="Previous">&#8249;</button>
-        <img className="lightbox__img" id="lightbox-img" alt="" />
-        <button className="lightbox__nav lightbox__nav--next" id="lightbox-next" aria-label="Next">&#8250;</button>
-        <span className="lightbox__counter" id="lightbox-counter"></span>
-      </div>
+      {isPreview && site.weddingDate && (
+        <CountdownClient weddingDate={site.weddingDate} />
+      )}
+      {!isPreview && (
+        <>
+          {/* Lightbox */}
+          <div className="lightbox" id="lightbox">
+            <button className="lightbox__close" aria-label="Close">&times;</button>
+            <button className="lightbox__nav lightbox__nav--prev" id="lightbox-prev" aria-label="Previous">&#8249;</button>
+            <img className="lightbox__img" id="lightbox-img" alt="" />
+            <button className="lightbox__nav lightbox__nav--next" id="lightbox-next" aria-label="Next">&#8250;</button>
+            <span className="lightbox__counter" id="lightbox-counter"></span>
+          </div>
 
-      <WeddingSiteClient
-        weddingDate={site.weddingDate}
-        scheduleStyle={site.scheduleStyle}
-        sectionOrder={site.sectionOrder}
-      />
+          <WeddingSiteClient
+            weddingDate={site.weddingDate}
+            scheduleStyle={site.scheduleStyle}
+            sectionOrder={site.sectionOrder}
+          />
+
+          <nav className="modern-nav">
+            <div className="modern-container modern-nav__inner">
+              <a href="#hero" className="modern-nav__brand">{site.navBrand}</a>
+              <ul className="modern-nav__links">
+                {navItems.map(item => (
+                  <li key={item.id}><a href={`#${item.id}`} className="modern-nav__link">{item.label}</a></li>
+                ))}
+              </ul>
+            </div>
+          </nav>
+        </>
+      )}
 
       {/* Fonts */}
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       <link href={fontStyle.googleFontsUrl} rel="stylesheet" />
-      
-      <nav className="modern-nav">
-        <div className="modern-container modern-nav__inner">
-          <a href="#hero" className="modern-nav__brand">{site.navBrand}</a>
-          <ul className="modern-nav__links">
-            {navItems.map(item => (
-              <li key={item.id}><a href={`#${item.id}`} className="modern-nav__link">{item.label}</a></li>
-            ))}
-          </ul>
-        </div>
-      </nav>
 
       {order.filter(s => s.visible).map((section, i) => {
         const render = sections[section.type] || sections[section.id];
@@ -701,7 +712,7 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
               zIndex: order.length - i,
               background: bgUrl ? 'var(--color-dark)' : 'transparent',
               overflow: 'hidden',
-              ...(bgUrl && textColorOverride ? { color: textColorOverride } : {}),
+              ...(bgUrl && textColorOverride ? { '--color-primary': textColorOverride, '--color-accent': textColorOverride } as React.CSSProperties : {}),
             }}
           >
             {bgUrl && (

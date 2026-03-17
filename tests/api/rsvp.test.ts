@@ -21,6 +21,11 @@ vi.mock('@/lib/google-sheets', () => ({
   syncRSVPToGoogleSheets: vi.fn(),
 }));
 
+vi.mock('@/lib/email', () => ({
+  sendRSVPConfirmation: vi.fn().mockResolvedValue(undefined),
+  sendRSVPNotification: vi.fn().mockResolvedValue(undefined),
+}));
+
 describe('POST /api/rsvp', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -43,11 +48,24 @@ describe('POST /api/rsvp', () => {
     expect(data.error).toMatch(/Slug and at least one guest are required/);
   });
 
+  it('should return 400 if email is missing', async () => {
+    const req = createRequest({
+      slug: 'unknown-site',
+      guests: [{ name: 'John Doe', attending: true }],
+    });
+    const res = await POST(req);
+    const data = await res.json();
+
+    expect(res.status).toBe(400);
+    expect(data.error).toMatch(/valid email/i);
+  });
+
   it('should return 404 if site is not found', async () => {
     vi.mocked(sites.getSiteBySlug).mockResolvedValueOnce(null);
 
     const req = createRequest({
       slug: 'unknown-site',
+      email: 'test@example.com',
       guests: [{ name: 'John Doe', attending: true }],
     });
     const res = await POST(req);
@@ -80,12 +98,13 @@ describe('POST /api/rsvp', () => {
     expect(data.success).toBe(true);
     expect(data.rsvpId).toBe('rsvp-123');
 
-    // Verify DB was called
+    // Verify DB was called (phone is undefined)
     expect(rsvps.createRSVP).toHaveBeenCalledWith(
       'test-site',
       'john@example.com',
       rsvpData.guests,
-      'Cant wait!'
+      'Cant wait!',
+      undefined
     );
 
     // Verify Sync was called
@@ -96,5 +115,35 @@ describe('POST /api/rsvp', () => {
       'Cant wait!',
       'rsvp-123'
     );
+  });
+
+  it('should return 400 if guests exceed limit', async () => {
+    const guests = Array.from({ length: 11 }, (_, i) => ({
+      name: `Guest ${i}`,
+      attending: true,
+    }));
+    const req = createRequest({
+      slug: 'test-site',
+      email: 'test@example.com',
+      guests,
+    });
+    const res = await POST(req);
+    const data = await res.json();
+
+    expect(res.status).toBe(400);
+    expect(data.error).toMatch(/Maximum 10 guests/);
+  });
+
+  it('should return 400 if guest name is empty', async () => {
+    const req = createRequest({
+      slug: 'test-site',
+      email: 'test@example.com',
+      guests: [{ name: '', attending: true }],
+    });
+    const res = await POST(req);
+    const data = await res.json();
+
+    expect(res.status).toBe(400);
+    expect(data.error).toMatch(/must have a name/);
   });
 });
