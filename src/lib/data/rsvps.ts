@@ -17,6 +17,7 @@ export interface RSVPRecord {
   phone: string | null;
   message: string | null;
   guests: GuestInput[];
+  confirmation_sent: boolean;
   synced_at: Date | null;
   created_at: Date | null;
 }
@@ -44,6 +45,7 @@ export async function createRSVP(
     phone: row.phone,
     message: row.message,
     guests: row.guests as GuestInput[],
+    confirmation_sent: row.confirmationSent,
     synced_at: row.syncedAt,
     created_at: row.createdAt,
   };
@@ -62,9 +64,16 @@ export async function getRSVPsBySite(slug: string): Promise<RSVPRecord[]> {
     phone: row.phone,
     message: row.message,
     guests: row.guests as GuestInput[],
+    confirmation_sent: row.confirmationSent,
     synced_at: row.syncedAt,
     created_at: row.createdAt,
   }));
+}
+
+export async function markRSVPConfirmationSent(id: string) {
+  await db.update(rsvps)
+    .set({ confirmationSent: true })
+    .where(eq(rsvps.id, id));
 }
 
 export async function markRSVPSynced(id: string) {
@@ -104,6 +113,7 @@ export async function getUnsyncedRSVPs(slug: string): Promise<RSVPRecord[]> {
     phone: row.phone,
     message: row.message,
     guests: row.guests as GuestInput[],
+    confirmation_sent: row.confirmationSent,
     synced_at: row.syncedAt,
     created_at: row.createdAt,
   }));

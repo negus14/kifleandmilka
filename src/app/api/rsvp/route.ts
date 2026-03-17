@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSiteBySlug } from "../../../lib/data/sites";
-import { createRSVP } from "../../../lib/data/rsvps";
+import { createRSVP, markRSVPConfirmationSent } from "../../../lib/data/rsvps";
 import { syncRSVPToGoogleSheets } from "../../../lib/google-sheets";
+import { sendRSVPConfirmation, sendRSVPNotification } from "../../../lib/email";
 
 interface GuestInput {
   name: string;
@@ -57,6 +58,13 @@ export async function POST(request: NextRequest) {
     // We await this to ensure we try at least once, but failure won't break the response
     // since the data is now safe in our DB.
     await syncRSVPToGoogleSheets(site, email, guests, message, rsvp.id);
+
+    // 3. Send email confirmations (fire-and-forget — never block response)
+    sendRSVPConfirmation(site, email, guests, message)
+      .then((sent) => { if (sent) markRSVPConfirmationSent(rsvp.id); })
+      .catch((err) => console.error("[RSVP] Confirmation email error:", err));
+    sendRSVPNotification(site, email, guests, message)
+      .catch((err) => console.error("[RSVP] Notification email error:", err));
 
     return NextResponse.json({ success: true, rsvpId: rsvp.id });
   } catch (error: any) {

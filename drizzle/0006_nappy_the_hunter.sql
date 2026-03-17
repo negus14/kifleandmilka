@@ -1,0 +1,1 @@
+ALTER TABLE "rsvps" ADD COLUMN "confirmation_sent" boolean DEFAULT false NOT NULL;

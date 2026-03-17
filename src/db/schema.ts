@@ -1,4 +1,4 @@
-import { pgTable, text, jsonb, timestamp, uuid, index } from "drizzle-orm/pg-core";
+import { pgTable, text, jsonb, timestamp, uuid, index, boolean } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 
 // 1. Sites Table
@@ -7,6 +7,7 @@ export const sites = pgTable("sites", {
   data: jsonb("data").notNull(),
   isPaid: timestamp("is_paid").default(sql`NULL`), // Using timestamp for paid date or null
   stripeCustomerId: text("stripe_customer_id"),
+  customDomain: text("custom_domain").unique(),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 }, (table) => {
@@ -23,6 +24,7 @@ export const rsvps = pgTable("rsvps", {
   phone: text("phone"),
   message: text("message"),
   guests: jsonb("guests").notNull(),
+  confirmationSent: boolean("confirmation_sent").default(false).notNull(),
   syncedAt: timestamp("synced_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 }, (table) => {
@@ -49,7 +51,40 @@ export const giftContributions = pgTable("gift_contributions", {
   ];
 });
 
-// 3. Audit Log Table — tracks all site mutations for debugging persistence issues
+// 3. Broadcast Groups Table
+export const broadcastGroups = pgTable("broadcast_groups", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  siteSlug: text("site_slug").references(() => sites.slug, { onDelete: 'cascade' }),
+  name: text("name").notNull(),
+  type: text("type").notNull().default("custom"), // "smart" | "custom"
+  filter: jsonb("filter"), // For smart groups: { status: "attending" | "declined" | "all" }
+  members: jsonb("members"), // For custom groups: string[] of RSVP emails
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+}, (table) => {
+  return [
+    index("idx_broadcast_groups_site_slug").on(table.siteSlug),
+  ];
+});
+
+// 4. Broadcasts Table
+export const broadcasts = pgTable("broadcasts", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  siteSlug: text("site_slug").references(() => sites.slug, { onDelete: 'cascade' }),
+  groupId: uuid("group_id").references(() => broadcastGroups.id, { onDelete: 'cascade' }),
+  subject: text("subject").notNull(),
+  body: text("body").notNull(),
+  channel: text("channel").notNull().default("email"),
+  status: text("status").notNull().default("draft"), // "draft" | "sending" | "sent" | "failed"
+  recipientCount: text("recipient_count"),
+  sentAt: timestamp("sent_at", { withTimezone: true }),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+}, (table) => {
+  return [
+    index("idx_broadcasts_site_slug").on(table.siteSlug),
+  ];
+});
+
+// 5. Audit Log Table — tracks all site mutations for debugging persistence issues
 export const siteAuditLog = pgTable("site_audit_log", {
   id: uuid("id").defaultRandom().primaryKey(),
   siteSlug: text("site_slug").notNull(),
