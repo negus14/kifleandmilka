@@ -3329,7 +3329,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                   {renderBg("Gift Background Image")}
                   <Field label="Heading" value={site.giftHeading} onChange={(v) => set("giftHeading", v)} />
                   <Field label="Subheading" value={site.giftSubheading} onChange={(v) => set("giftSubheading", v)} multiline rows={3} />
-
+                  <Field label="Footnote / Thank You Message" value={site.giftNote || ""} onChange={(v) => set("giftNote", v)} multiline rows={2} placeholder="e.g. Thank you for your generosity!" />
                   <div className="mt-8 mb-4 p-4 bg-[#2d2b25]/5 border border-[#2d2b25]/10 rounded-sm flex items-center justify-between">
                     <div>
                       <Label>Add Gift Items</Label>
