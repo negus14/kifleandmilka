@@ -254,3 +254,15 @@
 .gift-contrib__success { text-align: center; padding: 2rem 0; }
 .gift-contrib__success-title { font-size: 1.3rem; font-weight: 600; margin-bottom: 0.5rem; }
 .gift-contrib__success-text { font-size: 0.9rem; opacity: 0.6; }
+
+.gift-contrib__banks { margin-top: 2rem; padding-top: 2rem; border-top: 1px solid color-mix(in srgb, var(--color-dark, #2d2b25), transparent 88%); }
+.gift-contrib__banks-heading { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.15em; opacity: 0.5; margin-bottom: 1rem; text-align: center; }
+.gift-contrib__bank { padding: 1.25rem; background: color-mix(in srgb, var(--color-dark, #2d2b25), transparent 96%); border: 1px solid color-mix(in srgb, var(--color-dark, #2d2b25), transparent 88%); border-radius: 4px; margin-bottom: 1rem; }
+.gift-contrib__bank-title { font-size: 0.9rem; font-weight: 600; margin-bottom: 1rem; }
+.gift-contrib__bank-row { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; padding: 0.5rem 0; border-bottom: 1px solid color-mix(in srgb, var(--color-dark, #2d2b25), transparent 92%); }
+.gift-contrib__bank-row:last-child { border-bottom: none; }
+.gift-contrib__bank-field { min-width: 0; }
+.gift-contrib__bank-label { display: block; font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; opacity: 0.45; margin-bottom: 0.15rem; }
+.gift-contrib__bank-value { font-size: 0.88rem; font-weight: 500; word-break: break-all; }
+.gift-contrib__copy-btn { padding: 0.3rem 0.75rem; font: inherit; font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; cursor: pointer; background: var(--color-dark, #2d2b25); color: var(--color-primary, #faf1e1); border: 1px solid var(--color-dark, #2d2b25); border-radius: 2px; transition: all 0.2s; white-space: nowrap; flex-shrink: 0; }
+.gift-contrib__copy-btn:hover { background: transparent; color: var(--color-dark, #2d2b25); }
