@@ -858,13 +858,14 @@ type GuestRow = {
 function MessagesPanel({ msgData, loadMessages, site }: {
   msgData: {
     groups: { id: string; name: string; type: string; filter: any; members: any }[];
-    broadcasts: { id: string; groupId: string | null; subject: string; body: string; status: string; recipientCount: string | null; sentAt: string | null; createdAt: string | null }[];
+    broadcasts: { id: string; groupId: string | null; subject: string; body: string; channel: string; status: string; recipientCount: string | null; sentAt: string | null; createdAt: string | null }[];
     loaded: boolean; loading: boolean; error: string | null;
   };
   loadMessages: () => void;
   site: WeddingSite;
 }) {
   const [activeView, setActiveView] = useState<"compose" | "history" | "groups">("compose");
+  const [channel, setChannel] = useState<"email" | "sms">("email");
   const [subject, setSubject] = useState("");
   const [body, setBody] = useState("");
   const [selectedGroup, setSelectedGroup] = useState("");
@@ -891,7 +892,8 @@ function MessagesPanel({ msgData, loadMessages, site }: {
   }
 
   const handleSend = async () => {
-    if (!selectedGroup || !subject.trim() || !body.trim()) return;
+    if (!selectedGroup || !body.trim()) return;
+    if (channel === "email" && !subject.trim()) return;
     setSending(true);
     setSendResult(null);
     try {
@@ -899,7 +901,7 @@ function MessagesPanel({ msgData, loadMessages, site }: {
       const createRes = await fetch(`/api/sites/${site.slug}/broadcasts`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ groupId: selectedGroup, subject, body }),
+        body: JSON.stringify({ groupId: selectedGroup, subject: subject || undefined, body, channel }),
       });
       const createData = await createRes.json();
       if (!createRes.ok) throw new Error(createData.error);
@@ -961,9 +963,18 @@ function MessagesPanel({ msgData, loadMessages, site }: {
     .filter((b) => b.status === "sent")
     .sort((a, b) => new Date(b.sentAt || b.createdAt || 0).getTime() - new Date(a.sentAt || a.createdAt || 0).getTime());
 
+  const isPremium = !!site.isPaid;
+
   return (
     <div className="p-6 max-w-2xl mx-auto">
       <h2 className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#2d2b25]/60 mb-6">Messages</h2>
+
+      {!isPremium && (
+        <div className="mb-6 p-4 border border-amber-200 bg-amber-50 rounded-sm">
+          <p className="text-sm font-medium text-amber-800">Premium Feature</p>
+          <p className="text-[11px] text-amber-700 mt-1">Email and SMS broadcasts require a premium account. Upgrade to send messages to your guests.</p>
+        </div>
+      )}
 
       {/* View Tabs */}
       <div className="flex gap-1 mb-8 border-b border-[#2d2b25]/10 pb-px">
@@ -981,6 +992,26 @@ function MessagesPanel({ msgData, loadMessages, site }: {
       {/* Compose View */}
       {activeView === "compose" && (
         <div>
+          {/* Channel Toggle */}
+          <div className="mb-5">
+            <label className="block text-[11px] font-semibold tracking-[0.15em] uppercase text-[#2d2b25]/60 mb-3">Channel</label>
+            <div className="flex gap-0 border border-[#2d2b25]/15 rounded-sm overflow-hidden w-fit">
+              {(["email", "sms"] as const).map((ch) => (
+                <button
+                  key={ch}
+                  type="button"
+                  onClick={() => setChannel(ch)}
+                  className={`px-4 py-2 text-[10px] font-bold uppercase tracking-wider transition-all ${channel === ch ? "bg-[#2d2b25] text-white" : "bg-white/50 text-[#2d2b25]/50 hover:text-[#2d2b25]/80"}`}
+                >
+                  {ch === "email" ? "Email" : "SMS"}
+                </button>
+              ))}
+            </div>
+            {channel === "sms" && (
+              <p className="text-[10px] text-[#2d2b25]/40 mt-2">Only guests who provided a phone number will receive this message.</p>
+            )}
+          </div>
+
           <div className="mb-4">
             <label className="block text-[11px] font-semibold tracking-[0.15em] uppercase text-[#2d2b25]/60 mb-3">Send To</label>
             <select
@@ -1003,11 +1034,13 @@ function MessagesPanel({ msgData, loadMessages, site }: {
           </div>
 
           <div className="mb-4">
-            <label className="block text-[11px] font-semibold tracking-[0.15em] uppercase text-[#2d2b25]/60 mb-3">Subject</label>
+            <label className="block text-[11px] font-semibold tracking-[0.15em] uppercase text-[#2d2b25]/60 mb-3">
+              {channel === "sms" ? "Header (optional)" : "Subject"}
+            </label>
             <input
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
-              placeholder="e.g. Important Update"
+              placeholder={channel === "sms" ? "e.g. Wedding Update" : "e.g. Important Update"}
               className="w-full px-3 py-2 border border-[#2d2b25]/15 bg-white/50 text-[#2d2b25] text-sm outline-none focus:border-[#2d2b25]/40 rounded-sm"
             />
           </div>
@@ -1019,8 +1052,12 @@ function MessagesPanel({ msgData, loadMessages, site }: {
               onChange={(e) => setBody(e.target.value)}
               placeholder="Write your message here..."
               rows={8}
+              maxLength={channel === "sms" ? 1600 : undefined}
               className="w-full px-3 py-2 border border-[#2d2b25]/15 bg-white/50 text-[#2d2b25] text-sm outline-none focus:border-[#2d2b25]/40 resize-y rounded-sm"
             />
+            {channel === "sms" && (
+              <p className="text-[10px] text-[#2d2b25]/30 mt-1 text-right">{body.length}/1600 {body.length > 160 && `(${Math.ceil(body.length / 153)} SMS parts)`}</p>
+            )}
           </div>
 
           {sendResult && (
@@ -1031,10 +1068,10 @@ function MessagesPanel({ msgData, loadMessages, site }: {
 
           <button
             onClick={handleSend}
-            disabled={sending || !selectedGroup || !subject.trim() || !body.trim()}
+            disabled={sending || !selectedGroup || !body.trim() || (channel === "email" && !subject.trim()) || !isPremium}
             className="w-full py-3 text-[11px] font-bold uppercase tracking-[0.2em] bg-[#2d2b25] text-white rounded-sm hover:bg-[#2d2b25]/90 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
           >
-            {sending ? "Sending..." : "Send Email"}
+            {sending ? "Sending..." : channel === "sms" ? "Send SMS" : "Send Email"}
           </button>
         </div>
       )}
@@ -1058,6 +1095,9 @@ function MessagesPanel({ msgData, loadMessages, site }: {
                         </p>
                       </div>
                       <div className="text-right flex-shrink-0">
+                        <span className={`inline-block text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-sm mr-1 ${b.channel === "sms" ? "bg-emerald-50 text-emerald-700" : "bg-blue-50 text-blue-700"}`}>
+                          {b.channel === "sms" ? "SMS" : "Email"}
+                        </span>
                         <span className={`inline-block text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-sm ${b.status === "sent" ? "bg-green-50 text-green-700" : b.status === "failed" ? "bg-red-50 text-red-700" : "bg-yellow-50 text-yellow-700"}`}>
                           {b.status}
                         </span>
@@ -1891,7 +1931,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
   // Broadcast / messages state
   const [msgData, setMsgData] = useState<{
     groups: { id: string; name: string; type: string; filter: any; members: any }[];
-    broadcasts: { id: string; groupId: string | null; subject: string; body: string; status: string; recipientCount: string | null; sentAt: string | null; createdAt: string | null }[];
+    broadcasts: { id: string; groupId: string | null; subject: string; body: string; channel: string; status: string; recipientCount: string | null; sentAt: string | null; createdAt: string | null }[];
     loaded: boolean; loading: boolean; error: string | null;
   }>({ groups: [], broadcasts: [], loaded: false, loading: false, error: null });
 
