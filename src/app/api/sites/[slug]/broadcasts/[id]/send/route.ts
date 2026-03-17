@@ -70,16 +70,16 @@ export async function POST(
           return NextResponse.json({ error: "No recipients with phone numbers in this group" }, { status: 400 });
         }
 
-        const messageBody = broadcast.subject
-          ? `${senderLine}${broadcast.subject}\n\n${broadcast.body}`
-          : `${senderLine}${broadcast.body}`;
-
         const senderId = site.partner1Name && site.partner2Name
           ? `${site.partner1Name}&${site.partner2Name}`.slice(0, 11)
           : site.slug.slice(0, 11);
         const senderLine = site.partner1Name && site.partner2Name
           ? `${site.partner1Name} & ${site.partner2Name}\n\n`
           : "";
+
+        const messageBody = broadcast.subject
+          ? `${senderLine}${broadcast.subject}\n\n${broadcast.body}`
+          : `${senderLine}${broadcast.body}`;
 
         const result = await sendSMSBroadcast(
           phoneRecipients.map((r) => ({ phone: r.phone!, name: r.name })),
