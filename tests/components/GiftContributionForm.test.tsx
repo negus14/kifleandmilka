@@ -16,6 +16,12 @@ const defaultProps = {
 describe('GiftContributionForm', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Mock navigator.clipboard
+    Object.assign(navigator, {
+      clipboard: {
+        writeText: vi.fn().mockResolvedValue(undefined),
+      },
+    });
   });
 
   it('renders the form with default currency symbol', () => {
@@ -60,25 +66,23 @@ describe('GiftContributionForm', () => {
     );
 
     // Default is GBP — PayPal and Monzo accept GBP
-    const select = screen.getByRole('combobox');
-    let options = Array.from(select.querySelectorAll('option')).map(o => o.textContent);
-    expect(options).toContain("PayPal");
-    expect(options).toContain("Monzo");
-    expect(options).not.toContain("Wise");
+    expect(screen.getByText('PayPal')).toBeInTheDocument();
+    expect(screen.getByText('Monzo')).toBeInTheDocument();
+    expect(screen.queryByText('Wise')).not.toBeInTheDocument();
 
-    // Switch to USD — only PayPal accepts USD
+    // Switch to USD — only PayPal accepts USD (Auto-selected, grid hidden)
     fireEvent.click(screen.getByText('$ USD'));
-    options = Array.from(select.querySelectorAll('option')).map(o => o.textContent);
-    expect(options).toContain("PayPal");
-    expect(options).not.toContain("Monzo");
-    expect(options).not.toContain("Wise");
+    expect(screen.queryByText('PayPal')).not.toBeInTheDocument();
+    expect(screen.queryByText('Monzo')).not.toBeInTheDocument();
+    expect(screen.queryByText('Wise')).not.toBeInTheDocument();
+    expect(screen.getByText('Send & Continue')).toBeInTheDocument();
 
-    // Switch to EUR — only Wise accepts EUR
+    // Switch to EUR — only Wise accepts EUR (Auto-selected, grid hidden)
     fireEvent.click(screen.getByText('€ EUR'));
-    options = Array.from(select.querySelectorAll('option')).map(o => o.textContent);
-    expect(options).toContain("Wise");
-    expect(options).not.toContain("PayPal");
-    expect(options).not.toContain("Monzo");
+    expect(screen.queryByText('Wise')).not.toBeInTheDocument();
+    expect(screen.queryByText('PayPal')).not.toBeInTheDocument();
+    expect(screen.queryByText('Monzo')).not.toBeInTheDocument();
+    expect(screen.getByText('Send & Continue')).toBeInTheDocument();
   });
 
   it('resets payment method when switching currency', () => {
@@ -88,17 +92,22 @@ describe('GiftContributionForm', () => {
         paymentOptions={[
           { label: "PayPal", currencies: ["GBP"] },
           { label: "Wise", currencies: ["USD"] },
+          { label: "Bank Transfer", currencies: ["GBP", "USD"] },
         ]}
       />
     );
 
-    const select = screen.getByRole('combobox') as HTMLSelectElement;
-    fireEvent.change(select, { target: { value: "PayPal" } });
-    expect(select.value).toBe("PayPal");
+    // Multiple methods for GBP: PayPal, Bank Transfer
+    fireEvent.click(screen.getByText('PayPal'));
+    expect(screen.getByText('PayPal').className).toContain('active');
 
-    // Switch currency — payment method should reset
+    // Switch currency to USD — payment method should reset (PayPal no longer available)
     fireEvent.click(screen.getByText('$ USD'));
-    expect(select.value).toBe("");
+    expect(screen.queryByText('PayPal')).not.toBeInTheDocument();
+    
+    // Multiple methods for USD: Wise, Bank Transfer. None should be active initially.
+    expect(screen.getByText('Wise').className).not.toContain('active');
+    expect(screen.getByText('Bank Transfer').className).not.toContain('active');
   });
 
   it('shows payment options without currencies for all currencies (backwards compat)', () => {
@@ -114,16 +123,13 @@ describe('GiftContributionForm', () => {
     );
 
     // Legacy link should show for GBP (default)
-    const select = screen.getByRole('combobox');
-    let options = Array.from(select.querySelectorAll('option')).map(o => o.textContent);
-    expect(options).toContain("Legacy Link");
-    expect(options).toContain("PayPal");
+    expect(screen.getByText('Legacy Link')).toBeInTheDocument();
+    expect(screen.getByText('PayPal')).toBeInTheDocument();
 
     // Switch to USD — legacy link should still show
     fireEvent.click(screen.getByText('$ USD'));
-    options = Array.from(select.querySelectorAll('option')).map(o => o.textContent);
-    expect(options).toContain("Legacy Link");
-    expect(options).toContain("Wise");
+    expect(screen.getByText('Legacy Link')).toBeInTheDocument();
+    expect(screen.getByText('Wise')).toBeInTheDocument();
   });
 
   it('deduplicates currencies across multiple payment options', () => {
@@ -136,8 +142,11 @@ describe('GiftContributionForm', () => {
         ]}
       />
     );
-    // Should have 3 unique currencies, not 5
-    const buttons = screen.getAllByRole('button').filter(b => b.className.includes('gift-contrib__currency-btn'));
+    // Should have 3 unique currency buttons
+    const buttons = screen.getAllByRole('button').filter(b => 
+      b.className.includes('gift-contrib__currency-btn') && 
+      (b.textContent?.includes('GBP') || b.textContent?.includes('USD') || b.textContent?.includes('EUR'))
+    );
     expect(buttons).toHaveLength(3);
   });
 
@@ -180,6 +189,7 @@ describe('GiftContributionForm', () => {
     render(
       <GiftContributionForm
         {...defaultProps}
+        showName={true}
         paymentOptions={[
           { label: "PayPal (GBP)", currencies: ["GBP"] },
           { label: "PayPal (ETB)", currencies: ["ETB"] },
@@ -192,7 +202,8 @@ describe('GiftContributionForm', () => {
     await userEvent.type(screen.getByPlaceholderText('Your full name'), 'Test User');
     await userEvent.type(screen.getByPlaceholderText('0'), '100');
 
-    fireEvent.click(screen.getByText('Send Well Wishes'));
+    // Auto-selected PayPal (ETB), so button says "Send & Continue"
+    fireEvent.click(screen.getByText('Send & Continue'));
 
     await waitFor(() => {
       expect(mockFetch).toHaveBeenCalledWith('/api/gift-contribution', expect.objectContaining({
@@ -217,5 +228,88 @@ describe('GiftContributionForm', () => {
     expect(screen.getByText('Honeymoon Fund')).toBeInTheDocument();
     expect(screen.getByText('Br50')).toBeInTheDocument();
     expect(screen.getByText('Br100')).toBeInTheDocument();
+  });
+
+  it('auto-selects payment method if only one option exists', () => {
+    render(
+      <GiftContributionForm
+        {...defaultProps}
+        paymentOptions={[
+          { label: "PayPal", currencies: ["GBP"] },
+        ]}
+      />
+    );
+    // Button should not be rendered if only one (my code hides the selection grid if length <= 1)
+    expect(screen.queryByText('PayPal')).not.toBeInTheDocument();
+    // But it should be selected internally so the submit button says "Send & Continue"
+    expect(screen.getByText('Send & Continue')).toBeInTheDocument();
+  });
+
+  it('shows bank details when a bank method is selected', () => {
+    render(
+      <GiftContributionForm
+        {...defaultProps}
+        bankDetails={[
+          { label: "Bank Transfer", currencies: ["GBP"], bankName: "Test Bank", accountNumber: "123456" }
+        ]}
+        paymentOptions={[
+           { label: "PayPal", currencies: ["GBP"] }
+        ]}
+      />
+    );
+
+    // Grid should show both
+    expect(screen.getByText('PayPal')).toBeInTheDocument();
+    expect(screen.getByText('Bank Transfer')).toBeInTheDocument();
+
+    // Click bank transfer
+    fireEvent.click(screen.getByText('Bank Transfer'));
+
+    // Should show bank details
+    expect(screen.getByText('Test Bank')).toBeInTheDocument();
+    expect(screen.getByText('123456')).toBeInTheDocument();
+  });
+
+  it('copies all bank details when "Copy All" is clicked', async () => {
+    render(
+      <GiftContributionForm
+        {...defaultProps}
+        bankDetails={[
+          { label: "Bank Transfer", currencies: ["GBP"], bankName: "Test Bank", accountNumber: "123456" }
+        ]}
+      />
+    );
+
+    fireEvent.click(screen.getByText('Copy All'));
+
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(expect.stringContaining('Bank: Test Bank'));
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(expect.stringContaining('Account Number: 123456'));
+    expect(screen.getByText('Copied All!')).toBeInTheDocument();
+  });
+
+  it('shows "Send Well Wishes" for bank transfer and submits immediately', async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({}),
+    });
+
+    render(
+      <GiftContributionForm
+        {...defaultProps}
+        bankDetails={[
+          { label: "Bank Transfer", currencies: ["GBP"], bankName: "Test Bank", accountNumber: "123456" }
+        ]}
+      />
+    );
+
+    expect(screen.getByText('Send Well Wishes')).toBeInTheDocument();
+
+    await userEvent.type(screen.getByPlaceholderText('0'), '50');
+    fireEvent.click(screen.getByText('Send Well Wishes'));
+
+    await waitFor(() => {
+      expect(mockFetch).toHaveBeenCalled();
+      expect(screen.getByText('Thank You!')).toBeInTheDocument();
+    });
   });
 });

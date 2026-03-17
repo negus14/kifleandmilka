@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { GiftItem } from "@/lib/types/wedding-site";
+import type { GiftItem, BankDetail } from "@/lib/types/wedding-site";
 import { getCurrencySymbol } from "@/components/CurrencyPicker";
 
 interface PaymentOption {
@@ -15,13 +15,129 @@ interface GiftContributionFormProps {
   giftItems: GiftItem[];
   currency: string;
   paymentOptions: PaymentOption[];
+  bankDetails?: BankDetail[];
   showName?: boolean;
 }
 
-export default function GiftContributionForm({ slug, giftItems, currency, paymentOptions, showName = false }: GiftContributionFormProps) {
-  // Derive accepted currencies from payment options that have currencies set
+function CopyButton({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false);
+  return (
+    <button
+      type="button"
+      style={{
+        padding: "0.35rem 0.85rem",
+        fontSize: "0.65rem",
+        fontWeight: 600,
+        textTransform: "uppercase",
+        letterSpacing: "0.12em",
+        cursor: "pointer",
+        background: "var(--color-dark, #2d2b25)",
+        color: "var(--color-primary, #faf1e1)",
+        border: "1px solid var(--color-dark, #2d2b25)",
+        borderRadius: "2px",
+        whiteSpace: "nowrap",
+        flexShrink: 0,
+        fontFamily: "inherit",
+      }}
+      onClick={() => {
+        navigator.clipboard.writeText(text);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      }}
+    >
+      {copied ? "Copied!" : "Copy"}
+    </button>
+  );
+}
+
+function BankDetailCard({ bank }: { bank: BankDetail }) {
+  const [copiedAll, setCopiedAll] = useState(false);
+  const fields: { label: string; value: string }[] = [];
+  if (bank.accountHolder) fields.push({ label: "Account Holder", value: bank.accountHolder });
+  if (bank.bankName) fields.push({ label: "Bank", value: bank.bankName });
+  if (bank.accountNumber) fields.push({ label: "Account Number", value: bank.accountNumber });
+  if (bank.sortCode) fields.push({ label: "Sort Code", value: bank.sortCode });
+  if (bank.swiftCode) fields.push({ label: "SWIFT/BIC", value: bank.swiftCode });
+  if (bank.email) fields.push({ label: "Email", value: bank.email });
+
+  if (fields.length === 0) return null;
+
+  const handleCopyAll = () => {
+    const textToCopy = fields.map(f => `${f.label}: ${f.value}`).join("\n");
+    navigator.clipboard.writeText(textToCopy);
+    setCopiedAll(true);
+    setTimeout(() => setCopiedAll(false), 2000);
+  };
+
+  return (
+    <div style={{
+      padding: "1.25rem",
+      background: "rgba(0,0,0,0.04)",
+      border: "1px solid rgba(0,0,0,0.08)",
+      borderRadius: "6px",
+      marginBottom: "1rem",
+    }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
+        <h4 style={{ fontSize: "0.95rem", fontWeight: 600, margin: 0 }}>{bank.label}</h4>
+        {fields.length > 1 && (
+          <button
+            type="button"
+            onClick={handleCopyAll}
+            style={{
+              padding: "0.35rem 0.85rem",
+              fontSize: "0.65rem",
+              fontWeight: 600,
+              textTransform: "uppercase",
+              letterSpacing: "0.12em",
+              cursor: "pointer",
+              background: "var(--color-dark, #2d2b25)",
+              color: "var(--color-primary, #faf1e1)",
+              border: "1px solid var(--color-dark, #2d2b25)",
+              borderRadius: "2px",
+              whiteSpace: "nowrap",
+              flexShrink: 0,
+              fontFamily: "inherit",
+            }}
+          >
+            {copiedAll ? "Copied All!" : "Copy All"}
+          </button>
+        )}
+      </div>
+      {fields.map((f) => (
+        <div key={f.label} style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: "0.75rem",
+          padding: "0.55rem 0",
+          borderBottom: "1px solid rgba(0,0,0,0.06)",
+        }}>
+          <div style={{ minWidth: 0 }}>
+            <div style={{
+              fontSize: "0.6rem",
+              fontWeight: 700,
+              textTransform: "uppercase",
+              letterSpacing: "0.14em",
+              opacity: 0.4,
+              marginBottom: "0.2rem",
+            }}>{f.label}</div>
+            <div style={{
+              fontSize: "0.88rem",
+              fontWeight: 500,
+              wordBreak: "break-all",
+            }}>{f.value}</div>
+          </div>
+          <CopyButton text={f.value} />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default function GiftContributionForm({ slug, giftItems, currency, paymentOptions, bankDetails = [], showName = false }: GiftContributionFormProps) {
+  // Derive accepted currencies from all payment options and bank details
   const acceptedCurrencies = [...new Set(
-    paymentOptions.flatMap(o => o.currencies || [])
+    [...paymentOptions, ...bankDetails].flatMap(o => o.currencies || [])
   )];
   // Fall back to the site default if no payment options have currencies
   const effectiveCurrencies = acceptedCurrencies.length > 0 ? acceptedCurrencies : [currency];
@@ -40,11 +156,27 @@ export default function GiftContributionForm({ slug, giftItems, currency, paymen
 
   const currencySymbol = getCurrencySymbol(selectedCurrency);
 
-  // Filter payment options to only show those matching the selected currency
-  // Options without currencies set are shown for all currencies (backwards compat)
+  // Filter payment options (redirect-based only) matching selected currency
   const filteredPaymentOptions = paymentOptions.filter(
     o => !o.currencies || o.currencies.length === 0 || o.currencies.includes(selectedCurrency)
   );
+  // Filter bank details matching selected currency
+  const filteredBankDetails = bankDetails.filter(
+    b => !b.currencies || b.currencies.length === 0 || b.currencies.includes(selectedCurrency)
+  );
+
+  // Unified payment methods
+  const allMethods = [
+    ...filteredPaymentOptions.map(o => ({ ...o, type: "link" as const })),
+    ...filteredBankDetails.map(b => ({ ...b, type: "bank" as const })),
+  ];
+
+  // Auto-select if only one method
+  if (allMethods.length === 1 && !paymentMethod) {
+    setPaymentMethod(allMethods[0].label);
+  }
+
+  const selectedMethodObj = allMethods.find(m => m.label === paymentMethod);
 
   const selectGift = (gift: GiftItem) => {
     setSelectedGift(gift);
@@ -67,10 +199,12 @@ export default function GiftContributionForm({ slug, giftItems, currency, paymen
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     setStatus("loading");
 
     // Open window synchronously so iOS Safari doesn't block it as a popup
-    const payWindow = paymentMethod ? window.open("about:blank", "_blank") : null;
+    const isRedirect = selectedMethodObj?.type === "link";
+    const payWindow = isRedirect ? window.open("about:blank", "_blank") : null;
 
     try {
       const res = await fetch("/api/gift-contribution", {
@@ -120,7 +254,7 @@ export default function GiftContributionForm({ slug, giftItems, currency, paymen
         <h3 className="gift-contrib__success-title">Thank You!</h3>
         <p className="gift-contrib__success-text">
           Your well wishes have been recorded.
-          {paymentMethod && " You should have been redirected to complete your payment."}
+          {selectedMethodObj?.type === "bank" && " Please complete your bank transfer using the details provided below."}
         </p>
         <button onClick={reset} className="gift-contrib__btn gift-contrib__btn--outline" style={{ marginTop: "1.5rem" }}>
           Send Another Gift
@@ -244,19 +378,30 @@ export default function GiftContributionForm({ slug, giftItems, currency, paymen
           />
         </div>
 
-        {filteredPaymentOptions.length > 0 && (
+        {allMethods.length > 1 && (
           <div className="gift-contrib__field">
             <label className="gift-contrib__label">Payment Method</label>
-            <select
-              className="gift-contrib__select"
-              value={paymentMethod}
-              onChange={(e) => setPaymentMethod(e.target.value)}
-            >
-              <option value="">Select payment method...</option>
-              {filteredPaymentOptions.map((opt) => (
-                <option key={opt.label} value={opt.label}>{opt.label}</option>
+            <div className="gift-contrib__currency-grid" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))" }}>
+              {allMethods.map((method) => (
+                <button
+                  key={method.label}
+                  type="button"
+                  onClick={() => {
+                    setPaymentMethod(method.label);
+                  }}
+                  className={`gift-contrib__currency-btn ${paymentMethod === method.label ? "gift-contrib__currency-btn--active" : ""}`}
+                  style={{ fontSize: "0.75rem", padding: "0.75rem 0.5rem" }}
+                >
+                  {method.label}
+                </button>
               ))}
-            </select>
+            </div>
+          </div>
+        )}
+
+        {selectedMethodObj?.type === "bank" && (
+          <div className="gift-contrib__banks" style={{ marginTop: "1.5rem" }}>
+            <BankDetailCard bank={selectedMethodObj as BankDetail} />
           </div>
         )}
 
@@ -267,8 +412,38 @@ export default function GiftContributionForm({ slug, giftItems, currency, paymen
           disabled={status === "loading"}
           className="gift-contrib__btn"
         >
-          {status === "loading" ? "Sending..." : paymentMethod ? "Send & Pay" : "Send Well Wishes"}
+          {status === "loading" 
+            ? "Sending..." 
+            : selectedMethodObj?.type === "link" 
+              ? "Send & Continue" 
+              : "Send Well Wishes"}
         </button>
+
+        {selectedMethodObj?.type === "link" && !status.includes("loading") && (
+          <p style={{ 
+            fontSize: "0.7rem", 
+            opacity: 0.5, 
+            textAlign: "center", 
+            marginTop: "0.75rem",
+            fontFamily: "var(--font-sans)",
+            letterSpacing: "0.02em"
+          }}>
+            You'll be redirected to {selectedMethodObj.label} to complete your payment.
+          </p>
+        )}
+
+        {selectedMethodObj?.type === "bank" && !status.includes("loading") && (
+          <p style={{ 
+            fontSize: "0.7rem", 
+            opacity: 0.5, 
+            textAlign: "center", 
+            marginTop: "0.75rem",
+            fontFamily: "var(--font-sans)",
+            letterSpacing: "0.02em"
+          }}>
+            Your message will be sent, and you can then complete the transfer using the details provided.
+          </p>
+        )}
       </form>
     </div>
   );
