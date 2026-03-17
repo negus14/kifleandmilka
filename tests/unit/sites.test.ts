@@ -15,14 +15,24 @@ vi.mock('@/lib/redis', () => ({
   },
 }));
 
+// Helper to build a chainable select mock
+function mockSelectChain(result: any) {
+  return vi.fn(() => ({
+    from: vi.fn(() => ({
+      where: vi.fn().mockResolvedValue(result ? [result] : []),
+    })),
+  }));
+}
+
 // Mock DB
 vi.mock('@/lib/db', () => ({
   db: {
-    query: {
-      sites: {
-        findFirst: vi.fn(),
-      },
-    },
+    select: vi.fn(() => ({
+      from: vi.fn(() => ({
+        where: vi.fn().mockResolvedValue([]),
+        orderBy: vi.fn().mockResolvedValue([]),
+      })),
+    })),
     update: vi.fn(() => ({
       set: vi.fn(() => ({
         where: vi.fn().mockReturnValue({
@@ -55,21 +65,29 @@ describe('sites data layer', () => {
 
       expect(result).toEqual(expect.objectContaining(mockSite));
       expect(redis.get).toHaveBeenCalledWith('site:test-site');
-      expect(db.query.sites.findFirst).not.toHaveBeenCalled();
+      expect(db.select).not.toHaveBeenCalled();
     });
 
     it('should fetch from DB and populate cache if Redis is empty', async () => {
       const mockSiteData = { partner1Name: 'Alice' };
       vi.mocked(redis.get).mockResolvedValueOnce(null);
-      vi.mocked(db.query.sites.findFirst).mockResolvedValueOnce({
-        slug: 'test-site',
-        data: mockSiteData,
+
+      // Mock the select chain for DB query
+      vi.mocked(db.select).mockReturnValueOnce({
+        from: vi.fn().mockReturnValue({
+          where: vi.fn().mockResolvedValue([{
+            data: mockSiteData,
+            isPaid: null,
+            stripeCustomerId: null,
+            customDomain: null,
+          }]),
+        }),
       } as any);
 
       const result = await getSiteBySlug('test-site');
 
       expect(result).toEqual(expect.objectContaining(mockSiteData));
-      expect(db.query.sites.findFirst).toHaveBeenCalled();
+      expect(db.select).toHaveBeenCalled();
       expect(redis.setex).toHaveBeenCalledWith(
         'site:test-site',
         60,
@@ -81,16 +99,30 @@ describe('sites data layer', () => {
   describe('updateSite', () => {
     it('should invalidate cache after a successful update', async () => {
       const mockSiteData = { slug: 'test-site', partner1Name: 'Alice' };
-      // 1st call: getSiteBySlug(slug, true) to get existing
-      vi.mocked(db.query.sites.findFirst).mockResolvedValueOnce({
-        slug: 'test-site',
-        data: mockSiteData,
-      } as any);
-      // 2nd call: post-update verification getSiteBySlug(slug, true)
-      vi.mocked(db.query.sites.findFirst).mockResolvedValueOnce({
-        slug: 'test-site',
-        data: { ...mockSiteData, partner1Name: 'Bob' },
-      } as any);
+
+      // 1st getSiteBySlug call (forceRefresh for existing)
+      vi.mocked(db.select)
+        .mockReturnValueOnce({
+          from: vi.fn().mockReturnValue({
+            where: vi.fn().mockResolvedValue([{
+              data: mockSiteData,
+              isPaid: null,
+              stripeCustomerId: null,
+              customDomain: null,
+            }]),
+          }),
+        } as any)
+        // 2nd getSiteBySlug call (post-update verification)
+        .mockReturnValueOnce({
+          from: vi.fn().mockReturnValue({
+            where: vi.fn().mockResolvedValue([{
+              data: { ...mockSiteData, partner1Name: 'Bob' },
+              isPaid: null,
+              stripeCustomerId: null,
+              customDomain: null,
+            }]),
+          }),
+        } as any);
 
       await updateSite('test-site', { partner1Name: 'Bob' });
 

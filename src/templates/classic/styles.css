@@ -2239,7 +2239,7 @@
 }
 
 .gift-contrib__field {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .gift-contrib__label {
@@ -2258,9 +2258,9 @@
 .gift-contrib__select,
 .gift-contrib__textarea {
   width: 100%;
-  padding: 0.85rem 1rem;
+  padding: 0.6rem 0.85rem;
   font-family: var(--font-serif);
-  font-size: 1rem;
+  font-size: 0.9rem;
   border: 1px solid color-mix(in srgb, var(--color-dark), transparent 85%);
   background: white;
   color: var(--color-dark);
@@ -2360,8 +2360,8 @@
 }
 
 .gift-contrib__currency-btn {
-  padding: 0.5rem;
-  font-size: 0.75rem;
+  padding: 0.35rem;
+  font-size: 0.65rem;
   font-weight: 700;
   border: 1px solid rgba(45, 43, 37, 0.15);
   background: transparent;

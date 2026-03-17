@@ -15,14 +15,18 @@ vi.mock('@/lib/redis', () => ({
   },
 }));
 
-// Mock DB
+// Mock DB with select chain
 vi.mock('@/lib/db', () => ({
   db: {
-    query: {
-      sites: {
-        findFirst: vi.fn(),
-      },
-    },
+    select: vi.fn(() => ({
+      from: vi.fn(() => ({
+        where: vi.fn().mockResolvedValue([]),
+        orderBy: vi.fn().mockResolvedValue([
+          { slug: 'alpha-wedding' },
+          { slug: 'beta-wedding' },
+        ]),
+      })),
+    })),
     update: vi.fn(() => ({
       set: vi.fn(() => ({
         where: vi.fn().mockReturnValue({
@@ -33,19 +37,19 @@ vi.mock('@/lib/db', () => ({
     insert: vi.fn(() => ({
       values: vi.fn().mockResolvedValue({}),
     })),
-    select: vi.fn(() => ({
-      from: vi.fn(() => ({
-        orderBy: vi.fn().mockResolvedValue([
-          { slug: 'alpha-wedding' },
-          { slug: 'beta-wedding' },
-        ]),
-      })),
-    })),
   },
   default: {
     query: vi.fn(),
   },
 }));
+
+function mockDbSelect(result: any) {
+  vi.mocked(db.select).mockReturnValueOnce({
+    from: vi.fn().mockReturnValue({
+      where: vi.fn().mockResolvedValue(result ? [result] : []),
+    }),
+  } as any);
+}
 
 describe('sites data layer - additional functions', () => {
   beforeEach(() => {
@@ -54,20 +58,22 @@ describe('sites data layer - additional functions', () => {
 
   describe('getSiteBySlug with forceRefresh', () => {
     it('should skip cache when forceRefresh is true', async () => {
-      vi.mocked(db.query.sites.findFirst).mockResolvedValueOnce({
-        slug: 'test-site',
+      mockDbSelect({
         data: { partner1Name: 'Alice' },
-      } as any);
+        isPaid: null,
+        stripeCustomerId: null,
+        customDomain: null,
+      });
 
       await getSiteBySlug('test-site', true);
 
       expect(redis.get).not.toHaveBeenCalled();
-      expect(db.query.sites.findFirst).toHaveBeenCalled();
+      expect(db.select).toHaveBeenCalled();
     });
 
     it('should return null when site not found in DB', async () => {
       vi.mocked(redis.get).mockResolvedValueOnce(null);
-      vi.mocked(db.query.sites.findFirst).mockResolvedValueOnce(null as any);
+      mockDbSelect(null);
 
       const result = await getSiteBySlug('nonexistent');
       expect(result).toBeNull();
@@ -75,26 +81,30 @@ describe('sites data layer - additional functions', () => {
 
     it('should handle Redis read errors gracefully', async () => {
       vi.mocked(redis.get).mockRejectedValueOnce(new Error('Redis down'));
-      vi.mocked(db.query.sites.findFirst).mockResolvedValueOnce({
-        slug: 'test-site',
+      mockDbSelect({
         data: { partner1Name: 'Alice' },
-      } as any);
+        isPaid: null,
+        stripeCustomerId: null,
+        customDomain: null,
+      });
 
       const result = await getSiteBySlug('test-site');
 
       expect(result).toEqual(expect.objectContaining({ partner1Name: 'Alice' }));
-      expect(db.query.sites.findFirst).toHaveBeenCalled();
+      expect(db.select).toHaveBeenCalled();
     });
   });
 
   describe('renameSite', () => {
     it('should rename site and invalidate both old and new cache keys', async () => {
-      // Mock the internal getSiteBySlug call (force refresh)
       vi.mocked(redis.get).mockResolvedValue(null as any);
-      vi.mocked(db.query.sites.findFirst).mockResolvedValueOnce({
-        slug: 'old-slug',
+      // getSiteBySlug(oldSlug, true) → returns existing
+      mockDbSelect({
         data: { slug: 'old-slug', partner1Name: 'Alice' },
-      } as any);
+        isPaid: null,
+        stripeCustomerId: null,
+        customDomain: null,
+      });
 
       const result = await renameSite('old-slug', 'new-slug', { partner1Name: 'Bob' });
 
@@ -107,7 +117,7 @@ describe('sites data layer - additional functions', () => {
 
     it('should return null if original site not found', async () => {
       vi.mocked(redis.get).mockResolvedValue(null as any);
-      vi.mocked(db.query.sites.findFirst).mockResolvedValueOnce(null as any);
+      mockDbSelect(null);
 
       const result = await renameSite('nonexistent', 'new-slug', {});
       expect(result).toBeNull();

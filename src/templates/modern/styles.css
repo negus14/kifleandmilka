@@ -1181,7 +1181,7 @@ img[data-zoomable] {
 }
 
 .gift-contrib__field {
-  margin-bottom: 2rem;
+  margin-bottom: 1.25rem;
 }
 
 .gift-contrib__label {
@@ -1200,9 +1200,9 @@ img[data-zoomable] {
 .gift-contrib__select,
 .gift-contrib__textarea {
   width: 100%;
-  padding: 1.1rem 1.25rem;
+  padding: 0.7rem 0.9rem;
   font-family: var(--font-sans);
-  font-size: 1rem;
+  font-size: 0.9rem;
   border: 1px solid color-mix(in srgb, var(--color-dark), transparent 85%);
   background: white;
   color: var(--color-dark);
@@ -1294,8 +1294,8 @@ img[data-zoomable] {
 }
 
 .gift-contrib__currency-btn {
-  padding: 0.5rem;
-  font-size: 0.75rem;
+  padding: 0.35rem;
+  font-size: 0.65rem;
   font-weight: 700;
   border: 1px solid rgba(0, 0, 0, 0.1);
   background: transparent;

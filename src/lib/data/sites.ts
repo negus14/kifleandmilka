@@ -53,10 +53,11 @@ export async function getSiteBySlug(
   // 2. Fallback to Drizzle
   console.log(`[DB] Fetching site from database: ${slug}`);
   const [result] = await db
-    .select({ 
-      data: sites.data, 
-      isPaid: sites.isPaid, 
-      stripeCustomerId: sites.stripeCustomerId 
+    .select({
+      data: sites.data,
+      isPaid: sites.isPaid,
+      stripeCustomerId: sites.stripeCustomerId,
+      customDomain: sites.customDomain,
     })
     .from(sites)
     .where(eq(sites.slug, slug));
@@ -65,7 +66,8 @@ export async function getSiteBySlug(
   const site = {
     ...normalizeSiteData(result.data as WeddingSite),
     isPaid: result.isPaid,
-    stripeCustomerId: result.stripeCustomerId
+    stripeCustomerId: result.stripeCustomerId,
+    customDomain: result.customDomain,
   };
 
   // 3. Populate Cache
@@ -96,13 +98,14 @@ export async function updateSite(
     sectionCount: updated.sectionOrder?.length 
   });
 
-  const { isPaid, stripeCustomerId, ...rest } = updated;
+  const { isPaid, stripeCustomerId, customDomain, ...rest } = updated;
   const result = await db.update(sites)
-    .set({ 
-      data: rest, 
+    .set({
+      data: rest,
       isPaid: isPaid ? new Date(isPaid) : null,
       stripeCustomerId: stripeCustomerId || null,
-      updatedAt: new Date() 
+      customDomain: customDomain ? customDomain.toLowerCase() : null,
+      updatedAt: new Date()
     })
     .where(eq(sites.slug, slug))
     .returning({ slug: sites.slug });
@@ -121,6 +124,10 @@ export async function updateSite(
 
   // Invalidate Cache (with retry)
   await invalidateCache(slug);
+  // Also invalidate domain cache if domain changed
+  if (customDomain) {
+    try { await redis.del(`domain:${customDomain.toLowerCase()}`); } catch {}
+  }
 
   // Verify persistence by re-reading from DB
   const verified = await getSiteBySlug(slug, true);
@@ -145,14 +152,15 @@ export async function renameSite(
 
   // Drizzle Update (including PK change) — verify rows affected
   console.log(`[DB] Renaming site: ${oldSlug} -> ${newSlug}`);
-  const { isPaid, stripeCustomerId, ...rest } = updated;
+  const { isPaid, stripeCustomerId, customDomain, ...rest } = updated;
   const result = await db.update(sites)
-    .set({ 
-      slug: newSlug, 
-      data: rest, 
+    .set({
+      slug: newSlug,
+      data: rest,
       isPaid: isPaid ? new Date(isPaid) : null,
       stripeCustomerId: stripeCustomerId || null,
-      updatedAt: new Date() 
+      customDomain: customDomain ? customDomain.toLowerCase() : null,
+      updatedAt: new Date()
     })
     .where(eq(sites.slug, oldSlug))
     .returning({ slug: sites.slug });
@@ -181,14 +189,61 @@ export async function createSite(
   data: WeddingSite
 ): Promise<WeddingSite> {
   console.log(`[DB] Creating site: ${slug}`);
-  const { isPaid, stripeCustomerId, ...rest } = data;
+  const { isPaid, stripeCustomerId, customDomain, ...rest } = data;
   await db.insert(sites).values({
     slug,
     data: rest,
     isPaid: isPaid ? new Date(isPaid) : null,
     stripeCustomerId: stripeCustomerId || null,
+    customDomain: customDomain ? customDomain.toLowerCase() : null,
   });
   return data;
+}
+
+export async function getSiteByDomain(
+  domain: string
+): Promise<WeddingSite | null> {
+  const domainCacheKey = `domain:${domain}`;
+
+  // 1. Try Redis cache
+  try {
+    const cached = await redis.get(domainCacheKey);
+    if (cached) {
+      console.log(`[Redis] Domain cache HIT for: ${domain}`);
+      const site = JSON.parse(cached) as WeddingSite;
+      return normalizeSiteData(site);
+    }
+  } catch (error) {
+    // Redis unavailable — fall through to DB
+  }
+
+  // 2. Query by customDomain column
+  const [result] = await db
+    .select({
+      slug: sites.slug,
+      data: sites.data,
+      isPaid: sites.isPaid,
+      stripeCustomerId: sites.stripeCustomerId,
+    })
+    .from(sites)
+    .where(eq(sites.customDomain, domain.toLowerCase()));
+
+  if (!result) return null;
+
+  const site = {
+    ...normalizeSiteData(result.data as WeddingSite),
+    isPaid: result.isPaid,
+    stripeCustomerId: result.stripeCustomerId,
+  };
+
+  // 3. Populate cache
+  try {
+    await redis.setex(domainCacheKey, SITE_CACHE_TTL, JSON.stringify(site));
+  } catch (error) {
+    console.error("[Redis] Domain cache write error:", error);
+  }
+
+  return site;
 }
 
 export async function getAllSlugs(): Promise<string[]> {
