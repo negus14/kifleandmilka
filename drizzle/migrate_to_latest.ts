@@ -87,7 +87,7 @@ async function migrate() {
       const legacyFields = [
         "venues", "venueInfoBlocks", "detailsStyle", "detailsDayLabel", 
         "dayTwoEvent", "dayTwoDayLabel", "scheduleItems",
-        "giftPaymentUrl", "giftPaymentLabel", "giftNote", "giftBankName",
+        "giftPaymentUrl", "giftPaymentLabel", "giftBankName",
         "giftAccountHolder", "giftAccountNumber", "giftSwiftCode"
       ];
 
