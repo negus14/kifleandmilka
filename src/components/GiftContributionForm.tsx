@@ -331,39 +331,69 @@ export default function GiftContributionForm({ slug, giftItems, currency, paymen
           </div>
         )}
 
-        {effectiveCurrencies.length > 1 && (
-          <div className="gift-contrib__field">
-            <label className="gift-contrib__label">Select Currency</label>
-            <div className="gift-contrib__currency-grid">
-              {effectiveCurrencies.map((code) => (
-                <button
-                  key={code}
-                  type="button"
-                  onClick={() => handleCurrencyChange(code)}
-                  className={`gift-contrib__currency-btn ${selectedCurrency === code ? "gift-contrib__currency-btn--active" : ""}`}
-                >
-                  {getCurrencySymbol(code)} {code}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
         <div className="gift-contrib__field">
-          <label className="gift-contrib__label">Amount ({selectedCurrency})</label>
-          <div className="relative">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 font-serif opacity-40">{currencySymbol}</span>
-            <input
-              type="text"
-              required
-              className="gift-contrib__input"
-              style={{ paddingLeft: "2.5rem", paddingRight: "3.5rem" }}
-              value={amount}
-              onChange={handleAmountChange}
-              placeholder="0"
-              inputMode="numeric"
-            />
-            <span className="absolute right-4 top-1/2 -translate-y-1/2 font-serif opacity-40">.00</span>
+          <label className="gift-contrib__label">Amount</label>
+          <div style={{ display: "flex", alignItems: "stretch", gap: "0" }}>
+            {effectiveCurrencies.length > 1 ? (
+              <select
+                value={selectedCurrency}
+                onChange={(e) => handleCurrencyChange(e.target.value)}
+                style={{
+                  padding: "0.6rem 0.5rem",
+                  fontSize: "0.8rem",
+                  fontFamily: "inherit",
+                  background: "rgba(0,0,0,0.06)",
+                  border: "1px solid rgba(0,0,0,0.12)",
+                  borderRight: "none",
+                  borderRadius: "4px 0 0 4px",
+                  color: "inherit",
+                  cursor: "pointer",
+                  outline: "none",
+                  appearance: "auto",
+                  minWidth: "4.5rem",
+                }}
+              >
+                {effectiveCurrencies.map((code) => (
+                  <option key={code} value={code}>
+                    {getCurrencySymbol(code)} {code}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <span style={{
+                display: "flex",
+                alignItems: "center",
+                padding: "0.6rem 0.65rem",
+                fontSize: "0.8rem",
+                fontFamily: "inherit",
+                background: "rgba(0,0,0,0.06)",
+                border: "1px solid rgba(0,0,0,0.12)",
+                borderRight: "none",
+                borderRadius: "4px 0 0 4px",
+                opacity: 0.6,
+              }}>
+                {currencySymbol}
+              </span>
+            )}
+            <div className="relative" style={{ flex: 1 }}>
+              <input
+                type="text"
+                required
+                className="gift-contrib__input"
+                style={{
+                  paddingLeft: "0.85rem",
+                  paddingRight: "3rem",
+                  borderRadius: effectiveCurrencies.length > 1 ? "0 4px 4px 0" : "0 4px 4px 0",
+                  borderLeft: "none",
+                  margin: 0,
+                }}
+                value={amount}
+                onChange={handleAmountChange}
+                placeholder="0"
+                inputMode="numeric"
+              />
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 font-serif opacity-40" style={{ fontSize: "0.85rem" }}>.00</span>
+            </div>
           </div>
         </div>
 

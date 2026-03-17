@@ -1,13 +1,14 @@
 import type { WeddingSite } from "./types/wedding-site";
 
-function escapeICS(str: string): string {
-  return str.replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\n/g, "\\n");
-}
-
 function formatICSDate(iso: string): string {
-  // Convert ISO date to ICS format: 20260801T140000Z
   const d = new Date(iso);
-  return d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+  const y = d.getUTCFullYear();
+  const m = String(d.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(d.getUTCDate()).padStart(2, "0");
+  const h = String(d.getUTCHours()).padStart(2, "0");
+  const min = String(d.getUTCMinutes()).padStart(2, "0");
+  const s = String(d.getUTCSeconds()).padStart(2, "0");
+  return `${y}${m}${day}T${h}${min}${s}Z`;
 }
 
 export function generateICS(site: WeddingSite): string {
@@ -15,35 +16,34 @@ export function generateICS(site: WeddingSite): string {
   if (!start) return "";
 
   const startDate = formatICSDate(start);
-  // End date: use weddingEndDate or default to +4 hours
   const endDate = site.weddingEndDate
     ? formatICSDate(site.weddingEndDate)
     : formatICSDate(new Date(new Date(start).getTime() + 4 * 60 * 60 * 1000).toISOString());
+  const now = formatICSDate(new Date().toISOString());
 
-  const summary = `${site.partner1Name} & ${site.partner2Name}'s Wedding`;
+  const summary = `${site.partner1Name} & ${site.partner2Name} Wedding`;
   const location = site.locationText || "";
-  const description = site.dateDisplayText
-    ? `${site.dateDisplayText}${location ? ` — ${location}` : ""}`
-    : "";
   const url = `https://ithinkshewifey.com/${site.slug}`;
 
   const lines = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//ithinkshewifey//wedding//EN",
+    "PRODID:-//ithinkshewifey//EN",
     "CALSCALE:GREGORIAN",
     "METHOD:PUBLISH",
     "BEGIN:VEVENT",
+    `DTSTAMP:${now}`,
     `DTSTART:${startDate}`,
     `DTEND:${endDate}`,
-    `SUMMARY:${escapeICS(summary)}`,
-    ...(location ? [`LOCATION:${escapeICS(location)}`] : []),
-    ...(description ? [`DESCRIPTION:${escapeICS(description)}\\n\\nDetails: ${url}`] : [`DESCRIPTION:Details: ${url}`]),
+    `SUMMARY:${summary}`,
+    ...(location ? [`LOCATION:${location}`] : []),
+    `DESCRIPTION:Details: ${url}`,
     `URL:${url}`,
     `UID:${site.slug}@ithinkshewifey.com`,
     "STATUS:CONFIRMED",
     "END:VEVENT",
     "END:VCALENDAR",
+    "",
   ];
 
   return lines.join("\r\n");

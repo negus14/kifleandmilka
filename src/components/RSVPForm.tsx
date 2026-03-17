@@ -30,15 +30,25 @@ interface RSVPFormProps {
   calendarInfo?: CalendarInfo;
 }
 
+function fmtCalDate(iso: string): string {
+  const d = new Date(iso);
+  const y = d.getUTCFullYear();
+  const m = String(d.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(d.getUTCDate()).padStart(2, "0");
+  const h = String(d.getUTCHours()).padStart(2, "0");
+  const min = String(d.getUTCMinutes()).padStart(2, "0");
+  const s = String(d.getUTCSeconds()).padStart(2, "0");
+  return `${y}${m}${day}T${h}${min}${s}`;
+}
+
 function buildGoogleCalendarUrl(info: CalendarInfo): string {
-  const fmt = (iso: string) => new Date(iso).toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "").replace("Z", "");
-  const start = fmt(info.weddingDate);
+  const start = fmtCalDate(info.weddingDate);
   const end = info.weddingEndDate
-    ? fmt(info.weddingEndDate)
-    : fmt(new Date(new Date(info.weddingDate).getTime() + 4 * 60 * 60 * 1000).toISOString());
+    ? fmtCalDate(info.weddingEndDate)
+    : fmtCalDate(new Date(new Date(info.weddingDate).getTime() + 4 * 60 * 60 * 1000).toISOString());
   const params = new URLSearchParams({
     action: "TEMPLATE",
-    text: `${info.partner1Name} & ${info.partner2Name}'s Wedding`,
+    text: `${info.partner1Name} & ${info.partner2Name} Wedding`,
     dates: `${start}/${end}`,
     details: `Details: https://ithinkshewifey.com/${info.siteSlug}`,
     location: info.locationText || "",
@@ -46,22 +56,58 @@ function buildGoogleCalendarUrl(info: CalendarInfo): string {
   return `https://calendar.google.com/calendar/render?${params.toString()}`;
 }
 
+function buildOutlookCalendarUrl(info: CalendarInfo): string {
+  const toISO = (iso: string) => new Date(iso).toISOString();
+  const start = toISO(info.weddingDate);
+  const end = info.weddingEndDate
+    ? toISO(info.weddingEndDate)
+    : toISO(new Date(new Date(info.weddingDate).getTime() + 4 * 60 * 60 * 1000).toISOString());
+  const params = new URLSearchParams({
+    rru: "addevent",
+    startdt: start,
+    enddt: end,
+    subject: `${info.partner1Name} & ${info.partner2Name} Wedding`,
+    body: `Details: https://ithinkshewifey.com/${info.siteSlug}`,
+    location: info.locationText || "",
+  });
+  return `https://outlook.live.com/calendar/0/deeplink/compose?${params.toString()}`;
+}
+
 function buildICSContent(info: CalendarInfo): string {
-  const fmt = (iso: string) => new Date(iso).toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+  const fmt = (iso: string) => {
+    const d = new Date(iso);
+    const y = d.getUTCFullYear();
+    const m = String(d.getUTCMonth() + 1).padStart(2, "0");
+    const day = String(d.getUTCDate()).padStart(2, "0");
+    const h = String(d.getUTCHours()).padStart(2, "0");
+    const min = String(d.getUTCMinutes()).padStart(2, "0");
+    const s = String(d.getUTCSeconds()).padStart(2, "0");
+    return `${y}${m}${day}T${h}${min}${s}Z`;
+  };
   const start = fmt(info.weddingDate);
   const end = info.weddingEndDate
     ? fmt(info.weddingEndDate)
     : fmt(new Date(new Date(info.weddingDate).getTime() + 4 * 60 * 60 * 1000).toISOString());
-  const esc = (s: string) => s.replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\n/g, "\\n");
+  const now = fmt(new Date().toISOString());
+  const summary = `${info.partner1Name} & ${info.partner2Name} Wedding`;
   const lines = [
-    "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//ithinkshewifey//wedding//EN",
-    "CALSCALE:GREGORIAN", "METHOD:PUBLISH", "BEGIN:VEVENT",
-    `DTSTART:${start}`, `DTEND:${end}`,
-    `SUMMARY:${esc(`${info.partner1Name} & ${info.partner2Name}'s Wedding`)}`,
-    ...(info.locationText ? [`LOCATION:${esc(info.locationText)}`] : []),
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//ithinkshewifey//EN",
+    "CALSCALE:GREGORIAN",
+    "METHOD:PUBLISH",
+    "BEGIN:VEVENT",
+    `DTSTAMP:${now}`,
+    `DTSTART:${start}`,
+    `DTEND:${end}`,
+    `SUMMARY:${summary}`,
+    ...(info.locationText ? [`LOCATION:${info.locationText}`] : []),
     `URL:https://ithinkshewifey.com/${info.siteSlug}`,
     `UID:${info.siteSlug}@ithinkshewifey.com`,
-    "STATUS:CONFIRMED", "END:VEVENT", "END:VCALENDAR",
+    "STATUS:CONFIRMED",
+    "END:VEVENT",
+    "END:VCALENDAR",
+    "",
   ];
   return lines.join("\r\n");
 }
@@ -182,25 +228,33 @@ export default function RSVPForm({ slug, mealOptions, mealDietaryOptions, calend
         <h3 className="rsvp__success-title">Thank You!</h3>
         <p className="rsvp__success-text">Your RSVP has been received.</p>
         {showCalendar && (
-          <div style={{ display: "flex", gap: "0.75rem", justifyContent: "center", flexWrap: "wrap", marginTop: "1.5rem" }}>
-            <a
-              href={buildGoogleCalendarUrl(calendarInfo!)}
-              target="_blank"
-              rel="noopener noreferrer"
+          <div style={{ display: "flex", gap: "0.5rem", justifyContent: "center", flexWrap: "wrap", marginTop: "1.5rem" }}>
+            <button
+              type="button"
+              onClick={() => window.open(buildGoogleCalendarUrl(calendarInfo!), "_blank", "noopener,noreferrer")}
               className="rsvp__button"
-              style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", textDecoration: "none" }}
+              style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", fontSize: "0.7rem", padding: "0.6rem 1rem" }}
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-              Google Calendar
-            </a>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              Google
+            </button>
+            <button
+              type="button"
+              onClick={() => window.open(buildOutlookCalendarUrl(calendarInfo!), "_blank", "noopener,noreferrer")}
+              className="rsvp__button"
+              style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", fontSize: "0.7rem", padding: "0.6rem 1rem" }}
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              Outlook
+            </button>
             <button
               type="button"
               onClick={() => downloadICS(calendarInfo!)}
               className="rsvp__button rsvp__button--outline"
-              style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem" }}
+              style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", fontSize: "0.7rem", padding: "0.6rem 1rem" }}
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-              Apple / Outlook
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Apple / Other
             </button>
           </div>
         )}
