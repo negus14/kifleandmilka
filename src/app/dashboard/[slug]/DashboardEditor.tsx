@@ -2465,7 +2465,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
             <form action="/api/auth/logout" method="POST" className="hidden sm:block">
               <button type="submit"
                 className="text-xs tracking-wide uppercase text-[#2d2b25]/40 hover:text-red-500 transition-colors ml-1">
-                Out
+                Logout
               </button>
             </form>
           </div>
@@ -2902,26 +2902,54 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                 set("sectionBackgroundColors", bgs);
               };
 
+              const textColor = site.sectionTextColors?.[id] || "";
+              const setTextColor = (v: string) => {
+                const colors = { ...(site.sectionTextColors || {}) };
+                if (!v) delete colors[id]; else colors[id] = v;
+                set("sectionTextColors", colors);
+              };
+
               const renderBg = (label: string) => (
                 <div className="mb-6 pt-2">
-                  <ColorPicker 
-                    label="Background Color" 
-                    value={bgColor} 
-                    onChange={setBgColor as any} 
+                  <ColorPicker
+                    label="Background Color"
+                    value={bgColor}
+                    onChange={setBgColor as any}
                     themeColors={activeTheme.colors}
                   />
                   <div className="h-px bg-[#2d2b25]/5 my-6" />
-                  <ImageField 
-                    label={label} 
-                    value={bg} 
-                    onChange={(v) => {
-                      // If we set an image, we should probably clear the color?
-                      // Or maybe not. Let's keep them independent for now.
-                      setBg(v);
-                    }} 
+                  <ImageField
+                    label={label}
+                    value={bg}
+                    onChange={(v) => setBg(v)}
                     recentLinks={site.recentlyUsedLinks || []}
                     onAddRecentLink={addRecentLink}
                   />
+                  {bg && (
+                    <div className="mt-4">
+                      <Label>Text Color</Label>
+                      <p className="text-[10px] text-[#2d2b25]/40 mb-2 uppercase tracking-wider">Text color over the background image</p>
+                      <div className="flex gap-2">
+                        {([
+                          { id: "", name: "Default", color: activeTheme.colors.accent },
+                          { id: activeTheme.colors.primary, name: "Light", color: activeTheme.colors.primary },
+                          { id: activeTheme.colors.accent, name: "Accent", color: activeTheme.colors.accent },
+                          { id: activeTheme.colors.dark, name: "Dark", color: activeTheme.colors.dark },
+                          { id: "#ffffff", name: "White", color: "#ffffff" },
+                        ]).map((opt) => (
+                          <button
+                            key={opt.id || "default"}
+                            type="button"
+                            onClick={() => setTextColor(opt.id)}
+                            className={`flex items-center gap-2 px-3 py-2 rounded-sm border transition-all ${textColor === opt.id ? "border-[#2d2b25] bg-[#2d2b25]/5" : "border-[#2d2b25]/10 hover:border-[#2d2b25]/30"}`}
+                          >
+                            <span className="w-4 h-4 rounded-full border border-[#2d2b25]/20" style={{ background: opt.color }} />
+                            <span className="text-[10px] font-bold uppercase tracking-wider">{opt.name}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                   <div className="h-px bg-[#2d2b25]/10 mt-6" />
                 </div>
               );

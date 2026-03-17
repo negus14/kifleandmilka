@@ -243,26 +243,23 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
                 {bgUrl && (
                   <>
                     <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
-                      <SafeImage 
-                        src={bgUrl} 
-                        alt="" 
-                        fill 
+                      <SafeImage
+                        src={bgUrl}
+                        alt=""
+                        fill
                         quality={100}
                         priority
                         sizes="100vw"
-                        style={{ 
+                        style={{
                           objectFit: 'cover',
-                          opacity: 0.5,
-                          mixBlendMode: 'luminosity',
-                          transform: 'scale(1.1)'
-                        }} 
+                        }}
                       />
                     </div>
                     <div style={{
                       position: 'absolute',
                       inset: 0,
                       zIndex: 1,
-                      background: `linear-gradient(180deg, color-mix(in srgb, var(--color-dark), transparent 40%) 0%, transparent 50%, color-mix(in srgb, var(--color-dark), transparent 40%) 100%)`,
+                      background: 'rgba(0, 0, 0, 0.55)',
                       pointerEvents: 'none'
                     }} />
                   </>
@@ -742,6 +739,7 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
 
         const bgUrl = site.sectionBackgrounds?.[section.id];
         const bgColor = site.sectionBackgroundColors?.[section.id];
+        const textColorOverride = site.sectionTextColors?.[section.id];
         const sectionId = section.id.toLowerCase();
         
         // Only apply alternating backgrounds to content sections (not hero)
@@ -759,7 +757,7 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
         
         let extraClass = "";
         if (bgUrl) {
-          extraClass = "section--has-bg section--dark";
+          extraClass = `section--has-bg section--dark`;
         } else if (bgColor && bgColor !== "transparent") {
           extraClass = `section--${bgColor}`;
           if (bgColor === "dark") extraClass += " section--dark";
@@ -771,39 +769,37 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
         const extraStyle = {};
 
         return (
-          <div 
-            key={section.id} 
+          <div
+            key={section.id}
             className={extraClass}
-            style={{ 
-              position: 'relative', 
-              zIndex: order.length - i, 
+            style={{
+              position: 'relative',
+              zIndex: order.length - i,
               background: bgUrl ? 'var(--color-dark)' : 'transparent',
-              overflow: 'hidden'
+              overflow: 'hidden',
+              ...(bgUrl && textColorOverride ? { color: textColorOverride } : {}),
             }}
           >
             {bgUrl && (
               <>
                 <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
-                  <SafeImage 
-                    src={bgUrl} 
-                    alt="" 
-                    fill 
+                  <SafeImage
+                    src={bgUrl}
+                    alt=""
+                    fill
                     quality={100}
                     priority
                     sizes="100vw"
-                    style={{ 
+                    style={{
                       objectFit: 'cover',
-                      opacity: 0.5,
-                      mixBlendMode: 'luminosity',
-                      transform: 'scale(1.1)'
-                    }} 
+                    }}
                   />
                 </div>
                 <div style={{
                   position: 'absolute',
                   inset: 0,
                   zIndex: 1,
-                  background: `linear-gradient(180deg, color-mix(in srgb, var(--color-dark), transparent 40%) 0%, transparent 50%, color-mix(in srgb, var(--color-dark), transparent 40%) 100%)`,
+                  background: 'rgba(0, 0, 0, 0.55)',
                   pointerEvents: 'none'
                 }} />
               </>

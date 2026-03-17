@@ -246,6 +246,7 @@ export interface WeddingSite {
   navBrand: string;
   sectionBackgrounds?: Record<string, string>;
   sectionBackgroundColors?: Record<string, "primary" | "accent" | "dark" | "transparent">;
+  sectionTextColors?: Record<string, string>;
   sectionData?: Record<string, any>; // Instance-specific data for duplicate sections
   recentlyUsedLinks?: string[];
   customDomain?: string | null;
