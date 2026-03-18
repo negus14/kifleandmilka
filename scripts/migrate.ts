@@ -95,7 +95,7 @@ async function runMigrations() {
           await pool.query(stmt);
         } catch (err: any) {
           // Handle "already exists" errors gracefully (e.g., IF NOT EXISTS not used in older migrations)
-          if (err.code === "42P07" || err.code === "42701" || err.code === "42710") {
+          if (["42P07", "42701", "42710", "42704", "42703"].includes(err.code)) {
             console.log(`[migrate]   (skipped: ${err.message.split("\n")[0]})`);
           } else {
             throw err;

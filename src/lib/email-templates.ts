@@ -17,6 +17,16 @@ function escapeHtml(str: string): string {
     .replace(/"/g, "&quot;");
 }
 
+function siteUrl(site: WeddingSite): string {
+  return site.customDomain
+    ? `https://${site.customDomain}`
+    : `https://${site.slug}.ithinkshewifey.com`;
+}
+
+function siteUrlDisplay(site: WeddingSite): string {
+  return site.customDomain || `${site.slug}.ithinkshewifey.com`;
+}
+
 function baseLayout(content: string, site: WeddingSite) {
   return `<!DOCTYPE html>
 <html>
@@ -35,7 +45,7 @@ function baseLayout(content: string, site: WeddingSite) {
   </td></tr>
   <tr><td style="padding:24px 40px;border-top:1px solid #e8e6e1;text-align:center;">
     <p style="font-size:11px;color:#8a8578;margin:0;">
-      Sent from <a href="https://ithinkshewifey.com/${escapeHtml(site.slug)}" style="color:#8a8578;">ithinkshewifey.com/${escapeHtml(site.slug)}</a>
+      Sent from <a href="${siteUrl(site)}" style="color:#8a8578;">${escapeHtml(siteUrlDisplay(site))}</a>
     </p>
   </td></tr>
 </table>
@@ -79,7 +89,7 @@ export function rsvpConfirmationHtml(
     <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px;">${guestRows}</table>
     ${message ? `<div style="background:#f7f6f3;padding:16px;border-radius:4px;margin:0 0 24px;"><p style="font-size:13px;color:#8a8578;margin:0 0 4px;">Your message:</p><p style="font-size:14px;color:#2d2b25;margin:0;font-style:italic;">"${escapeHtml(message)}"</p></div>` : ""}
     ${attending.length > 0 && site.weddingDate ? `<div style="text-align:center;margin:0 0 24px;"><a href="${googleCalendarUrl(site)}" target="_blank" style="display:inline-block;padding:12px 28px;background:#2d2b25;color:#fdfcf9;font-size:13px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;text-decoration:none;border-radius:3px;">Add to Calendar</a><p style="font-size:11px;color:#8a8578;margin:8px 0 0;">An .ics file is also attached for Apple &amp; Outlook calendars</p></div>` : ""}
-    <p style="font-size:13px;color:#8a8578;margin:0;text-align:center;">You can view the full wedding details at<br><a href="https://ithinkshewifey.com/${escapeHtml(site.slug)}" style="color:#2d2b25;">ithinkshewifey.com/${escapeHtml(site.slug)}</a></p>
+    <p style="font-size:13px;color:#8a8578;margin:0;text-align:center;">You can view the full wedding details at<br><a href="${siteUrl(site)}" style="color:#2d2b25;">${escapeHtml(siteUrlDisplay(site))}</a></p>
   `;
 
   return baseLayout(content, site);
@@ -112,7 +122,7 @@ export function rsvpNotificationHtml(
     <ul style="list-style:none;padding:0;margin:0 0 24px;">${guestList}</ul>
     ${message ? `<div style="background:#f7f6f3;padding:16px;border-radius:4px;margin:0 0 24px;"><p style="font-size:13px;color:#8a8578;margin:0 0 4px;">Message:</p><p style="font-size:14px;color:#2d2b25;margin:0;font-style:italic;">"${escapeHtml(message)}"</p></div>` : ""}
     <p style="font-size:13px;color:#8a8578;margin:0;text-align:center;">
-      <a href="https://ithinkshewifey.com/dashboard/${escapeHtml(site.slug)}" style="color:#2d2b25;">View all RSVPs in your dashboard</a>
+      <a href="https://ithinkshewifey.com/dashboard/${escapeHtml(site.slug)}" style="color:#2d2b25;">View all RSVPs in dashboard</a>
     </p>
   `;
 
@@ -136,9 +146,16 @@ export function broadcastEmailHtml(
     <h1 style="font-size:22px;font-weight:normal;color:#2d2b25;text-align:center;margin:0 0 24px;">${escapeHtml(subject)}</h1>
     ${paragraphs}
     <p style="font-size:13px;color:#8a8578;margin:24px 0 0;text-align:center;">
-      <a href="https://ithinkshewifey.com/${escapeHtml(site.slug)}" style="color:#2d2b25;">View wedding details</a>
+      <a href="${siteUrl(site)}" style="color:#2d2b25;">View wedding details</a>
     </p>
   `;
 
   return baseLayout(content, site);
+}
+
+export function inviteEmailDefaults(site: WeddingSite): { subject: string; body: string } {
+  const names = `${site.partner1Name} & ${site.partner2Name}`;
+  const subject = `You're Invited — ${names}`;
+  const body = `We are delighted to invite you to celebrate our wedding!\n\n${site.dateDisplayText ? `Date: ${site.dateDisplayText}\n` : ""}${site.locationText ? `Venue: ${site.locationText}\n` : ""}\nPlease visit our wedding website for all the details and to RSVP:\n${siteUrl(site)}\n\nWe can't wait to celebrate with you!\n\nWith love,\n${names}`;
+  return { subject, body };
 }

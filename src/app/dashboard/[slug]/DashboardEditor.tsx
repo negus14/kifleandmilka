@@ -82,14 +82,37 @@ function Field({ label, value, onChange, placeholder, multiline, rows, type = "t
   );
 }
 
-function SlugField({ currentSlug, onSave }: { currentSlug: string; onSave: (val: string) => void }) {
+function SlugField({ currentSlug, onSave, customDomain, domainVerified }: { currentSlug: string; onSave: (val: string) => void; customDomain?: string | null; domainVerified?: boolean }) {
   const [draft, setDraft] = useState(currentSlug);
+  const [copied, setCopied] = useState(false);
   const hasChanged = draft !== currentSlug;
+
+  const shareUrl = customDomain
+    ? `https://${customDomain}`
+    : `https://${currentSlug}.ithinkshewifey.com`;
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(shareUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   return (
     <div className="mb-6 p-4 bg-[#2d2b25]/5 border border-[#2d2b25]/10 rounded-sm">
       <Label>Site URL</Label>
-      <div className="flex items-center gap-2 mt-1">
+
+      {/* Shareable link with copy */}
+      <div className="flex items-center gap-2 mt-1 mb-3 p-2.5 bg-white/60 border border-[#2d2b25]/10 rounded-sm">
+        <span className="flex-1 text-sm text-[#2d2b25]/70 truncate select-all">{shareUrl}</span>
+        <button
+          onClick={handleCopy}
+          className="shrink-0 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider bg-[#2d2b25] text-white rounded-sm hover:bg-[#2d2b25]/90 transition-all"
+        >
+          {copied ? "Copied!" : "Copy"}
+        </button>
+      </div>
+
+      <div className="flex items-center gap-2">
         <span className="text-xs text-[#2d2b25]/40 shrink-0 hidden sm:inline">ithinkshewifey.com/</span>
         <input
           type="text"
@@ -1137,6 +1160,9 @@ function MessagesPanel({ msgData, loadMessages, site }: {
   const [sendResult, setSendResult] = useState<{ ok: boolean; message: string } | null>(null);
   const [newGroupName, setNewGroupName] = useState("");
   const [creatingGroup, setCreatingGroup] = useState(false);
+  const [editingGroupId, setEditingGroupId] = useState<string | null>(null);
+  const [memberInput, setMemberInput] = useState("");
+  const [savingMembers, setSavingMembers] = useState(false);
 
   if (!msgData.loaded) {
     return (
@@ -1215,6 +1241,55 @@ function MessagesPanel({ msgData, loadMessages, site }: {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: groupId }),
       });
+      if (editingGroupId === groupId) setEditingGroupId(null);
+      loadMessages();
+    } catch {
+      // silent
+    }
+  };
+
+  const handleAddMembers = async (groupId: string) => {
+    const raw = memberInput.trim();
+    if (!raw) return;
+    // Split by comma, semicolon, newline, or space — then validate emails
+    const newEmails = raw
+      .split(/[,;\s\n]+/)
+      .map((e) => e.trim().toLowerCase())
+      .filter((e) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e));
+    if (newEmails.length === 0) return;
+
+    const group = msgData.groups.find((g) => g.id === groupId);
+    const existing = (group?.members as string[]) || [];
+    const merged = Array.from(new Set([...existing, ...newEmails]));
+
+    setSavingMembers(true);
+    try {
+      const res = await fetch(`/api/sites/${site.slug}/broadcast-groups`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: groupId, members: merged }),
+      });
+      if (!res.ok) throw new Error("Failed to update group");
+      setMemberInput("");
+      loadMessages();
+    } catch {
+      // silent
+    } finally {
+      setSavingMembers(false);
+    }
+  };
+
+  const handleRemoveMember = async (groupId: string, email: string) => {
+    const group = msgData.groups.find((g) => g.id === groupId);
+    const existing = (group?.members as string[]) || [];
+    const updated = existing.filter((e) => e !== email);
+
+    try {
+      await fetch(`/api/sites/${site.slug}/broadcast-groups`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: groupId, members: updated }),
+      });
       loadMessages();
     } catch {
       // silent
@@ -1256,6 +1331,21 @@ function MessagesPanel({ msgData, loadMessages, site }: {
       {/* Compose View */}
       {activeView === "compose" && (
         <div>
+          {/* Template Button */}
+          {channel === "email" && !subject && !body && (
+            <button
+              onClick={() => {
+                const names = `${site.partner1Name} & ${site.partner2Name}`;
+                const url = site.customDomain ? `https://${site.customDomain}` : `https://${site.slug}.ithinkshewifey.com`;
+                setSubject(`You're Invited — ${names}`);
+                setBody(`We are delighted to invite you to celebrate our wedding!\n\n${site.dateDisplayText ? `Date: ${site.dateDisplayText}\n` : ""}${site.locationText ? `Venue: ${site.locationText}\n` : ""}\nPlease visit our wedding website for all the details and to RSVP:\n${url}\n\nWe can't wait to celebrate with you!\n\nWith love,\n${names}`);
+              }}
+              className="w-full mb-5 py-3 border border-dashed border-[#2d2b25]/20 text-[11px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/50 hover:text-[#2d2b25]/80 hover:border-[#2d2b25]/40 rounded-sm transition-all"
+            >
+              Use Invite Template
+            </button>
+          )}
+
           {/* Channel Toggle */}
           <div className="mb-5">
             <label className="block text-[11px] font-semibold tracking-[0.15em] uppercase text-[#2d2b25]/60 mb-3">Channel</label>
@@ -1400,16 +1490,60 @@ function MessagesPanel({ msgData, loadMessages, site }: {
           <div className="mb-6">
             <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#2d2b25]/40 mb-3">Custom Groups</h3>
             {customGroups.length > 0 ? (
-              <div className="space-y-2 mb-4">
-                {customGroups.map((g) => (
-                  <div key={g.id} className="flex items-center justify-between p-3 border border-[#2d2b25]/10 rounded-sm">
-                    <div>
-                      <span className="text-sm text-[#2d2b25]">{g.name}</span>
-                      <span className="text-[10px] text-[#2d2b25]/40 ml-2">({((g.members as string[]) || []).length} members)</span>
+              <div className="space-y-3 mb-4">
+                {customGroups.map((g) => {
+                  const members = (g.members as string[]) || [];
+                  const isEditing = editingGroupId === g.id;
+                  return (
+                    <div key={g.id} className="border border-[#2d2b25]/10 rounded-sm">
+                      <div className="flex items-center justify-between p-3">
+                        <button
+                          onClick={() => { setEditingGroupId(isEditing ? null : g.id); setMemberInput(""); }}
+                          className="flex items-center gap-2 text-left"
+                        >
+                          <svg width="10" height="10" viewBox="0 0 10 10" className={`text-[#2d2b25]/40 transition-transform ${isEditing ? "rotate-90" : ""}`}><path d="M3 1l4 4-4 4" fill="none" stroke="currentColor" strokeWidth="1.5" /></svg>
+                          <span className="text-sm text-[#2d2b25]">{g.name}</span>
+                          <span className="text-[10px] text-[#2d2b25]/40">({members.length} member{members.length !== 1 ? "s" : ""})</span>
+                        </button>
+                        <button onClick={() => handleDeleteGroup(g.id)} className="text-[10px] text-red-500 hover:text-red-700 uppercase tracking-wider font-bold">Remove</button>
+                      </div>
+
+                      {isEditing && (
+                        <div className="px-3 pb-3 border-t border-[#2d2b25]/5 pt-3">
+                          {/* Existing members */}
+                          {members.length > 0 && (
+                            <div className="flex flex-wrap gap-1.5 mb-3">
+                              {members.map((email) => (
+                                <span key={email} className="inline-flex items-center gap-1 px-2 py-1 bg-[#2d2b25]/5 rounded text-[11px] text-[#2d2b25]/70">
+                                  {email}
+                                  <button onClick={() => handleRemoveMember(g.id, email)} className="text-[#2d2b25]/30 hover:text-red-500 ml-0.5">&times;</button>
+                                </span>
+                              ))}
+                            </div>
+                          )}
+
+                          {/* Add emails */}
+                          <div>
+                            <textarea
+                              value={memberInput}
+                              onChange={(e) => setMemberInput(e.target.value)}
+                              placeholder="Paste emails here — separated by commas, spaces, or new lines"
+                              rows={3}
+                              className="w-full px-3 py-2 border border-[#2d2b25]/15 bg-white/50 text-[#2d2b25] text-sm outline-none focus:border-[#2d2b25]/40 rounded-sm resize-y"
+                            />
+                            <button
+                              onClick={() => handleAddMembers(g.id)}
+                              disabled={savingMembers || !memberInput.trim()}
+                              className="mt-2 px-4 py-2 text-[10px] font-bold uppercase tracking-wider bg-[#2d2b25] text-white rounded-sm hover:bg-[#2d2b25]/90 disabled:opacity-30"
+                            >
+                              {savingMembers ? "Adding..." : "Add Emails"}
+                            </button>
+                          </div>
+                        </div>
+                      )}
                     </div>
-                    <button onClick={() => handleDeleteGroup(g.id)} className="text-[10px] text-red-500 hover:text-red-700 uppercase tracking-wider font-bold">Remove</button>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             ) : (
               <p className="text-sm text-[#2d2b25]/40 mb-4">No custom groups yet</p>
@@ -2895,7 +3029,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                 <div>
                   <SectionTitle>Basic Info</SectionTitle>
                   
-                  <SlugField currentSlug={site.slug} onSave={(val) => set("slug", val)} />
+                  <SlugField currentSlug={site.slug} onSave={(val) => set("slug", val)} customDomain={site.customDomain} domainVerified={!!site.domainVerifiedAt} />
 
                   {/* Custom Domain — right below Site URL */}
                   {site.isPaid && (
