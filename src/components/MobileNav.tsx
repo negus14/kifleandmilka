@@ -13,6 +13,11 @@ const NAV_LINKS = [
 
 export default function MobileNav() {
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Lock body scroll when open
   useEffect(() => {
@@ -65,7 +70,7 @@ export default function MobileNav() {
       </button>
 
       {/* Portal out of nav's stacking context (backdrop-blur creates a new one) */}
-      {typeof document !== "undefined" && createPortal(<>
+      {mounted && createPortal(<>
       {/* Overlay */}
       <div
         className={`fixed inset-0 z-40 bg-[#2d2b25]/40 backdrop-blur-sm transition-opacity duration-300 md:hidden ${
