@@ -58,6 +58,8 @@ export async function getSiteBySlug(
       isPaid: sites.isPaid,
       stripeCustomerId: sites.stripeCustomerId,
       customDomain: sites.customDomain,
+      cloudflareHostnameId: sites.cloudflareHostnameId,
+      domainVerifiedAt: sites.domainVerifiedAt,
     })
     .from(sites)
     .where(eq(sites.slug, slug));
@@ -68,6 +70,8 @@ export async function getSiteBySlug(
     isPaid: result.isPaid,
     stripeCustomerId: result.stripeCustomerId,
     customDomain: result.customDomain,
+    cloudflareHostnameId: result.cloudflareHostnameId,
+    domainVerifiedAt: result.domainVerifiedAt,
   };
 
   // 3. Populate Cache
@@ -87,6 +91,15 @@ export async function updateSite(
   const existing = await getSiteBySlug(slug, true); // Force refresh to get latest before update
   if (!existing) return null;
 
+  // Domain lock: once verified, customDomain cannot be changed
+  if (
+    data.customDomain !== undefined &&
+    existing.domainVerifiedAt &&
+    data.customDomain !== existing.customDomain
+  ) {
+    throw new Error("Domain is locked. Contact support to change your custom domain.");
+  }
+
   // Combine data, but ensure keys in 'data' completely overwrite those in 'existing'
   // This is especially important for arrays like sectionOrder
   const updated = { ...existing, ...data, slug: existing.slug };
@@ -98,13 +111,15 @@ export async function updateSite(
     sectionCount: updated.sectionOrder?.length 
   });
 
-  const { isPaid, stripeCustomerId, customDomain, ...rest } = updated;
+  const { isPaid, stripeCustomerId, customDomain, cloudflareHostnameId, domainVerifiedAt, ...rest } = updated;
   const result = await db.update(sites)
     .set({
       data: rest,
       isPaid: isPaid ? new Date(isPaid) : null,
       stripeCustomerId: stripeCustomerId || null,
       customDomain: customDomain ? customDomain.toLowerCase() : null,
+      cloudflareHostnameId: cloudflareHostnameId || null,
+      domainVerifiedAt: domainVerifiedAt ? new Date(domainVerifiedAt) : null,
       updatedAt: new Date()
     })
     .where(eq(sites.slug, slug))
@@ -152,7 +167,7 @@ export async function renameSite(
 
   // Drizzle Update (including PK change) — verify rows affected
   console.log(`[DB] Renaming site: ${oldSlug} -> ${newSlug}`);
-  const { isPaid, stripeCustomerId, customDomain, ...rest } = updated;
+  const { isPaid, stripeCustomerId, customDomain, cloudflareHostnameId, domainVerifiedAt, ...rest } = updated;
   const result = await db.update(sites)
     .set({
       slug: newSlug,
@@ -160,6 +175,8 @@ export async function renameSite(
       isPaid: isPaid ? new Date(isPaid) : null,
       stripeCustomerId: stripeCustomerId || null,
       customDomain: customDomain ? customDomain.toLowerCase() : null,
+      cloudflareHostnameId: cloudflareHostnameId || null,
+      domainVerifiedAt: domainVerifiedAt ? new Date(domainVerifiedAt) : null,
       updatedAt: new Date()
     })
     .where(eq(sites.slug, oldSlug))
@@ -189,13 +206,15 @@ export async function createSite(
   data: WeddingSite
 ): Promise<WeddingSite> {
   console.log(`[DB] Creating site: ${slug}`);
-  const { isPaid, stripeCustomerId, customDomain, ...rest } = data;
+  const { isPaid, stripeCustomerId, customDomain, cloudflareHostnameId, domainVerifiedAt, ...rest } = data;
   await db.insert(sites).values({
     slug,
     data: rest,
     isPaid: isPaid ? new Date(isPaid) : null,
     stripeCustomerId: stripeCustomerId || null,
     customDomain: customDomain ? customDomain.toLowerCase() : null,
+    cloudflareHostnameId: cloudflareHostnameId || null,
+    domainVerifiedAt: domainVerifiedAt ? new Date(domainVerifiedAt) : null,
   });
   return data;
 }

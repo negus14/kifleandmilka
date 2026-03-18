@@ -1,4 +1,4 @@
-import { pgTable, text, jsonb, timestamp, uuid, index, boolean } from "drizzle-orm/pg-core";
+import { pgTable, text, jsonb, timestamp, uuid, index, boolean, integer, numeric } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 
 // 1. Sites Table
@@ -8,6 +8,8 @@ export const sites = pgTable("sites", {
   isPaid: timestamp("is_paid").default(sql`NULL`), // Using timestamp for paid date or null
   stripeCustomerId: text("stripe_customer_id"),
   customDomain: text("custom_domain").unique(),
+  cloudflareHostnameId: text("cloudflare_hostname_id"),
+  domainVerifiedAt: timestamp("domain_verified_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 }, (table) => {
@@ -39,7 +41,7 @@ export const giftContributions = pgTable("gift_contributions", {
   siteSlug: text("site_slug").references(() => sites.slug, { onDelete: 'cascade' }),
   giftName: text("gift_name").notNull(),
   guestName: text("guest_name").notNull(),
-  amount: text("amount"),
+  amount: numeric("amount", { precision: 10, scale: 2 }),
   currency: text("currency").default("GBP"),
   message: text("message"),
   paymentMethod: text("payment_method"),
@@ -75,7 +77,7 @@ export const broadcasts = pgTable("broadcasts", {
   body: text("body").notNull(),
   channel: text("channel").notNull().default("email"),
   status: text("status").notNull().default("draft"), // "draft" | "sending" | "sent" | "failed"
-  recipientCount: text("recipient_count"),
+  recipientCount: integer("recipient_count"),
   sentAt: timestamp("sent_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 }, (table) => {

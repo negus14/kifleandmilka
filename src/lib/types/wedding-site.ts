@@ -250,4 +250,6 @@ export interface WeddingSite {
   sectionData?: Record<string, any>; // Instance-specific data for duplicate sections
   recentlyUsedLinks?: string[];
   customDomain?: string | null;
+  cloudflareHostnameId?: string | null;
+  domainVerifiedAt?: string | Date | null;
 }

@@ -50,6 +50,20 @@
       "when": 1773745284117,
       "tag": "0006_nappy_the_hunter",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1774080000000,
+      "tag": "0007_fix_column_types",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1774090000000,
+      "tag": "0008_custom_domain_fields",
+      "breakpoints": true
     }
   ]
 }
