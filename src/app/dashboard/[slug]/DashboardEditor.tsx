@@ -265,10 +265,11 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
   return <h2 className="text-lg mb-6" style={{ fontFamily: "'Cormorant Garamond', serif" }}>{children}</h2>;
 }
 
-function DomainRequest({ slug }: { slug: string }) {
+function DomainRequest({ slug, existingDomain }: { slug: string; existingDomain?: string | null }) {
   const [domain, setDomain] = useState("");
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
+  const [expanded, setExpanded] = useState(!existingDomain);
 
   const handleSubmit = async () => {
     if (!domain.trim()) return;
@@ -293,50 +294,66 @@ function DomainRequest({ slug }: { slug: string }) {
     }
   };
 
+  if (status === "sent") {
+    return (
+      <div className="p-4 bg-green-50 border border-green-200 rounded-sm">
+        <p className="text-xs font-medium text-green-800">Updated request submitted!</p>
+        <p className="text-[10px] text-green-600 mt-1">
+          We&apos;ll set up <strong>{domain}</strong> instead. You&apos;ll receive an email when it&apos;s ready.
+        </p>
+      </div>
+    );
+  }
+
+  if (existingDomain && !expanded) {
+    return (
+      <button
+        onClick={() => setExpanded(true)}
+        className="text-[10px] text-[#2d2b25]/50 underline hover:text-[#2d2b25]/70 transition-colors"
+      >
+        Change requested domain
+      </button>
+    );
+  }
+
   return (
     <div className="space-y-3">
-      {status === "sent" && (
-        <div className="p-4 bg-green-50 border border-green-200 rounded-sm">
-          <p className="text-xs font-medium text-green-800">Request submitted!</p>
-          <p className="text-[10px] text-green-600 mt-1">
-            We&apos;ll set up <strong>{domain}</strong> for you and email you when it&apos;s ready. This usually takes 24–48 hours.
-          </p>
-          <button
-            onClick={() => { setStatus("idle"); setDomain(""); }}
-            className="mt-2 text-[10px] text-green-700 underline hover:no-underline"
-          >
-            Request a different domain
-          </button>
-        </div>
+      <p className="text-xs text-[#2d2b25]/70">
+        {existingDomain
+          ? "Enter a different domain to update your request:"
+          : "Enter your desired domain and we\u2019ll handle everything \u2014 purchasing, setup, and connecting it to your site."}
+      </p>
+      <input
+        type="text"
+        value={domain}
+        onChange={(e) => { setDomain(e.target.value.toLowerCase().replace(/[^a-z0-9.-]/g, "")); if (status === "error") setStatus("idle"); }}
+        placeholder="e.g. milkaandkifle.com"
+        className="w-full text-sm px-3 py-2.5 bg-white border border-[#2d2b25]/15 rounded-sm focus:outline-none focus:border-[#2d2b25]/40 transition-colors placeholder:text-[#2d2b25]/25"
+      />
+      {status === "error" && (
+        <p className="text-xs text-red-600">{errorMsg}</p>
       )}
-      {status !== "sent" && (
-        <>
-          <p className="text-xs text-[#2d2b25]/70">
-            Enter your desired domain and we&apos;ll handle everything — purchasing, setup, and connecting it to your site.
-          </p>
-          <input
-            type="text"
-            value={domain}
-            onChange={(e) => { setDomain(e.target.value.toLowerCase().replace(/[^a-z0-9.-]/g, "")); if (status === "error") setStatus("idle"); }}
-            placeholder="e.g. milkaandkifle.com"
-            className="w-full text-sm px-3 py-2.5 bg-white border border-[#2d2b25]/15 rounded-sm focus:outline-none focus:border-[#2d2b25]/40 transition-colors placeholder:text-[#2d2b25]/25"
-          />
-          {status === "error" && (
-            <p className="text-xs text-red-600">{errorMsg}</p>
-          )}
-          {domain && (
-            <button
-              onClick={handleSubmit}
-              disabled={status === "sending"}
-              className="w-full py-2.5 text-[10px] font-semibold tracking-[0.12em] uppercase bg-[#2d2b25] text-[#faf1e1] hover:bg-[#1a1812] disabled:opacity-50 transition-colors rounded-sm"
-            >
-              {status === "sending" ? "Checking availability..." : `Request ${domain}`}
-            </button>
-          )}
-          <p className="text-[10px] text-[#2d2b25]/40">
-            Domain registration is included in your premium plan. We&apos;ll check availability and get back to you.
-          </p>
-        </>
+      {domain && (
+        <button
+          onClick={handleSubmit}
+          disabled={status === "sending"}
+          className="w-full py-2.5 text-[10px] font-semibold tracking-[0.12em] uppercase bg-[#2d2b25] text-[#faf1e1] hover:bg-[#1a1812] disabled:opacity-50 transition-colors rounded-sm"
+        >
+          {status === "sending" ? "Checking availability..." : existingDomain ? `Update to ${domain}` : `Request ${domain}`}
+        </button>
+      )}
+      {existingDomain && (
+        <button
+          onClick={() => setExpanded(false)}
+          className="text-[10px] text-[#2d2b25]/40 hover:text-[#2d2b25]/60 transition-colors"
+        >
+          Cancel
+        </button>
+      )}
+      {!existingDomain && (
+        <p className="text-[10px] text-[#2d2b25]/40">
+          Domain registration is included in your premium plan. We&apos;ll check availability and get back to you.
+        </p>
       )}
     </div>
   );
@@ -2800,21 +2817,26 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                       <p className="text-[10px] text-[#2d2b25]/40 mb-4 uppercase tracking-wider">Use your own domain instead of ithinkshewifey.com/{site.slug}</p>
                       {site.domainVerifiedAt ? (
                         <div className="p-4 bg-green-50 border border-green-200 rounded-sm">
-                          <p className="text-xs font-medium text-green-800">
-                            {site.customDomain} is connected
-                          </p>
-                          <p className="text-[10px] text-green-600 mt-1">
-                            Your custom domain is live. Contact support to make changes.
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="w-2 h-2 rounded-full bg-green-500" />
+                            <p className="text-xs font-medium text-green-800">Connected</p>
+                          </div>
+                          <p className="text-xs text-green-700">
+                            {site.customDomain} is live. Contact support to make changes.
                           </p>
                         </div>
                       ) : site.customDomain ? (
-                        <div className="p-4 bg-amber-50 border border-amber-200 rounded-sm">
-                          <p className="text-xs font-medium text-amber-800">
-                            {site.customDomain} is being set up
-                          </p>
-                          <p className="text-[10px] text-amber-600 mt-1">
-                            We&apos;re connecting your domain. You&apos;ll receive an email when it&apos;s ready.
-                          </p>
+                        <div className="space-y-3">
+                          <div className="p-4 bg-amber-50 border border-amber-200 rounded-sm">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+                              <p className="text-xs font-medium text-amber-800">Request Sent</p>
+                            </div>
+                            <p className="text-xs text-amber-700">
+                              <strong>{site.customDomain}</strong> — we&apos;re working on it. You&apos;ll receive an email when it&apos;s ready.
+                            </p>
+                          </div>
+                          <DomainRequest slug={site.slug} existingDomain={site.customDomain} />
                         </div>
                       ) : (
                         <DomainRequest slug={site.slug} />
