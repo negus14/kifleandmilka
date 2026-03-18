@@ -265,6 +265,68 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
   return <h2 className="text-lg mb-6" style={{ fontFamily: "'Cormorant Garamond', serif" }}>{children}</h2>;
 }
 
+function DomainRequest({ slug }: { slug: string }) {
+  const [domain, setDomain] = useState("");
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+
+  const handleSubmit = async () => {
+    if (!domain.trim()) return;
+    setStatus("sending");
+    try {
+      const res = await fetch(`/api/sites/${slug}/domain-request`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ domain: domain.trim().toLowerCase() }),
+      });
+      if (res.ok) setStatus("sent");
+      else setStatus("error");
+    } catch {
+      setStatus("error");
+    }
+  };
+
+  if (status === "sent") {
+    return (
+      <div className="p-4 bg-green-50 border border-green-200 rounded-sm">
+        <p className="text-xs font-medium text-green-800">Request submitted!</p>
+        <p className="text-[10px] text-green-600 mt-1">
+          We&apos;ll set up <strong>{domain}</strong> for you and email you when it&apos;s ready. This usually takes 24–48 hours.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-3">
+      <p className="text-xs text-[#2d2b25]/70">
+        Enter your desired domain and we&apos;ll handle everything — purchasing, setup, and connecting it to your site.
+      </p>
+      <input
+        type="text"
+        value={domain}
+        onChange={(e) => setDomain(e.target.value.toLowerCase().replace(/[^a-z0-9.-]/g, ""))}
+        placeholder="e.g. milkaandkifle.com"
+        className="w-full text-sm px-3 py-2.5 bg-white border border-[#2d2b25]/15 rounded-sm focus:outline-none focus:border-[#2d2b25]/40 transition-colors placeholder:text-[#2d2b25]/25"
+      />
+      {domain && (
+        <button
+          onClick={handleSubmit}
+          disabled={status === "sending"}
+          className="w-full py-2.5 text-[10px] font-semibold tracking-[0.12em] uppercase bg-[#2d2b25] text-[#faf1e1] hover:bg-[#1a1812] disabled:opacity-50 transition-colors rounded-sm"
+        >
+          {status === "sending" ? "Submitting..." : `Request ${domain}`}
+        </button>
+      )}
+      {status === "error" && (
+        <p className="text-xs text-red-600">Something went wrong. Please try again or contact support.</p>
+      )}
+      <p className="text-[10px] text-[#2d2b25]/40">
+        Domain registration is included in your premium plan. We&apos;ll check availability and get back to you.
+      </p>
+    </div>
+  );
+}
+
 function DomainStatus({ slug, domain }: { slug: string; domain: string }) {
   const [status, setStatus] = useState<"idle" | "checking" | "configured" | "pending" | "error">("idle");
   const [message, setMessage] = useState("");
@@ -2835,86 +2897,25 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                       <Label>Custom Domain</Label>
                       <p className="text-[10px] text-[#2d2b25]/40 mb-4 uppercase tracking-wider">Use your own domain instead of ithinkshewifey.com/{site.slug}</p>
                       {site.domainVerifiedAt ? (
-                        <>
-                          <div className="p-4 bg-green-50 border border-green-200 rounded-sm">
-                            <p className="text-xs font-medium text-green-800">
-                              {site.customDomain} is connected
-                            </p>
-                            <p className="text-[10px] text-green-600 mt-1">
-                              Domain locked. Contact support to change.
-                            </p>
-                          </div>
-                        </>
+                        <div className="p-4 bg-green-50 border border-green-200 rounded-sm">
+                          <p className="text-xs font-medium text-green-800">
+                            {site.customDomain} is connected
+                          </p>
+                          <p className="text-[10px] text-green-600 mt-1">
+                            Your custom domain is live. Contact support to make changes.
+                          </p>
+                        </div>
+                      ) : site.customDomain ? (
+                        <div className="p-4 bg-amber-50 border border-amber-200 rounded-sm">
+                          <p className="text-xs font-medium text-amber-800">
+                            {site.customDomain} is being set up
+                          </p>
+                          <p className="text-[10px] text-amber-600 mt-1">
+                            We&apos;re connecting your domain. You&apos;ll receive an email when it&apos;s ready.
+                          </p>
+                        </div>
                       ) : (
-                        <>
-                          {/* Buy a domain CTA */}
-                          {!site.customDomain && (
-                            <div className="mb-4 p-4 bg-[#f7f6f3] border border-[#2d2b25]/10 rounded-sm">
-                              <p className="text-xs text-[#2d2b25]/70 mb-3">
-                                Don&apos;t have a domain yet? Buy one from a registrar:
-                              </p>
-                              <div className="flex gap-2">
-                                <a
-                                  href={`https://www.cloudflare.com/products/registrar/`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="flex-1 text-center py-2 text-[10px] font-semibold tracking-[0.12em] uppercase border border-[#2d2b25]/15 hover:border-[#2d2b25]/40 rounded-sm transition-colors text-[#2d2b25]/70"
-                                >
-                                  Cloudflare
-                                </a>
-                                <a
-                                  href={`https://www.namecheap.com/domains/registration/results/?domain=${site.slug}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="flex-1 text-center py-2 text-[10px] font-semibold tracking-[0.12em] uppercase border border-[#2d2b25]/15 hover:border-[#2d2b25]/40 rounded-sm transition-colors text-[#2d2b25]/70"
-                                >
-                                  Namecheap
-                                </a>
-                              </div>
-                              <p className="text-[10px] text-[#2d2b25]/40 mt-2">
-                                After purchasing, enter your domain below and follow the DNS setup instructions.
-                              </p>
-                            </div>
-                          )}
-                          <Field
-                            label="Domain"
-                            value={site.customDomain || ""}
-                            onChange={(v) => set("customDomain", v.toLowerCase().replace(/[^a-z0-9.-]/g, "") || null)}
-                            placeholder="e.g. wedding.smith.com"
-                          />
-                          {site.customDomain && (
-                            <div className="mt-3 p-4 bg-[#f7f6f3] border border-[#2d2b25]/10 rounded-sm">
-                              <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/60 mb-3">Connect Your Domain</p>
-                              <div className="space-y-3 text-xs text-[#2d2b25]/70">
-                                <div className="flex gap-2">
-                                  <span className="shrink-0 w-5 h-5 rounded-full bg-[#2d2b25]/10 flex items-center justify-center text-[10px] font-bold text-[#2d2b25]/60">1</span>
-                                  <p>Log in to the website where you bought your domain (e.g. Namecheap, GoDaddy, Cloudflare)</p>
-                                </div>
-                                <div className="flex gap-2">
-                                  <span className="shrink-0 w-5 h-5 rounded-full bg-[#2d2b25]/10 flex items-center justify-center text-[10px] font-bold text-[#2d2b25]/60">2</span>
-                                  <div>
-                                    <p>Find your domain&apos;s DNS settings and add a new record:</p>
-                                    <div className="mt-2 bg-white border border-[#2d2b25]/10 rounded-sm overflow-hidden">
-                                      <div className="grid grid-cols-3 text-[10px] font-bold uppercase tracking-wider text-[#2d2b25]/40 px-3 py-1.5 border-b border-[#2d2b25]/5">
-                                        <span>Type</span><span>Name</span><span>Value</span>
-                                      </div>
-                                      <div className="grid grid-cols-3 text-xs px-3 py-2 font-mono">
-                                        <span>CNAME</span><span>@</span><span className="select-all">proxy.ithinkshewifey.com</span>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                                <div className="flex gap-2">
-                                  <span className="shrink-0 w-5 h-5 rounded-full bg-[#2d2b25]/10 flex items-center justify-center text-[10px] font-bold text-[#2d2b25]/60">3</span>
-                                  <p>Save and come back here to verify. It can take up to 10 minutes for changes to take effect.</p>
-                                </div>
-                              </div>
-                              <div className="mt-4">
-                                <DomainStatus slug={site.slug} domain={site.customDomain} />
-                              </div>
-                            </div>
-                          )}
-                        </>
+                        <DomainRequest slug={site.slug} />
                       )}
                     </div>
                   )}
