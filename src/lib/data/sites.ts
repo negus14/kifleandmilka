@@ -7,6 +7,21 @@ import { normalizeSiteData } from "../template-utils";
 
 const SITE_CACHE_TTL = 60; // 60 seconds — short TTL to minimize stale reads
 
+/**
+ * Safely coerce a value to a Date or null for timestamp columns.
+ * Handles: Date objects, ISO date strings, booleans (from !!isPaid), and nullish values.
+ */
+function toTimestampOrNull(value: unknown): Date | null {
+  if (!value) return null;
+  if (value instanceof Date) return value;
+  if (typeof value === "string") {
+    const d = new Date(value);
+    return isNaN(d.getTime()) ? null : d;
+  }
+  // Boolean `true` (from !!isPaid) — can't convert to a meaningful date
+  return null;
+}
+
 function getSiteCacheKey(slug: string) {
   return `site:${slug}`;
 }
@@ -115,11 +130,11 @@ export async function updateSite(
   const result = await db.update(sites)
     .set({
       data: rest,
-      isPaid: isPaid ? new Date(isPaid) : null,
+      isPaid: toTimestampOrNull(isPaid),
       stripeCustomerId: stripeCustomerId || null,
       customDomain: customDomain ? customDomain.toLowerCase() : null,
       cloudflareHostnameId: cloudflareHostnameId || null,
-      domainVerifiedAt: domainVerifiedAt ? new Date(domainVerifiedAt) : null,
+      domainVerifiedAt: toTimestampOrNull(domainVerifiedAt),
       updatedAt: new Date()
     })
     .where(eq(sites.slug, slug))
@@ -172,11 +187,11 @@ export async function renameSite(
     .set({
       slug: newSlug,
       data: rest,
-      isPaid: isPaid ? new Date(isPaid) : null,
+      isPaid: toTimestampOrNull(isPaid),
       stripeCustomerId: stripeCustomerId || null,
       customDomain: customDomain ? customDomain.toLowerCase() : null,
       cloudflareHostnameId: cloudflareHostnameId || null,
-      domainVerifiedAt: domainVerifiedAt ? new Date(domainVerifiedAt) : null,
+      domainVerifiedAt: toTimestampOrNull(domainVerifiedAt),
       updatedAt: new Date()
     })
     .where(eq(sites.slug, oldSlug))
@@ -210,11 +225,11 @@ export async function createSite(
   await db.insert(sites).values({
     slug,
     data: rest,
-    isPaid: isPaid ? new Date(isPaid) : null,
+    isPaid: toTimestampOrNull(isPaid),
     stripeCustomerId: stripeCustomerId || null,
     customDomain: customDomain ? customDomain.toLowerCase() : null,
     cloudflareHostnameId: cloudflareHostnameId || null,
-    domainVerifiedAt: domainVerifiedAt ? new Date(domainVerifiedAt) : null,
+    domainVerifiedAt: toTimestampOrNull(domainVerifiedAt),
   });
   return data;
 }
