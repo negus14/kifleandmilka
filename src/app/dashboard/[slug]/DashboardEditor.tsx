@@ -2884,12 +2884,34 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                           />
                           {site.customDomain && (
                             <div className="mt-3 p-4 bg-[#f7f6f3] border border-[#2d2b25]/10 rounded-sm">
-                              <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/60 mb-2">DNS Setup</p>
-                              <p className="text-xs text-[#2d2b25]/70 mb-2">1. Go to your domain registrar&apos;s DNS settings</p>
-                              <p className="text-xs text-[#2d2b25]/70 mb-2">2. Add a CNAME record pointing to:</p>
-                              <code className="block text-xs bg-white px-3 py-2 border border-[#2d2b25]/10 rounded-sm text-[#2d2b25] select-all mb-2">proxy.ithinkshewifey.com</code>
-                              <p className="text-xs text-[#2d2b25]/70 mb-2">3. Save your DNS changes, then click verify below</p>
-                              <DomainStatus slug={site.slug} domain={site.customDomain} />
+                              <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/60 mb-3">Connect Your Domain</p>
+                              <div className="space-y-3 text-xs text-[#2d2b25]/70">
+                                <div className="flex gap-2">
+                                  <span className="shrink-0 w-5 h-5 rounded-full bg-[#2d2b25]/10 flex items-center justify-center text-[10px] font-bold text-[#2d2b25]/60">1</span>
+                                  <p>Log in to the website where you bought your domain (e.g. Namecheap, GoDaddy, Cloudflare)</p>
+                                </div>
+                                <div className="flex gap-2">
+                                  <span className="shrink-0 w-5 h-5 rounded-full bg-[#2d2b25]/10 flex items-center justify-center text-[10px] font-bold text-[#2d2b25]/60">2</span>
+                                  <div>
+                                    <p>Find your domain&apos;s DNS settings and add a new record:</p>
+                                    <div className="mt-2 bg-white border border-[#2d2b25]/10 rounded-sm overflow-hidden">
+                                      <div className="grid grid-cols-3 text-[10px] font-bold uppercase tracking-wider text-[#2d2b25]/40 px-3 py-1.5 border-b border-[#2d2b25]/5">
+                                        <span>Type</span><span>Name</span><span>Value</span>
+                                      </div>
+                                      <div className="grid grid-cols-3 text-xs px-3 py-2 font-mono">
+                                        <span>CNAME</span><span>@</span><span className="select-all">proxy.ithinkshewifey.com</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="flex gap-2">
+                                  <span className="shrink-0 w-5 h-5 rounded-full bg-[#2d2b25]/10 flex items-center justify-center text-[10px] font-bold text-[#2d2b25]/60">3</span>
+                                  <p>Save and come back here to verify. It can take up to 10 minutes for changes to take effect.</p>
+                                </div>
+                              </div>
+                              <div className="mt-4">
+                                <DomainStatus slug={site.slug} domain={site.customDomain} />
+                              </div>
                             </div>
                           )}
                         </>
