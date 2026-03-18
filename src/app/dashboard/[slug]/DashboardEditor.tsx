@@ -268,61 +268,76 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
 function DomainRequest({ slug }: { slug: string }) {
   const [domain, setDomain] = useState("");
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [errorMsg, setErrorMsg] = useState("");
 
   const handleSubmit = async () => {
     if (!domain.trim()) return;
     setStatus("sending");
+    setErrorMsg("");
     try {
       const res = await fetch(`/api/sites/${slug}/domain-request`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ domain: domain.trim().toLowerCase() }),
       });
-      if (res.ok) setStatus("sent");
-      else setStatus("error");
+      if (res.ok) {
+        setStatus("sent");
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setErrorMsg(data.error || "Something went wrong. Please try again.");
+        setStatus("error");
+      }
     } catch {
+      setErrorMsg("Something went wrong. Please try again.");
       setStatus("error");
     }
   };
 
-  if (status === "sent") {
-    return (
-      <div className="p-4 bg-green-50 border border-green-200 rounded-sm">
-        <p className="text-xs font-medium text-green-800">Request submitted!</p>
-        <p className="text-[10px] text-green-600 mt-1">
-          We&apos;ll set up <strong>{domain}</strong> for you and email you when it&apos;s ready. This usually takes 24–48 hours.
-        </p>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-3">
-      <p className="text-xs text-[#2d2b25]/70">
-        Enter your desired domain and we&apos;ll handle everything — purchasing, setup, and connecting it to your site.
-      </p>
-      <input
-        type="text"
-        value={domain}
-        onChange={(e) => setDomain(e.target.value.toLowerCase().replace(/[^a-z0-9.-]/g, ""))}
-        placeholder="e.g. milkaandkifle.com"
-        className="w-full text-sm px-3 py-2.5 bg-white border border-[#2d2b25]/15 rounded-sm focus:outline-none focus:border-[#2d2b25]/40 transition-colors placeholder:text-[#2d2b25]/25"
-      />
-      {domain && (
-        <button
-          onClick={handleSubmit}
-          disabled={status === "sending"}
-          className="w-full py-2.5 text-[10px] font-semibold tracking-[0.12em] uppercase bg-[#2d2b25] text-[#faf1e1] hover:bg-[#1a1812] disabled:opacity-50 transition-colors rounded-sm"
-        >
-          {status === "sending" ? "Submitting..." : `Request ${domain}`}
-        </button>
+      {status === "sent" && (
+        <div className="p-4 bg-green-50 border border-green-200 rounded-sm">
+          <p className="text-xs font-medium text-green-800">Request submitted!</p>
+          <p className="text-[10px] text-green-600 mt-1">
+            We&apos;ll set up <strong>{domain}</strong> for you and email you when it&apos;s ready. This usually takes 24–48 hours.
+          </p>
+          <button
+            onClick={() => { setStatus("idle"); setDomain(""); }}
+            className="mt-2 text-[10px] text-green-700 underline hover:no-underline"
+          >
+            Request a different domain
+          </button>
+        </div>
       )}
-      {status === "error" && (
-        <p className="text-xs text-red-600">Something went wrong. Please try again or contact support.</p>
+      {status !== "sent" && (
+        <>
+          <p className="text-xs text-[#2d2b25]/70">
+            Enter your desired domain and we&apos;ll handle everything — purchasing, setup, and connecting it to your site.
+          </p>
+          <input
+            type="text"
+            value={domain}
+            onChange={(e) => { setDomain(e.target.value.toLowerCase().replace(/[^a-z0-9.-]/g, "")); if (status === "error") setStatus("idle"); }}
+            placeholder="e.g. milkaandkifle.com"
+            className="w-full text-sm px-3 py-2.5 bg-white border border-[#2d2b25]/15 rounded-sm focus:outline-none focus:border-[#2d2b25]/40 transition-colors placeholder:text-[#2d2b25]/25"
+          />
+          {status === "error" && (
+            <p className="text-xs text-red-600">{errorMsg}</p>
+          )}
+          {domain && (
+            <button
+              onClick={handleSubmit}
+              disabled={status === "sending"}
+              className="w-full py-2.5 text-[10px] font-semibold tracking-[0.12em] uppercase bg-[#2d2b25] text-[#faf1e1] hover:bg-[#1a1812] disabled:opacity-50 transition-colors rounded-sm"
+            >
+              {status === "sending" ? "Checking availability..." : `Request ${domain}`}
+            </button>
+          )}
+          <p className="text-[10px] text-[#2d2b25]/40">
+            Domain registration is included in your premium plan. We&apos;ll check availability and get back to you.
+          </p>
+        </>
       )}
-      <p className="text-[10px] text-[#2d2b25]/40">
-        Domain registration is included in your premium plan. We&apos;ll check availability and get back to you.
-      </p>
     </div>
   );
 }

@@ -1,9 +1,22 @@
 import { NextRequest } from "next/server";
+import dns from "dns";
 import { requirePaidAuth } from "@/lib/auth";
 import { apiOk, apiError } from "@/lib/api-response";
+import { getSiteByDomain } from "@/lib/data/sites";
 import { Resend } from "resend";
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "abel@ithinkshewifey.com";
+
+/** Check if a domain is already registered (has DNS records). */
+async function isDomainRegistered(domain: string): Promise<boolean> {
+  try {
+    await dns.promises.resolveAny(domain);
+    return true; // has DNS records = registered
+  } catch (err: any) {
+    if (err.code === "ENOTFOUND" || err.code === "ENODATA") return false; // not registered
+    return false; // DNS error = assume available, we'll verify manually
+  }
+}
 
 export async function POST(request: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -15,6 +28,18 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 
   if (!domain || !domain.includes(".")) {
     return apiError("Please enter a valid domain (e.g. milkaandkifle.com)", 400);
+  }
+
+  // Check if domain is already used on our platform
+  const existingSite = await getSiteByDomain(domain);
+  if (existingSite) {
+    return apiError("This domain is already connected to another site on our platform", 400);
+  }
+
+  // Check if domain is already registered by someone else
+  const registered = await isDomainRegistered(domain);
+  if (registered) {
+    return apiError("This domain is already registered. Please choose a different domain, or contact support if you already own it.", 400);
   }
 
   // Send notification email
