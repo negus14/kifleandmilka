@@ -21,9 +21,28 @@ const PLATFORM_HOSTS = [
 export default async function(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // ─── Custom Domain Routing ───
+  // ─── Subdomain & Custom Domain Routing ───
   const hostname = request.headers.get("host")?.split(":")[0] || "";
-  const isPlatformHost = PLATFORM_HOSTS.some((h) => hostname === h || hostname.endsWith(`.${h}`));
+  const isMainHost = PLATFORM_HOSTS.some((h) => hostname === h);
+
+  // Check for subdomain of ithinkshewifey.com (e.g. kifleandmilka.ithinkshewifey.com)
+  const subdomainMatch = hostname.match(/^([a-z0-9-]+)\.(?:ithinkshewifey\.com|localhost)$/);
+  const subdomain = subdomainMatch?.[1];
+  const isSubdomain = subdomain && subdomain !== "www" && subdomain !== "proxy";
+
+  if (
+    isSubdomain &&
+    !pathname.startsWith("/api/") &&
+    !pathname.startsWith("/_next/") &&
+    !pathname.includes(".")
+  ) {
+    // Rewrite subdomain to the site's slug path
+    const url = request.nextUrl.clone();
+    url.pathname = `/${subdomain}${pathname === "/" ? "" : pathname}`;
+    return NextResponse.rewrite(url);
+  }
+
+  const isPlatformHost = isMainHost || (!!subdomain && (subdomain === "www" || subdomain === "proxy"));
 
   if (
     !isPlatformHost &&
