@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 import dns from "dns";
 import { requirePaidAuth } from "@/lib/auth";
 import { apiOk, apiError } from "@/lib/api-response";
-import { getSiteByDomain } from "@/lib/data/sites";
+import { getSiteByDomain, updateSite } from "@/lib/data/sites";
 import { Resend } from "resend";
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "abel@ithinkshewifey.com";
@@ -36,10 +36,14 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     return apiError("This domain is already connected to another site on our platform", 400);
   }
 
-  // Check if domain is already registered by someone else
-  const registered = await isDomainRegistered(domain);
-  if (registered) {
-    return apiError("This domain is already registered. Please choose a different domain, or contact support if you already own it.", 400);
+  const requestType = body.type === "own" ? "own" : "buy";
+
+  // Only check availability if they want us to buy it
+  if (requestType === "buy") {
+    const registered = await isDomainRegistered(domain);
+    if (registered) {
+      return apiError("This domain is already registered. Please choose a different domain, or select 'I already have a domain' if you own it.", 400);
+    }
   }
 
   // Send notification email
@@ -53,18 +57,19 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     await resend.emails.send({
       from: process.env.EMAIL_FROM || "noreply@ithinkshewifey.com",
       to: ADMIN_EMAIL,
-      subject: `Domain Request: ${domain} for ${slug}`,
+      subject: `Domain Request (${requestType === "own" ? "existing" : "purchase"}): ${domain} for ${slug}`,
       html: `
         <h2>New Custom Domain Request</h2>
         <table style="border-collapse:collapse;font-family:sans-serif;">
           <tr><td style="padding:8px;font-weight:bold;color:#666;">Site</td><td style="padding:8px;">${slug}</td></tr>
           <tr><td style="padding:8px;font-weight:bold;color:#666;">Requested Domain</td><td style="padding:8px;"><strong>${domain}</strong></td></tr>
+          <tr><td style="padding:8px;font-weight:bold;color:#666;">Type</td><td style="padding:8px;">${requestType === "own" ? "Customer already owns this domain" : "Purchase new domain (£15/year)"}</td></tr>
           <tr><td style="padding:8px;font-weight:bold;color:#666;">Dashboard</td><td style="padding:8px;"><a href="https://ithinkshewifey.com/dashboard/${slug}">Open Dashboard</a></td></tr>
         </table>
         <h3>Setup Steps</h3>
         <ol>
-          <li>Check availability and purchase <strong>${domain}</strong> on Cloudflare Registrar</li>
-          <li>Add CNAME record: <code>@</code> → <code>proxy.ithinkshewifey.com</code></li>
+          ${requestType === "buy" ? `<li>Check availability and purchase <strong>${domain}</strong> on Cloudflare Registrar</li>` : `<li>Email customer DNS instructions: CNAME <code>@</code> → <code>proxy.ithinkshewifey.com</code></li>`}
+          ${requestType === "buy" ? `<li>Add CNAME record: <code>@</code> → <code>proxy.ithinkshewifey.com</code></li>` : ""}
           <li>Register custom hostname via Cloudflare for SaaS API</li>
           <li>Update site record: set customDomain to <code>${domain}</code></li>
           <li>Verify and mark as connected</li>
@@ -78,4 +83,14 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     console.error("[Domain Request] Failed to send email:", error);
     return apiError("Failed to submit request", 500);
   }
+}
+
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const auth = await requirePaidAuth(slug);
+  if (auth instanceof Response) return auth;
+
+  await updateSite(slug, { customDomain: null } as any);
+  console.log(`[Domain Request] Cancelled for ${slug}`);
+  return apiOk({ message: "Request cancelled" });
 }

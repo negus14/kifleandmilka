@@ -266,12 +266,13 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
 }
 
 function DomainRequest({ slug, existingDomain }: { slug: string; existingDomain?: string | null }) {
+  const [mode, setMode] = useState<"choose" | "buy" | "own">(existingDomain ? "buy" : "choose");
   const [domain, setDomain] = useState("");
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
   const [expanded, setExpanded] = useState(!existingDomain);
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (type: "buy" | "own") => {
     if (!domain.trim()) return;
     setStatus("sending");
     setErrorMsg("");
@@ -279,7 +280,7 @@ function DomainRequest({ slug, existingDomain }: { slug: string; existingDomain?
       const res = await fetch(`/api/sites/${slug}/domain-request`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ domain: domain.trim().toLowerCase() }),
+        body: JSON.stringify({ domain: domain.trim().toLowerCase(), type }),
       });
       if (res.ok) {
         setStatus("sent");
@@ -297,9 +298,9 @@ function DomainRequest({ slug, existingDomain }: { slug: string; existingDomain?
   if (status === "sent") {
     return (
       <div className="p-4 bg-green-50 border border-green-200 rounded-sm">
-        <p className="text-xs font-medium text-green-800">Updated request submitted!</p>
+        <p className="text-xs font-medium text-green-800">Request submitted!</p>
         <p className="text-[10px] text-green-600 mt-1">
-          We&apos;ll set up <strong>{domain}</strong> instead. You&apos;ll receive an email when it&apos;s ready.
+          We&apos;ll connect <strong>{domain}</strong> to your site. You&apos;ll receive an email when it&apos;s ready.
         </p>
       </div>
     );
@@ -316,12 +317,36 @@ function DomainRequest({ slug, existingDomain }: { slug: string; existingDomain?
     );
   }
 
+  // Choice screen
+  if (mode === "choose" && !existingDomain) {
+    return (
+      <div className="space-y-2">
+        <button
+          onClick={() => setMode("buy")}
+          className="w-full p-3 text-left border border-[#2d2b25]/10 rounded-sm hover:border-[#2d2b25]/30 transition-colors"
+        >
+          <p className="text-xs font-medium text-[#2d2b25]">I need a new domain</p>
+          <p className="text-[10px] text-[#2d2b25]/50 mt-0.5">We&apos;ll purchase and set it up for you — from £15/year</p>
+        </button>
+        <button
+          onClick={() => setMode("own")}
+          className="w-full p-3 text-left border border-[#2d2b25]/10 rounded-sm hover:border-[#2d2b25]/30 transition-colors"
+        >
+          <p className="text-xs font-medium text-[#2d2b25]">I already have a domain</p>
+          <p className="text-[10px] text-[#2d2b25]/50 mt-0.5">We&apos;ll connect your existing domain for free</p>
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-3">
       <p className="text-xs text-[#2d2b25]/70">
         {existingDomain
           ? "Enter a different domain to update your request:"
-          : "Enter your desired domain and we\u2019ll handle everything \u2014 purchasing, setup, and connecting it to your site."}
+          : mode === "own"
+            ? "Enter the domain you already own:"
+            : "Enter the domain you\u2019d like us to purchase for you:"}
       </p>
       <input
         type="text"
@@ -330,27 +355,44 @@ function DomainRequest({ slug, existingDomain }: { slug: string; existingDomain?
         placeholder="e.g. milkaandkifle.com"
         className="w-full text-sm px-3 py-2.5 bg-white border border-[#2d2b25]/15 rounded-sm focus:outline-none focus:border-[#2d2b25]/40 transition-colors placeholder:text-[#2d2b25]/25"
       />
+      {mode === "own" && domain && (
+        <div className="p-3 bg-[#f7f6f3] border border-[#2d2b25]/10 rounded-sm">
+          <p className="text-[10px] text-[#2d2b25]/60">
+            After submitting, you&apos;ll need to add a DNS record pointing to us. We&apos;ll email you the instructions.
+          </p>
+        </div>
+      )}
       {status === "error" && (
         <p className="text-xs text-red-600">{errorMsg}</p>
       )}
       {domain && (
         <button
-          onClick={handleSubmit}
+          onClick={() => handleSubmit(mode === "choose" ? "buy" : mode)}
           disabled={status === "sending"}
           className="w-full py-2.5 text-[10px] font-semibold tracking-[0.12em] uppercase bg-[#2d2b25] text-[#faf1e1] hover:bg-[#1a1812] disabled:opacity-50 transition-colors rounded-sm"
         >
-          {status === "sending" ? "Checking availability..." : existingDomain ? `Update to ${domain}` : `Request ${domain}`}
+          {status === "sending" ? "Submitting..." : existingDomain ? `Update to ${domain}` : mode === "own" ? `Connect ${domain}` : `Request ${domain}`}
         </button>
       )}
-      {existingDomain && (
-        <button
-          onClick={() => setExpanded(false)}
-          className="text-[10px] text-[#2d2b25]/40 hover:text-[#2d2b25]/60 transition-colors"
-        >
-          Cancel
-        </button>
-      )}
-      {!existingDomain && (
+      <div className="flex gap-3">
+        {!existingDomain && (
+          <button
+            onClick={() => { setMode("choose"); setDomain(""); setStatus("idle"); }}
+            className="text-[10px] text-[#2d2b25]/40 hover:text-[#2d2b25]/60 transition-colors"
+          >
+            Back
+          </button>
+        )}
+        {existingDomain && (
+          <button
+            onClick={() => setExpanded(false)}
+            className="text-[10px] text-[#2d2b25]/40 hover:text-[#2d2b25]/60 transition-colors"
+          >
+            Cancel
+          </button>
+        )}
+      </div>
+      {mode === "buy" && !existingDomain && (
         <p className="text-[10px] text-[#2d2b25]/40">
           Custom domains are £15/year. We&apos;ll check availability and send you a payment link.
         </p>
@@ -2835,6 +2877,16 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                             <p className="text-xs text-amber-700">
                               <strong>{site.customDomain}</strong> — we&apos;re working on it. You&apos;ll receive an email when it&apos;s ready.
                             </p>
+                            <button
+                              onClick={async () => {
+                                if (!confirm("Cancel your domain request?")) return;
+                                await fetch(`/api/sites/${site.slug}/domain-request`, { method: "DELETE" });
+                                set("customDomain", null);
+                              }}
+                              className="mt-2 text-[10px] text-amber-600 underline hover:no-underline"
+                            >
+                              Cancel request
+                            </button>
                           </div>
                           <DomainRequest slug={site.slug} existingDomain={site.customDomain} />
                         </div>
