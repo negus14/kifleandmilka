@@ -16,6 +16,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `${site.partner1Name} & ${site.partner2Name} — ${site.dateDisplayText}`,
     description: `Join us in celebrating the wedding of ${site.partner1Name} and ${site.partner2Name} — ${site.dateDisplayText} in ${site.locationText}.`,
+    openGraph: {
+      title: `${site.partner1Name} & ${site.partner2Name}`,
+      description: `Join us in celebrating the wedding of ${site.partner1Name} and ${site.partner2Name} — ${site.dateDisplayText} in ${site.locationText}.`,
+      url: `${process.env.NEXT_PUBLIC_BASE_URL}/${slug}`,
+      type: "website",
+    },
   };
 }
 

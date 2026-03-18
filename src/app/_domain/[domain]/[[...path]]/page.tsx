@@ -14,6 +14,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `${site.partner1Name} & ${site.partner2Name} — ${site.dateDisplayText}`,
     description: `Join us in celebrating the wedding of ${site.partner1Name} and ${site.partner2Name} — ${site.dateDisplayText} in ${site.locationText}.`,
+    openGraph: {
+      title: `${site.partner1Name} & ${site.partner2Name}`,
+      description: `Join us in celebrating the wedding of ${site.partner1Name} and ${site.partner2Name} — ${site.dateDisplayText} in ${site.locationText}.`,
+      url: `https://${domain}`,
+      type: "website",
+    },
     alternates: {
       canonical: `https://${domain}`,
     },
