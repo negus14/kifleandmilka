@@ -82,7 +82,7 @@ function Field({ label, value, onChange, placeholder, multiline, rows, type = "t
   );
 }
 
-function SlugField({ currentSlug, isPaid, onSave }: { currentSlug: string; isPaid: boolean; onSave: (val: string) => void }) {
+function SlugField({ currentSlug, onSave }: { currentSlug: string; onSave: (val: string) => void }) {
   const [draft, setDraft] = useState(currentSlug);
   const hasChanged = draft !== currentSlug;
 
@@ -113,13 +113,6 @@ function SlugField({ currentSlug, isPaid, onSave }: { currentSlug: string; isPai
       <p className="text-[10px] text-[#2d2b25]/40 mt-2 uppercase tracking-wider">
         Caution: Changing this will change your public website address.
       </p>
-      {isPaid && (
-        <div className="mt-3 pt-3 border-t border-[#2d2b25]/10">
-          <p className="text-[10px] text-[#2d2b25]/50">
-            Want your own domain like <strong>{currentSlug}.com</strong>? Scroll down to <strong>Custom Domain</strong> in Settings to request one.
-          </p>
-        </div>
-      )}
     </div>
   );
 }
@@ -2798,7 +2791,36 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                 <div>
                   <SectionTitle>Basic Info</SectionTitle>
                   
-                  <SlugField currentSlug={site.slug} isPaid={!!site.isPaid} onSave={(val) => set("slug", val)} />
+                  <SlugField currentSlug={site.slug} onSave={(val) => set("slug", val)} />
+
+                  {/* Custom Domain — right below Site URL */}
+                  {site.isPaid && (
+                    <div className="mb-6 p-4 bg-[#2d2b25]/5 border border-[#2d2b25]/10 rounded-sm">
+                      <Label>Custom Domain</Label>
+                      <p className="text-[10px] text-[#2d2b25]/40 mb-4 uppercase tracking-wider">Use your own domain instead of ithinkshewifey.com/{site.slug}</p>
+                      {site.domainVerifiedAt ? (
+                        <div className="p-4 bg-green-50 border border-green-200 rounded-sm">
+                          <p className="text-xs font-medium text-green-800">
+                            {site.customDomain} is connected
+                          </p>
+                          <p className="text-[10px] text-green-600 mt-1">
+                            Your custom domain is live. Contact support to make changes.
+                          </p>
+                        </div>
+                      ) : site.customDomain ? (
+                        <div className="p-4 bg-amber-50 border border-amber-200 rounded-sm">
+                          <p className="text-xs font-medium text-amber-800">
+                            {site.customDomain} is being set up
+                          </p>
+                          <p className="text-[10px] text-amber-600 mt-1">
+                            We&apos;re connecting your domain. You&apos;ll receive an email when it&apos;s ready.
+                          </p>
+                        </div>
+                      ) : (
+                        <DomainRequest slug={site.slug} />
+                      )}
+                    </div>
+                  )}
 
                   <Field label="Partner 1 Name" value={site.partner1Name} onChange={(v) => set("partner1Name", v)} />
                   <Field label="Partner 2 Name" value={site.partner2Name} onChange={(v) => set("partner2Name", v)} />
@@ -2912,35 +2934,6 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                       onChange={(fonts) => set("customFonts", fonts as any)}
                     />
                   </div>
-
-                  {/* Custom Domain */}
-                  {site.isPaid && (
-                    <div className="mt-10 pt-8 border-t border-[#2d2b25]/10">
-                      <Label>Custom Domain</Label>
-                      <p className="text-[10px] text-[#2d2b25]/40 mb-4 uppercase tracking-wider">Use your own domain instead of ithinkshewifey.com/{site.slug}</p>
-                      {site.domainVerifiedAt ? (
-                        <div className="p-4 bg-green-50 border border-green-200 rounded-sm">
-                          <p className="text-xs font-medium text-green-800">
-                            {site.customDomain} is connected
-                          </p>
-                          <p className="text-[10px] text-green-600 mt-1">
-                            Your custom domain is live. Contact support to make changes.
-                          </p>
-                        </div>
-                      ) : site.customDomain ? (
-                        <div className="p-4 bg-amber-50 border border-amber-200 rounded-sm">
-                          <p className="text-xs font-medium text-amber-800">
-                            {site.customDomain} is being set up
-                          </p>
-                          <p className="text-[10px] text-amber-600 mt-1">
-                            We&apos;re connecting your domain. You&apos;ll receive an email when it&apos;s ready.
-                          </p>
-                        </div>
-                      ) : (
-                        <DomainRequest slug={site.slug} />
-                      )}
-                    </div>
-                  )}
 
                   {/* Publish Section */}
                   <div className="mt-10 pt-8 border-t border-[#2d2b25]/10">
