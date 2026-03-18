@@ -26,7 +26,7 @@ const nextConfig: NextConfig = {
               // Styles: self + Google Fonts + inline (needed for styled-jsx/emotion)
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               // Fonts: Google Fonts CDN
-              "font-src 'self' https://fonts.gstatic.com",
+              "font-src 'self' https://fonts.gstatic.com data:",
               // Images: self + your R2 bucket + Unsplash + data URIs (for inline images)
               "img-src 'self' https://*.r2.dev https://*.r2.cloudflarestorage.com https://assets.ithinkshewifey.com https://images.unsplash.com data: blob:",
               // iframes: Google Maps embeds only
