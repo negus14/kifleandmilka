@@ -40,12 +40,12 @@ export async function POST(req: NextRequest) {
       line_items: [
         {
           price_data: {
-            currency: "usd",
+            currency: "gbp",
             product_data: {
               name: `Wedding Website - ${site.slug}`,
               description: "Full access to ithinkshewifey.com features",
             },
-            unit_amount: 2900, // $29.00
+            unit_amount: 5000, // £50.00
           },
           quantity: 1,
         },
