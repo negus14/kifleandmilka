@@ -302,6 +302,12 @@ function DomainRequest({ slug, existingDomain }: { slug: string; existingDomain?
         <p className="text-[10px] text-green-600 mt-1">
           We&apos;ll connect <strong>{domain}</strong> to your site. You&apos;ll receive an email when it&apos;s ready.
         </p>
+        <button
+          onClick={() => { setStatus("idle"); setDomain(""); }}
+          className="mt-2 text-[10px] text-green-700 underline hover:no-underline"
+        >
+          Change or cancel request
+        </button>
       </div>
     );
   }
