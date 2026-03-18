@@ -7,70 +7,80 @@
       "version": "7",
       "when": 1773423064860,
       "tag": "0000_chief_kitty_pryde",
-      "breakpoints": true
+      "breakpoints": true,
+      "date": "2026-03-11T09:31:04Z"
     },
     {
       "idx": 1,
       "version": "7",
       "when": 1773578950334,
       "tag": "0001_lowly_beast",
-      "breakpoints": true
+      "breakpoints": true,
+      "date": "2026-03-13T04:49:10Z"
     },
     {
       "idx": 2,
       "version": "7",
       "when": 1773588000000,
       "tag": "0002_create_rsvps_if_missing",
-      "breakpoints": true
+      "breakpoints": true,
+      "date": "2026-03-13T07:20:00Z"
     },
     {
       "idx": 3,
       "version": "7",
       "when": 1773589000000,
       "tag": "0003_mark_existing_customers_paid",
-      "breakpoints": true
+      "breakpoints": true,
+      "date": "2026-03-13T07:36:40Z"
     },
     {
       "idx": 4,
       "version": "7",
       "when": 1773658110031,
       "tag": "0004_aromatic_randall",
-      "breakpoints": true
+      "breakpoints": true,
+      "date": "2026-03-14T02:48:30Z"
     },
     {
       "idx": 5,
       "version": "7",
       "when": 1773698679723,
       "tag": "0005_motionless_zemo",
-      "breakpoints": true
+      "breakpoints": true,
+      "date": "2026-03-14T14:04:39Z"
     },
     {
       "idx": 6,
       "version": "7",
       "when": 1773745284117,
       "tag": "0006_nappy_the_hunter",
-      "breakpoints": true
+      "breakpoints": true,
+      "date": "2026-03-15T03:01:24Z"
     },
     {
       "idx": 7,
       "version": "7",
       "when": 1774080000000,
       "tag": "0007_fix_column_types",
-      "breakpoints": true
+      "breakpoints": true,
+      "date": "2026-03-18T12:00:00Z"
     },
     {
       "idx": 8,
       "version": "7",
       "when": 1774090000000,
       "tag": "0008_custom_domain_fields",
-      "breakpoints": true
+      "breakpoints": true,
+      "date": "2026-03-18T14:46:40Z"
     },
     {
       "idx": 9,
       "version": "7",
       "when": 1773848829602,
       "tag": "0009_faithful_jackal",
-      "breakpoints": true
+      "breakpoints": true,
+      "date": "2026-03-16T07:47:09Z"
     }
   ]
 }
