@@ -352,7 +352,7 @@ function DomainRequest({ slug, existingDomain }: { slug: string; existingDomain?
       )}
       {!existingDomain && (
         <p className="text-[10px] text-[#2d2b25]/40">
-          Domain registration is included in your premium plan. We&apos;ll check availability and get back to you.
+          Domains start from ~£10/year. We&apos;ll check availability and confirm the price before purchasing.
         </p>
       )}
     </div>
