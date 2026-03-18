@@ -5,7 +5,7 @@ import { apiOk, apiError } from "@/lib/api-response";
 import { getSiteByDomain, updateSite } from "@/lib/data/sites";
 import { Resend } from "resend";
 
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "abel@ithinkshewifey.com";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "2percentcargoltd@gmail.com";
 
 /** Check if a domain is already registered (has DNS records). */
 async function isDomainRegistered(domain: string): Promise<boolean> {
