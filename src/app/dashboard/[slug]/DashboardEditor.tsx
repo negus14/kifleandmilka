@@ -38,6 +38,8 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import ClassicTemplate from "@/templates/classic/Template";
 import ModernTemplate from "@/templates/modern/Template";
+import ColorCustomizer from "@/components/dashboard/ColorCustomizer";
+import FontCustomizer from "@/components/dashboard/FontCustomizer";
 
 const STATIC_TABS = ["Basics", "Layout"] as const;
 type View = "website" | "guests" | "gifts" | "messages";
@@ -86,8 +88,8 @@ function SlugField({ currentSlug, onSave }: { currentSlug: string; onSave: (val:
   return (
     <div className="mb-6 p-4 bg-[#2d2b25]/5 border border-[#2d2b25]/10 rounded-sm">
       <Label>Site URL</Label>
-      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 sm:gap-2 mt-1">
-        <span className="text-xs sm:text-sm text-[#2d2b25]/40 shrink-0">ithinkshewifey.com/</span>
+      <div className="flex items-center gap-2 mt-1">
+        <span className="text-xs text-[#2d2b25]/40 shrink-0 hidden sm:inline">ithinkshewifey.com/</span>
         <input
           type="text"
           value={draft}
@@ -95,18 +97,18 @@ function SlugField({ currentSlug, onSave }: { currentSlug: string; onSave: (val:
             const val = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "");
             setDraft(val);
           }}
-          className="flex-1 px-3 py-2 border border-[#2d2b25]/15 bg-white/50 text-[#2d2b25] text-sm font-medium outline-none focus:border-[#2d2b25]/40 rounded-sm"
+          className="flex-1 min-w-0 px-3 py-2 border border-[#2d2b25]/15 bg-white/50 text-[#2d2b25] text-sm font-medium outline-none focus:border-[#2d2b25]/40 rounded-sm"
           placeholder="your-url-here"
         />
-        {hasChanged && (
-          <button
-            onClick={() => onSave(draft)}
-            className="px-4 py-2 bg-[#2d2b25] text-[#faf1e1] text-xs font-semibold tracking-[0.1em] uppercase rounded-sm hover:opacity-90 transition-opacity shrink-0"
-          >
-            Update URL
-          </button>
-        )}
       </div>
+      {hasChanged && (
+        <button
+          onClick={() => onSave(draft)}
+          className="mt-2 w-full px-4 py-2 bg-[#2d2b25] text-[#faf1e1] text-[10px] font-bold tracking-widest uppercase rounded-sm hover:opacity-90 transition-opacity"
+        >
+          Update URL
+        </button>
+      )}
       <p className="text-[10px] text-[#2d2b25]/40 mt-2 uppercase tracking-wider">
         Caution: Changing this will change your public website address.
       </p>
@@ -2108,6 +2110,8 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(true); // Start as saved
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [showRenameConfirm, setShowRenameConfirm] = useState(false);
+  const [showSaveErrorModal, setShowSaveErrorModal] = useState<string | null>(null);
   const saveRetryCountRef = useRef(0);
   const MAX_SAVE_RETRIES = 2;
   const [isPreview, setIsPreview] = useState(true);
@@ -2281,6 +2285,11 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
     setSaved(false);
   }
 
+  // Inline editing callback — uses set() so undo/redo and auto-save work
+  const handleFieldUpdate = useCallback((field: string, value: string) => {
+    set(field as keyof WeddingSite, value as any);
+  }, [site]); // eslint-disable-line react-hooks/exhaustive-deps
+
   function setSectionData(sectionId: string, data: any) {
     setPast((p) => [...p.slice(-49), site]);
     setFuture([]);
@@ -2392,13 +2401,11 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
     return arr.filter((_, i) => i !== index);
   }
 
-  async function handleSave(isRetry = false) {
-    // 1. Check for slug rename
-    if (site.slug !== initial.slug) {
-      const confirmRename = window.confirm(
-        `Are you sure you want to change your URL to /${site.slug}?\n\nThis will change your public website link and you will be redirected to the new dashboard.`
-      );
-      if (!confirmRename) return;
+  async function handleSave(isRetry = false, skipRenameCheck = false) {
+    // 1. Check for slug rename — show styled modal instead of window.confirm
+    if (!skipRenameCheck && site.slug !== initial.slug) {
+      setShowRenameConfirm(true);
+      return;
     }
 
     setSaving(true);
@@ -2432,13 +2439,13 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
       if (!isRetry && saveRetryCountRef.current < MAX_SAVE_RETRIES) {
         saveRetryCountRef.current++;
         console.log(`[Dashboard] Retrying save (${saveRetryCountRef.current}/${MAX_SAVE_RETRIES})...`);
-        setTimeout(() => handleSave(true), 2000);
+        setTimeout(() => handleSave(true, true), 2000);
         return; // Don't clear saving state yet
       }
 
       setSaveError(message);
       saveRetryCountRef.current = 0;
-      alert(`${message}\n\nYour changes have NOT been saved. Please check your connection and try again.`);
+      setShowSaveErrorModal(message);
     } finally {
       if (!isRetry || saveRetryCountRef.current === 0) {
         setSaving(false);
@@ -2586,9 +2593,9 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
       </header>
 
       {/* Main Layout with Sidebar */}
-      <div className={`mx-auto transition-all ${view === "website" && isPreview ? "max-w-[1800px] px-0 lg:px-3" : "max-w-6xl px-3 sm:px-6"} py-4 lg:py-8 flex flex-col lg:flex-row gap-0 ${view === "website" && isPreview ? "lg:gap-4" : "lg:gap-8"}`}>
+      <div className={`mx-auto transition-all ${view === "website" && isPreview ? "max-w-[1800px] px-0 lg:px-3 py-0 lg:py-0" : "max-w-6xl px-3 sm:px-6 py-4 lg:py-8"} flex flex-col lg:flex-row gap-0 ${view === "website" && isPreview ? "lg:gap-4" : "lg:gap-8"}`}>
         {/* Sidebar / Mobile Tabs */}
-        <nav className={`shrink-0 sticky top-14 lg:top-20 z-40 self-start transition-all ${view === "website" && isPreview ? "lg:w-28" : "lg:w-44"} w-full overflow-x-auto lg:overflow-x-visible no-scrollbar mb-6 lg:mb-0 px-4 lg:px-0 block bg-[#faf1e1]/95 backdrop-blur-sm lg:bg-transparent lg:backdrop-blur-none py-2 lg:py-0 -mx-0 border-b border-[#2d2b25]/[0.06] lg:border-b-0`}>
+        <nav className={`shrink-0 sticky top-14 lg:top-[3.5rem] z-40 self-start transition-all ${view === "website" && isPreview ? "lg:w-36 lg:h-[calc(100vh-3.5rem)] lg:overflow-y-auto lg:pt-4" : "lg:w-44"} w-full overflow-x-auto lg:overflow-x-visible no-scrollbar mb-6 lg:mb-0 px-4 lg:px-0 block bg-[#faf1e1]/95 backdrop-blur-sm lg:bg-transparent lg:backdrop-blur-none py-2 lg:py-0 -mx-0 border-b border-[#2d2b25]/[0.06] lg:border-b-0`}>
           <div className="flex lg:flex-col gap-1 min-w-max lg:min-w-0">
             {(() => {
               const order = site.sectionOrder ?? DEFAULT_SECTION_ORDER;
@@ -2624,19 +2631,19 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                       }
                       handleTabChange(t.id);
                     }}
-                    className={`whitespace-nowrap px-4 lg:px-3 py-2 text-[11px] lg:text-sm rounded-sm transition-all duration-200 ${
+                    className={`whitespace-nowrap px-4 lg:px-1 py-1.5 lg:py-1 text-[11px] lg:text-[13px] transition-all duration-200 text-left ${
                       view === "website" && tab === t.id
-                        ? "bg-[#2d2b25] text-[#faf1e1] shadow-md font-bold scale-[1.02]"
+                        ? "text-[#2d2b25] font-semibold"
                         : isHidden
                           ? "text-[#2d2b25]/20 cursor-not-allowed italic"
-                          : "text-[#2d2b25]/60 hover:text-[#2d2b25] hover:bg-[#2d2b25]/5 hover:translate-x-0.5"
+                          : "text-[#2d2b25]/40 hover:text-[#2d2b25]/70"
                     }`}
                     title={isHidden ? `${t.label} is hidden in layout` : ""}
                   >
-                    <div className="flex items-center justify-between gap-2">
-                      <span>{t.label}</span>
+                    <div className="flex items-center gap-2">
+                      <span className={view === "website" && tab === t.id ? "border-b border-[#2d2b25]" : ""}>{t.label}</span>
                       {isHidden && (
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="opacity-40">
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="opacity-40 shrink-0">
                           <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
                           <line x1="1" y1="1" x2="23" y2="23" />
                         </svg>
@@ -2659,15 +2666,15 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
               <button
                 key={item.id}
                 onClick={() => setView(item.id)}
-                className={`whitespace-nowrap px-4 lg:px-3 py-2 text-[11px] lg:text-sm rounded-sm transition-all duration-200 w-full text-left ${
+                className={`whitespace-nowrap px-4 lg:px-1 py-1.5 lg:py-1 text-[11px] lg:text-[13px] transition-all duration-200 w-full text-left ${
                   view === item.id
-                    ? "bg-[#2d2b25] text-[#faf1e1] shadow-md font-bold scale-[1.02]"
-                    : "text-[#2d2b25]/60 hover:text-[#2d2b25] hover:bg-[#2d2b25]/5 hover:translate-x-0.5"
+                    ? "text-[#2d2b25] font-semibold"
+                    : "text-[#2d2b25]/40 hover:text-[#2d2b25]/70"
                 }`}
               >
                 <div className="flex items-center gap-2">
-                  {item.icon}
-                  <span>{item.label}</span>
+                  <span className="lg:hidden">{item.icon}</span>
+                  <span className={view === item.id ? "border-b border-[#2d2b25]" : ""}>{item.label}</span>
                 </div>
               </button>
             ))}
@@ -2698,7 +2705,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
           {/* Editor Column */}
           <div
             style={isPreview ? { width: `${editorWidth}%`, maxWidth: `${editorWidth}%` } : { width: '100%' }}
-            className={`transition-all min-w-0 overflow-x-hidden ${isPreview ? "h-auto lg:h-[calc(100vh-10rem)] lg:overflow-y-auto lg:pr-6 custom-scrollbar block shrink-0 max-lg:!w-full max-lg:!max-w-full" : "w-full block"}`}
+            className={`transition-all min-w-0 overflow-x-hidden ${isPreview ? "h-auto lg:h-[calc(100vh-3.5rem)] lg:overflow-y-auto lg:pr-6 lg:pt-4 custom-scrollbar block shrink-0 max-lg:!w-full max-lg:!max-w-full lg:sticky lg:top-[3.5rem]" : "w-full max-h-[calc(100vh-8rem)] overflow-y-auto custom-scrollbar block"}`}
           >
             <div key={tab} className="animate-[fadeIn_0.3s_ease]">
             {(() => {
@@ -2761,7 +2768,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                       <button
                         key={theme.id}
                         type="button"
-                        onClick={() => set("templateId", theme.id)}
+                        onClick={() => { set("templateId", theme.id); set("customColors", undefined as any); }}
                         className={`relative text-left p-3 rounded-sm border-2 transition-all ${
                           site.templateId === theme.id
                             ? "border-[#2d2b25] shadow-sm bg-[#2d2b25]/[0.02]"
@@ -2780,6 +2787,13 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                       </button>
                     ))}
                   </div>
+                  <div className="mb-6">
+                    <ColorCustomizer
+                      templateId={site.templateId}
+                      customColors={site.customColors}
+                      onChange={(colors) => set("customColors", colors as any)}
+                    />
+                  </div>
 
                   <Label>Font Style</Label>
                   <div className="grid grid-cols-2 gap-3 mt-2 mb-4">
@@ -2787,7 +2801,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                       <button
                         key={style.id}
                         type="button"
-                        onClick={() => set("fontStyleId", style.id)}
+                        onClick={() => { set("fontStyleId", style.id); set("customFonts", undefined as any); }}
                         className={`relative text-left p-4 rounded-sm border-2 transition-all ${
                           (site.fontStyleId || "timeless") === style.id
                             ? "border-[#2d2b25] shadow-sm bg-[#2d2b25]/[0.02]"
@@ -2805,6 +2819,13 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                         )}
                       </button>
                     ))}
+                  </div>
+                  <div className="mb-6">
+                    <FontCustomizer
+                      fontStyleId={site.fontStyleId}
+                      customFonts={site.customFonts}
+                      onChange={(fonts) => set("customFonts", fonts as any)}
+                    />
                   </div>
 
                   {/* Custom Domain */}
@@ -3663,7 +3684,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
           {isPreview && (
             <div
               style={{ width: `${100 - editorWidth}%`, maxWidth: `${100 - editorWidth}%` }}
-              className="sticky top-20 h-[calc(100vh-6rem)] border border-[#2d2b25]/10 bg-white rounded-sm overflow-hidden flex flex-col shadow-xl transition-all min-w-0 shrink-0 hidden lg:flex"
+              className="sticky top-[3.5rem] h-[calc(100vh-3.5rem)] border border-[#2d2b25]/10 bg-white rounded-sm overflow-hidden flex flex-col shadow-xl transition-all min-w-0 shrink-0 hidden lg:flex"
             >
               <div className="bg-[#2d2b25]/[0.02] border-b border-[#2d2b25]/10 px-4 py-2 flex items-center justify-between">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-[#2d2b25]/40">Real-time Preview</span>
@@ -3690,9 +3711,9 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                   }}
                 >
                   {site.layoutId === "modern" ? (
-                    <ModernTemplate site={site} isPreview />
+                    <ModernTemplate site={site} isPreview onFieldUpdate={handleFieldUpdate} />
                   ) : (
-                    <ClassicTemplate site={site} isPreview />
+                    <ClassicTemplate site={site} isPreview onFieldUpdate={handleFieldUpdate} />
                   )}
                 </div>
               </div>
@@ -3716,10 +3737,64 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
           </div>
           <div className="flex-1 overflow-y-auto" style={{ containerType: "inline-size" }}>
             {site.layoutId === "modern" ? (
-              <ModernTemplate site={site} isPreview />
+              <ModernTemplate site={site} isPreview onFieldUpdate={handleFieldUpdate} />
             ) : (
-              <ClassicTemplate site={site} isPreview />
+              <ClassicTemplate site={site} isPreview onFieldUpdate={handleFieldUpdate} />
             )}
+          </div>
+        </div>
+      )}
+
+      {/* URL Rename Confirmation Modal */}
+      {showRenameConfirm && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setShowRenameConfirm(false)}>
+          <div className="bg-[#faf1e1] border border-[#2d2b25]/15 rounded-sm p-6 max-w-sm mx-4 shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-base font-medium mb-1" style={{ fontFamily: "'Cormorant Garamond', serif" }}>Change Site URL</h3>
+            <p className="text-sm text-[#2d2b25]/60 mb-2">Your site will move to:</p>
+            <p className="text-sm font-medium text-[#2d2b25] bg-[#2d2b25]/5 border border-[#2d2b25]/10 rounded-sm px-3 py-2 mb-4 break-all">
+              ithinkshewifey.com/<span className="font-bold">{site.slug}</span>
+            </p>
+            <p className="text-[10px] text-[#2d2b25]/40 uppercase tracking-wider mb-6">
+              This will change your public website link. You will be redirected to the new dashboard.
+            </p>
+            <div className="flex items-center justify-end gap-3">
+              <button
+                onClick={() => setShowRenameConfirm(false)}
+                className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-[#2d2b25]/50 hover:text-[#2d2b25] transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  setShowRenameConfirm(false);
+                  handleSave(false, true);
+                }}
+                className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest bg-[#2d2b25] text-[#faf1e1] rounded-sm hover:opacity-90 transition-opacity"
+              >
+                Confirm Change
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Save Error Modal */}
+      {showSaveErrorModal && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setShowSaveErrorModal(null)}>
+          <div className="bg-[#faf1e1] border border-[#2d2b25]/15 rounded-sm p-6 max-w-sm mx-4 shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-base font-medium mb-1 text-red-700" style={{ fontFamily: "'Cormorant Garamond', serif" }}>Save Failed</h3>
+            <p className="text-sm text-[#2d2b25]/70 mb-2 break-words">{showSaveErrorModal}</p>
+            <p className="text-[10px] text-[#2d2b25]/40 uppercase tracking-wider mb-6">
+              Your changes have not been saved. Please check your connection and try again.
+            </p>
+            <div className="flex items-center justify-end">
+              <button
+                onClick={() => setShowSaveErrorModal(null)}
+                className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest bg-[#2d2b25] text-[#faf1e1] rounded-sm hover:opacity-90 transition-opacity"
+              >
+                Dismiss
+              </button>
+            </div>
           </div>
         </div>
       )}
