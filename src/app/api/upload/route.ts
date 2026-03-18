@@ -3,6 +3,8 @@ import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { getSession } from "../../../lib/auth";
 import { r2, R2_BUCKET, R2_PUBLIC_URL } from "../../../lib/r2";
+import { rateLimit, getClientIP } from "@/lib/rate-limit";
+import { apiError } from "@/lib/api-response";
 
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/avif", "image/gif"];
 const MAX_SIZE = 10 * 1024 * 1024; // 10MB
@@ -10,54 +12,38 @@ const MAX_SIZE = 10 * 1024 * 1024; // 10MB
 export async function POST(request: NextRequest) {
   const session = await getSession();
   if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return apiError("Unauthorized", 401);
+  }
+
+  // Rate limit: 30 uploads per minute per user (gallery uploads can be bursty)
+  const { allowed } = await rateLimit(session.slug, { prefix: "rl:upload", maxRequests: 30, windowSeconds: 60 });
+  if (!allowed) {
+    return apiError("Upload rate limit exceeded. Please wait.", 429);
   }
 
   const { fileName, contentType, fileSize } = await request.json();
 
   if (!fileName || !contentType) {
-    return NextResponse.json({ error: "fileName and contentType required" }, { status: 400 });
+    return apiError("fileName and contentType required", 400);
   }
 
   if (!ALLOWED_TYPES.includes(contentType)) {
-    return NextResponse.json({ error: "File type not allowed" }, { status: 400 });
+    return apiError("File type not allowed", 400);
   }
 
   if (fileSize && fileSize > MAX_SIZE) {
-    return NextResponse.json({ error: "File too large (max 10MB)" }, { status: 400 });
+    return apiError("File too large (max 10MB)", 400);
   }
 
-  const missingVars = [];
-  if (!R2_BUCKET) missingVars.push("R2_BUCKET");
-  if (!process.env.R2_ACCOUNT_ID) missingVars.push("R2_ACCOUNT_ID");
-  if (!process.env.R2_ACCESS_KEY_ID) missingVars.push("R2_ACCESS_KEY_ID");
-  if (!process.env.R2_SECRET_ACCESS_KEY) missingVars.push("R2_SECRET_ACCESS_KEY");
-  if (!R2_PUBLIC_URL) missingVars.push("R2_PUBLIC_URL");
-
-  console.log("[Upload API] Config Check:", {
-    has_bucket: !!R2_BUCKET,
-    has_account: !!process.env.R2_ACCOUNT_ID,
-    has_key: !!process.env.R2_ACCESS_KEY_ID,
-    has_secret: !!process.env.R2_SECRET_ACCESS_KEY,
-    has_public_url: !!R2_PUBLIC_URL,
-    missing: missingVars
-  });
-
-  const client = r2;
-
-  if (missingVars.length > 0 || !client) {
-    console.error("R2 is not configured for upload. Missing environment variables or client failed to initialize:", missingVars.join(", "));
-    return NextResponse.json({ 
-      error: `Upload not configured. Missing or invalid credentials.`,
-      missing: missingVars
-    }, { status: 500 });
+  if (!r2 || !R2_BUCKET || !R2_PUBLIC_URL) {
+    return apiError("Upload not configured", 503);
   }
 
   // Key: sites/{slug}/{timestamp}-{filename}
   const ALLOWED_EXTENSIONS = ["jpg", "jpeg", "png", "webp", "avif", "gif"];
   const ext = (fileName.split(".").pop() || "").toLowerCase();
   if (!ext || !ALLOWED_EXTENSIONS.includes(ext)) {
-    return NextResponse.json({ error: "Invalid file extension" }, { status: 400 });
+    return apiError("Invalid file extension", 400);
   }
   const key = `sites/${session.slug}/${Date.now()}.${ext}`;
 
@@ -67,7 +53,7 @@ export async function POST(request: NextRequest) {
     ContentType: contentType,
   });
 
-  const uploadUrl = await getSignedUrl(client, command, { expiresIn: 600 });
+  const uploadUrl = await getSignedUrl(r2!, command, { expiresIn: 600 });
   const publicUrl = `${R2_PUBLIC_URL}/${key}`;
 
   return NextResponse.json({ uploadUrl, publicUrl });

@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSession } from "@/lib/auth";
+import { requireAuth } from "@/lib/auth";
 import { getSiteBySlug } from "@/lib/data/sites";
 import { getUnsyncedRSVPs } from "@/lib/data/rsvps";
 import { syncRSVPToGoogleSheets } from "@/lib/google-sheets";
+import { apiOk, apiError } from "@/lib/api-response";
 
 export async function POST(
   _request: NextRequest,
@@ -12,20 +13,18 @@ export async function POST(
     const { slug } = await params;
     
     // 1. Auth check
-    const session = await getSession();
-    if (!session || session.slug !== slug) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAuth(slug);
+    if (auth instanceof NextResponse) return auth;
 
     // 2. Get site and unsynced RSVPs
     const site = await getSiteBySlug(slug);
     if (!site) {
-      return NextResponse.json({ error: "Site not found" }, { status: 404 });
+      return apiError("Site not found", 404);
     }
 
     const unsynced = await getUnsyncedRSVPs(slug);
     if (unsynced.length === 0) {
-      return NextResponse.json({ success: true, message: "No RSVPs to sync", count: 0 });
+      return apiOk({ message: "No RSVPs to sync", count: 0 });
     }
 
     // 3. Sync each one
@@ -42,8 +41,7 @@ export async function POST(
       if (success) successCount++;
     }
 
-    return NextResponse.json({ 
-      success: true, 
+    return apiOk({
       message: `Successfully synced ${successCount} RSVPs`,
       count: successCount,
       failed: unsynced.length - successCount
@@ -51,7 +49,7 @@ export async function POST(
 
   } catch (error: any) {
     console.error("Manual Sync Error:", error);
-    return NextResponse.json({ error: error.message || "Failed to sync RSVPs" }, { status: 500 });
+    return apiError(error.message || "Failed to sync RSVPs");
   }
 }
 
@@ -62,10 +60,8 @@ export async function GET(
 ) {
   try {
     const { slug } = await params;
-    const session = await getSession();
-    if (!session || session.slug !== slug) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAuth(slug);
+    if (auth instanceof NextResponse) return auth;
 
     const unsynced = await getUnsyncedRSVPs(slug);
     return NextResponse.json({ 
@@ -73,6 +69,6 @@ export async function GET(
       needsSync: unsynced.length > 0 
     });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return apiError(error.message);
   }
 }

@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
-import { getSession } from "@/lib/auth";
+import { requireAuth } from "@/lib/auth";
 import { getBroadcastsBySite, createBroadcast } from "@/lib/data/broadcasts";
+import { broadcastSchema, parseBody } from "@/lib/validations";
+import { apiError } from "@/lib/api-response";
 
 export async function GET(
   request: Request,
@@ -8,16 +10,14 @@ export async function GET(
 ) {
   try {
     const { slug } = await params;
-    const session = await getSession();
-    if (!session || session.slug !== slug) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAuth(slug);
+    if (auth instanceof NextResponse) return auth;
 
     const items = await getBroadcastsBySite(slug);
     return NextResponse.json({ broadcasts: items });
   } catch (error) {
     console.error("[API] GET Broadcasts Error:", error);
-    return NextResponse.json({ error: "Failed to load broadcasts" }, { status: 500 });
+    return apiError("Failed to load broadcasts");
   }
 }
 
@@ -27,24 +27,20 @@ export async function POST(
 ) {
   try {
     const { slug } = await params;
-    const session = await getSession();
-    if (!session || session.slug !== slug) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAuth(slug);
+    if (auth instanceof NextResponse) return auth;
 
     const body = await request.json();
-    const { groupId, subject, body: msgBody, channel } = body;
-
-    if (!groupId || !msgBody) {
-      return NextResponse.json({ error: "Group and message body are required" }, { status: 400 });
+    const parsed = parseBody(broadcastSchema, body);
+    if (typeof parsed === "string") {
+      return apiError(parsed, 400);
     }
 
-    if (channel && channel !== "email" && channel !== "sms") {
-      return NextResponse.json({ error: "Channel must be 'email' or 'sms'" }, { status: 400 });
-    }
+    const { groupId, subject, body: msgBody, channel } = parsed;
 
+    // Subject is required for email broadcasts (SMS doesn't need one)
     if (channel !== "sms" && !subject) {
-      return NextResponse.json({ error: "Subject is required for email broadcasts" }, { status: 400 });
+      return apiError("Subject is required for email broadcasts", 400);
     }
 
     const broadcast = await createBroadcast(slug, {
@@ -57,6 +53,6 @@ export async function POST(
     return NextResponse.json({ broadcast });
   } catch (error) {
     console.error("[API] POST Broadcast Error:", error);
-    return NextResponse.json({ error: "Failed to create broadcast" }, { status: 500 });
+    return apiError("Failed to create broadcast");
   }
 }

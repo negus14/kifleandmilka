@@ -2,6 +2,7 @@
  * @vitest-environment node
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { NextResponse } from 'next/server';
 import { POST, GET } from '@/app/api/sites/[slug]/sync/route';
 import { NextRequest } from 'next/server';
 import * as auth from '@/lib/auth';
@@ -11,6 +12,7 @@ import * as googleSync from '@/lib/google-sheets';
 
 vi.mock('@/lib/auth', () => ({
   getSession: vi.fn(),
+  requireAuth: vi.fn(),
 }));
 
 vi.mock('@/lib/data/sites', () => ({
@@ -36,7 +38,9 @@ describe('POST /api/sites/[slug]/sync', () => {
   });
 
   it('should return 401 if no session', async () => {
-    vi.mocked(auth.getSession).mockResolvedValueOnce(null);
+    vi.mocked(auth.requireAuth).mockResolvedValueOnce(
+      NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    );
 
     const res = await POST(makeRequest('test-site'), makeParams('test-site'));
     const data = await res.json();
@@ -46,14 +50,16 @@ describe('POST /api/sites/[slug]/sync', () => {
   });
 
   it('should return 401 if session slug does not match', async () => {
-    vi.mocked(auth.getSession).mockResolvedValueOnce({ slug: 'other' });
+    vi.mocked(auth.requireAuth).mockResolvedValueOnce(
+      NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    );
 
     const res = await POST(makeRequest('test-site'), makeParams('test-site'));
     expect(res.status).toBe(401);
   });
 
   it('should return 404 if site not found', async () => {
-    vi.mocked(auth.getSession).mockResolvedValueOnce({ slug: 'test-site' });
+    vi.mocked(auth.requireAuth).mockResolvedValueOnce({ slug: 'test-site', isPaid: false });
     vi.mocked(sites.getSiteBySlug).mockResolvedValueOnce(null);
 
     const res = await POST(makeRequest('test-site'), makeParams('test-site'));
@@ -64,7 +70,7 @@ describe('POST /api/sites/[slug]/sync', () => {
   });
 
   it('should return success with count 0 if no unsynced RSVPs', async () => {
-    vi.mocked(auth.getSession).mockResolvedValueOnce({ slug: 'test-site' });
+    vi.mocked(auth.requireAuth).mockResolvedValueOnce({ slug: 'test-site', isPaid: false });
     vi.mocked(sites.getSiteBySlug).mockResolvedValueOnce({ slug: 'test-site' } as any);
     vi.mocked(rsvps.getUnsyncedRSVPs).mockResolvedValueOnce([]);
 
@@ -83,7 +89,7 @@ describe('POST /api/sites/[slug]/sync', () => {
       { id: 'r2', email: 'c@d.com', guests: [{ name: 'B', attending: false }], message: null, created_at: new Date() },
     ] as any[];
 
-    vi.mocked(auth.getSession).mockResolvedValueOnce({ slug: 'test-site' });
+    vi.mocked(auth.requireAuth).mockResolvedValueOnce({ slug: 'test-site', isPaid: false });
     vi.mocked(sites.getSiteBySlug).mockResolvedValueOnce(mockSite);
     vi.mocked(rsvps.getUnsyncedRSVPs).mockResolvedValueOnce(mockRSVPs);
     vi.mocked(googleSync.syncRSVPToGoogleSheets)
@@ -107,14 +113,16 @@ describe('GET /api/sites/[slug]/sync', () => {
   });
 
   it('should return 401 if no session', async () => {
-    vi.mocked(auth.getSession).mockResolvedValueOnce(null);
+    vi.mocked(auth.requireAuth).mockResolvedValueOnce(
+      NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    );
 
     const res = await GET(makeRequest('test-site', 'GET'), makeParams('test-site'));
     expect(res.status).toBe(401);
   });
 
   it('should return unsynced count', async () => {
-    vi.mocked(auth.getSession).mockResolvedValueOnce({ slug: 'test-site' });
+    vi.mocked(auth.requireAuth).mockResolvedValueOnce({ slug: 'test-site', isPaid: false });
     vi.mocked(rsvps.getUnsyncedRSVPs).mockResolvedValueOnce([{ id: 'r1' }, { id: 'r2' }] as any[]);
 
     const res = await GET(makeRequest('test-site', 'GET'), makeParams('test-site'));
@@ -126,7 +134,7 @@ describe('GET /api/sites/[slug]/sync', () => {
   });
 
   it('should return needsSync false when all synced', async () => {
-    vi.mocked(auth.getSession).mockResolvedValueOnce({ slug: 'test-site' });
+    vi.mocked(auth.requireAuth).mockResolvedValueOnce({ slug: 'test-site', isPaid: false });
     vi.mocked(rsvps.getUnsyncedRSVPs).mockResolvedValueOnce([]);
 
     const res = await GET(makeRequest('test-site', 'GET'), makeParams('test-site'));

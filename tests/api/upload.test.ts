@@ -26,6 +26,11 @@ vi.mock('@aws-sdk/client-s3', () => ({
   PutObjectCommand: vi.fn(),
 }));
 
+vi.mock('@/lib/rate-limit', () => ({
+  rateLimit: vi.fn().mockResolvedValue({ allowed: true, remaining: 30 }),
+  getClientIP: vi.fn().mockReturnValue('127.0.0.1'),
+}));
+
 const createRequest = (body: any) =>
   new NextRequest('http://localhost:3000/api/upload', {
     method: 'POST',
@@ -53,7 +58,7 @@ describe('POST /api/upload', () => {
   });
 
   it('should return 400 if fileName is missing', async () => {
-    vi.mocked(auth.getSession).mockResolvedValueOnce({ slug: 'test-site' });
+    vi.mocked(auth.getSession).mockResolvedValueOnce({ slug: 'test-site', isPaid: false });
 
     const res = await POST(createRequest({ contentType: 'image/jpeg' }));
     const data = await res.json();
@@ -63,7 +68,7 @@ describe('POST /api/upload', () => {
   });
 
   it('should return 400 if contentType is missing', async () => {
-    vi.mocked(auth.getSession).mockResolvedValueOnce({ slug: 'test-site' });
+    vi.mocked(auth.getSession).mockResolvedValueOnce({ slug: 'test-site', isPaid: false });
 
     const res = await POST(createRequest({ fileName: 'test.jpg' }));
     const data = await res.json();
@@ -72,7 +77,7 @@ describe('POST /api/upload', () => {
   });
 
   it('should return 400 if file type is not allowed', async () => {
-    vi.mocked(auth.getSession).mockResolvedValueOnce({ slug: 'test-site' });
+    vi.mocked(auth.getSession).mockResolvedValueOnce({ slug: 'test-site', isPaid: false });
 
     const res = await POST(createRequest({ fileName: 'test.pdf', contentType: 'application/pdf' }));
     const data = await res.json();
@@ -82,7 +87,7 @@ describe('POST /api/upload', () => {
   });
 
   it('should return 400 if file is too large', async () => {
-    vi.mocked(auth.getSession).mockResolvedValueOnce({ slug: 'test-site' });
+    vi.mocked(auth.getSession).mockResolvedValueOnce({ slug: 'test-site', isPaid: false });
 
     const res = await POST(createRequest({
       fileName: 'big.jpg',
@@ -96,7 +101,7 @@ describe('POST /api/upload', () => {
   });
 
   it('should return signed upload URL on success', async () => {
-    vi.mocked(auth.getSession).mockResolvedValueOnce({ slug: 'test-site' });
+    vi.mocked(auth.getSession).mockResolvedValueOnce({ slug: 'test-site', isPaid: false });
 
     const res = await POST(createRequest({
       fileName: 'photo.jpg',
@@ -114,7 +119,7 @@ describe('POST /api/upload', () => {
     const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/gif'];
 
     for (const contentType of allowedTypes) {
-      vi.mocked(auth.getSession).mockResolvedValueOnce({ slug: 'test-site' });
+      vi.mocked(auth.getSession).mockResolvedValueOnce({ slug: 'test-site', isPaid: false });
       const res = await POST(createRequest({ fileName: 'img.jpg', contentType }));
       expect(res.status).toBe(200);
     }

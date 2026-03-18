@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getSession, createSession } from "../../../../lib/auth";
+import { requireAuth, createSession } from "../../../../lib/auth";
 import { getSiteBySlug, updateSite, renameSite } from "../../../../lib/data/sites";
 import type { WeddingSite } from "../../../../lib/types/wedding-site";
 
@@ -13,10 +13,8 @@ export async function PUT(
 ) {
   try {
     const { slug: currentSlug } = await params;
-    const session = await getSession();
-    if (!session || session.slug !== currentSlug) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAuth(currentSlug);
+    if (auth instanceof NextResponse) return auth;
 
     const body = (await request.json()) as Partial<WeddingSite>;
     const newSlug = body.slug;
@@ -92,10 +90,8 @@ export async function GET(
     const { searchParams } = new URL(request.url);
     const nocache = searchParams.get("nocache") === "true";
 
-    const session = await getSession();
-    if (!session || session.slug !== slug) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAuth(slug);
+    if (auth instanceof NextResponse) return auth;
 
     const site = await getSiteBySlug(slug, nocache);
     if (!site) {

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import { getSession } from "@/lib/auth";
-import { getRSVPsBySite, updateRSVP, deleteRSVP } from "@/lib/data/rsvps";
+import { requireAuth } from "@/lib/auth";
+import { getRSVPsBySitePaginated, updateRSVP, deleteRSVP } from "@/lib/data/rsvps";
+import { apiOk, apiError } from "@/lib/api-response";
 
 export async function GET(
   request: Request,
@@ -8,16 +9,18 @@ export async function GET(
 ) {
   try {
     const { slug } = await params;
-    const session = await getSession();
-    if (!session || session.slug !== slug) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAuth(slug);
+    if (auth instanceof NextResponse) return auth;
 
-    const rsvps = await getRSVPsBySite(slug);
-    return NextResponse.json({ rsvps });
+    const { searchParams } = new URL(request.url);
+    const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
+    const limit = Math.min(100, Math.max(1, parseInt(searchParams.get("limit") || "50", 10)));
+
+    const result = await getRSVPsBySitePaginated(slug, page, limit);
+    return NextResponse.json({ rsvps: result.items, total: result.total, page: result.page, totalPages: result.totalPages });
   } catch (error) {
     console.error("[API] GET RSVPs Error:", error);
-    return NextResponse.json({ error: "Failed to load RSVPs" }, { status: 500 });
+    return apiError("Failed to load RSVPs");
   }
 }
 
@@ -27,23 +30,21 @@ export async function PUT(
 ) {
   try {
     const { slug } = await params;
-    const session = await getSession();
-    if (!session || session.slug !== slug) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAuth(slug);
+    if (auth instanceof NextResponse) return auth;
 
     const body = await request.json();
     const { id, email, phone, message, guests } = body;
 
     if (!id || typeof id !== "string") {
-      return NextResponse.json({ error: "Missing RSVP id" }, { status: 400 });
+      return apiError("Missing RSVP id", 400);
     }
 
     await updateRSVP(id, { email, phone, message, guests });
-    return NextResponse.json({ success: true });
+    return apiOk();
   } catch (error) {
     console.error("[API] PUT RSVP Error:", error);
-    return NextResponse.json({ error: "Failed to update RSVP" }, { status: 500 });
+    return apiError("Failed to update RSVP");
   }
 }
 
@@ -53,22 +54,20 @@ export async function DELETE(
 ) {
   try {
     const { slug } = await params;
-    const session = await getSession();
-    if (!session || session.slug !== slug) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAuth(slug);
+    if (auth instanceof NextResponse) return auth;
 
     const body = await request.json();
     const { id } = body;
 
     if (!id || typeof id !== "string") {
-      return NextResponse.json({ error: "Missing RSVP id" }, { status: 400 });
+      return apiError("Missing RSVP id", 400);
     }
 
     await deleteRSVP(id);
-    return NextResponse.json({ success: true });
+    return apiOk();
   } catch (error) {
     console.error("[API] DELETE RSVP Error:", error);
-    return NextResponse.json({ error: "Failed to delete RSVP" }, { status: 500 });
+    return apiError("Failed to delete RSVP");
   }
 }

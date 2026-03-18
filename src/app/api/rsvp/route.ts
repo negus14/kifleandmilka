@@ -3,48 +3,30 @@ import { getSiteBySlug } from "../../../lib/data/sites";
 import { createRSVP, markRSVPConfirmationSent } from "../../../lib/data/rsvps";
 import { syncRSVPToGoogleSheets } from "../../../lib/google-sheets";
 import { sendRSVPConfirmation, sendRSVPNotification } from "../../../lib/email";
-
-interface GuestInput {
-  name: string;
-  attending: boolean;
-  mealChoice?: string;
-  isHalal?: boolean;
-  dietaryPreference?: string;
-}
-
-interface RSVPPayload {
-  slug: string;
-  email: string;
-  phone?: string;
-  message?: string;
-  guests: GuestInput[];
-}
+import { rateLimit, getClientIP } from "@/lib/rate-limit";
+import { rsvpSchema, parseBody } from "@/lib/validations";
 
 export async function POST(request: NextRequest) {
   try {
-    const body = (await request.json()) as RSVPPayload;
-    const { slug, email, phone, guests, message } = body;
-
-    if (!slug || !guests || !Array.isArray(guests) || guests.length === 0) {
-      return NextResponse.json({ error: "Slug and at least one guest are required" }, { status: 400 });
+    // Rate limit: 5 RSVPs per IP per minute
+    const ip = getClientIP(request);
+    const { allowed } = await rateLimit(ip, { prefix: "rl:rsvp", maxRequests: 5, windowSeconds: 60 });
+    if (!allowed) {
+      return NextResponse.json(
+        { error: "Too many submissions. Please wait a moment and try again." },
+        { status: 429 }
+      );
     }
 
-    if (!email || typeof email !== "string" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return NextResponse.json({ error: "A valid email address is required" }, { status: 400 });
+    // Validate & sanitize input with Zod — replaces all the manual if/else checks.
+    // This also strips HTML tags from text fields to prevent stored XSS.
+    const body = await request.json();
+    const parsed = parseBody(rsvpSchema, body);
+    if (typeof parsed === "string") {
+      return NextResponse.json({ error: parsed }, { status: 400 });
     }
 
-    if (guests.length > 10) {
-      return NextResponse.json({ error: "Maximum 10 guests per RSVP" }, { status: 400 });
-    }
-
-    for (const guest of guests) {
-      if (!guest.name || typeof guest.name !== "string" || guest.name.trim().length === 0) {
-        return NextResponse.json({ error: "Each guest must have a name" }, { status: 400 });
-      }
-      if (guest.name.length > 100) {
-        return NextResponse.json({ error: "Guest name is too long" }, { status: 400 });
-      }
-    }
+    const { slug, email, phone, guests, message } = parsed;
 
     const site = await getSiteBySlug(slug);
     if (!site) {
@@ -55,8 +37,6 @@ export async function POST(request: NextRequest) {
     const rsvp = await createRSVP(slug, email, guests, message, phone);
 
     // 2. Attempt Sync to Google Sheets (Secondary/Legacy Store)
-    // We await this to ensure we try at least once, but failure won't break the response
-    // since the data is now safe in our DB.
     await syncRSVPToGoogleSheets(site, email, guests, message, rsvp.id);
 
     // 3. Send email confirmations (fire-and-forget — never block response)

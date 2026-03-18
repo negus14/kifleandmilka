@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import { getSession } from "@/lib/auth";
-import { getGiftContributionsBySite, updateGiftContribution, deleteGiftContribution } from "@/lib/data/gift-contributions";
+import { requireAuth } from "@/lib/auth";
+import { getGiftContributionsBySitePaginated, updateGiftContribution, deleteGiftContribution } from "@/lib/data/gift-contributions";
+import { apiOk, apiError } from "@/lib/api-response";
 
 export async function GET(
   request: Request,
@@ -8,16 +9,18 @@ export async function GET(
 ) {
   try {
     const { slug } = await params;
-    const session = await getSession();
-    if (!session || session.slug !== slug) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAuth(slug);
+    if (auth instanceof NextResponse) return auth;
 
-    const contributions = await getGiftContributionsBySite(slug);
-    return NextResponse.json({ contributions });
+    const { searchParams } = new URL(request.url);
+    const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
+    const limit = Math.min(100, Math.max(1, parseInt(searchParams.get("limit") || "50", 10)));
+
+    const result = await getGiftContributionsBySitePaginated(slug, page, limit);
+    return NextResponse.json({ contributions: result.items, total: result.total, page: result.page, totalPages: result.totalPages });
   } catch (error) {
     console.error("[API] GET Gift Contributions Error:", error);
-    return NextResponse.json({ error: "Failed to load" }, { status: 500 });
+    return apiError("Failed to load");
   }
 }
 
@@ -27,19 +30,17 @@ export async function PUT(
 ) {
   try {
     const { slug } = await params;
-    const session = await getSession();
-    if (!session || session.slug !== slug) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAuth(slug);
+    if (auth instanceof NextResponse) return auth;
 
     const { id, status } = await request.json();
-    if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
+    if (!id) return apiError("Missing id", 400);
 
     await updateGiftContribution(id, { status });
-    return NextResponse.json({ success: true });
+    return apiOk();
   } catch (error) {
     console.error("[API] PUT Gift Contribution Error:", error);
-    return NextResponse.json({ error: "Failed to update" }, { status: 500 });
+    return apiError("Failed to update");
   }
 }
 
@@ -49,18 +50,16 @@ export async function DELETE(
 ) {
   try {
     const { slug } = await params;
-    const session = await getSession();
-    if (!session || session.slug !== slug) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAuth(slug);
+    if (auth instanceof NextResponse) return auth;
 
     const { id } = await request.json();
-    if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
+    if (!id) return apiError("Missing id", 400);
 
     await deleteGiftContribution(id);
-    return NextResponse.json({ success: true });
+    return apiOk();
   } catch (error) {
     console.error("[API] DELETE Gift Contribution Error:", error);
-    return NextResponse.json({ error: "Failed to delete" }, { status: 500 });
+    return apiError("Failed to delete");
   }
 }

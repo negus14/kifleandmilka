@@ -47,7 +47,7 @@ describe('GET /api/media', () => {
   });
 
   it('should return images list on success', async () => {
-    vi.mocked(auth.getSession).mockResolvedValueOnce({ slug: 'test-site' });
+    vi.mocked(auth.getSession).mockResolvedValueOnce({ slug: 'test-site', isPaid: false });
 
     const mockObjects = [
       { Key: 'sites/test-site/photo1.jpg', LastModified: new Date('2024-01-02'), Size: 1024 },
@@ -65,7 +65,7 @@ describe('GET /api/media', () => {
   });
 
   it('should filter out folder entries', async () => {
-    vi.mocked(auth.getSession).mockResolvedValueOnce({ slug: 'test-site' });
+    vi.mocked(auth.getSession).mockResolvedValueOnce({ slug: 'test-site', isPaid: false });
 
     const mockObjects = [
       { Key: 'sites/test-site/', LastModified: new Date(), Size: 0 },
@@ -81,7 +81,7 @@ describe('GET /api/media', () => {
   });
 
   it('should return empty images when no objects exist', async () => {
-    vi.mocked(auth.getSession).mockResolvedValueOnce({ slug: 'test-site' });
+    vi.mocked(auth.getSession).mockResolvedValueOnce({ slug: 'test-site', isPaid: false });
     mockSend.mockResolvedValue({ Contents: undefined });
 
     const res = await GET(createRequest());
@@ -91,20 +91,26 @@ describe('GET /api/media', () => {
     expect(data.images).toHaveLength(0);
   });
 
-  it('should return 500 if R2 config is missing', async () => {
-    vi.mocked(auth.getSession).mockResolvedValueOnce({ slug: 'test-site' });
-    delete process.env.R2_ACCOUNT_ID;
+  it('should return 503 if R2 config is missing', async () => {
+    // Re-mock with null r2 client to simulate missing config
+    const r2Module = await import('@/lib/r2');
+    const originalR2 = r2Module.r2;
+    Object.defineProperty(r2Module, 'r2', { value: null, writable: true });
+
+    vi.mocked(auth.getSession).mockResolvedValueOnce({ slug: 'test-site', isPaid: false });
 
     const res = await GET(createRequest());
     const data = await res.json();
 
-    expect(res.status).toBe(500);
-    expect(data.images).toEqual([]);
+    expect(res.status).toBe(503);
     expect(data.error).toMatch(/not configured/);
+
+    // Restore
+    Object.defineProperty(r2Module, 'r2', { value: originalR2, writable: true });
   });
 
   it('should sort images by lastModified descending', async () => {
-    vi.mocked(auth.getSession).mockResolvedValueOnce({ slug: 'test-site' });
+    vi.mocked(auth.getSession).mockResolvedValueOnce({ slug: 'test-site', isPaid: false });
 
     const mockObjects = [
       { Key: 'sites/test-site/old.jpg', LastModified: new Date('2024-01-01'), Size: 1024 },

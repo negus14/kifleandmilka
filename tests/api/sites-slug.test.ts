@@ -2,13 +2,17 @@
  * @vitest-environment node
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { NextResponse } from 'next/server';
 import { PUT, GET } from '@/app/api/sites/[slug]/route';
 import * as sites from '@/lib/data/sites';
 import * as auth from '@/lib/auth';
 
 // Mock dependencies
+// The route uses requireAuth() which internally calls getSession().
+// We mock requireAuth directly — it returns SessionPayload on success or NextResponse(401) on failure.
 vi.mock('@/lib/auth', () => ({
   getSession: vi.fn(),
+  requireAuth: vi.fn(),
   createSession: vi.fn(),
 }));
 
@@ -40,7 +44,9 @@ describe('PUT /api/sites/[slug]', () => {
   });
 
   it('should return 401 if no session', async () => {
-    vi.mocked(auth.getSession).mockResolvedValueOnce(null);
+    vi.mocked(auth.requireAuth).mockResolvedValueOnce(
+      NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    );
 
     const req = createRequest({ partner1Name: 'Alice' }, 'test-site');
     const res = await PUT(req, makeParams('test-site'));
@@ -51,7 +57,9 @@ describe('PUT /api/sites/[slug]', () => {
   });
 
   it('should return 401 if session slug does not match', async () => {
-    vi.mocked(auth.getSession).mockResolvedValueOnce({ slug: 'other-site' });
+    vi.mocked(auth.requireAuth).mockResolvedValueOnce(
+      NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    );
 
     const req = createRequest({ partner1Name: 'Alice' }, 'test-site');
     const res = await PUT(req, makeParams('test-site'));
@@ -63,7 +71,7 @@ describe('PUT /api/sites/[slug]', () => {
 
   // ─── Standard Update ───
   it('should update site successfully', async () => {
-    vi.mocked(auth.getSession).mockResolvedValueOnce({ slug: 'test-site' });
+    vi.mocked(auth.requireAuth).mockResolvedValueOnce({ slug: 'test-site', isPaid: false });
     vi.mocked(sites.updateSite).mockResolvedValueOnce({ slug: 'test-site', partner1Name: 'Bob' } as any);
 
     const req = createRequest({ partner1Name: 'Bob' }, 'test-site');
@@ -76,7 +84,7 @@ describe('PUT /api/sites/[slug]', () => {
   });
 
   it('should return 404 if site not found on update', async () => {
-    vi.mocked(auth.getSession).mockResolvedValueOnce({ slug: 'test-site' });
+    vi.mocked(auth.requireAuth).mockResolvedValueOnce({ slug: 'test-site', isPaid: false });
     vi.mocked(sites.updateSite).mockResolvedValueOnce(null);
 
     const req = createRequest({ partner1Name: 'Bob' }, 'test-site');
@@ -89,7 +97,7 @@ describe('PUT /api/sites/[slug]', () => {
 
   // ─── Rename Cases ───
   it('should reject slug with invalid characters', async () => {
-    vi.mocked(auth.getSession).mockResolvedValueOnce({ slug: 'old-slug' });
+    vi.mocked(auth.requireAuth).mockResolvedValueOnce({ slug: 'old-slug', isPaid: false });
 
     const req = createRequest({ slug: 'INVALID_Slug!' }, 'old-slug');
     const res = await PUT(req, makeParams('old-slug'));
@@ -100,7 +108,7 @@ describe('PUT /api/sites/[slug]', () => {
   });
 
   it('should reject slug that is too short', async () => {
-    vi.mocked(auth.getSession).mockResolvedValueOnce({ slug: 'old-slug' });
+    vi.mocked(auth.requireAuth).mockResolvedValueOnce({ slug: 'old-slug', isPaid: false });
 
     const req = createRequest({ slug: 'ab' }, 'old-slug');
     const res = await PUT(req, makeParams('old-slug'));
@@ -111,7 +119,7 @@ describe('PUT /api/sites/[slug]', () => {
   });
 
   it('should reject reserved slugs', async () => {
-    vi.mocked(auth.getSession).mockResolvedValueOnce({ slug: 'old-slug' });
+    vi.mocked(auth.requireAuth).mockResolvedValueOnce({ slug: 'old-slug', isPaid: false });
 
     const req = createRequest({ slug: 'dashboard' }, 'old-slug');
     const res = await PUT(req, makeParams('old-slug'));
@@ -122,7 +130,7 @@ describe('PUT /api/sites/[slug]', () => {
   });
 
   it('should reject slug that is already taken', async () => {
-    vi.mocked(auth.getSession).mockResolvedValueOnce({ slug: 'old-slug' });
+    vi.mocked(auth.requireAuth).mockResolvedValueOnce({ slug: 'old-slug', isPaid: false });
     vi.mocked(sites.getSiteBySlug).mockResolvedValueOnce({ slug: 'taken-slug' } as any);
 
     const req = createRequest({ slug: 'taken-slug' }, 'old-slug');
@@ -134,7 +142,7 @@ describe('PUT /api/sites/[slug]', () => {
   });
 
   it('should rename site successfully', async () => {
-    vi.mocked(auth.getSession).mockResolvedValueOnce({ slug: 'old-slug' });
+    vi.mocked(auth.requireAuth).mockResolvedValueOnce({ slug: 'old-slug', isPaid: false });
     vi.mocked(sites.getSiteBySlug).mockResolvedValueOnce(null); // no conflict
     vi.mocked(sites.renameSite).mockResolvedValueOnce({ slug: 'new-slug' } as any);
 
@@ -150,7 +158,7 @@ describe('PUT /api/sites/[slug]', () => {
   });
 
   it('should return 404 if site not found during rename', async () => {
-    vi.mocked(auth.getSession).mockResolvedValueOnce({ slug: 'old-slug' });
+    vi.mocked(auth.requireAuth).mockResolvedValueOnce({ slug: 'old-slug', isPaid: false });
     vi.mocked(sites.getSiteBySlug).mockResolvedValueOnce(null); // no conflict
     vi.mocked(sites.renameSite).mockResolvedValueOnce(null);
 
@@ -163,7 +171,7 @@ describe('PUT /api/sites/[slug]', () => {
   });
 
   it('should not rename if slug is unchanged', async () => {
-    vi.mocked(auth.getSession).mockResolvedValueOnce({ slug: 'test-site' });
+    vi.mocked(auth.requireAuth).mockResolvedValueOnce({ slug: 'test-site', isPaid: false });
     vi.mocked(sites.updateSite).mockResolvedValueOnce({ slug: 'test-site' } as any);
 
     const req = createRequest({ slug: 'test-site', partner1Name: 'Bob' }, 'test-site');
@@ -184,7 +192,9 @@ describe('GET /api/sites/[slug]', () => {
   });
 
   it('should return 401 if no session', async () => {
-    vi.mocked(auth.getSession).mockResolvedValueOnce(null);
+    vi.mocked(auth.requireAuth).mockResolvedValueOnce(
+      NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    );
 
     const req = createGetRequest('test-site');
     const res = await GET(req, makeParams('test-site'));
@@ -195,7 +205,9 @@ describe('GET /api/sites/[slug]', () => {
   });
 
   it('should return 401 if session slug does not match', async () => {
-    vi.mocked(auth.getSession).mockResolvedValueOnce({ slug: 'other-site' });
+    vi.mocked(auth.requireAuth).mockResolvedValueOnce(
+      NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    );
 
     const req = createGetRequest('test-site');
     const res = await GET(req, makeParams('test-site'));
@@ -205,7 +217,7 @@ describe('GET /api/sites/[slug]', () => {
 
   it('should return site data successfully', async () => {
     const mockSite = { slug: 'test-site', partner1Name: 'Alice' };
-    vi.mocked(auth.getSession).mockResolvedValueOnce({ slug: 'test-site' });
+    vi.mocked(auth.requireAuth).mockResolvedValueOnce({ slug: 'test-site', isPaid: false });
     vi.mocked(sites.getSiteBySlug).mockResolvedValueOnce(mockSite as any);
 
     const req = createGetRequest('test-site');
@@ -217,7 +229,7 @@ describe('GET /api/sites/[slug]', () => {
   });
 
   it('should return 404 if site not found', async () => {
-    vi.mocked(auth.getSession).mockResolvedValueOnce({ slug: 'test-site' });
+    vi.mocked(auth.requireAuth).mockResolvedValueOnce({ slug: 'test-site', isPaid: false });
     vi.mocked(sites.getSiteBySlug).mockResolvedValueOnce(null);
 
     const req = createGetRequest('test-site');
@@ -229,7 +241,7 @@ describe('GET /api/sites/[slug]', () => {
   });
 
   it('should bypass cache when nocache=true', async () => {
-    vi.mocked(auth.getSession).mockResolvedValueOnce({ slug: 'test-site' });
+    vi.mocked(auth.requireAuth).mockResolvedValueOnce({ slug: 'test-site', isPaid: false });
     vi.mocked(sites.getSiteBySlug).mockResolvedValueOnce({ slug: 'test-site' } as any);
 
     const req = createGetRequest('test-site', '?nocache=true');

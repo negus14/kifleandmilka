@@ -1,11 +1,13 @@
 import { NextResponse } from "next/server";
-import { getSession } from "@/lib/auth";
+import { requireAuth } from "@/lib/auth";
 import {
   getBroadcastGroupsBySite,
   createBroadcastGroup,
   deleteBroadcastGroup,
   updateBroadcastGroup,
 } from "@/lib/data/broadcasts";
+import { broadcastGroupSchema, parseBody } from "@/lib/validations";
+import { apiOk, apiError } from "@/lib/api-response";
 
 const DEFAULT_SMART_GROUPS = [
   { name: "All Guests", filter: { status: "all" } },
@@ -19,10 +21,8 @@ export async function GET(
 ) {
   try {
     const { slug } = await params;
-    const session = await getSession();
-    if (!session || session.slug !== slug) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAuth(slug);
+    if (auth instanceof NextResponse) return auth;
 
     let groups = await getBroadcastGroupsBySite(slug);
 
@@ -42,7 +42,7 @@ export async function GET(
     return NextResponse.json({ groups });
   } catch (error) {
     console.error("[API] GET Broadcast Groups Error:", error);
-    return NextResponse.json({ error: "Failed to load groups" }, { status: 500 });
+    return apiError("Failed to load groups");
   }
 }
 
@@ -52,28 +52,25 @@ export async function POST(
 ) {
   try {
     const { slug } = await params;
-    const session = await getSession();
-    if (!session || session.slug !== slug) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAuth(slug);
+    if (auth instanceof NextResponse) return auth;
 
     const body = await request.json();
-    const { name, members } = body;
-
-    if (!name || typeof name !== "string") {
-      return NextResponse.json({ error: "Group name is required" }, { status: 400 });
+    const parsed = parseBody(broadcastGroupSchema, body);
+    if (typeof parsed === "string") {
+      return apiError(parsed, 400);
     }
 
     const group = await createBroadcastGroup(slug, {
-      name,
+      name: parsed.name,
       type: "custom",
-      members: members || [],
+      members: parsed.members,
     });
 
     return NextResponse.json({ group });
   } catch (error) {
     console.error("[API] POST Broadcast Group Error:", error);
-    return NextResponse.json({ error: "Failed to create group" }, { status: 500 });
+    return apiError("Failed to create group");
   }
 }
 
@@ -83,23 +80,21 @@ export async function PUT(
 ) {
   try {
     const { slug } = await params;
-    const session = await getSession();
-    if (!session || session.slug !== slug) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAuth(slug);
+    if (auth instanceof NextResponse) return auth;
 
     const body = await request.json();
     const { id, name, members } = body;
 
     if (!id || typeof id !== "string") {
-      return NextResponse.json({ error: "Missing group id" }, { status: 400 });
+      return apiError("Missing group id", 400);
     }
 
     await updateBroadcastGroup(id, { name, members });
-    return NextResponse.json({ success: true });
+    return apiOk();
   } catch (error) {
     console.error("[API] PUT Broadcast Group Error:", error);
-    return NextResponse.json({ error: "Failed to update group" }, { status: 500 });
+    return apiError("Failed to update group");
   }
 }
 
@@ -109,22 +104,20 @@ export async function DELETE(
 ) {
   try {
     const { slug } = await params;
-    const session = await getSession();
-    if (!session || session.slug !== slug) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAuth(slug);
+    if (auth instanceof NextResponse) return auth;
 
     const body = await request.json();
     const { id } = body;
 
     if (!id || typeof id !== "string") {
-      return NextResponse.json({ error: "Missing group id" }, { status: 400 });
+      return apiError("Missing group id", 400);
     }
 
     await deleteBroadcastGroup(id);
-    return NextResponse.json({ success: true });
+    return apiOk();
   } catch (error) {
     console.error("[API] DELETE Broadcast Group Error:", error);
-    return NextResponse.json({ error: "Failed to delete group" }, { status: 500 });
+    return apiError("Failed to delete group");
   }
 }
