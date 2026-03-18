@@ -2,9 +2,12 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { jwtVerify } from "jose";
 
-const SECRET = new TextEncoder().encode(
-  process.env.AUTH_SECRET || "dev-secret-change-in-production"
-);
+// Must match the same check in src/lib/auth.ts — never fall back to a hardcoded secret.
+if (!process.env.AUTH_SECRET) {
+  throw new Error("AUTH_SECRET environment variable is required.");
+}
+
+const SECRET = new TextEncoder().encode(process.env.AUTH_SECRET);
 
 const PLATFORM_HOSTS = [
   "ithinkshewifey.com",
@@ -28,6 +31,12 @@ export default async function(request: NextRequest) {
     !pathname.startsWith("/_domain/") &&
     !pathname.includes(".")
   ) {
+    // Validate hostname format — reject obviously invalid or malicious values.
+    // Valid domains: letters, numbers, hyphens, dots. Max 253 chars (DNS limit).
+    if (!hostname || hostname.length > 253 || !/^[a-z0-9.-]+$/.test(hostname)) {
+      return new NextResponse("Invalid host", { status: 400 });
+    }
+
     const url = request.nextUrl.clone();
     url.pathname = `/_domain/${hostname}${pathname}`;
     return NextResponse.rewrite(url);

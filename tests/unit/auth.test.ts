@@ -51,9 +51,7 @@ describe('Auth Library', () => {
 
     it('should return payload if token is valid', async () => {
       // Create a valid token first
-      const SECRET = new TextEncoder().encode(
-        process.env.AUTH_SECRET || "dev-secret-change-in-production"
-      );
+      const SECRET = new TextEncoder().encode(process.env.AUTH_SECRET);
       const token = await new jose.SignJWT({ slug: 'test-slug' })
         .setProtectedHeader({ alg: "HS256" })
         .setExpirationTime("7d")

@@ -1,14 +1,23 @@
 import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 import { SignJWT, jwtVerify } from "jose";
 import { getSiteBySlug } from "./data/sites";
 
-const SECRET = new TextEncoder().encode(
-  process.env.AUTH_SECRET || "dev-secret-change-in-production"
-);
+// Fail fast if AUTH_SECRET is missing — never fall back to a hardcoded secret.
+// A missing secret means anyone who reads the source code can forge session tokens.
+if (!process.env.AUTH_SECRET) {
+  throw new Error(
+    "AUTH_SECRET environment variable is required. " +
+    "Set it in .env.local (dev) or Railway env vars (prod). " +
+    "Generate one with: openssl rand -base64 32"
+  );
+}
+
+const SECRET = new TextEncoder().encode(process.env.AUTH_SECRET);
 
 const COOKIE_NAME = "itsw_session";
 
-interface SessionPayload {
+export interface SessionPayload {
   slug: string;
   isPaid: boolean;
 }
@@ -54,4 +63,36 @@ export async function getSession(): Promise<SessionPayload | null> {
 export async function destroySession() {
   const cookieStore = await cookies();
   cookieStore.delete(COOKIE_NAME);
+}
+
+/**
+ * Verify the user owns the given slug. Returns the session on success,
+ * or a 401 NextResponse on failure. Use in API routes like:
+ *
+ *   const auth = await requireAuth(slug);
+ *   if (auth instanceof NextResponse) return auth;
+ *   // auth is now a valid SessionPayload
+ */
+export async function requireAuth(slug: string): Promise<SessionPayload | NextResponse> {
+  const session = await getSession();
+  if (!session || session.slug !== slug) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  return session;
+}
+
+/**
+ * Same as requireAuth but also checks the user has a paid account.
+ * Returns 403 with a clear upgrade message if not paid.
+ */
+export async function requirePaidAuth(slug: string): Promise<SessionPayload | NextResponse> {
+  const result = await requireAuth(slug);
+  if (result instanceof NextResponse) return result;
+  if (!result.isPaid) {
+    return NextResponse.json(
+      { error: "This feature requires a premium account. Upgrade to unlock." },
+      { status: 403 }
+    );
+  }
+  return result;
 }
