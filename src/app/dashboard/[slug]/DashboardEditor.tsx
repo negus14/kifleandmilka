@@ -79,6 +79,41 @@ function Field({ label, value, onChange, placeholder, multiline, rows, type = "t
   );
 }
 
+function SlugField({ currentSlug, onSave }: { currentSlug: string; onSave: (val: string) => void }) {
+  const [draft, setDraft] = useState(currentSlug);
+  const hasChanged = draft !== currentSlug;
+
+  return (
+    <div className="mb-6 p-4 bg-[#2d2b25]/5 border border-[#2d2b25]/10 rounded-sm">
+      <Label>Site URL</Label>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 sm:gap-2 mt-1">
+        <span className="text-xs sm:text-sm text-[#2d2b25]/40 shrink-0">ithinkshewifey.com/</span>
+        <input
+          type="text"
+          value={draft}
+          onChange={(e) => {
+            const val = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "");
+            setDraft(val);
+          }}
+          className="flex-1 px-3 py-2 border border-[#2d2b25]/15 bg-white/50 text-[#2d2b25] text-sm font-medium outline-none focus:border-[#2d2b25]/40 rounded-sm"
+          placeholder="your-url-here"
+        />
+        {hasChanged && (
+          <button
+            onClick={() => onSave(draft)}
+            className="px-4 py-2 bg-[#2d2b25] text-[#faf1e1] text-xs font-semibold tracking-[0.1em] uppercase rounded-sm hover:opacity-90 transition-opacity shrink-0"
+          >
+            Update URL
+          </button>
+        )}
+      </div>
+      <p className="text-[10px] text-[#2d2b25]/40 mt-2 uppercase tracking-wider">
+        Caution: Changing this will change your public website address.
+      </p>
+    </div>
+  );
+}
+
 const DatePickerTrigger = forwardRef<HTMLDivElement, { value?: string; onClick?: () => void; hasValue: boolean }>(
   ({ value: displayValue, onClick, hasValue }, ref) => {
     const formatDisplay = (iso: string) => {
@@ -202,7 +237,7 @@ function TimePicker({ label, hour, period, onChange }: {
 
 function Card({ children, onRemove, title }: { children: React.ReactNode; onRemove?: () => void; title?: string }) {
   return (
-    <div className="border border-[#2d2b25]/10 bg-white/40 p-4 rounded-sm mb-3 relative">
+    <div className="border border-[#2d2b25]/10 bg-white/40 p-4 rounded-sm mb-3 relative transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(45,43,37,0.06)]">
       {title && <p className="text-xs font-semibold tracking-wide uppercase text-[#2d2b25]/40 mb-3">{title}</p>}
       {onRemove && (
         <button onClick={onRemove} type="button"
@@ -218,13 +253,13 @@ function Card({ children, onRemove, title }: { children: React.ReactNode; onRemo
 function AddButton({ onClick, label }: { onClick: () => void; label: string }) {
   return (
     <button onClick={onClick} type="button"
-      className="text-xs font-semibold tracking-[0.1em] uppercase text-[#2d2b25]/50 border border-dashed border-[#2d2b25]/20 px-4 py-2 hover:border-[#2d2b25]/40 hover:text-[#2d2b25] transition-colors w-full mt-1 mb-4 rounded-sm"
+      className="text-xs font-semibold tracking-[0.1em] uppercase text-[#2d2b25]/50 border border-dashed border-[#2d2b25]/20 px-4 py-2.5 hover:border-[#2d2b25]/40 hover:text-[#2d2b25] hover:bg-[#2d2b25]/[0.02] transition-all duration-200 w-full mt-1 mb-4 rounded-sm hover:scale-[1.01]"
     >+ {label}</button>
   );
 }
 
 function SectionTitle({ children }: { children: React.ReactNode }) {
-  return <h2 className="text-lg mb-6" style={{ fontFamily: "'Playfair Display', serif" }}>{children}</h2>;
+  return <h2 className="text-lg mb-6" style={{ fontFamily: "'Cormorant Garamond', serif" }}>{children}</h2>;
 }
 
 function DomainStatus({ slug, domain }: { slug: string; domain: string }) {
@@ -234,11 +269,34 @@ function DomainStatus({ slug, domain }: { slug: string; domain: string }) {
   const check = async () => {
     setStatus("checking");
     try {
-      const res = await fetch(`/api/sites/${slug}/domain`);
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
-      setStatus(data.configured ? "configured" : "pending");
-      setMessage(data.configured ? "Domain is configured and active" : "Waiting for DNS propagation...");
+      // First check current status
+      const getRes = await fetch(`/api/sites/${slug}/domain`);
+      const getData = await getRes.json();
+
+      if (getData.configured) {
+        setStatus("configured");
+        setMessage("Domain is configured and active");
+        return;
+      }
+
+      if (getData.pending) {
+        setStatus("pending");
+        setMessage("SSL certificate is being provisioned. Check back in a few minutes.");
+        return;
+      }
+
+      // Not yet registered — try to verify and register
+      const postRes = await fetch(`/api/sites/${slug}/domain`, { method: "POST" });
+      const postData = await postRes.json();
+
+      if (!postRes.ok) {
+        setStatus("error");
+        setMessage(postData.error);
+        return;
+      }
+
+      setStatus("pending");
+      setMessage("Domain verified! SSL certificate is being provisioned. This usually takes a few minutes.");
     } catch (err) {
       setStatus("error");
       setMessage(err instanceof Error ? err.message : "Failed to check status");
@@ -669,9 +727,10 @@ function GiftTrackerPanel({ giftData, loadGifts, site }: {
       currency: string | null; message: string | null; payment_method: string | null;
       status: string | null; created_at: string | null;
     }[];
+    total: number; page: number; totalPages: number;
     loaded: boolean; loading: boolean; error: string | null;
   };
-  loadGifts: () => void;
+  loadGifts: (page?: number) => void;
   site: WeddingSite;
 }) {
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
@@ -710,10 +769,10 @@ function GiftTrackerPanel({ giftData, loadGifts, site }: {
     <div>
       <div className="flex items-start justify-between mb-2">
         <div>
-          <h2 className="text-lg" style={{ fontFamily: "'Playfair Display', serif" }}>Gift Tracker</h2>
+          <h2 className="text-lg" style={{ fontFamily: "'Cormorant Garamond', serif" }}>Gift Tracker{giftData.total > 0 ? ` (${giftData.total})` : ""}</h2>
           <p className="text-xs text-[#2d2b25]/40 mt-1">Track contributions and well wishes from guests</p>
         </div>
-        <button onClick={loadGifts} disabled={loading} className="p-2 text-[#2d2b25]/40 hover:text-[#2d2b25] hover:bg-[#2d2b25]/5 rounded-sm transition-all" title="Refresh">
+        <button onClick={() => loadGifts(giftData.page)} disabled={loading} className="p-2 text-[#2d2b25]/40 hover:text-[#2d2b25] hover:bg-[#2d2b25]/5 rounded-sm transition-all" title="Refresh">
           <svg className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
           </svg>
@@ -734,7 +793,7 @@ function GiftTrackerPanel({ giftData, loadGifts, site }: {
           { label: "Confirmed", value: confirmed, color: "text-green-700" },
           { label: "Pending", value: pending, color: "text-[#2d2b25]/40" },
         ].map((stat) => (
-          <div key={stat.label} className="p-3 bg-white border border-[#2d2b25]/8 rounded-sm text-center">
+          <div key={stat.label} className="p-3 bg-white border border-[#2d2b25]/8 rounded-sm text-center transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(45,43,37,0.06)]">
             <p className={`text-xl font-serif italic ${stat.color}`}>{stat.value}</p>
             <p className="text-[8px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/35 mt-0.5">{stat.label}</p>
           </div>
@@ -821,11 +880,34 @@ function GiftTrackerPanel({ giftData, loadGifts, site }: {
         </div>
       )}
 
+      {/* Pagination */}
+      {giftData.totalPages > 1 && (
+        <div className="flex items-center justify-between mt-4 pt-3 border-t border-[#2d2b25]/8">
+          <button
+            onClick={() => loadGifts(giftData.page - 1)}
+            disabled={giftData.page <= 1 || loading}
+            className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-[#2d2b25]/50 hover:text-[#2d2b25] border border-[#2d2b25]/10 hover:border-[#2d2b25]/25 rounded-sm transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+          >
+            Prev
+          </button>
+          <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/40">
+            Page {giftData.page} of {giftData.totalPages}
+          </span>
+          <button
+            onClick={() => loadGifts(giftData.page + 1)}
+            disabled={giftData.page >= giftData.totalPages || loading}
+            className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-[#2d2b25]/50 hover:text-[#2d2b25] border border-[#2d2b25]/10 hover:border-[#2d2b25]/25 rounded-sm transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+          >
+            Next
+          </button>
+        </div>
+      )}
+
       {/* Delete modal */}
       {deleteConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setDeleteConfirm(null)}>
           <div className="bg-[#faf1e1] border border-[#2d2b25]/15 rounded-sm p-6 max-w-sm mx-4 shadow-xl" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-base font-medium mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>Delete Gift</h3>
+            <h3 className="text-base font-medium mb-2" style={{ fontFamily: "'Cormorant Garamond', serif" }}>Delete Gift</h3>
             <p className="text-sm text-[#2d2b25]/60 mb-6">Are you sure? This cannot be undone.</p>
             <div className="flex items-center justify-end gap-3">
               <button onClick={() => setDeleteConfirm(null)} className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-[#2d2b25]/50 hover:text-[#2d2b25] transition-colors">Cancel</button>
@@ -858,7 +940,7 @@ type GuestRow = {
 function MessagesPanel({ msgData, loadMessages, site }: {
   msgData: {
     groups: { id: string; name: string; type: string; filter: any; members: any }[];
-    broadcasts: { id: string; groupId: string | null; subject: string; body: string; channel: string; status: string; recipientCount: string | null; sentAt: string | null; createdAt: string | null }[];
+    broadcasts: { id: string; groupId: string | null; subject: string; body: string; channel: string; status: string; recipientCount: number | null; sentAt: string | null; createdAt: string | null }[];
     loaded: boolean; loading: boolean; error: string | null;
   };
   loadMessages: () => void;
@@ -1091,7 +1173,7 @@ function MessagesPanel({ msgData, loadMessages, site }: {
                       <div className="min-w-0">
                         <p className="text-sm font-medium text-[#2d2b25] truncate">{b.subject}</p>
                         <p className="text-[11px] text-[#2d2b25]/50 mt-1">
-                          To: {group?.name || "Unknown group"} &middot; {b.recipientCount || "?"} recipient{b.recipientCount === "1" ? "" : "s"}
+                          To: {group?.name || "Unknown group"} &middot; {b.recipientCount || "?"} recipient{b.recipientCount === 1 ? "" : "s"}
                         </p>
                       </div>
                       <div className="text-right flex-shrink-0">
@@ -1187,11 +1269,14 @@ function GuestListPanel({ rsvpData, loadRSVPs, site, set }: {
       guests: { name: string; attending: boolean; mealChoice?: string; isHalal?: boolean; dietaryPreference?: string }[];
       created_at: string | null;
     }[];
+    total: number;
+    page: number;
+    totalPages: number;
     loaded: boolean;
     loading: boolean;
     error: string | null;
   };
-  loadRSVPs: () => void;
+  loadRSVPs: (page?: number) => void;
   site: WeddingSite;
   set: <K extends keyof WeddingSite>(key: K, value: WeddingSite[K]) => void;
 }) {
@@ -1348,7 +1433,7 @@ function GuestListPanel({ rsvpData, loadRSVPs, site, set }: {
       {/* Header */}
       <div className="flex items-start justify-between mb-2">
         <div>
-          <h2 className="text-lg" style={{ fontFamily: "'Playfair Display', serif" }}>Guest List</h2>
+          <h2 className="text-lg" style={{ fontFamily: "'Cormorant Garamond', serif" }}>Guest List{rsvpData.total > 0 ? ` (${rsvpData.total})` : ""}</h2>
           <p className="text-xs text-[#2d2b25]/40 mt-1">Track RSVPs and manage your guest list</p>
         </div>
         <div className="flex items-center gap-2">
@@ -1370,7 +1455,7 @@ function GuestListPanel({ rsvpData, loadRSVPs, site, set }: {
             </button>
           )}
           <button
-            onClick={loadRSVPs}
+            onClick={() => loadRSVPs(rsvpData.page)}
             disabled={rsvpLoading}
             className="p-2 text-[#2d2b25]/40 hover:text-[#2d2b25] hover:bg-[#2d2b25]/5 rounded-sm transition-all"
             title="Refresh"
@@ -1397,7 +1482,7 @@ function GuestListPanel({ rsvpData, loadRSVPs, site, set }: {
           { label: "Attending", value: attending, color: "text-green-700" },
           { label: "Declined", value: declined, color: "text-[#2d2b25]/40" },
         ].map((stat) => (
-          <div key={stat.label} className="p-3 bg-white border border-[#2d2b25]/8 rounded-sm text-center">
+          <div key={stat.label} className="p-3 bg-white border border-[#2d2b25]/8 rounded-sm text-center transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(45,43,37,0.06)]">
             <p className={`text-xl font-serif italic ${stat.color}`}>{stat.value}</p>
             <p className="text-[8px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/35 mt-0.5">{stat.label}</p>
           </div>
@@ -1825,6 +1910,29 @@ function GuestListPanel({ rsvpData, loadRSVPs, site, set }: {
               })}
             </div>
           )}
+
+          {/* Pagination */}
+          {rsvpData.totalPages > 1 && (
+            <div className="flex items-center justify-between mt-4 pt-3 border-t border-[#2d2b25]/8">
+              <button
+                onClick={() => loadRSVPs(rsvpData.page - 1)}
+                disabled={rsvpData.page <= 1 || rsvpLoading}
+                className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-[#2d2b25]/50 hover:text-[#2d2b25] border border-[#2d2b25]/10 hover:border-[#2d2b25]/25 rounded-sm transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                Prev
+              </button>
+              <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/40">
+                Page {rsvpData.page} of {rsvpData.totalPages}
+              </span>
+              <button
+                onClick={() => loadRSVPs(rsvpData.page + 1)}
+                disabled={rsvpData.page >= rsvpData.totalPages || rsvpLoading}
+                className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-[#2d2b25]/50 hover:text-[#2d2b25] border border-[#2d2b25]/10 hover:border-[#2d2b25]/25 rounded-sm transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                Next
+              </button>
+            </div>
+          )}
         </>
       )}
 
@@ -1832,7 +1940,7 @@ function GuestListPanel({ rsvpData, loadRSVPs, site, set }: {
       {deleteConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setDeleteConfirm(null)}>
           <div className="bg-[#faf1e1] border border-[#2d2b25]/15 rounded-sm p-6 max-w-sm mx-4 shadow-xl" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-base font-medium mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>Delete RSVP</h3>
+            <h3 className="text-base font-medium mb-2" style={{ fontFamily: "'Cormorant Garamond', serif" }}>Delete RSVP</h3>
             <p className="text-sm text-[#2d2b25]/60 mb-6">Are you sure you want to delete this RSVP? This action cannot be undone.</p>
             <div className="flex items-center justify-end gap-3">
               <button
@@ -1879,18 +1987,21 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
       guests: { name: string; attending: boolean; mealChoice?: string; isHalal?: boolean; dietaryPreference?: string }[];
       created_at: string | null;
     }[];
+    total: number;
+    page: number;
+    totalPages: number;
     loaded: boolean;
     loading: boolean;
     error: string | null;
-  }>({ rsvps: [], loaded: false, loading: false, error: null });
+  }>({ rsvps: [], total: 0, page: 1, totalPages: 1, loaded: false, loading: false, error: null });
 
-  const loadRSVPs = useCallback(async () => {
+  const loadRSVPs = useCallback(async (page = 1) => {
     setRsvpData(prev => ({ ...prev, loading: true, error: null }));
     try {
-      const res = await fetch(`/api/sites/${initial.slug}/rsvps`);
+      const res = await fetch(`/api/sites/${initial.slug}/rsvps?page=${page}&limit=50`);
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to load RSVPs");
-      setRsvpData({ rsvps: data.rsvps, loaded: true, loading: false, error: null });
+      setRsvpData({ rsvps: data.rsvps, total: data.total ?? data.rsvps.length, page: data.page ?? page, totalPages: data.totalPages ?? 1, loaded: true, loading: false, error: null });
     } catch (err) {
       const message = err instanceof Error ? err.message : "Failed to load RSVPs";
       setRsvpData(prev => ({ ...prev, loading: false, error: message }));
@@ -1910,18 +2021,21 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
       status: string | null;
       created_at: string | null;
     }[];
+    total: number;
+    page: number;
+    totalPages: number;
     loaded: boolean;
     loading: boolean;
     error: string | null;
-  }>({ contributions: [], loaded: false, loading: false, error: null });
+  }>({ contributions: [], total: 0, page: 1, totalPages: 1, loaded: false, loading: false, error: null });
 
-  const loadGifts = useCallback(async () => {
+  const loadGifts = useCallback(async (page = 1) => {
     setGiftData(prev => ({ ...prev, loading: true, error: null }));
     try {
-      const res = await fetch(`/api/sites/${initial.slug}/gift-contributions`);
+      const res = await fetch(`/api/sites/${initial.slug}/gift-contributions?page=${page}&limit=50`);
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to load");
-      setGiftData({ contributions: data.contributions, loaded: true, loading: false, error: null });
+      setGiftData({ contributions: data.contributions, total: data.total ?? data.contributions.length, page: data.page ?? page, totalPages: data.totalPages ?? 1, loaded: true, loading: false, error: null });
     } catch (err) {
       const message = err instanceof Error ? err.message : "Failed to load gift contributions";
       setGiftData(prev => ({ ...prev, loading: false, error: message }));
@@ -1931,7 +2045,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
   // Broadcast / messages state
   const [msgData, setMsgData] = useState<{
     groups: { id: string; name: string; type: string; filter: any; members: any }[];
-    broadcasts: { id: string; groupId: string | null; subject: string; body: string; channel: string; status: string; recipientCount: string | null; sentAt: string | null; createdAt: string | null }[];
+    broadcasts: { id: string; groupId: string | null; subject: string; body: string; channel: string; status: string; recipientCount: number | null; sentAt: string | null; createdAt: string | null }[];
     loaded: boolean; loading: boolean; error: string | null;
   }>({ groups: [], broadcasts: [], loaded: false, loading: false, error: null });
 
@@ -2356,7 +2470,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
       
       {/* Upgrade banner for unpaid sites */}
       {!site.isPaid && (
-        <div className="sticky top-0 z-[60] bg-[#2d2b25] text-[#faf1e1] px-4 py-2.5 flex items-center justify-between">
+        <div className="sticky top-0 z-[60] bg-gradient-to-r from-[#2d2b25] via-[#3a3730] to-[#2d2b25] text-[#faf1e1] px-4 py-2.5 flex items-center justify-between">
           <p className="text-xs">
             <span className="font-bold uppercase tracking-wider">Free plan</span>
             <span className="opacity-60 ml-2">Upgrade to publish your site and go live</span>
@@ -2366,7 +2480,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
             disabled={isPaying}
             className="px-4 py-1.5 bg-white text-[#2d2b25] text-[10px] font-bold uppercase tracking-widest rounded-sm hover:bg-white/90 disabled:opacity-50 transition-all"
           >
-            {isPaying ? "Loading..." : "Upgrade — $29"}
+            {isPaying ? "Loading..." : "Upgrade — £50"}
           </button>
         </div>
       )}
@@ -2375,10 +2489,10 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
       <header className="sticky top-0 z-50 border-b border-[#2d2b25]/[0.08] bg-[#faf1e1]/95 backdrop-blur-sm">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <a href="/" className="text-base hidden sm:block" style={{ fontFamily: "'Playfair Display', serif" }}>
+            <a href="/" className="text-base hidden sm:block font-medium" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
               I Think She Wifey
             </a>
-            <a href="/" className="text-base sm:hidden font-serif italic">ITSW</a>
+            <a href="/" className="text-base sm:hidden italic" style={{ fontFamily: "'Cormorant Garamond', serif" }}>ITSW</a>
             <span className="text-[#2d2b25]/30">/</span>
             <span className="text-xs sm:text-sm text-[#2d2b25]/60 truncate max-w-[100px] sm:max-w-none">{site.partner1Name} & {site.partner2Name}</span>
           </div>
@@ -2403,9 +2517,9 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
             </div>
 
             <div className="flex items-center gap-1.5 px-1 sm:px-3">
-              <div className={`w-1.5 h-1.5 rounded-full transition-colors flex-shrink-0 ${saveError ? "bg-red-500 animate-pulse" : saving ? "bg-amber-400 animate-pulse" : saved ? "bg-green-500" : "bg-amber-400"}`} />
-              <span className={`text-[9px] sm:text-[10px] font-bold uppercase tracking-widest whitespace-nowrap ${saveError ? "text-red-600" : "text-[#2d2b25]/40"}`}>
-                {saveError ? "Error" : saving ? "Saving" : saved ? "Saved" : "Changes"}
+              <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 transition-all duration-300 ${saveError ? "bg-red-500 animate-pulse" : saving ? "bg-amber-400 animate-pulse" : saved ? "bg-green-500 shadow-[0_0_6px_rgba(34,197,94,0.4)]" : "bg-amber-400"}`} />
+              <span className={`text-[9px] sm:text-[10px] font-bold uppercase tracking-widest whitespace-nowrap transition-colors duration-300 ${saveError ? "text-red-600" : saved && !saving ? "text-green-600" : "text-[#2d2b25]/40"}`}>
+                {saveError ? "Error" : saving ? "Saving..." : saved ? "Saved" : "Unsaved"}
               </span>
             </div>
 
@@ -2510,12 +2624,12 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                       }
                       handleTabChange(t.id);
                     }}
-                    className={`whitespace-nowrap px-4 lg:px-3 py-2 text-[11px] lg:text-sm rounded-sm transition-all ${
+                    className={`whitespace-nowrap px-4 lg:px-3 py-2 text-[11px] lg:text-sm rounded-sm transition-all duration-200 ${
                       view === "website" && tab === t.id
-                        ? "bg-[#2d2b25] text-[#faf1e1] shadow-sm font-bold"
+                        ? "bg-[#2d2b25] text-[#faf1e1] shadow-md font-bold scale-[1.02]"
                         : isHidden
                           ? "text-[#2d2b25]/20 cursor-not-allowed italic"
-                          : "text-[#2d2b25]/60 hover:text-[#2d2b25] hover:bg-[#2d2b25]/5"
+                          : "text-[#2d2b25]/60 hover:text-[#2d2b25] hover:bg-[#2d2b25]/5 hover:translate-x-0.5"
                     }`}
                     title={isHidden ? `${t.label} is hidden in layout` : ""}
                   >
@@ -2545,10 +2659,10 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
               <button
                 key={item.id}
                 onClick={() => setView(item.id)}
-                className={`whitespace-nowrap px-4 lg:px-3 py-2 text-[11px] lg:text-sm rounded-sm transition-all w-full text-left ${
+                className={`whitespace-nowrap px-4 lg:px-3 py-2 text-[11px] lg:text-sm rounded-sm transition-all duration-200 w-full text-left ${
                   view === item.id
-                    ? "bg-[#2d2b25] text-[#faf1e1] shadow-sm font-bold"
-                    : "text-[#2d2b25]/60 hover:text-[#2d2b25] hover:bg-[#2d2b25]/5"
+                    ? "bg-[#2d2b25] text-[#faf1e1] shadow-md font-bold scale-[1.02]"
+                    : "text-[#2d2b25]/60 hover:text-[#2d2b25] hover:bg-[#2d2b25]/5 hover:translate-x-0.5"
                 }`}
               >
                 <div className="flex items-center gap-2">
@@ -2586,30 +2700,13 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
             style={isPreview ? { width: `${editorWidth}%`, maxWidth: `${editorWidth}%` } : { width: '100%' }}
             className={`transition-all min-w-0 overflow-x-hidden ${isPreview ? "h-auto lg:h-[calc(100vh-10rem)] lg:overflow-y-auto lg:pr-6 custom-scrollbar block shrink-0 max-lg:!w-full max-lg:!max-w-full" : "w-full block"}`}
           >
+            <div key={tab} className="animate-[fadeIn_0.3s_ease]">
             {(() => {
               if (tab === "Basics") return (
                 <div>
                   <SectionTitle>Basic Info</SectionTitle>
                   
-                  <div className="mb-6 p-4 bg-[#2d2b25]/5 border border-[#2d2b25]/10 rounded-sm">
-                    <Label>Site URL</Label>
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 sm:gap-2 mt-1">
-                      <span className="text-xs sm:text-sm text-[#2d2b25]/40 shrink-0">ithinkshewifey.com/</span>
-                      <input
-                        type="text"
-                        value={site.slug}
-                        onChange={(e) => {
-                          const val = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "");
-                          set("slug", val);
-                        }}
-                        className="flex-1 px-3 py-2 border border-[#2d2b25]/15 bg-white/50 text-[#2d2b25] text-sm font-medium outline-none focus:border-[#2d2b25]/40 rounded-sm"
-                        placeholder="your-url-here"
-                      />
-                    </div>
-                    <p className="text-[10px] text-[#2d2b25]/40 mt-2 uppercase tracking-wider">
-                      Caution: Changing this will change your public website address.
-                    </p>
-                  </div>
+                  <SlugField currentSlug={site.slug} onSave={(val) => set("slug", val)} />
 
                   <Field label="Partner 1 Name" value={site.partner1Name} onChange={(v) => set("partner1Name", v)} />
                   <Field label="Partner 2 Name" value={site.partner2Name} onChange={(v) => set("partner2Name", v)} />
@@ -2715,19 +2812,34 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                     <div className="mt-10 pt-8 border-t border-[#2d2b25]/10">
                       <Label>Custom Domain</Label>
                       <p className="text-[10px] text-[#2d2b25]/40 mb-4 uppercase tracking-wider">Use your own domain instead of ithinkshewifey.com/{site.slug}</p>
-                      <Field
-                        label="Domain"
-                        value={site.customDomain || ""}
-                        onChange={(v) => set("customDomain", v.toLowerCase().replace(/[^a-z0-9.-]/g, "") || null)}
-                        placeholder="e.g. wedding.smith.com"
-                      />
-                      {site.customDomain && (
-                        <div className="mt-3 p-4 bg-[#f7f6f3] border border-[#2d2b25]/10 rounded-sm">
-                          <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/60 mb-2">DNS Setup</p>
-                          <p className="text-xs text-[#2d2b25]/70 mb-2">Add a CNAME record pointing to:</p>
-                          <code className="block text-xs bg-white px-3 py-2 border border-[#2d2b25]/10 rounded-sm text-[#2d2b25] select-all">cname.vercel-dns.com</code>
-                          <DomainStatus slug={site.slug} domain={site.customDomain} />
-                        </div>
+                      {site.domainVerifiedAt ? (
+                        <>
+                          <div className="p-4 bg-green-50 border border-green-200 rounded-sm">
+                            <p className="text-xs font-medium text-green-800">
+                              {site.customDomain} is connected
+                            </p>
+                            <p className="text-[10px] text-green-600 mt-1">
+                              Domain locked. Contact support to change.
+                            </p>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <Field
+                            label="Domain"
+                            value={site.customDomain || ""}
+                            onChange={(v) => set("customDomain", v.toLowerCase().replace(/[^a-z0-9.-]/g, "") || null)}
+                            placeholder="e.g. wedding.smith.com"
+                          />
+                          {site.customDomain && (
+                            <div className="mt-3 p-4 bg-[#f7f6f3] border border-[#2d2b25]/10 rounded-sm">
+                              <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/60 mb-2">DNS Setup</p>
+                              <p className="text-xs text-[#2d2b25]/70 mb-2">Add a CNAME record pointing to:</p>
+                              <code className="block text-xs bg-white px-3 py-2 border border-[#2d2b25]/10 rounded-sm text-[#2d2b25] select-all">proxy.ithinkshewifey.com</code>
+                              <DomainStatus slug={site.slug} domain={site.customDomain} />
+                            </div>
+                          )}
+                        </>
                       )}
                     </div>
                   )}
@@ -2778,7 +2890,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                           disabled={isPaying}
                           className="w-full py-3 bg-[#2d2b25] text-[#faf1e1] font-bold uppercase tracking-widest text-[10px] rounded-sm hover:opacity-90 disabled:opacity-50 transition-all"
                         >
-                          {isPaying ? "Preparing Checkout..." : "Upgrade — $29 one-time"}
+                          {isPaying ? "Preparing Checkout..." : "Upgrade — £50 one-time"}
                         </button>
                       </div>
                     )}
@@ -3532,6 +3644,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
 
               return null;
             })()}
+            </div>
           </div>
 
           {/* Draggable Divider */}
