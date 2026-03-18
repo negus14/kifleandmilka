@@ -1,5 +1,5 @@
 import { WeddingSite, DEFAULT_SECTION_ORDER, SECTION_LABELS } from "./types/wedding-site";
-import { getTheme, getFontStyle } from "./themes";
+import { getTheme, getFontStyle, buildGoogleFontsUrl } from "./themes";
 
 /**
  * Ensures a site object has all required fields and conforms to the latest structure.
@@ -75,28 +75,45 @@ export function toEmbedUrl(url: string): string {
 }
 
 /**
- * Generates CSS variables based on the site's theme and font style.
+ * Generates CSS variables based on the site's theme and font style,
+ * merging any custom color/font overrides on top of presets.
  */
 export function generateThemeVars(site: WeddingSite): React.CSSProperties {
   const theme = getTheme(site.templateId);
   const fontStyle = getFontStyle(site.fontStyleId);
 
+  // Merge custom overrides on top of preset values
+  const colors = { ...theme.colors, ...site.customColors };
+  const fonts = { ...fontStyle.fonts, ...site.customFonts };
+
   return {
-    "--color-dark": theme.colors.dark,
-    "--color-accent": theme.colors.accent,
-    "--color-primary": theme.colors.primary,
-    "--color-accent-light": theme.colors.accentLight,
-    "--color-accent-dark": theme.colors.accentDark,
-    "--color-primary-dark": theme.colors.primaryDark,
-    "--font-script": fontStyle.fonts.script,
-    "--font-serif": fontStyle.fonts.serif,
-    "--font-sans": fontStyle.fonts.sans,
+    "--color-dark": colors.dark,
+    "--color-accent": colors.accent,
+    "--color-primary": colors.primary,
+    "--color-accent-light": colors.accentLight,
+    "--color-accent-dark": colors.accentDark,
+    "--color-primary-dark": colors.primaryDark,
+    "--font-script": fonts.script,
+    "--font-serif": fonts.serif,
+    "--font-sans": fonts.sans,
     // Optical tuning overrides
     "--tracking-sans": fontStyle.overrides?.letterSpacingSans || "0em",
     "--tracking-serif": fontStyle.overrides?.letterSpacingSerif || "0em",
     "--line-height-script": fontStyle.overrides?.lineHeightScript || "1.1",
     "--weight-sans": fontStyle.overrides?.fontWeightSans || "400",
   } as React.CSSProperties;
+}
+
+/**
+ * Returns the Google Fonts URL for the site, accounting for custom font overrides.
+ */
+export function getGoogleFontsUrl(site: WeddingSite): string {
+  const fontStyle = getFontStyle(site.fontStyleId);
+  if (!site.customFonts?.script && !site.customFonts?.serif && !site.customFonts?.sans) {
+    return fontStyle.googleFontsUrl;
+  }
+  const mergedFonts = { ...fontStyle.fonts, ...site.customFonts };
+  return buildGoogleFontsUrl(mergedFonts, fontStyle.googleFontsUrl);
 }
 
 /**

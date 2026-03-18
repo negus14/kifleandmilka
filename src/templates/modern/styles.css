@@ -1731,3 +1731,22 @@ img[data-zoomable] {
     font-size: 1.1rem;
   }
 }
+
+/* ─── Inline Editable Text ─── */
+.modern-site [data-editable] {
+  cursor: text;
+  transition: outline 0.15s ease, background 0.15s ease;
+  outline: 1.5px dashed transparent;
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+.modern-site [data-editable]:hover {
+  outline-color: var(--color-accent-dark, #888);
+}
+
+.modern-site [data-editable]:focus {
+  outline-color: var(--color-dark, #1a1a1a);
+  outline-style: solid;
+  background: color-mix(in srgb, var(--color-primary, #fff) 70%, transparent);
+}

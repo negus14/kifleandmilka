@@ -6,13 +6,7 @@ import { getSiteBySlug } from "./data/sites";
 // Lazy-initialise so the module can be imported at build time (Next.js page
 // data collection) without crashing.  The secret is only needed at runtime.
 function getSecret() {
-  if (!process.env.AUTH_SECRET) {
-    throw new Error(
-      "AUTH_SECRET environment variable is required. " +
-      "Set it in .env.local (dev) or Railway env vars (prod). " +
-      "Generate one with: openssl rand -base64 32"
-    );
-  }
+  if (!process.env.AUTH_SECRET) return null;
   return new TextEncoder().encode(process.env.AUTH_SECRET);
 }
 
@@ -24,13 +18,16 @@ export interface SessionPayload {
 }
 
 export async function createSession(slug: string) {
+  const secret = getSecret();
+  if (!secret) throw new Error("AUTH_SECRET is not configured");
+
   const site = await getSiteBySlug(slug, true);
   const isPaid = !!site?.isPaid;
 
   const token = await new SignJWT({ slug, isPaid })
     .setProtectedHeader({ alg: "HS256" })
     .setExpirationTime("30d")
-    .sign(getSecret());
+    .sign(secret);
 
   const cookieStore = await cookies();
   cookieStore.set(COOKIE_NAME, token, {
@@ -47,8 +44,11 @@ export async function getSession(): Promise<SessionPayload | null> {
   const token = cookieStore.get(COOKIE_NAME)?.value;
   if (!token) return null;
 
+  const secret = getSecret();
+  if (!secret) return null;
+
   try {
-    const { payload } = await jwtVerify(token, getSecret());
+    const { payload } = await jwtVerify(token, secret);
 
     // Validate payload structure
     if (typeof payload.slug !== "string" || !payload.slug) {

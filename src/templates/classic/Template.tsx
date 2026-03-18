@@ -1,15 +1,21 @@
 import SafeImage from "@/components/SafeImage";
 import type { WeddingSite, VenueItem, VenueInfoBlock } from "@/lib/types/wedding-site";
 import { getTheme, getFontStyle } from "@/lib/themes";
-import { toEmbedUrl, generateThemeVars, getSectionData } from "@/lib/template-utils";
+import { toEmbedUrl, generateThemeVars, getSectionData, getGoogleFontsUrl } from "@/lib/template-utils";
 import WeddingSiteClient from "./WeddingSiteClient";
 import CountdownClient from "@/templates/CountdownClient";
 import RSVPForm from "@/components/RSVPForm";
 import AccommodationActions from "@/components/AccommodationActions";
 import GiftContributionForm from "@/components/GiftContributionForm";
+import EditableText from "@/components/dashboard/EditableText";
 import "./styles.css";
 
-export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPreview?: boolean }) {
+export function ClassicTemplate({ site, isPreview, onFieldUpdate }: { site: WeddingSite; isPreview?: boolean; onFieldUpdate?: (field: string, value: string) => void }) {
+  const editable = !!onFieldUpdate;
+  const E = ({ field, value, className, style, children, multiline }: { field: string; value: string; className?: string; style?: React.CSSProperties; children?: React.ReactNode; multiline?: boolean }) => {
+    if (!editable) return <>{children ?? value}</>;
+    return <EditableText fieldKey={field} value={value} onUpdate={onFieldUpdate!} className={className} style={style} multiline={multiline}>{children ?? value}</EditableText>;
+  };
   const theme = getTheme(site.templateId);
   const fontStyle = getFontStyle(site.fontStyleId);
   const themeVars = generateThemeVars(site);
@@ -41,15 +47,15 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
             }}></div>
           </div>
           <div className="hero__content" style={{ position: 'relative', zIndex: 1 }}>
-            {d(id, 'pretext', site.heroPretext) && <p className="hero__pretext">{d(id, 'pretext', site.heroPretext)}</p>}
+            {d(id, 'pretext', site.heroPretext) && <p className="hero__pretext"><E field="heroPretext" value={d(id, 'pretext', site.heroPretext)} /></p>}
             <h1 className="hero__names">
-              {site.partner1Name} <span className="hero__ampersand">&amp;</span> {site.partner2Name}
+              <E field="partner1Name" value={site.partner1Name} /> <span className="hero__ampersand">&amp;</span> <E field="partner2Name" value={site.partner2Name} />
             </h1>
             <div className="hero__line"></div>
-            {d(id, 'tagline', site.heroTagline) && <p className="hero__tagline">{d(id, 'tagline', site.heroTagline)}</p>}
-            {d(id, 'cta', site.heroCta) && <a href="#rsvp" className="hero__btn">{d(id, 'cta', site.heroCta)}</a>}
+            {d(id, 'tagline', site.heroTagline) && <p className="hero__tagline"><E field="heroTagline" value={d(id, 'tagline', site.heroTagline)} /></p>}
+            {d(id, 'cta', site.heroCta) && <a href="#rsvp" className="hero__btn"><E field="heroCta" value={d(id, 'cta', site.heroCta)} /></a>}
             <p className="hero__date-line">
-              {site.dateDisplayText} &bull; {site.locationText}
+              <E field="dateDisplayText" value={site.dateDisplayText} /> &bull; <E field="locationText" value={site.locationText} />
             </p>
             <div className="hero__countdown" aria-label="Countdown to wedding">
               <div className="countdown__item">
@@ -82,13 +88,13 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
         <section className={`section ${cls || "section--tan"}`} id={id} style={style}>
           <div className="container">
             <div className="section__header reveal">
-              <p className="section__subtitle">{d(id, 'subtitle', site.storySubtitle)}</p>
-              <h2 className="section__title">{d(id, 'title', site.storyTitle)}</h2>
+              <p className="section__subtitle"><E field="storySubtitle" value={d(id, 'subtitle', site.storySubtitle)} /></p>
+              <h2 className="section__title"><E field="storyTitle" value={d(id, 'title', site.storyTitle)} /></h2>
               <div className="section__line"></div>
             </div>
             <div className="story">
               <div className="story__text-block reveal">
-                <p className="story__lead">&ldquo;{d(id, 'leadQuote', site.storyLeadQuote)}&rdquo;</p>
+                <p className="story__lead">&ldquo;<E field="storyLeadQuote" value={d(id, 'leadQuote', site.storyLeadQuote)} />&rdquo;</p>
                 {storyBody.map((p, i) => (
                   <p key={i} className="story__text">{p}</p>
                 ))}
@@ -280,9 +286,9 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
         <section className={`section ${cls}`} id={id} style={style}>
           <div className="container">
             <div className="quote reveal">
-              <p className="quote__text">&ldquo;{text}&rdquo;</p>
+              <p className="quote__text">&ldquo;<E field="quoteText" value={text} />&rdquo;</p>
               {d(id, 'attribution', site.quoteAttribution) && (
-                <p className="quote__attribution">&mdash; {d(id, 'attribution', site.quoteAttribution)}</p>
+                <p className="quote__attribution">&mdash; <E field="quoteAttribution" value={d(id, 'attribution', site.quoteAttribution)} /></p>
               )}
             </div>
           </div>
@@ -323,11 +329,11 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
         <section className={`section ${cls || "section--dark"}`} id={id} style={style}>
           <div className="container">
             <div className="letter reveal">
-              {d(id, 'opening', site.letterOpening) && <p className="letter__opening">{d(id, 'opening', site.letterOpening)}</p>}
+              {d(id, 'opening', site.letterOpening) && <p className="letter__opening"><E field="letterOpening" value={d(id, 'opening', site.letterOpening)} /></p>}
               {body.map((p, i) => (
                 <p key={i} className="letter__text">{p}</p>
               ))}
-              {d(id, 'closing', site.letterClosing) && <p className="letter__closing">{d(id, 'closing', site.letterClosing)}</p>}
+              {d(id, 'closing', site.letterClosing) && <p className="letter__closing"><E field="letterClosing" value={d(id, 'closing', site.letterClosing)} /></p>}
             </div>
           </div>
         </section>
@@ -414,24 +420,37 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
 
     menu: (id, cls = "", style = {}) => {
       const hasBg = cls.includes("section--has-bg");
-      const hasContent = site.menuItems && site.menuItems.length > 0;
+      const categories = site.menuCategories || [];
+      const hasCategories = categories.length > 0;
+      const hasContent = hasCategories || (site.menuItems && site.menuItems.length > 0);
       if (!hasContent && !hasBg) return null;
+
+      const renderDish = (item: { name: string; description: string }, i: number) => (
+        <div key={i} className="menu__item">
+          <div className="menu__item-name">{item.name}</div>
+          <p className="menu__item-desc">
+            {item.description.split("\n").map((line, j) => (
+              <span key={j}>{line}{j < item.description.split("\n").length - 1 && <br />}</span>
+            ))}
+          </p>
+        </div>
+      );
 
       return (
         <section className={`section ${cls || "section--dark"}`} id={id} style={style}>
           <div className="container">
             <div className="menu-section reveal">
               <h2 className="menu__heading">Menu</h2>
-              {(site.menuItems || []).map((item, i) => (
-                <div key={i} className="menu__item">
-                  <div className="menu__item-name">{item.name}</div>
-                  <p className="menu__item-desc">
-                    {item.description.split("\n").map((line, j) => (
-                      <span key={j}>{line}{j < item.description.split("\n").length - 1 && <br />}</span>
-                    ))}
-                  </p>
-                </div>
-              ))}
+              {hasCategories ? (
+                categories.map((cat) => (
+                  <div key={cat.id} className="menu__category">
+                    {cat.name && <h3 className="menu__category-name">{cat.name}</h3>}
+                    {cat.items.map((item, i) => renderDish(item, i))}
+                  </div>
+                ))
+              ) : (
+                (site.menuItems || []).map((item, i) => renderDish(item, i))
+              )}
               {site.menuNote && <p className="menu__note">{site.menuNote}</p>}
             </div>
           </div>
@@ -604,7 +623,7 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
         <section className={`section ${cls}`} id={id} style={style}>
           <div className="container">
             <div className="rsvp__form-wrap reveal" style={{ maxWidth: 700, margin: "0 auto", textAlign: "center" }}>
-              <h2 className="rsvp__heading">{site.rsvpHeading}</h2>
+              <h2 className="rsvp__heading"><E field="rsvpHeading" value={site.rsvpHeading} /></h2>
               <p className="rsvp__subheading">{site.rsvpDeadlineText}</p>
               <RSVPForm slug={site.slug} mealOptions={mealOptions} mealDietaryOptions={mealDietaryOptions} calendarInfo={site.weddingDate ? { partner1Name: site.partner1Name, partner2Name: site.partner2Name, weddingDate: site.weddingDate, weddingEndDate: site.weddingEndDate, dateDisplayText: site.dateDisplayText, locationText: site.locationText, siteSlug: site.slug } : undefined} />
             </div>
@@ -620,8 +639,8 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
         <section className={`section ${cls}`} id={id} style={style}>
           <div className="container">
             <div className="gift-section reveal">
-              <h2 className="gift__heading">{site.giftHeading}</h2>
-              <p className="gift__subheading">{site.giftSubheading}</p>
+              <h2 className="gift__heading"><E field="giftHeading" value={site.giftHeading} /></h2>
+              <p className="gift__subheading"><E field="giftSubheading" value={site.giftSubheading} /></p>
 
               {(() => {
                 const paymentLinks = site.giftPaymentLinks || [];
@@ -657,8 +676,8 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
         <section className={`section ${cls}`} id={id} style={style}>
           <div className="container">
             <div className="contact-section reveal">
-              <h2 className="contact__heading">{site.contactHeading || "Get in Touch"}</h2>
-              {site.contactSubheading && <p className="contact__subheading">{site.contactSubheading}</p>}
+              <h2 className="contact__heading"><E field="contactHeading" value={site.contactHeading || "Get in Touch"} /></h2>
+              {site.contactSubheading && <p className="contact__subheading"><E field="contactSubheading" value={site.contactSubheading} /></p>}
               <div className="contact__entries">
                 {site.contactEntries.map((c, i) => (
                   <div key={i} className="contact__entry">
@@ -689,10 +708,10 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
       if (!site.footerNames) return null;
       return (
         <footer className={`footer ${cls}`} id="footer" style={style}>
-          <p className="footer__names">{site.footerNames}</p>
-          <p className="footer__date">{site.footerDateText}</p>
+          <p className="footer__names"><E field="footerNames" value={site.footerNames} /></p>
+          <p className="footer__date"><E field="footerDateText" value={site.footerDateText} /></p>
           <div className="footer__line"></div>
-          <p className="footer__copy">{site.footerCopyright}</p>
+          <p className="footer__copy"><E field="footerCopyright" value={site.footerCopyright} /></p>
           <div className="footer__dev" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
             Created by{' '}
             <a href="https://github.com/abeallin" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
@@ -743,7 +762,7 @@ export function ClassicTemplate({ site, isPreview }: { site: WeddingSite; isPrev
       {/* Fonts */}
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-      <link href={fontStyle.googleFontsUrl} rel="stylesheet" />
+      <link href={getGoogleFontsUrl(site)} rel="stylesheet" />
 
       {!isPreview && (
         <>

@@ -52,6 +52,12 @@ export interface MenuItem {
   dietaryOptions?: string[]; // e.g. ["Halal", "Kosher", "Vegan", "Gluten-Free"]
 }
 
+export interface MenuCategory {
+  id: string;
+  name: string; // e.g. "Starters", "Main Course", "Desserts"
+  items: MenuItem[];
+}
+
 export interface GalleryImage {
   url: string;
   alt: string;
@@ -237,6 +243,7 @@ export interface WeddingSite {
   weddingDays?: WeddingDay[];
   scheduleStyle?: "classic" | "minimal" | "cards";
   menuItems: MenuItem[];
+  menuCategories?: MenuCategory[];
   menuNote: string;
   galleryImages: GalleryImage[];
   exploreGroups: ExploreGroup[];
@@ -252,4 +259,19 @@ export interface WeddingSite {
   customDomain?: string | null;
   cloudflareHostnameId?: string | null;
   domainVerifiedAt?: string | Date | null;
+
+  // Custom overrides (merged on top of theme/font presets)
+  customColors?: Partial<{
+    dark: string;
+    accent: string;
+    primary: string;
+    accentLight: string;
+    accentDark: string;
+    primaryDark: string;
+  }>;
+  customFonts?: {
+    script?: string;
+    serif?: string;
+    sans?: string;
+  };
 }

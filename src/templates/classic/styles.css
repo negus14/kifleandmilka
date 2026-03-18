@@ -410,6 +410,7 @@
 .section--dark .contact__heading,
 .section--dark .menu__heading,
 .section--dark .menu__item-name,
+.section--dark .menu__category-name,
 .section--dark .hero__pretext,
 .section--dark .hero__tagline,
 .section--dark .hero__date-line,
@@ -445,7 +446,8 @@
 .section--dark .contact__phone-number,
 .section--dark .contact__link,
 .section--dark .letter__body,
-.section--dark .menu__item { border-color: rgba(212, 189, 172, 0.15); }
+.section--dark .menu__item,
+.section--dark .menu__category-name { border-color: rgba(212, 189, 172, 0.15); }
 .section--dark .menu__item-desc,
 .section--dark .menu__note,
 .section--dark .footer__date,
@@ -1555,6 +1557,26 @@
   color: var(--color-dark);
   line-height: 1.8;
   opacity: 0.7;
+}
+
+.menu__category {
+  margin-bottom: 3rem;
+}
+
+.menu__category:last-child {
+  margin-bottom: 0;
+}
+
+.menu__category-name {
+  font-family: var(--font-serif);
+  font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+  font-weight: 400;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-dark);
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-dark), transparent 85%);
 }
 
 .menu__note {
@@ -2874,4 +2896,23 @@ img[data-zoomable] {
     width: 100%;
     max-width: none;
   }
+}
+
+/* ─── Inline Editable Text ─── */
+.wedding-site [data-editable] {
+  cursor: text;
+  transition: outline 0.15s ease, background 0.15s ease;
+  outline: 1.5px dashed transparent;
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+.wedding-site [data-editable]:hover {
+  outline-color: var(--color-accent-dark, #b5a992);
+}
+
+.wedding-site [data-editable]:focus {
+  outline-color: var(--color-dark, #2d2b25);
+  outline-style: solid;
+  background: color-mix(in srgb, var(--color-primary, #fff) 70%, transparent);
 }

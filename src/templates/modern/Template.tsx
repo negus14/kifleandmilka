@@ -1,15 +1,21 @@
 import SafeImage from "@/components/SafeImage";
 import type { WeddingSite, VenueItem, VenueInfoBlock, ScheduleItem } from "@/lib/types/wedding-site";
 import { getTheme, getFontStyle } from "@/lib/themes";
-import { toEmbedUrl, generateThemeVars, getSectionData } from "@/lib/template-utils";
+import { toEmbedUrl, generateThemeVars, getSectionData, getGoogleFontsUrl } from "@/lib/template-utils";
 import WeddingSiteClient from "./WeddingSiteClient";
 import CountdownClient from "@/templates/CountdownClient";
 import RSVPForm from "@/components/RSVPForm";
 import AccommodationActions from "@/components/AccommodationActions";
 import GiftContributionForm from "@/components/GiftContributionForm";
+import EditableText from "@/components/dashboard/EditableText";
 import "./styles.css";
 
-export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPreview?: boolean }) {
+export function ModernTemplate({ site, isPreview, onFieldUpdate }: { site: WeddingSite; isPreview?: boolean; onFieldUpdate?: (field: string, value: string) => void }) {
+  const editable = !!onFieldUpdate;
+  const E = ({ field, value, className, style, children, multiline }: { field: string; value: string; className?: string; style?: React.CSSProperties; children?: React.ReactNode; multiline?: boolean }) => {
+    if (!editable) return <>{children ?? value}</>;
+    return <EditableText fieldKey={field} value={value} onUpdate={onFieldUpdate!} className={className} style={style} multiline={multiline}>{children ?? value}</EditableText>;
+  };
   const theme = getTheme(site.templateId);
   const fontStyle = getFontStyle(site.fontStyleId);
   const themeVars = generateThemeVars(site);
@@ -36,17 +42,17 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
           )}
           <div className="modern-container">
             <div className="modern-hero__content reveal">
-              {d(id, 'pretext', site.heroPretext) && <p className="modern-hero__pretext">{d(id, 'pretext', site.heroPretext)}</p>}
+              {d(id, 'pretext', site.heroPretext) && <p className="modern-hero__pretext"><E field="heroPretext" value={d(id, 'pretext', site.heroPretext)} /></p>}
               <h1 className="modern-hero__names">
-                {site.partner1Name} <span className="modern-amp">&</span> {site.partner2Name}
+                <E field="partner1Name" value={site.partner1Name} /> <span className="modern-amp">&</span> <E field="partner2Name" value={site.partner2Name} />
               </h1>
-              {d(id, 'tagline', site.heroTagline) && <p className="modern-hero__tagline">{d(id, 'tagline', site.heroTagline)}</p>}
+              {d(id, 'tagline', site.heroTagline) && <p className="modern-hero__tagline"><E field="heroTagline" value={d(id, 'tagline', site.heroTagline)} /></p>}
               <div className="modern-hero__date-loc">
-                <span className="modern-hero__date">{site.dateDisplayText}</span>
+                <span className="modern-hero__date"><E field="dateDisplayText" value={site.dateDisplayText} /></span>
                 <span className="modern-hero__sep">|</span>
-                <span className="modern-hero__loc">{site.locationText}</span>
+                <span className="modern-hero__loc"><E field="locationText" value={site.locationText} /></span>
               </div>
-              {d(id, 'cta', site.heroCta) && <a href="#rsvp" className="modern-btn modern-btn--primary">{d(id, 'cta', site.heroCta)}</a>}
+              {d(id, 'cta', site.heroCta) && <a href="#rsvp" className="modern-btn modern-btn--primary"><E field="heroCta" value={d(id, 'cta', site.heroCta)} /></a>}
             </div>
           </div>
         </header>
@@ -72,9 +78,9 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
                 />
               </div>
               <div className="modern-story__content reveal">
-                {d(id, 'subtitle', site.storySubtitle) && <p className="modern-subtitle">{d(id, 'subtitle', site.storySubtitle)}</p>}
-                <h2 className="modern-title">{d(id, 'title', site.storyTitle)}</h2>
-                {d(id, 'leadQuote', site.storyLeadQuote) && <blockquote className="modern-quote">{d(id, 'leadQuote', site.storyLeadQuote)}</blockquote>}
+                {d(id, 'subtitle', site.storySubtitle) && <p className="modern-subtitle"><E field="storySubtitle" value={d(id, 'subtitle', site.storySubtitle)} /></p>}
+                <h2 className="modern-title"><E field="storyTitle" value={d(id, 'title', site.storyTitle)} /></h2>
+                {d(id, 'leadQuote', site.storyLeadQuote) && <blockquote className="modern-quote"><E field="storyLeadQuote" value={d(id, 'leadQuote', site.storyLeadQuote)} /></blockquote>}
                 <div className="modern-text">
                   {body.map((p: string, i: number) => <p key={i}>{p}</p>)}
                 </div>
@@ -91,8 +97,8 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
       return (
         <section className={`modern-section ${cls}`} id={id} style={style}>
           <div className="modern-container modern-container--narrow text-center reveal">
-            <h2 className="modern-quote modern-quote--large">"{text}"</h2>
-            <p className="modern-quote-attr">— {d(id, 'attribution', site.quoteAttribution)}</p>
+            <h2 className="modern-quote modern-quote--large">"<E field="quoteText" value={text} />"</h2>
+            <p className="modern-quote-attr">— <E field="quoteAttribution" value={d(id, 'attribution', site.quoteAttribution)} /></p>
           </div>
         </section>
       );
@@ -133,11 +139,11 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
         <section className={`modern-section ${finalCls}`} id={id} style={style}>
           <div className="modern-container modern-container--narrow">
             <div className="modern-letter reveal">
-              <p className="modern-letter__opening">{opening}</p>
+              <p className="modern-letter__opening"><E field="letterOpening" value={opening} /></p>
               {d(id, 'body', site.letterBody).map((p: string, i: number) => (
                 <p key={i} className="modern-letter__body">{p}</p>
               ))}
-              <p className="modern-letter__closing">{d(id, 'closing', site.letterClosing)}</p>
+              <p className="modern-letter__closing"><E field="letterClosing" value={d(id, 'closing', site.letterClosing)} /></p>
             </div>
           </div>
         </section>
@@ -146,24 +152,39 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
 
     menu: (id, cls = "", style = {}) => {
       const hasBg = cls.includes("modern-section--has-bg");
-      const hasContent = site.menuItems && site.menuItems.length > 0;
+      const categories = site.menuCategories || [];
+      const hasCategories = categories.length > 0;
+      const hasContent = hasCategories || (site.menuItems && site.menuItems.length > 0);
       if (!hasContent && !hasBg) return null;
 
       // If parent didn't provide a background (tan or has-bg), default to dark for the menu
       const finalCls = cls.includes('modern-section--tan') || cls.includes('modern-section--has-bg') ? cls : `modern-section--dark ${cls}`;
 
+      const renderDish = (item: { name: string; description: string }, i: number) => (
+        <div key={i} className="reveal">
+          <h3 className="modern-card__title" style={{ fontSize: '1.4rem' }}>{item.name}</h3>
+          <p className="modern-text--small">{item.description}</p>
+        </div>
+      );
+
       return (
         <section className={`modern-section ${finalCls}`} id={id} style={style}>
           <div className="modern-container text-center">
             <h2 className="modern-title reveal">Menu</h2>
-            <div className="modern-grid modern-grid--3col">
-              {(site.menuItems || []).map((item, i) => (
-                <div key={i} className="reveal">
-                  <h3 className="modern-card__title" style={{ fontSize: '1.4rem' }}>{item.name}</h3>
-                  <p className="modern-text--small">{item.description}</p>
+            {hasCategories ? (
+              categories.map((cat) => (
+                <div key={cat.id} className="mb-12 last:mb-0">
+                  {cat.name && <h3 className="modern-subtitle reveal" style={{ marginBottom: '2rem' }}>{cat.name}</h3>}
+                  <div className="modern-grid modern-grid--3col">
+                    {cat.items.map((item, i) => renderDish(item, i))}
+                  </div>
                 </div>
-              ))}
-            </div>
+              ))
+            ) : (
+              <div className="modern-grid modern-grid--3col">
+                {(site.menuItems || []).map((item, i) => renderDish(item, i))}
+              </div>
+            )}
             {site.menuNote && <p className="modern-text--small mt-12 italic reveal">{site.menuNote}</p>}
           </div>
         </section>
@@ -545,7 +566,7 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
         <section className={`modern-section ${cls}`} id={id} style={style}>
           <div className="modern-container modern-container--narrow">
             <div className="modern-card modern-card--flat reveal">
-              <h2 className="modern-title modern-title--center">{site.rsvpHeading}</h2>
+              <h2 className="modern-title modern-title--center"><E field="rsvpHeading" value={site.rsvpHeading} /></h2>
               <p className="modern-subtitle modern-subtitle--center">{site.rsvpDeadlineText}</p>
               <RSVPForm slug={site.slug} mealOptions={mealOptions} mealDietaryOptions={mealDietaryOptions} calendarInfo={site.weddingDate ? { partner1Name: site.partner1Name, partner2Name: site.partner2Name, weddingDate: site.weddingDate, weddingEndDate: site.weddingEndDate, dateDisplayText: site.dateDisplayText, locationText: site.locationText, siteSlug: site.slug } : undefined} />
             </div>
@@ -560,8 +581,8 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
       return (
         <section className={`modern-section ${cls}`} id={id} style={style}>
           <div className="modern-container modern-container--narrow reveal text-center">
-            <h2 className="modern-title">{site.giftHeading}</h2>
-            <p className="modern-text">{site.giftSubheading}</p>
+            <h2 className="modern-title"><E field="giftHeading" value={site.giftHeading} /></h2>
+            <p className="modern-text"><E field="giftSubheading" value={site.giftSubheading} /></p>
 
             {(() => {
               const paymentLinks = site.giftPaymentLinks || [];
@@ -595,7 +616,7 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
       return (
         <section className={`modern-section ${cls}`} id={id} style={style}>
           <div className="modern-container reveal text-center">
-            <h2 className="modern-title">{site.contactHeading || "Contact"}</h2>
+            <h2 className="modern-title"><E field="contactHeading" value={site.contactHeading || "Contact"} /></h2>
             <div className="modern-contact-grid">
               {site.contactEntries.map((c, i) => (
                 <div key={i} className="modern-contact-item">
@@ -616,9 +637,9 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
         <footer className={`modern-footer ${cls}`} id={id} style={style}>
           <div className="modern-container">
             <div className="modern-footer__content">
-              <p className="modern-footer__names">{names}</p>
-              {d(id, 'date', site.footerDateText) && <p className="modern-footer__copy" style={{ marginTop: '0.25rem', opacity: 0.6 }}>{d(id, 'date', site.footerDateText)}</p>}
-              <p className="modern-footer__copy" style={{ marginTop: '1rem' }}>{d(id, 'copy', site.footerCopyright)}</p>
+              <p className="modern-footer__names"><E field="footerNames" value={names} /></p>
+              {d(id, 'date', site.footerDateText) && <p className="modern-footer__copy" style={{ marginTop: '0.25rem', opacity: 0.6 }}><E field="footerDateText" value={d(id, 'date', site.footerDateText)} /></p>}
+              <p className="modern-footer__copy" style={{ marginTop: '1rem' }}><E field="footerCopyright" value={d(id, 'copy', site.footerCopyright)} /></p>
               <div className="modern-footer__dev" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
                 Created by{' '}
                 <a href="https://github.com/abeallin" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
@@ -693,7 +714,7 @@ export function ModernTemplate({ site, isPreview }: { site: WeddingSite; isPrevi
       {/* Fonts */}
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-      <link href={fontStyle.googleFontsUrl} rel="stylesheet" />
+      <link href={getGoogleFontsUrl(site)} rel="stylesheet" />
 
       {order.filter(s => s.visible).map((section, i) => {
         const render = sections[section.type] || sections[section.id];

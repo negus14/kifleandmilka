@@ -3,10 +3,10 @@ import type { NextRequest } from "next/server";
 import { jwtVerify } from "jose";
 
 // Lazy-initialise so the module can be imported at build time without crashing.
+// During `next build` on Railway, AUTH_SECRET may not be available — return null
+// so the middleware gracefully redirects to login instead of crashing the build.
 function getSecret() {
-  if (!process.env.AUTH_SECRET) {
-    throw new Error("AUTH_SECRET environment variable is required.");
-  }
+  if (!process.env.AUTH_SECRET) return null;
   return new TextEncoder().encode(process.env.AUTH_SECRET);
 }
 
@@ -46,11 +46,12 @@ export default async function(request: NextRequest) {
   // ─── Dashboard Auth ───
   if (pathname.startsWith("/dashboard")) {
     const token = request.cookies.get("itsw_session")?.value;
-    if (!token) {
+    const secret = getSecret();
+    if (!token || !secret) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
     try {
-      const { payload } = await jwtVerify(token, getSecret());
+      const { payload } = await jwtVerify(token, secret);
       const sessionSlug = payload.slug as string;
 
       // Extract the slug from /dashboard/{slug}/...
