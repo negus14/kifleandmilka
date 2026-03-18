@@ -677,23 +677,28 @@ function ImageField({ label, value, onChange, recentLinks = [], onAddRecentLink 
 }) {
   const [uploading, setUploading] = useState(false);
   const [showLibrary, setShowLibrary] = useState(false);
+  const [largeFileConfirm, setLargeFileConfirm] = useState<File | null>(null);
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  async function handleFile(file: File) {
-    if (file.size > 5 * 1024 * 1024) {
-      if (!confirm("This image is quite large (>5MB). Large images can slow down your site. Would you like to proceed anyway?")) {
-        return;
-      }
-    }
+  async function processUpload(file: File) {
     setUploading(true);
     try {
       const url = await uploadFile(file);
       onChange(url);
       if (onAddRecentLink) onAddRecentLink(url);
     } catch (err: any) {
-      alert(err.message || "Upload failed");
+      setUploadError(err.message || "Upload failed");
     }
     setUploading(false);
+  }
+
+  async function handleFile(file: File) {
+    if (file.size > 5 * 1024 * 1024) {
+      setLargeFileConfirm(file);
+      return;
+    }
+    processUpload(file);
   }
 
   const handlePaste = async (e: React.ClipboardEvent) => {
@@ -764,14 +769,46 @@ function ImageField({ label, value, onChange, recentLinks = [], onAddRecentLink 
       )}
       
       {showLibrary && (
-        <MediaLibrary 
+        <MediaLibrary
           onSelect={(url) => {
             onChange(url);
             if (onAddRecentLink) onAddRecentLink(url);
-          }} 
-          onClose={() => setShowLibrary(false)} 
-          recentLinks={recentLinks} 
+          }}
+          onClose={() => setShowLibrary(false)}
+          recentLinks={recentLinks}
         />
+      )}
+      {/* Large file confirmation modal */}
+      {largeFileConfirm && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setLargeFileConfirm(null)}>
+          <div className="bg-[#faf1e1] border border-[#2d2b25]/15 rounded-sm p-6 max-w-sm mx-4 shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-base font-medium mb-1" style={{ fontFamily: "'Cormorant Garamond', serif" }}>Large Image</h3>
+            <p className="text-sm text-[#2d2b25]/60 mb-2">This image is over 5MB. Large images can slow down your site for guests.</p>
+            <p className="text-[10px] text-[#2d2b25]/40 uppercase tracking-wider mb-6">Would you like to upload it anyway?</p>
+            <div className="flex items-center justify-end gap-3">
+              <button onClick={() => setLargeFileConfirm(null)} className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-[#2d2b25]/50 hover:text-[#2d2b25] transition-colors">
+                Cancel
+              </button>
+              <button onClick={() => { const f = largeFileConfirm; setLargeFileConfirm(null); processUpload(f); }} className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest bg-[#2d2b25] text-[#faf1e1] rounded-sm hover:opacity-90 transition-opacity">
+                Upload Anyway
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Upload error modal */}
+      {uploadError && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setUploadError(null)}>
+          <div className="bg-[#faf1e1] border border-[#2d2b25]/15 rounded-sm p-6 max-w-sm mx-4 shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-base font-medium mb-1 text-red-700" style={{ fontFamily: "'Cormorant Garamond', serif" }}>Upload Failed</h3>
+            <p className="text-sm text-[#2d2b25]/70 mb-6 break-words">{uploadError}</p>
+            <div className="flex items-center justify-end">
+              <button onClick={() => setUploadError(null)} className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest bg-[#2d2b25] text-[#faf1e1] rounded-sm hover:opacity-90 transition-opacity">
+                Dismiss
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
@@ -2249,6 +2286,8 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
   const [saveError, setSaveError] = useState<string | null>(null);
   const [showRenameConfirm, setShowRenameConfirm] = useState(false);
   const [showSaveErrorModal, setShowSaveErrorModal] = useState<string | null>(null);
+  const [showCancelDomainModal, setShowCancelDomainModal] = useState(false);
+  const [showLargeImageModal, setShowLargeImageModal] = useState<(() => void) | null>(null);
   const saveRetryCountRef = useRef(0);
   const MAX_SAVE_RETRIES = 2;
   const [isPreview, setIsPreview] = useState(true);
@@ -2878,11 +2917,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                               <strong>{site.customDomain}</strong> — we&apos;re working on it. You&apos;ll receive an email when it&apos;s ready.
                             </p>
                             <button
-                              onClick={async () => {
-                                if (!confirm("Cancel your domain request?")) return;
-                                await fetch(`/api/sites/${site.slug}/domain-request`, { method: "DELETE" });
-                                set("customDomain", null);
-                              }}
+                              onClick={() => setShowCancelDomainModal(true)}
                               className="mt-2 text-[10px] text-amber-600 underline hover:no-underline"
                             >
                               Cancel request
@@ -4064,6 +4099,39 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                 className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest bg-[#2d2b25] text-[#faf1e1] rounded-sm hover:opacity-90 transition-opacity"
               >
                 Confirm Change
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Cancel Domain Request Modal */}
+      {showCancelDomainModal && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setShowCancelDomainModal(false)}>
+          <div className="bg-[#faf1e1] border border-[#2d2b25]/15 rounded-sm p-6 max-w-sm mx-4 shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-base font-medium mb-1" style={{ fontFamily: "'Cormorant Garamond', serif" }}>Cancel Domain Request</h3>
+            <p className="text-sm text-[#2d2b25]/60 mb-2">
+              Are you sure you want to cancel your request for <strong>{site.customDomain}</strong>?
+            </p>
+            <p className="text-[10px] text-[#2d2b25]/40 uppercase tracking-wider mb-6">
+              You can always request a new domain later.
+            </p>
+            <div className="flex items-center justify-end gap-3">
+              <button
+                onClick={() => setShowCancelDomainModal(false)}
+                className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-[#2d2b25]/50 hover:text-[#2d2b25] transition-colors"
+              >
+                Keep Request
+              </button>
+              <button
+                onClick={async () => {
+                  setShowCancelDomainModal(false);
+                  await fetch(`/api/sites/${site.slug}/domain-request`, { method: "DELETE" });
+                  set("customDomain", null);
+                }}
+                className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest bg-red-600 text-white rounded-sm hover:bg-red-700 transition-colors"
+              >
+                Cancel Request
               </button>
             </div>
           </div>
