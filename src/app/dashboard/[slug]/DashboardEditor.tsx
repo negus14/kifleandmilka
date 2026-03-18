@@ -82,7 +82,7 @@ function Field({ label, value, onChange, placeholder, multiline, rows, type = "t
   );
 }
 
-function SlugField({ currentSlug, onSave }: { currentSlug: string; onSave: (val: string) => void }) {
+function SlugField({ currentSlug, isPaid, onSave }: { currentSlug: string; isPaid: boolean; onSave: (val: string) => void }) {
   const [draft, setDraft] = useState(currentSlug);
   const hasChanged = draft !== currentSlug;
 
@@ -113,6 +113,13 @@ function SlugField({ currentSlug, onSave }: { currentSlug: string; onSave: (val:
       <p className="text-[10px] text-[#2d2b25]/40 mt-2 uppercase tracking-wider">
         Caution: Changing this will change your public website address.
       </p>
+      {isPaid && (
+        <div className="mt-3 pt-3 border-t border-[#2d2b25]/10">
+          <p className="text-[10px] text-[#2d2b25]/50">
+            Want your own domain like <strong>{currentSlug}.com</strong>? Scroll down to <strong>Custom Domain</strong> in Settings to request one.
+          </p>
+        </div>
+      )}
     </div>
   );
 }
@@ -2791,7 +2798,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                 <div>
                   <SectionTitle>Basic Info</SectionTitle>
                   
-                  <SlugField currentSlug={site.slug} onSave={(val) => set("slug", val)} />
+                  <SlugField currentSlug={site.slug} isPaid={!!site.isPaid} onSave={(val) => set("slug", val)} />
 
                   <Field label="Partner 1 Name" value={site.partner1Name} onChange={(v) => set("partner1Name", v)} />
                   <Field label="Partner 2 Name" value={site.partner2Name} onChange={(v) => set("partner2Name", v)} />
