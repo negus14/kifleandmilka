@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { rsvps } from "@/db/schema";
-import { eq, isNull, and } from "drizzle-orm";
+import { eq, isNull, and, count } from "drizzle-orm";
 
 export interface GuestInput {
   name: string;
@@ -68,6 +68,41 @@ export async function getRSVPsBySite(slug: string): Promise<RSVPRecord[]> {
     synced_at: row.syncedAt,
     created_at: row.createdAt,
   }));
+}
+
+export async function getRSVPsBySitePaginated(
+  slug: string,
+  page = 1,
+  limit = 50
+): Promise<{ items: RSVPRecord[]; total: number; page: number; totalPages: number }> {
+  const offset = (page - 1) * limit;
+
+  const [rows, [{ total }]] = await Promise.all([
+    db.query.rsvps.findMany({
+      where: eq(rsvps.siteSlug, slug),
+      orderBy: (rsvps, { desc }) => [desc(rsvps.createdAt)],
+      limit,
+      offset,
+    }),
+    db.select({ total: count() }).from(rsvps).where(eq(rsvps.siteSlug, slug)),
+  ]);
+
+  return {
+    items: rows.map(row => ({
+      id: row.id,
+      site_slug: row.siteSlug,
+      email: row.email,
+      phone: row.phone,
+      message: row.message,
+      guests: row.guests as GuestInput[],
+      confirmation_sent: row.confirmationSent,
+      synced_at: row.syncedAt,
+      created_at: row.createdAt,
+    })),
+    total,
+    page,
+    totalPages: Math.ceil(total / limit),
+  };
 }
 
 export async function markRSVPConfirmationSent(id: string) {

@@ -23,14 +23,17 @@ export async function resolveGroupRecipients(
 
       const guests = rsvp.guests as any[];
       const recipient: Recipient = { email: rsvp.email, name: guests[0]?.name || rsvp.email, phone: rsvp.phone || undefined };
+
+      // Normalize: old data may store "yes"/"no" strings, new data stores booleans.
+      // This helper handles both so we don't need to check everywhere.
+      const isAttending = (g: any) => g.attending === true || g.attending === "yes";
+
       if (status === "all") {
         recipients.push(recipient);
       } else if (status === "attending") {
-        const hasAttending = guests.some((g) => g.attending === true || g.attending === "yes");
-        if (hasAttending) recipients.push(recipient);
+        if (guests.some(isAttending)) recipients.push(recipient);
       } else if (status === "declined") {
-        const allDeclined = guests.every((g) => g.attending === false || g.attending === "no");
-        if (allDeclined) recipients.push(recipient);
+        if (guests.every((g) => !isAttending(g))) recipients.push(recipient);
       }
     }
 

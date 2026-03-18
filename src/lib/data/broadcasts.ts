@@ -56,13 +56,18 @@ export interface BroadcastRecord {
   body: string;
   channel: string;
   status: string;
-  recipientCount: string | null;
+  recipientCount: number | null;
   sentAt: Date | null;
   createdAt: Date | null;
 }
 
 export async function getBroadcastsBySite(slug: string): Promise<BroadcastRecord[]> {
   return db.select().from(broadcasts).where(eq(broadcasts.siteSlug, slug));
+}
+
+export async function getBroadcastById(id: string): Promise<BroadcastRecord | null> {
+  const [broadcast] = await db.select().from(broadcasts).where(eq(broadcasts.id, id));
+  return broadcast || null;
 }
 
 export async function createBroadcast(
@@ -82,7 +87,7 @@ export async function createBroadcast(
 
 export async function updateBroadcast(
   id: string,
-  data: { status?: string; recipientCount?: string; sentAt?: Date }
+  data: { status?: string; recipientCount?: number; sentAt?: Date }
 ) {
   const updates: any = {};
   if (data.status !== undefined) updates.status = data.status;

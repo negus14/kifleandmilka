@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { giftContributions } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, count } from "drizzle-orm";
 
 export interface GiftContributionRecord {
   id: string;
@@ -62,6 +62,42 @@ export async function getGiftContributionsBySite(slug: string): Promise<GiftCont
     status: row.status,
     created_at: row.createdAt,
   }));
+}
+
+export async function getGiftContributionsBySitePaginated(
+  slug: string,
+  page = 1,
+  limit = 50
+): Promise<{ items: GiftContributionRecord[]; total: number; page: number; totalPages: number }> {
+  const offset = (page - 1) * limit;
+
+  const [rows, [{ total }]] = await Promise.all([
+    db.query.giftContributions.findMany({
+      where: eq(giftContributions.siteSlug, slug),
+      orderBy: (t, { desc }) => [desc(t.createdAt)],
+      limit,
+      offset,
+    }),
+    db.select({ total: count() }).from(giftContributions).where(eq(giftContributions.siteSlug, slug)),
+  ]);
+
+  return {
+    items: rows.map(row => ({
+      id: row.id,
+      site_slug: row.siteSlug,
+      gift_name: row.giftName,
+      guest_name: row.guestName,
+      amount: row.amount,
+      currency: row.currency,
+      message: row.message,
+      payment_method: row.paymentMethod,
+      status: row.status,
+      created_at: row.createdAt,
+    })),
+    total,
+    page,
+    totalPages: Math.ceil(total / limit),
+  };
 }
 
 export async function updateGiftContribution(id: string, data: { status?: string }) {
