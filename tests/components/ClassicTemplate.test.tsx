@@ -128,7 +128,9 @@ describe('ClassicTemplate', () => {
   it('renders the gift section', () => {
     render(<ClassicTemplate site={mockSite} />);
     expect(screen.getByText('Gifts')).toBeInTheDocument();
-    expect(screen.getByText('PayPal')).toBeInTheDocument();
+    // PayPal is the only payment option so it's auto-selected and the grid is hidden,
+    // but it appears in the redirect note text
+    expect(screen.getByText(/PayPal/)).toBeInTheDocument();
   });
 
   it('renders the contact section', () => {

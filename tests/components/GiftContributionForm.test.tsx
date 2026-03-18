@@ -27,14 +27,14 @@ describe('GiftContributionForm', () => {
   it('renders the form with default currency symbol', () => {
     render(<GiftContributionForm {...defaultProps} />);
     expect(screen.getByText('£')).toBeInTheDocument();
-    expect(screen.getByText(/Amount \(GBP\)/)).toBeInTheDocument();
+    expect(screen.getByText('Amount')).toBeInTheDocument();
   });
 
   it('does not show currency selector with single currency payment options', () => {
     render(<GiftContributionForm {...defaultProps} paymentOptions={[
       { label: "PayPal", url: "https://paypal.me/test", currencies: ["GBP"] },
     ]} />);
-    expect(screen.queryByText('Select Currency')).not.toBeInTheDocument();
+    expect(screen.queryByRole('combobox')).not.toBeInTheDocument();
   });
 
   it('derives currencies from payment options and shows selector', () => {
@@ -47,10 +47,14 @@ describe('GiftContributionForm', () => {
         ]}
       />
     );
-    expect(screen.getByText('Select Currency')).toBeInTheDocument();
-    expect(screen.getByText('£ GBP')).toBeInTheDocument();
-    expect(screen.getByText('$ USD')).toBeInTheDocument();
-    expect(screen.getByText('€ EUR')).toBeInTheDocument();
+    // Currency selector is now a <select> dropdown
+    const select = screen.getByRole('combobox');
+    expect(select).toBeInTheDocument();
+    const options = select.querySelectorAll('option');
+    const optionTexts = Array.from(options).map(o => o.textContent);
+    expect(optionTexts).toContain('£ GBP');
+    expect(optionTexts).toContain('$ USD');
+    expect(optionTexts).toContain('€ EUR');
   });
 
   it('filters payment methods by selected currency', async () => {
@@ -65,20 +69,21 @@ describe('GiftContributionForm', () => {
       />
     );
 
-    // Default is GBP — PayPal and Monzo accept GBP
+    // Default is GBP — PayPal and Monzo accept GBP (multiple methods shown in grid)
     expect(screen.getByText('PayPal')).toBeInTheDocument();
     expect(screen.getByText('Monzo')).toBeInTheDocument();
     expect(screen.queryByText('Wise')).not.toBeInTheDocument();
 
     // Switch to USD — only PayPal accepts USD (Auto-selected, grid hidden)
-    fireEvent.click(screen.getByText('$ USD'));
+    const select = screen.getByRole('combobox');
+    fireEvent.change(select, { target: { value: 'USD' } });
     expect(screen.queryByText('PayPal')).not.toBeInTheDocument();
     expect(screen.queryByText('Monzo')).not.toBeInTheDocument();
     expect(screen.queryByText('Wise')).not.toBeInTheDocument();
     expect(screen.getByText('Send & Continue')).toBeInTheDocument();
 
     // Switch to EUR — only Wise accepts EUR (Auto-selected, grid hidden)
-    fireEvent.click(screen.getByText('€ EUR'));
+    fireEvent.change(select, { target: { value: 'EUR' } });
     expect(screen.queryByText('Wise')).not.toBeInTheDocument();
     expect(screen.queryByText('PayPal')).not.toBeInTheDocument();
     expect(screen.queryByText('Monzo')).not.toBeInTheDocument();
@@ -102,9 +107,10 @@ describe('GiftContributionForm', () => {
     expect(screen.getByText('PayPal').className).toContain('active');
 
     // Switch currency to USD — payment method should reset (PayPal no longer available)
-    fireEvent.click(screen.getByText('$ USD'));
+    const select = screen.getByRole('combobox');
+    fireEvent.change(select, { target: { value: 'USD' } });
     expect(screen.queryByText('PayPal')).not.toBeInTheDocument();
-    
+
     // Multiple methods for USD: Wise, Bank Transfer. None should be active initially.
     expect(screen.getByText('Wise').className).not.toContain('active');
     expect(screen.getByText('Bank Transfer').className).not.toContain('active');
@@ -127,7 +133,8 @@ describe('GiftContributionForm', () => {
     expect(screen.getByText('PayPal')).toBeInTheDocument();
 
     // Switch to USD — legacy link should still show
-    fireEvent.click(screen.getByText('$ USD'));
+    const select = screen.getByRole('combobox');
+    fireEvent.change(select, { target: { value: 'USD' } });
     expect(screen.getByText('Legacy Link')).toBeInTheDocument();
     expect(screen.getByText('Wise')).toBeInTheDocument();
   });
@@ -142,12 +149,11 @@ describe('GiftContributionForm', () => {
         ]}
       />
     );
-    // Should have 3 unique currency buttons
-    const buttons = screen.getAllByRole('button').filter(b => 
-      b.className.includes('gift-contrib__currency-btn') && 
-      (b.textContent?.includes('GBP') || b.textContent?.includes('USD') || b.textContent?.includes('EUR'))
-    );
-    expect(buttons).toHaveLength(3);
+    // Currency selector is now a <select> dropdown with <option> elements
+    const select = screen.getByRole('combobox');
+    const options = select.querySelectorAll('option');
+    // Should have 3 unique currency options
+    expect(options).toHaveLength(3);
   });
 
   it('displays correct symbols for various currencies', () => {
@@ -176,8 +182,11 @@ describe('GiftContributionForm', () => {
         ]}
       />
     );
-    expect(screen.getByText(/Amount \(ETB\)/)).toBeInTheDocument();
-    expect(screen.queryByText('Select Currency')).not.toBeInTheDocument();
+    // Label is just "Amount", currency symbol shown separately
+    expect(screen.getByText('Amount')).toBeInTheDocument();
+    expect(screen.getByText('Br')).toBeInTheDocument();
+    // No currency dropdown when only one effective currency
+    expect(screen.queryByRole('combobox')).not.toBeInTheDocument();
   });
 
   it('submits the selected currency with the form', async () => {
@@ -197,7 +206,9 @@ describe('GiftContributionForm', () => {
       />
     );
 
-    fireEvent.click(screen.getByText('Br ETB'));
+    // Switch currency to ETB using the dropdown
+    const select = screen.getByRole('combobox');
+    fireEvent.change(select, { target: { value: 'ETB' } });
 
     await userEvent.type(screen.getByPlaceholderText('Your full name'), 'Test User');
     await userEvent.type(screen.getByPlaceholderText('0'), '100');

@@ -176,6 +176,193 @@
   background: rgba(45, 43, 37, 0.25);
 }
 
+/* ─── Fade In (dashboard tab transitions) ─── */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ─── Scroll Reveal ─── */
+
+.scroll-reveal > * {
+  opacity: 0;
+  transform: translateY(28px) scale(0.97);
+  transition:
+    opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+.scroll-reveal.revealed > * {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* ─── Ken Burns ─── */
+
+@keyframes kenBurns {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.08);
+  }
+}
+
+@keyframes kenBurnsReverse {
+  0% {
+    transform: scale(1.08);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* ─── Shimmer button effect ─── */
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+/* ─── Breathing / pulse ─── */
+
+@keyframes breathe {
+  0%, 100% {
+    opacity: 0.3;
+    transform: translateX(-50%) scaleY(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: translateX(-50%) scaleY(1.15);
+  }
+}
+
+/* ─── Float ─── */
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+/* ─── Concentric ring pulse ─── */
+
+@keyframes ringPulse {
+  0% {
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0.06;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.4);
+    opacity: 0;
+  }
+}
+
+/* ─── Fade up (landing page hero) ─── */
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ─── Staggered field reveal ─── */
+
+@keyframes fieldReveal {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ─── Image Showcase (auth pages) ─── */
+
+.image-showcase {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.image-showcase__slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 1.5s ease-in-out;
+  animation: kenBurns 20s ease-in-out infinite alternate;
+}
+
+.image-showcase__slide--active {
+  opacity: 1;
+}
+
+.image-showcase__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(45, 43, 37, 0.65) 0%,
+    rgba(45, 43, 37, 0.35) 50%,
+    rgba(45, 43, 37, 0.55) 100%
+  );
+  z-index: 1;
+}
+
+.image-showcase__content {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: clamp(2rem, 5vw, 4rem);
+}
+
+/* ─── Input underline slide effect ─── */
+
+.input-animated-wrap {
+  position: relative;
+}
+
+.input-animated-wrap::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 1.5px;
+  background: #2d2b25;
+  transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.input-animated-wrap:focus-within::after {
+  width: 100%;
+}
+
 @layer utilities {
   .custom-scrollbar::-webkit-scrollbar {
     width: 4px;
