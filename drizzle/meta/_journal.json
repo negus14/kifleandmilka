@@ -64,6 +64,13 @@
       "when": 1774090000000,
       "tag": "0008_custom_domain_fields",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1773848829602,
+      "tag": "0009_faithful_jackal",
+      "breakpoints": true
     }
   ]
 }

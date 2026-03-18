@@ -42,7 +42,7 @@ export async function POST(
       return apiError("Group not found", 404);
     }
 
-    const recipients = await resolveGroupRecipients(group);
+    const recipients = await resolveGroupRecipients(group, slug);
     if (recipients.length === 0) {
       return apiError("No recipients in this group", 400);
     }

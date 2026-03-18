@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
-import { rsvps } from "@/db/schema";
+import { rsvps, sites } from "@/db/schema";
 import { eq, isNull, and, count } from "drizzle-orm";
+import { getSiteIdBySlug } from "./sites";
 
 export interface GuestInput {
   name: string;
@@ -12,7 +13,7 @@ export interface GuestInput {
 
 export interface RSVPRecord {
   id: string;
-  site_slug: string | null;
+  site_id: string | null;
   email: string | null;
   phone: string | null;
   message: string | null;
@@ -22,25 +23,10 @@ export interface RSVPRecord {
   created_at: Date | null;
 }
 
-export async function createRSVP(
-  slug: string,
-  email: string,
-  guests: GuestInput[],
-  message?: string,
-  phone?: string
-): Promise<RSVPRecord> {
-  const result = await db.insert(rsvps).values({
-    siteSlug: slug,
-    email,
-    phone: phone || null,
-    guests,
-    message,
-  }).returning();
-
-  const row = result[0];
+function toRecord(row: typeof rsvps.$inferSelect): RSVPRecord {
   return {
     id: row.id,
-    site_slug: row.siteSlug,
+    site_id: row.siteId,
     email: row.email,
     phone: row.phone,
     message: row.message,
@@ -51,23 +37,37 @@ export async function createRSVP(
   };
 }
 
+export async function createRSVP(
+  slug: string,
+  email: string,
+  guests: GuestInput[],
+  message?: string,
+  phone?: string
+): Promise<RSVPRecord> {
+  const siteId = await getSiteIdBySlug(slug);
+  if (!siteId) throw new Error(`Site not found: ${slug}`);
+
+  const result = await db.insert(rsvps).values({
+    siteId,
+    email,
+    phone: phone || null,
+    guests,
+    message,
+  }).returning();
+
+  return toRecord(result[0]);
+}
+
 export async function getRSVPsBySite(slug: string): Promise<RSVPRecord[]> {
+  const siteId = await getSiteIdBySlug(slug);
+  if (!siteId) return [];
+
   const rows = await db.query.rsvps.findMany({
-    where: eq(rsvps.siteSlug, slug),
+    where: eq(rsvps.siteId, siteId),
     orderBy: (rsvps, { desc }) => [desc(rsvps.createdAt)],
   });
-  
-  return rows.map(row => ({
-    id: row.id,
-    site_slug: row.siteSlug,
-    email: row.email,
-    phone: row.phone,
-    message: row.message,
-    guests: row.guests as GuestInput[],
-    confirmation_sent: row.confirmationSent,
-    synced_at: row.syncedAt,
-    created_at: row.createdAt,
-  }));
+
+  return rows.map(toRecord);
 }
 
 export async function getRSVPsBySitePaginated(
@@ -75,30 +75,23 @@ export async function getRSVPsBySitePaginated(
   page = 1,
   limit = 50
 ): Promise<{ items: RSVPRecord[]; total: number; page: number; totalPages: number }> {
+  const siteId = await getSiteIdBySlug(slug);
+  if (!siteId) return { items: [], total: 0, page, totalPages: 0 };
+
   const offset = (page - 1) * limit;
 
   const [rows, [{ total }]] = await Promise.all([
     db.query.rsvps.findMany({
-      where: eq(rsvps.siteSlug, slug),
+      where: eq(rsvps.siteId, siteId),
       orderBy: (rsvps, { desc }) => [desc(rsvps.createdAt)],
       limit,
       offset,
     }),
-    db.select({ total: count() }).from(rsvps).where(eq(rsvps.siteSlug, slug)),
+    db.select({ total: count() }).from(rsvps).where(eq(rsvps.siteId, siteId)),
   ]);
 
   return {
-    items: rows.map(row => ({
-      id: row.id,
-      site_slug: row.siteSlug,
-      email: row.email,
-      phone: row.phone,
-      message: row.message,
-      guests: row.guests as GuestInput[],
-      confirmation_sent: row.confirmationSent,
-      synced_at: row.syncedAt,
-      created_at: row.createdAt,
-    })),
+    items: rows.map(toRecord),
     total,
     page,
     totalPages: Math.ceil(total / limit),
@@ -134,22 +127,15 @@ export async function deleteRSVP(id: string) {
 }
 
 export async function getUnsyncedRSVPs(slug: string): Promise<RSVPRecord[]> {
+  const siteId = await getSiteIdBySlug(slug);
+  if (!siteId) return [];
+
   const rows = await db.query.rsvps.findMany({
     where: and(
-      eq(rsvps.siteSlug, slug),
+      eq(rsvps.siteId, siteId),
       isNull(rsvps.syncedAt)
     ),
   });
-  
-  return rows.map(row => ({
-    id: row.id,
-    site_slug: row.siteSlug,
-    email: row.email,
-    phone: row.phone,
-    message: row.message,
-    guests: row.guests as GuestInput[],
-    confirmation_sent: row.confirmationSent,
-    synced_at: row.syncedAt,
-    created_at: row.createdAt,
-  }));
+
+  return rows.map(toRecord);
 }

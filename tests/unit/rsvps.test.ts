@@ -20,7 +20,7 @@ vi.mock('@/lib/db', () => ({
 
 vi.mock('@/db/schema', () => ({
   rsvps: {
-    siteSlug: 'site_slug',
+    siteId: 'site_id',
     syncedAt: 'synced_at',
     createdAt: 'created_at',
     id: 'id',
@@ -31,21 +31,32 @@ vi.mock('drizzle-orm', () => ({
   eq: vi.fn((a, b) => ({ type: 'eq', field: a, value: b })),
   isNull: vi.fn((a) => ({ type: 'isNull', field: a })),
   and: vi.fn((...args) => ({ type: 'and', conditions: args })),
+  count: vi.fn(),
+}));
+
+// Mock getSiteIdBySlug
+vi.mock('@/lib/data/sites', () => ({
+  getSiteIdBySlug: vi.fn().mockResolvedValue('uuid-site-1'),
 }));
 
 describe('rsvps data layer', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Re-apply default mock for getSiteIdBySlug after clearAllMocks
+    const { getSiteIdBySlug } = require('@/lib/data/sites');
+    vi.mocked(getSiteIdBySlug).mockResolvedValue('uuid-site-1');
   });
 
   describe('createRSVP', () => {
     it('should insert an RSVP and return mapped record', async () => {
       const mockRow = {
         id: 'uuid-123',
-        siteSlug: 'test-site',
+        siteId: 'uuid-site-1',
         email: 'john@example.com',
+        phone: null,
         message: 'Excited!',
         guests: [{ name: 'John', attending: true }],
+        confirmationSent: false,
         syncedAt: null,
         createdAt: new Date('2024-01-01'),
       };
@@ -63,10 +74,12 @@ describe('rsvps data layer', () => {
 
       expect(result).toEqual({
         id: 'uuid-123',
-        site_slug: 'test-site',
+        site_id: 'uuid-site-1',
         email: 'john@example.com',
+        phone: null,
         message: 'Excited!',
         guests: [{ name: 'John', attending: true }],
+        confirmation_sent: false,
         synced_at: null,
         created_at: new Date('2024-01-01'),
       });
@@ -78,10 +91,12 @@ describe('rsvps data layer', () => {
       const mockRows = [
         {
           id: 'r1',
-          siteSlug: 'test-site',
+          siteId: 'uuid-site-1',
           email: 'a@b.com',
+          phone: null,
           message: null,
           guests: [{ name: 'A', attending: true }],
+          confirmationSent: false,
           syncedAt: null,
           createdAt: new Date('2024-01-01'),
         },
@@ -93,7 +108,7 @@ describe('rsvps data layer', () => {
 
       expect(result).toHaveLength(1);
       expect(result[0].id).toBe('r1');
-      expect(result[0].site_slug).toBe('test-site');
+      expect(result[0].site_id).toBe('uuid-site-1');
       expect(result[0].email).toBe('a@b.com');
     });
 
@@ -123,10 +138,12 @@ describe('rsvps data layer', () => {
       const mockRows = [
         {
           id: 'r1',
-          siteSlug: 'test-site',
+          siteId: 'uuid-site-1',
           email: 'x@y.com',
+          phone: null,
           message: null,
           guests: [{ name: 'X', attending: true }],
+          confirmationSent: false,
           syncedAt: null,
           createdAt: new Date(),
         },

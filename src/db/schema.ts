@@ -1,11 +1,12 @@
-import { pgTable, text, jsonb, timestamp, uuid, index, boolean, integer, numeric } from "drizzle-orm/pg-core";
+import { pgTable, text, jsonb, timestamp, uuid, index, boolean, integer, numeric, uniqueIndex } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 
-// 1. Sites Table
+// 1. Sites Table — UUID primary key, slug is a unique lookup column
 export const sites = pgTable("sites", {
-  slug: text("slug").primaryKey(),
+  id: uuid("id").defaultRandom().primaryKey(),
+  slug: text("slug").notNull().unique(),
   data: jsonb("data").notNull(),
-  isPaid: timestamp("is_paid").default(sql`NULL`), // Using timestamp for paid date or null
+  isPaid: timestamp("is_paid").default(sql`NULL`),
   stripeCustomerId: text("stripe_customer_id"),
   customDomain: text("custom_domain").unique(),
   cloudflareHostnameId: text("cloudflare_hostname_id"),
@@ -14,14 +15,14 @@ export const sites = pgTable("sites", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 }, (table) => {
   return [
-    index("idx_sites_published").on(table.data), // Matches your manual index
+    index("idx_sites_published").on(table.data),
   ];
 });
 
 // 2. RSVPs Table
 export const rsvps = pgTable("rsvps", {
   id: uuid("id").defaultRandom().primaryKey(),
-  siteSlug: text("site_slug").references(() => sites.slug, { onDelete: 'cascade' }),
+  siteId: uuid("site_id").references(() => sites.id, { onDelete: 'cascade' }),
   email: text("email"),
   phone: text("phone"),
   message: text("message"),
@@ -31,14 +32,14 @@ export const rsvps = pgTable("rsvps", {
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 }, (table) => {
   return [
-    index("idx_rsvps_site_slug").on(table.siteSlug),
+    index("idx_rsvps_site_id").on(table.siteId),
   ];
 });
 
 // 2b. Gift Contributions Table
 export const giftContributions = pgTable("gift_contributions", {
   id: uuid("id").defaultRandom().primaryKey(),
-  siteSlug: text("site_slug").references(() => sites.slug, { onDelete: 'cascade' }),
+  siteId: uuid("site_id").references(() => sites.id, { onDelete: 'cascade' }),
   giftName: text("gift_name").notNull(),
   guestName: text("guest_name").notNull(),
   amount: numeric("amount", { precision: 10, scale: 2 }),
@@ -49,14 +50,14 @@ export const giftContributions = pgTable("gift_contributions", {
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 }, (table) => {
   return [
-    index("idx_gift_contributions_site_slug").on(table.siteSlug),
+    index("idx_gift_contributions_site_id").on(table.siteId),
   ];
 });
 
 // 3. Broadcast Groups Table
 export const broadcastGroups = pgTable("broadcast_groups", {
   id: uuid("id").defaultRandom().primaryKey(),
-  siteSlug: text("site_slug").references(() => sites.slug, { onDelete: 'cascade' }),
+  siteId: uuid("site_id").references(() => sites.id, { onDelete: 'cascade' }),
   name: text("name").notNull(),
   type: text("type").notNull().default("custom"), // "smart" | "custom"
   filter: jsonb("filter"), // For smart groups: { status: "attending" | "declined" | "all" }
@@ -64,14 +65,14 @@ export const broadcastGroups = pgTable("broadcast_groups", {
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 }, (table) => {
   return [
-    index("idx_broadcast_groups_site_slug").on(table.siteSlug),
+    index("idx_broadcast_groups_site_id").on(table.siteId),
   ];
 });
 
 // 4. Broadcasts Table
 export const broadcasts = pgTable("broadcasts", {
   id: uuid("id").defaultRandom().primaryKey(),
-  siteSlug: text("site_slug").references(() => sites.slug, { onDelete: 'cascade' }),
+  siteId: uuid("site_id").references(() => sites.id, { onDelete: 'cascade' }),
   groupId: uuid("group_id").references(() => broadcastGroups.id, { onDelete: 'cascade' }),
   subject: text("subject").notNull(),
   body: text("body").notNull(),
@@ -82,7 +83,7 @@ export const broadcasts = pgTable("broadcasts", {
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 }, (table) => {
   return [
-    index("idx_broadcasts_site_slug").on(table.siteSlug),
+    index("idx_broadcasts_site_id").on(table.siteId),
   ];
 });
 

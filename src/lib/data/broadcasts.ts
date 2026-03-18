@@ -1,12 +1,13 @@
 import { db } from "@/lib/db";
 import { broadcastGroups, broadcasts } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
+import { getSiteIdBySlug } from "./sites";
 
 // ─── Broadcast Groups ───
 
 export interface BroadcastGroupRecord {
   id: string;
-  siteSlug: string | null;
+  siteId: string | null;
   name: string;
   type: string;
   filter: any;
@@ -15,15 +16,20 @@ export interface BroadcastGroupRecord {
 }
 
 export async function getBroadcastGroupsBySite(slug: string): Promise<BroadcastGroupRecord[]> {
-  return db.select().from(broadcastGroups).where(eq(broadcastGroups.siteSlug, slug));
+  const siteId = await getSiteIdBySlug(slug);
+  if (!siteId) return [];
+  return db.select().from(broadcastGroups).where(eq(broadcastGroups.siteId, siteId));
 }
 
 export async function createBroadcastGroup(
   slug: string,
   data: { name: string; type: "smart" | "custom"; filter?: any; members?: string[] }
 ): Promise<BroadcastGroupRecord> {
+  const siteId = await getSiteIdBySlug(slug);
+  if (!siteId) throw new Error(`Site not found: ${slug}`);
+
   const [group] = await db.insert(broadcastGroups).values({
-    siteSlug: slug,
+    siteId,
     name: data.name,
     type: data.type,
     filter: data.filter || null,
@@ -50,7 +56,7 @@ export async function updateBroadcastGroup(
 
 export interface BroadcastRecord {
   id: string;
-  siteSlug: string | null;
+  siteId: string | null;
   groupId: string | null;
   subject: string;
   body: string;
@@ -62,7 +68,9 @@ export interface BroadcastRecord {
 }
 
 export async function getBroadcastsBySite(slug: string): Promise<BroadcastRecord[]> {
-  return db.select().from(broadcasts).where(eq(broadcasts.siteSlug, slug));
+  const siteId = await getSiteIdBySlug(slug);
+  if (!siteId) return [];
+  return db.select().from(broadcasts).where(eq(broadcasts.siteId, siteId));
 }
 
 export async function getBroadcastById(id: string): Promise<BroadcastRecord | null> {
@@ -74,8 +82,11 @@ export async function createBroadcast(
   slug: string,
   data: { groupId: string; subject: string; body: string; channel?: string }
 ): Promise<BroadcastRecord> {
+  const siteId = await getSiteIdBySlug(slug);
+  if (!siteId) throw new Error(`Site not found: ${slug}`);
+
   const [broadcast] = await db.insert(broadcasts).values({
-    siteSlug: slug,
+    siteId,
     groupId: data.groupId,
     subject: data.subject,
     body: data.body,

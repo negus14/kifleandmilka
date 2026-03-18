@@ -42,6 +42,12 @@ async function invalidateCache(slug: string): Promise<void> {
   console.warn(`[Redis] ⚠️ Cache invalidation FAILED for ${slug} after 2 attempts. Stale data may be served for up to ${SITE_CACHE_TTL}s.`);
 }
 
+/** Look up the internal UUID for a site by its slug. */
+export async function getSiteIdBySlug(slug: string): Promise<string | null> {
+  const [row] = await db.select({ id: sites.id }).from(sites).where(eq(sites.slug, slug));
+  return row?.id ?? null;
+}
+
 export async function getSiteBySlug(
   slug: string,
   forceRefresh: boolean = false
@@ -116,14 +122,13 @@ export async function updateSite(
   }
 
   // Combine data, but ensure keys in 'data' completely overwrite those in 'existing'
-  // This is especially important for arrays like sectionOrder
   const updated = { ...existing, ...data, slug: existing.slug };
 
   // Drizzle Update — verify rows affected
   const changedFields = Object.keys(data);
-  console.log(`[DB] Updating site: ${slug}`, { 
+  console.log(`[DB] Updating site: ${slug}`, {
     fieldsChanged: changedFields,
-    sectionCount: updated.sectionOrder?.length 
+    sectionCount: updated.sectionOrder?.length
   });
 
   const { isPaid, stripeCustomerId, customDomain, cloudflareHostnameId, domainVerifiedAt, ...rest } = updated;
@@ -180,7 +185,7 @@ export async function renameSite(
 
   const updated = { ...existing, ...data, slug: newSlug };
 
-  // Drizzle Update (including PK change) — verify rows affected
+  // With UUID PK, renaming is just updating the slug column — no FK cascade needed
   console.log(`[DB] Renaming site: ${oldSlug} -> ${newSlug}`);
   const { isPaid, stripeCustomerId, customDomain, cloudflareHostnameId, domainVerifiedAt, ...rest } = updated;
   const result = await db.update(sites)

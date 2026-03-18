@@ -8,12 +8,13 @@ export interface Recipient {
 }
 
 export async function resolveGroupRecipients(
-  group: BroadcastGroupRecord
+  group: BroadcastGroupRecord,
+  slug: string
 ): Promise<Recipient[]> {
-  if (!group.siteSlug) return [];
+  if (!slug) return [];
 
   if (group.type === "smart") {
-    const rsvps = await getRSVPsBySite(group.siteSlug);
+    const rsvps = await getRSVPsBySite(slug);
     const filter = group.filter as { status?: string } | null;
     const status = filter?.status || "all";
 
@@ -52,7 +53,7 @@ export async function resolveGroupRecipients(
     if (memberEmails.length === 0) return [];
 
     // Resolve names and phones from RSVP data
-    const rsvps = await getRSVPsBySite(group.siteSlug);
+    const rsvps = await getRSVPsBySite(slug);
     const emailToInfo = new Map<string, { name: string; phone?: string }>();
     for (const rsvp of rsvps) {
       if (rsvp.email) {

@@ -1,10 +1,11 @@
 import { db } from "@/lib/db";
 import { giftContributions } from "@/db/schema";
 import { eq, count } from "drizzle-orm";
+import { getSiteIdBySlug } from "./sites";
 
 export interface GiftContributionRecord {
   id: string;
-  site_slug: string | null;
+  site_id: string | null;
   gift_name: string;
   guest_name: string;
   amount: string | null;
@@ -15,24 +16,10 @@ export interface GiftContributionRecord {
   created_at: Date | null;
 }
 
-export async function createGiftContribution(
-  slug: string,
-  data: { giftName: string; guestName: string; amount?: string; currency?: string; message?: string; paymentMethod?: string }
-): Promise<GiftContributionRecord> {
-  const result = await db.insert(giftContributions).values({
-    siteSlug: slug,
-    giftName: data.giftName,
-    guestName: data.guestName,
-    amount: data.amount,
-    currency: data.currency || "GBP",
-    message: data.message,
-    paymentMethod: data.paymentMethod,
-  }).returning();
-
-  const row = result[0];
+function toRecord(row: typeof giftContributions.$inferSelect): GiftContributionRecord {
   return {
     id: row.id,
-    site_slug: row.siteSlug,
+    site_id: row.siteId,
     gift_name: row.giftName,
     guest_name: row.guestName,
     amount: row.amount,
@@ -44,24 +31,36 @@ export async function createGiftContribution(
   };
 }
 
+export async function createGiftContribution(
+  slug: string,
+  data: { giftName: string; guestName: string; amount?: string; currency?: string; message?: string; paymentMethod?: string }
+): Promise<GiftContributionRecord> {
+  const siteId = await getSiteIdBySlug(slug);
+  if (!siteId) throw new Error(`Site not found: ${slug}`);
+
+  const result = await db.insert(giftContributions).values({
+    siteId,
+    giftName: data.giftName,
+    guestName: data.guestName,
+    amount: data.amount,
+    currency: data.currency || "GBP",
+    message: data.message,
+    paymentMethod: data.paymentMethod,
+  }).returning();
+
+  return toRecord(result[0]);
+}
+
 export async function getGiftContributionsBySite(slug: string): Promise<GiftContributionRecord[]> {
+  const siteId = await getSiteIdBySlug(slug);
+  if (!siteId) return [];
+
   const rows = await db.query.giftContributions.findMany({
-    where: eq(giftContributions.siteSlug, slug),
+    where: eq(giftContributions.siteId, siteId),
     orderBy: (t, { desc }) => [desc(t.createdAt)],
   });
 
-  return rows.map(row => ({
-    id: row.id,
-    site_slug: row.siteSlug,
-    gift_name: row.giftName,
-    guest_name: row.guestName,
-    amount: row.amount,
-    currency: row.currency,
-    message: row.message,
-    payment_method: row.paymentMethod,
-    status: row.status,
-    created_at: row.createdAt,
-  }));
+  return rows.map(toRecord);
 }
 
 export async function getGiftContributionsBySitePaginated(
@@ -69,31 +68,23 @@ export async function getGiftContributionsBySitePaginated(
   page = 1,
   limit = 50
 ): Promise<{ items: GiftContributionRecord[]; total: number; page: number; totalPages: number }> {
+  const siteId = await getSiteIdBySlug(slug);
+  if (!siteId) return { items: [], total: 0, page, totalPages: 0 };
+
   const offset = (page - 1) * limit;
 
   const [rows, [{ total }]] = await Promise.all([
     db.query.giftContributions.findMany({
-      where: eq(giftContributions.siteSlug, slug),
+      where: eq(giftContributions.siteId, siteId),
       orderBy: (t, { desc }) => [desc(t.createdAt)],
       limit,
       offset,
     }),
-    db.select({ total: count() }).from(giftContributions).where(eq(giftContributions.siteSlug, slug)),
+    db.select({ total: count() }).from(giftContributions).where(eq(giftContributions.siteId, siteId)),
   ]);
 
   return {
-    items: rows.map(row => ({
-      id: row.id,
-      site_slug: row.siteSlug,
-      gift_name: row.giftName,
-      guest_name: row.guestName,
-      amount: row.amount,
-      currency: row.currency,
-      message: row.message,
-      payment_method: row.paymentMethod,
-      status: row.status,
-      created_at: row.createdAt,
-    })),
+    items: rows.map(toRecord),
     total,
     page,
     totalPages: Math.ceil(total / limit),
