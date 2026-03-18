@@ -3,17 +3,18 @@ import { NextResponse } from "next/server";
 import { SignJWT, jwtVerify } from "jose";
 import { getSiteBySlug } from "./data/sites";
 
-// Fail fast if AUTH_SECRET is missing — never fall back to a hardcoded secret.
-// A missing secret means anyone who reads the source code can forge session tokens.
-if (!process.env.AUTH_SECRET) {
-  throw new Error(
-    "AUTH_SECRET environment variable is required. " +
-    "Set it in .env.local (dev) or Railway env vars (prod). " +
-    "Generate one with: openssl rand -base64 32"
-  );
+// Lazy-initialise so the module can be imported at build time (Next.js page
+// data collection) without crashing.  The secret is only needed at runtime.
+function getSecret() {
+  if (!process.env.AUTH_SECRET) {
+    throw new Error(
+      "AUTH_SECRET environment variable is required. " +
+      "Set it in .env.local (dev) or Railway env vars (prod). " +
+      "Generate one with: openssl rand -base64 32"
+    );
+  }
+  return new TextEncoder().encode(process.env.AUTH_SECRET);
 }
-
-const SECRET = new TextEncoder().encode(process.env.AUTH_SECRET);
 
 const COOKIE_NAME = "itsw_session";
 
@@ -29,7 +30,7 @@ export async function createSession(slug: string) {
   const token = await new SignJWT({ slug, isPaid })
     .setProtectedHeader({ alg: "HS256" })
     .setExpirationTime("30d")
-    .sign(SECRET);
+    .sign(getSecret());
 
   const cookieStore = await cookies();
   cookieStore.set(COOKIE_NAME, token, {
@@ -47,7 +48,7 @@ export async function getSession(): Promise<SessionPayload | null> {
   if (!token) return null;
 
   try {
-    const { payload } = await jwtVerify(token, SECRET);
+    const { payload } = await jwtVerify(token, getSecret());
 
     // Validate payload structure
     if (typeof payload.slug !== "string" || !payload.slug) {

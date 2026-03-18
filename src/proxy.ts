@@ -2,12 +2,13 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { jwtVerify } from "jose";
 
-// Must match the same check in src/lib/auth.ts — never fall back to a hardcoded secret.
-if (!process.env.AUTH_SECRET) {
-  throw new Error("AUTH_SECRET environment variable is required.");
+// Lazy-initialise so the module can be imported at build time without crashing.
+function getSecret() {
+  if (!process.env.AUTH_SECRET) {
+    throw new Error("AUTH_SECRET environment variable is required.");
+  }
+  return new TextEncoder().encode(process.env.AUTH_SECRET);
 }
-
-const SECRET = new TextEncoder().encode(process.env.AUTH_SECRET);
 
 const PLATFORM_HOSTS = [
   "ithinkshewifey.com",
@@ -49,7 +50,7 @@ export default async function(request: NextRequest) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
     try {
-      const { payload } = await jwtVerify(token, SECRET);
+      const { payload } = await jwtVerify(token, getSecret());
       const sessionSlug = payload.slug as string;
 
       // Extract the slug from /dashboard/{slug}/...
