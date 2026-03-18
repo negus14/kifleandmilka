@@ -1,7 +1,9 @@
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import { createSession, getSession } from "@/lib/auth";
 import { getSiteBySlug, createSite } from "@/lib/data/sites";
 import { hash } from "bcryptjs";
+import { rateLimit } from "@/lib/rate-limit";
 import SignupForm from "./SignupForm";
 import { DEFAULT_SECTION_ORDER, type WeddingSite } from "@/lib/types/wedding-site";
 
@@ -18,6 +20,14 @@ async function signupAction(formData: FormData) {
   const password = formData.get("password") as string;
 
   if (!slug || !password) return { error: "Please fill in all fields." };
+
+  // Rate limit by IP: prevents mass account creation (spam signups)
+  const headerList = await headers();
+  const ip = headerList.get("x-forwarded-for")?.split(",")[0].trim() || "127.0.0.1";
+  const { allowed } = await rateLimit(ip, { prefix: "rl:signup", maxRequests: 3, windowSeconds: 300 });
+  if (!allowed) {
+    return { error: "Too many signup attempts. Please wait a few minutes and try again." };
+  }
 
   if (password.length < 8) {
     return { error: "Password must be at least 8 characters long." };
