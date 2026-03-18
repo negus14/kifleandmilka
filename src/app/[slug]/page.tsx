@@ -13,13 +13,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (slug.includes(".") || !/^[a-z0-9][a-z0-9-]*$/.test(slug)) return {};
   const site = await getSiteBySlug(slug);
   if (!site) return {};
+  const baseUrl = site.customDomain
+    ? `https://${site.customDomain}`
+    : `https://${slug}.ithinkshewifey.com`;
   return {
+    metadataBase: new URL(baseUrl),
     title: `${site.partner1Name} & ${site.partner2Name} — ${site.dateDisplayText}`,
     description: `Join us in celebrating the wedding of ${site.partner1Name} and ${site.partner2Name} — ${site.dateDisplayText} in ${site.locationText}.`,
     openGraph: {
       title: `${site.partner1Name} & ${site.partner2Name}`,
       description: `Join us in celebrating the wedding of ${site.partner1Name} and ${site.partner2Name} — ${site.dateDisplayText} in ${site.locationText}.`,
-      url: `${process.env.NEXT_PUBLIC_BASE_URL}/${slug}`,
+      url: baseUrl,
       type: "website",
     },
   };
