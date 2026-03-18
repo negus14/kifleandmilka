@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 
 const NAV_LINKS = [
@@ -63,6 +64,8 @@ export default function MobileNav() {
         </div>
       </button>
 
+      {/* Portal out of nav's stacking context (backdrop-blur creates a new one) */}
+      {typeof document !== "undefined" && createPortal(<>
       {/* Overlay */}
       <div
         className={`fixed inset-0 z-40 bg-[#2d2b25]/40 backdrop-blur-sm transition-opacity duration-300 md:hidden ${
@@ -151,6 +154,7 @@ export default function MobileNav() {
           </p>
         </div>
       </div>
+      </>, document.body)}
     </>
   );
 }
