@@ -10,6 +10,7 @@ import type {
   VenueItem,
   ScheduleItem,
   MenuItem,
+  MenuCategory,
   GalleryImage,
   ExploreGroup,
   AccommodationItem,
@@ -2631,17 +2632,17 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                       }
                       handleTabChange(t.id);
                     }}
-                    className={`whitespace-nowrap px-4 lg:px-1 py-1.5 lg:py-1 text-[11px] lg:text-[13px] transition-all duration-200 text-left ${
+                    className={`whitespace-nowrap px-4 lg:px-3 py-1.5 lg:py-1.5 text-[11px] lg:text-[13px] transition-all duration-200 text-left rounded-sm ${
                       view === "website" && tab === t.id
-                        ? "text-[#2d2b25] font-semibold"
+                        ? "text-[#2d2b25] font-semibold bg-[#2d2b25]/[0.08] shadow-sm"
                         : isHidden
                           ? "text-[#2d2b25]/20 cursor-not-allowed italic"
-                          : "text-[#2d2b25]/40 hover:text-[#2d2b25]/70"
+                          : "text-[#2d2b25]/40 hover:text-[#2d2b25]/70 hover:bg-[#2d2b25]/[0.03]"
                     }`}
                     title={isHidden ? `${t.label} is hidden in layout` : ""}
                   >
                     <div className="flex items-center gap-2">
-                      <span className={view === "website" && tab === t.id ? "border-b border-[#2d2b25]" : ""}>{t.label}</span>
+                      <span>{t.label}</span>
                       {isHidden && (
                         <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="opacity-40 shrink-0">
                           <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
@@ -2666,15 +2667,15 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
               <button
                 key={item.id}
                 onClick={() => setView(item.id)}
-                className={`whitespace-nowrap px-4 lg:px-1 py-1.5 lg:py-1 text-[11px] lg:text-[13px] transition-all duration-200 w-full text-left ${
+                className={`whitespace-nowrap px-4 lg:px-3 py-1.5 lg:py-1.5 text-[11px] lg:text-[13px] transition-all duration-200 w-full text-left rounded-sm ${
                   view === item.id
-                    ? "text-[#2d2b25] font-semibold"
-                    : "text-[#2d2b25]/40 hover:text-[#2d2b25]/70"
+                    ? "text-[#2d2b25] font-semibold bg-[#2d2b25]/[0.08] shadow-sm"
+                    : "text-[#2d2b25]/40 hover:text-[#2d2b25]/70 hover:bg-[#2d2b25]/[0.03]"
                 }`}
               >
                 <div className="flex items-center gap-2">
                   <span className="lg:hidden">{item.icon}</span>
-                  <span className={view === item.id ? "border-b border-[#2d2b25]" : ""}>{item.label}</span>
+                  <span>{item.label}</span>
                 </div>
               </button>
             ))}
@@ -3358,49 +3359,197 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                 </div>
               );
 
-              if (type === "menu") return (
+              if (type === "menu") {
+                const categories = site.menuCategories || [];
+                const hasCategories = categories.length > 0;
+
+                // Helpers for category-based editing
+                const setCategories = (cats: MenuCategory[]) => {
+                  set("menuCategories", cats);
+                  // Sync flat menuItems for RSVP meal options
+                  const allItems = cats.flatMap(c => c.items);
+                  set("menuItems", allItems);
+                };
+                const updateCategory = (catIdx: number, patch: Partial<MenuCategory>) => {
+                  const updated = [...categories];
+                  updated[catIdx] = { ...updated[catIdx], ...patch };
+                  setCategories(updated);
+                };
+                const addDishToCategory = (catIdx: number) => {
+                  const updated = [...categories];
+                  updated[catIdx] = { ...updated[catIdx], items: [...updated[catIdx].items, { name: "", description: "" }] };
+                  setCategories(updated);
+                };
+                const updateDish = (catIdx: number, dishIdx: number, patch: Partial<MenuItem>) => {
+                  const updated = [...categories];
+                  const items = [...updated[catIdx].items];
+                  items[dishIdx] = { ...items[dishIdx], ...patch };
+                  updated[catIdx] = { ...updated[catIdx], items };
+                  setCategories(updated);
+                };
+                const removeDish = (catIdx: number, dishIdx: number) => {
+                  const updated = [...categories];
+                  updated[catIdx] = { ...updated[catIdx], items: updated[catIdx].items.filter((_, i) => i !== dishIdx) };
+                  setCategories(updated);
+                };
+                const removeCategory = (catIdx: number) => {
+                  setCategories(categories.filter((_, i) => i !== catIdx));
+                };
+                const addCategory = () => {
+                  setCategories([...categories, { id: `cat-${Date.now()}`, name: "", items: [{ name: "", description: "" }] }]);
+                };
+
+                // Migrate: if user has flat menuItems but no categories, offer to convert
+                const migrateToCategories = () => {
+                  const cat: MenuCategory = { id: `cat-${Date.now()}`, name: "Main Course", items: [...site.menuItems] };
+                  set("menuCategories", [cat]);
+                };
+
+                return (
                 <div>
                   <SectionTitle>Wedding Menu</SectionTitle>
                   {renderBg("Menu Background Image")}
                   <Field label="Menu Note" value={site.menuNote} onChange={(v) => set("menuNote", v)} multiline rows={2} />
-                  <SortableList items={site.menuItems} prefix={`menu-${id}`} onReorder={(items) => set("menuItems", items)}>
-                    {(m, i, sid) => (
-                      <SortableCard key={sid} id={sid} onRemove={() => set("menuItems", removeFromArray(site.menuItems, i))}>
-                        <Field label="Name" value={m.name} onChange={(v) => set("menuItems", updateInArray(site.menuItems, i, { name: v }))} placeholder="e.g. Chicken, Beef, Vegetarian" />
-                        <Field label="Description" value={m.description} onChange={(v) => set("menuItems", updateInArray(site.menuItems, i, { description: v }))} multiline rows={2} />
-                        <div className="mt-2">
-                          <label className="text-[9px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/40 block mb-2">Dietary Options Available</label>
-                          <div className="flex flex-wrap gap-1.5">
-                            {["Halal", "Kosher", "Vegan", "Vegetarian", "Gluten-Free", "Dairy-Free", "Nut-Free"].map(opt => {
-                              const active = m.dietaryOptions?.includes(opt);
-                              return (
-                                <button
-                                  key={opt}
-                                  type="button"
-                                  onClick={() => {
-                                    const current = m.dietaryOptions || [];
-                                    const updated = active ? current.filter(o => o !== opt) : [...current, opt];
-                                    set("menuItems", updateInArray(site.menuItems, i, { dietaryOptions: updated }));
-                                  }}
-                                  className={`px-2.5 py-1 text-[10px] font-medium rounded-sm border transition-all ${
-                                    active
-                                      ? "bg-[#2d2b25] text-white border-[#2d2b25]"
-                                      : "text-[#2d2b25]/40 border-[#2d2b25]/10 hover:border-[#2d2b25]/25"
-                                  }`}
-                                >
-                                  {opt}
-                                </button>
-                              );
-                            })}
+
+                  {!hasCategories && site.menuItems.length > 0 && (
+                    <div className="mb-4 p-3 border border-dashed border-[#2d2b25]/15 rounded-sm">
+                      <p className="text-[10px] text-[#2d2b25]/50 mb-2">You have dishes without categories. Organise them into courses?</p>
+                      <button type="button" onClick={migrateToCategories} className="text-[10px] font-bold uppercase tracking-wider text-[#2d2b25] hover:underline">
+                        Convert to Categories
+                      </button>
+                    </div>
+                  )}
+
+                  {!hasCategories && (
+                    <>
+                      <SortableList items={site.menuItems} prefix={`menu-${id}`} onReorder={(items) => set("menuItems", items)}>
+                        {(m, i, sid) => (
+                          <SortableCard key={sid} id={sid} onRemove={() => set("menuItems", removeFromArray(site.menuItems, i))}>
+                            <Field label="Name" value={m.name} onChange={(v) => set("menuItems", updateInArray(site.menuItems, i, { name: v }))} placeholder="e.g. Chicken, Beef, Vegetarian" />
+                            <Field label="Description" value={m.description} onChange={(v) => set("menuItems", updateInArray(site.menuItems, i, { description: v }))} multiline rows={2} />
+                            <div className="mt-2">
+                              <label className="text-[9px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/40 block mb-2">Dietary Options Available</label>
+                              <div className="flex flex-wrap gap-1.5">
+                                {["Halal", "Kosher", "Vegan", "Vegetarian", "Gluten-Free", "Dairy-Free", "Nut-Free"].map(opt => {
+                                  const active = m.dietaryOptions?.includes(opt);
+                                  return (
+                                    <button
+                                      key={opt}
+                                      type="button"
+                                      onClick={() => {
+                                        const current = m.dietaryOptions || [];
+                                        const updated = active ? current.filter(o => o !== opt) : [...current, opt];
+                                        set("menuItems", updateInArray(site.menuItems, i, { dietaryOptions: updated }));
+                                      }}
+                                      className={`px-2.5 py-1 text-[10px] font-medium rounded-sm border transition-all ${
+                                        active
+                                          ? "bg-[#2d2b25] text-white border-[#2d2b25]"
+                                          : "text-[#2d2b25]/40 border-[#2d2b25]/10 hover:border-[#2d2b25]/25"
+                                      }`}
+                                    >
+                                      {opt}
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                              <p className="text-[9px] text-[#2d2b25]/30 mt-1.5">Select which dietary options are available for this dish. These appear in the RSVP form.</p>
+                            </div>
+                          </SortableCard>
+                        )}
+                      </SortableList>
+                      <div className="flex gap-2 mt-2">
+                        <AddButton label="Add Dish" onClick={() => set("menuItems", [...site.menuItems, { name: "", description: "" }])} />
+                        {site.menuItems.length === 0 && (
+                          <AddButton label="Use Categories" onClick={addCategory} />
+                        )}
+                      </div>
+                    </>
+                  )}
+
+                  {hasCategories && (
+                    <>
+                      {categories.map((cat, catIdx) => (
+                        <div key={cat.id} className="mb-6 border border-[#2d2b25]/10 rounded-sm overflow-hidden">
+                          {/* Category header */}
+                          <div className="bg-[#2d2b25]/[0.03] px-3 py-2.5 flex items-center gap-2 border-b border-[#2d2b25]/10">
+                            <input
+                              type="text"
+                              value={cat.name}
+                              onChange={(e) => updateCategory(catIdx, { name: e.target.value })}
+                              placeholder="e.g. Starters, Main Course, Desserts"
+                              className="flex-1 bg-transparent text-sm font-bold uppercase tracking-[0.08em] text-[#2d2b25] outline-none placeholder:text-[#2d2b25]/25 placeholder:normal-case placeholder:font-normal placeholder:tracking-normal"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => removeCategory(catIdx)}
+                              className="text-[#2d2b25]/25 hover:text-red-500 transition-colors shrink-0"
+                              title="Remove category"
+                            >
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                              </svg>
+                            </button>
                           </div>
-                          <p className="text-[9px] text-[#2d2b25]/30 mt-1.5">Select which dietary options are available for this dish. These appear in the RSVP form.</p>
+                          {/* Dishes in this category */}
+                          <div className="px-3 py-2 space-y-3">
+                            {cat.items.map((dish, dishIdx) => (
+                              <div key={dishIdx} className="relative pl-3 border-l-2 border-[#2d2b25]/10">
+                                <button
+                                  type="button"
+                                  onClick={() => removeDish(catIdx, dishIdx)}
+                                  className="absolute top-0 right-0 text-[#2d2b25]/20 hover:text-red-500 transition-colors"
+                                  title="Remove dish"
+                                >
+                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+                                  </svg>
+                                </button>
+                                <Field label="Dish Name" value={dish.name} onChange={(v) => updateDish(catIdx, dishIdx, { name: v })} placeholder="e.g. Grilled Salmon" />
+                                <Field label="Description" value={dish.description} onChange={(v) => updateDish(catIdx, dishIdx, { description: v })} placeholder="A brief description" multiline rows={2} />
+                                <div className="mt-1">
+                                  <label className="text-[9px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/40 block mb-2">Dietary Options</label>
+                                  <div className="flex flex-wrap gap-1.5">
+                                    {["Halal", "Kosher", "Vegan", "Vegetarian", "Gluten-Free", "Dairy-Free", "Nut-Free"].map(opt => {
+                                      const active = dish.dietaryOptions?.includes(opt);
+                                      return (
+                                        <button
+                                          key={opt}
+                                          type="button"
+                                          onClick={() => {
+                                            const current = dish.dietaryOptions || [];
+                                            const updated = active ? current.filter(o => o !== opt) : [...current, opt];
+                                            updateDish(catIdx, dishIdx, { dietaryOptions: updated });
+                                          }}
+                                          className={`px-2.5 py-1 text-[10px] font-medium rounded-sm border transition-all ${
+                                            active
+                                              ? "bg-[#2d2b25] text-white border-[#2d2b25]"
+                                              : "text-[#2d2b25]/40 border-[#2d2b25]/10 hover:border-[#2d2b25]/25"
+                                          }`}
+                                        >
+                                          {opt}
+                                        </button>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                            <button
+                              type="button"
+                              onClick={() => addDishToCategory(catIdx)}
+                              className="w-full py-2 text-[10px] font-bold uppercase tracking-wider text-[#2d2b25]/30 hover:text-[#2d2b25]/60 border border-dashed border-[#2d2b25]/10 hover:border-[#2d2b25]/25 rounded-sm transition-all"
+                            >
+                              + Add Dish
+                            </button>
+                          </div>
                         </div>
-                      </SortableCard>
-                    )}
-                  </SortableList>
-                  <AddButton label="Add Menu Item" onClick={() => set("menuItems", [...site.menuItems, { name: "", description: "" }])} />
+                      ))}
+                      <AddButton label="Add Category" onClick={addCategory} />
+                    </>
+                  )}
                 </div>
-              );
+                );
+              }
 
               if (type === "faqs") return (
                 <div>
