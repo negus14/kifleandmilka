@@ -2847,6 +2847,35 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                         </>
                       ) : (
                         <>
+                          {/* Buy a domain CTA */}
+                          {!site.customDomain && (
+                            <div className="mb-4 p-4 bg-[#f7f6f3] border border-[#2d2b25]/10 rounded-sm">
+                              <p className="text-xs text-[#2d2b25]/70 mb-3">
+                                Don&apos;t have a domain yet? Buy one from a registrar:
+                              </p>
+                              <div className="flex gap-2">
+                                <a
+                                  href={`https://www.cloudflare.com/products/registrar/`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="flex-1 text-center py-2 text-[10px] font-semibold tracking-[0.12em] uppercase border border-[#2d2b25]/15 hover:border-[#2d2b25]/40 rounded-sm transition-colors text-[#2d2b25]/70"
+                                >
+                                  Cloudflare
+                                </a>
+                                <a
+                                  href={`https://www.namecheap.com/domains/registration/results/?domain=${site.slug}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="flex-1 text-center py-2 text-[10px] font-semibold tracking-[0.12em] uppercase border border-[#2d2b25]/15 hover:border-[#2d2b25]/40 rounded-sm transition-colors text-[#2d2b25]/70"
+                                >
+                                  Namecheap
+                                </a>
+                              </div>
+                              <p className="text-[10px] text-[#2d2b25]/40 mt-2">
+                                After purchasing, enter your domain below and follow the DNS setup instructions.
+                              </p>
+                            </div>
+                          )}
                           <Field
                             label="Domain"
                             value={site.customDomain || ""}
@@ -2856,8 +2885,10 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                           {site.customDomain && (
                             <div className="mt-3 p-4 bg-[#f7f6f3] border border-[#2d2b25]/10 rounded-sm">
                               <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/60 mb-2">DNS Setup</p>
-                              <p className="text-xs text-[#2d2b25]/70 mb-2">Add a CNAME record pointing to:</p>
-                              <code className="block text-xs bg-white px-3 py-2 border border-[#2d2b25]/10 rounded-sm text-[#2d2b25] select-all">proxy.ithinkshewifey.com</code>
+                              <p className="text-xs text-[#2d2b25]/70 mb-2">1. Go to your domain registrar&apos;s DNS settings</p>
+                              <p className="text-xs text-[#2d2b25]/70 mb-2">2. Add a CNAME record pointing to:</p>
+                              <code className="block text-xs bg-white px-3 py-2 border border-[#2d2b25]/10 rounded-sm text-[#2d2b25] select-all mb-2">proxy.ithinkshewifey.com</code>
+                              <p className="text-xs text-[#2d2b25]/70 mb-2">3. Save your DNS changes, then click verify below</p>
                               <DomainStatus slug={site.slug} domain={site.customDomain} />
                             </div>
                           )}
