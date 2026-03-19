@@ -2819,12 +2819,12 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
             <span className="text-[#2d2b25]/30">/</span>
             <span className="text-xs sm:text-sm text-[#2d2b25]/60 truncate max-w-[100px] sm:max-w-none">{site.partner1Name} & {site.partner2Name}</span>
           </div>
-          <div className="flex items-center gap-2 sm:gap-4">
-            <div className="hidden md:flex items-center gap-1 bg-[#2d2b25]/5 p-1 rounded-sm">
+          <div className="flex items-center gap-1.5 sm:gap-3">
+            <div className="flex items-center gap-0.5 bg-[#2d2b25]/5 p-0.5 sm:p-1 rounded-sm">
               <button
                 onClick={undo}
                 disabled={past.length === 0}
-                className="p-1.5 rounded-sm hover:bg-white disabled:opacity-30 transition-all text-[#2d2b25]"
+                className="p-1 sm:p-1.5 rounded-sm hover:bg-white disabled:opacity-30 transition-all text-[#2d2b25]"
                 title="Undo (Ctrl+Z)"
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>
@@ -2832,16 +2832,16 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
               <button
                 onClick={redo}
                 disabled={future.length === 0}
-                className="p-1.5 rounded-sm hover:bg-white disabled:opacity-30 transition-all text-[#2d2b25]"
+                className="p-1 sm:p-1.5 rounded-sm hover:bg-white disabled:opacity-30 transition-all text-[#2d2b25]"
                 title="Redo (Ctrl+Y)"
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3l3 2.7"/></svg>
               </button>
             </div>
 
-            <div className="flex items-center gap-1.5 px-1 sm:px-3">
+            <div className="flex items-center gap-1 px-1 sm:px-3">
               <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 transition-all duration-300 ${saveError ? "bg-red-500 animate-pulse" : saving ? "bg-amber-400 animate-pulse" : saved ? "bg-green-500 shadow-[0_0_6px_rgba(34,197,94,0.4)]" : "bg-amber-400"}`} />
-              <span className={`text-[9px] sm:text-[10px] font-bold uppercase tracking-widest whitespace-nowrap transition-colors duration-300 ${saveError ? "text-red-600" : saved && !saving ? "text-green-600" : "text-[#2d2b25]/40"}`}>
+              <span className={`hidden sm:inline text-[10px] font-bold uppercase tracking-widest whitespace-nowrap transition-colors duration-300 ${saveError ? "text-red-600" : saved && !saving ? "text-green-600" : "text-[#2d2b25]/40"}`}>
                 {saveError ? "Error" : saving ? "Saving..." : saved ? "Saved" : "Unsaved"}
               </span>
             </div>
@@ -2853,10 +2853,10 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
               </a>
             )}
 
-            <div className="flex bg-[#2d2b25]/5 rounded-sm p-1">
+            <div className="flex bg-[#2d2b25]/5 rounded-sm p-0.5 sm:p-1">
               <button
                 onClick={() => { setView("website"); setIsPreview(false); }}
-                className={`px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-sm transition-all ${
+                className={`px-2 sm:px-3 py-1 sm:py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-sm transition-all ${
                   view === "website" && !isPreview
                   ? "bg-[#2d2b25] text-white shadow-sm"
                   : "text-[#2d2b25]/40 hover:text-[#2d2b25]/60"
@@ -2866,7 +2866,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
               </button>
               <button
                 onClick={() => { setView("website"); setIsPreview(true); }}
-                className={`px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-sm transition-all ${
+                className={`px-2 sm:px-3 py-1 sm:py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-sm transition-all ${
                   view === "website" && isPreview
                   ? "bg-[#2d2b25] text-white shadow-sm"
                   : "text-[#2d2b25]/40 hover:text-[#2d2b25]/60"
@@ -2876,9 +2876,8 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
               </button>
             </div>
 
-
             <div className="hidden lg:flex bg-[#2d2b25]/5 rounded-sm p-1">
-              <button 
+              <button
                 onClick={() => setPreviewDevice("desktop")}
                 className={`px-2 py-1.5 rounded-sm transition-all ${
                   previewDevice === "desktop" ? "bg-white shadow-sm text-[#2d2b25]" : "text-[#2d2b25]/40 hover:text-[#2d2b25]/60"
@@ -2887,7 +2886,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
               </button>
-              <button 
+              <button
                 onClick={() => setPreviewDevice("mobile")}
                 className={`px-2 py-1.5 rounded-sm transition-all ${
                   previewDevice === "mobile" ? "bg-white shadow-sm text-[#2d2b25]" : "text-[#2d2b25]/40 hover:text-[#2d2b25]/60"
@@ -2898,10 +2897,13 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
               </button>
             </div>
 
-            <form action="/api/auth/logout" method="POST" className="hidden sm:block">
+            <form action="/api/auth/logout" method="POST">
               <button type="submit"
-                className="text-xs tracking-wide uppercase text-[#2d2b25]/40 hover:text-red-500 transition-colors ml-1">
-                Logout
+                className="p-1 sm:p-0 text-[#2d2b25]/40 hover:text-red-500 transition-colors"
+                title="Logout"
+              >
+                <span className="hidden sm:inline text-xs tracking-wide uppercase">Logout</span>
+                <svg className="sm:hidden" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
               </button>
             </form>
           </div>
