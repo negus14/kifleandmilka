@@ -662,7 +662,7 @@ export default function LandingPage() {
         <FlourishDivider />
         <div className="max-w-7xl mx-auto px-6 md:px-10 pb-14">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <div>
+            <div className="text-center md:text-left">
               <p className="font-['Cormorant_Garamond',serif] text-xl font-medium">
                 ITSW
               </p>
@@ -688,7 +688,7 @@ export default function LandingPage() {
           <div className="h-px bg-[#2d2b25]/10 my-8" />
           <div className="flex flex-col md:flex-row items-center justify-between gap-3">
             <p className="font-['DM_Sans',sans-serif] text-[11px] text-[#2d2b25]/30">
-              &copy; 2026 ITSW. All rights reserved.
+              &copy; 2026 2 Percent Cargo Ltd.
             </p>
             <div className="flex items-center gap-3 font-['DM_Sans',sans-serif] text-[11px] text-[#2d2b25]/25">
               <span>Created by</span>
