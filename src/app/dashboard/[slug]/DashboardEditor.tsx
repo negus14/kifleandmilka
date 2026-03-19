@@ -3050,23 +3050,17 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                         </div>
                       ) : site.customDomain ? (
                         <div className="space-y-3">
-                          <div className="p-4 bg-amber-50 border border-amber-200 rounded-sm">
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-                              <p className="text-xs font-medium text-amber-800">Request Sent</p>
-                            </div>
-                            <p className="text-xs text-amber-700">
-                              <strong>{site.customDomain}</strong> — we&apos;re working on it. You&apos;ll receive an email when it&apos;s ready.
-                            </p>
-                            <button
-                              onClick={() => setShowCancelDomainModal(true)}
-                              className="mt-2 text-[10px] text-amber-600 underline hover:no-underline"
-                            >
-                              Cancel request
-                            </button>
+                          <div className="p-4 bg-[#2d2b25]/5 border border-[#2d2b25]/10 rounded-sm">
+                            <p className="text-sm font-medium text-[#2d2b25] mb-1">{site.customDomain}</p>
+                            <p className="text-[10px] text-[#2d2b25]/40">Point your domain&apos;s CNAME to <strong>proxy.ithinkshewifey.com</strong>, then verify below.</p>
                           </div>
                           <DomainStatus slug={site.slug} domain={site.customDomain} />
-                          <DomainRequest slug={site.slug} existingDomain={site.customDomain} />
+                          <button
+                            onClick={() => setShowCancelDomainModal(true)}
+                            className="text-[10px] text-[#2d2b25]/40 underline hover:text-[#2d2b25]/60"
+                          >
+                            Remove domain
+                          </button>
                         </div>
                       ) : (
                         <DomainRequest slug={site.slug} />
