@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
             currency: "gbp",
             product_data: {
               name: `Wedding Website - ${site.slug}`,
-              description: "Full access to ithinkshewifey.com features",
+              description: "Full access to ITSW features",
             },
             unit_amount: 5000, // £50.00
           },

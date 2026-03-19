@@ -3,15 +3,15 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || "https://www.ithinkshewifey.com"),
-  title: "I Think She Wifey — Wedding Website Builder",
+  title: "ITSW — Wedding Website Builder",
   description:
     "Create a fully customisable wedding website in minutes — with RSVP, gallery, schedule, and everything your guests need.",
   openGraph: {
-    title: "I Think She Wifey",
+    title: "ITSW — Wedding Website Builder",
     description: "Create a fully customisable wedding website in minutes — with RSVP, gallery, schedule, and everything your guests need.",
     url: "https://www.ithinkshewifey.com",
     type: "website",
-    siteName: "I Think She Wifey",
+    siteName: "ITSW",
   },
 };
 

@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "nodejs";
-export const alt = "I Think She Wifey — Wedding Website Builder";
+export const alt = "ITSW — Wedding Website Builder";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -65,7 +65,7 @@ export default function OGImage() {
               marginBottom: 24,
             }}
           >
-            I Think She Wifey
+            ITSW
           </div>
           <div
             style={{

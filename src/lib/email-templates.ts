@@ -20,11 +20,11 @@ function escapeHtml(str: string): string {
 function siteUrl(site: WeddingSite): string {
   return site.customDomain
     ? `https://${site.customDomain}`
-    : `https://${site.slug}.itsw.com`;
+    : `https://${site.slug}.ithinkshewifey.com`;
 }
 
 function siteUrlDisplay(site: WeddingSite): string {
-  return site.customDomain || `${site.slug}.itsw.com`;
+  return site.customDomain || `${site.slug}.ithinkshewifey.com`;
 }
 
 function baseLayout(content: string, site: WeddingSite) {

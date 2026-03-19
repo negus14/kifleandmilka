@@ -7,7 +7,7 @@ import { rateLimit } from "@/lib/rate-limit";
 import SignupForm from "./SignupForm";
 import { DEFAULT_SECTION_ORDER, type WeddingSite } from "@/lib/types/wedding-site";
 
-export const metadata = { title: "Sign Up — I Think She Wifey" };
+export const metadata = { title: "Sign Up — ITSW" };
 
 const RESERVED_SLUGS = [
   "dashboard", "api", "login", "signup", "pricing", "about", "admin", "logout", "auth", "preview"

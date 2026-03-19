@@ -13,9 +13,7 @@ function getSecret() {
 const PLATFORM_HOSTS = [
   "ithinkshewifey.com",
   "www.ithinkshewifey.com",
-  "itsw.com",
-  "www.itsw.com",
-  "localhost",
+"localhost",
   "127.0.0.1",
   "ithinkshewifey-dev.up.railway.app",
   "ithinkshewifey-prod.up.railway.app",
@@ -28,8 +26,8 @@ export default async function(request: NextRequest) {
   const hostname = request.headers.get("host")?.split(":")[0] || "";
   const isMainHost = PLATFORM_HOSTS.some((h) => hostname === h);
 
-  // Check for subdomain of ithinkshewifey.com or itsw.com (e.g. kifleandmilka.itsw.com)
-  const subdomainMatch = hostname.match(/^([a-z0-9-]+)\.(?:ithinkshewifey\.com|itsw\.com|localhost)$/);
+  // Check for subdomain of ithinkshewifey.com (e.g. kifleandmilka.ithinkshewifey.com)
+  const subdomainMatch = hostname.match(/^([a-z0-9-]+)\.(?:ithinkshewifey\.com|localhost)$/);
   const subdomain = subdomainMatch?.[1];
   const isSubdomain = subdomain && subdomain !== "www" && subdomain !== "proxy";
 

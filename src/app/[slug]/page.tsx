@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!site) return {};
   const displayUrl = site.customDomain
     ? `https://${site.customDomain}`
-    : `https://${slug}.itsw.com`;
+    : `https://${slug}.ithinkshewifey.com`;
   return {
     metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || "https://www.ithinkshewifey.com"),
     title: `${site.partner1Name} & ${site.partner2Name} — ${site.dateDisplayText}`,

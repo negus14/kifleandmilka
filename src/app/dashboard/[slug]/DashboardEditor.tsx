@@ -89,7 +89,7 @@ function SlugField({ currentSlug, onSave, customDomain, domainVerified }: { curr
 
   const shareUrl = customDomain
     ? `https://${customDomain}`
-    : `https://${currentSlug}.itsw.com`;
+    : `https://${currentSlug}.ithinkshewifey.com`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(shareUrl);
@@ -1336,7 +1336,7 @@ function MessagesPanel({ msgData, loadMessages, site }: {
             <button
               onClick={() => {
                 const names = `${site.partner1Name} & ${site.partner2Name}`;
-                const url = site.customDomain ? `https://${site.customDomain}` : `https://${site.slug}.itsw.com`;
+                const url = site.customDomain ? `https://${site.customDomain}` : `https://${site.slug}.ithinkshewifey.com`;
                 setSubject(`You're Invited — ${names}`);
                 setBody(`We are delighted to invite you to celebrate our wedding!\n\n${site.dateDisplayText ? `Date: ${site.dateDisplayText}\n` : ""}${site.locationText ? `Venue: ${site.locationText}\n` : ""}\nPlease visit our wedding website for all the details and to RSVP:\n${url}\n\nWe can't wait to celebrate with you!\n\nWith love,\n${names}`);
               }}
@@ -2812,8 +2812,8 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
       <header className="sticky top-0 z-50 border-b border-[#2d2b25]/[0.08] bg-[#faf1e1]/95 backdrop-blur-sm">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <a href="/" className="text-base hidden sm:block font-medium" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
-              I Think She Wifey
+            <a href="/" className="text-base hidden sm:block font-medium italic" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+              ITSW
             </a>
             <a href="/" className="text-base sm:hidden italic" style={{ fontFamily: "'Cormorant Garamond', serif" }}>ITSW</a>
             <span className="text-[#2d2b25]/30">/</span>
@@ -3037,7 +3037,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                   {site.isPaid && (
                     <div className="mb-6 p-4 bg-[#2d2b25]/5 border border-[#2d2b25]/10 rounded-sm">
                       <Label>Custom Domain</Label>
-                      <p className="text-[10px] text-[#2d2b25]/40 mb-4 uppercase tracking-wider">Use your own domain instead of ithinkshewifey.com/{site.slug}</p>
+                      <p className="text-[10px] text-[#2d2b25]/40 mb-4 uppercase tracking-wider">Use your own domain instead of {site.slug}.ithinkshewifey.com</p>
                       {site.domainVerifiedAt ? (
                         <div className="p-4 bg-green-50 border border-green-200 rounded-sm">
                           <div className="flex items-center gap-2 mb-1">
@@ -3197,7 +3197,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                           </p>
                           <p className="text-[10px] text-[#2d2b25]/40 mt-0.5">
                             {site.isPublished
-                              ? <>Visible at <a href={site.customDomain ? `https://${site.customDomain}` : `https://${site.slug}.itsw.com`} target="_blank" className="underline">{site.customDomain || `${site.slug}.itsw.com`}</a></>
+                              ? <>Visible at <a href={site.customDomain ? `https://${site.customDomain}` : `https://${site.slug}.ithinkshewifey.com`} target="_blank" className="underline">{site.customDomain || `${site.slug}.ithinkshewifey.com`}</a></>
                               : "Toggle to make your site visible to guests"}
                           </p>
                         </div>
@@ -4221,7 +4221,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
             <h3 className="text-base font-medium mb-1" style={{ fontFamily: "'Cormorant Garamond', serif" }}>Change Site URL</h3>
             <p className="text-sm text-[#2d2b25]/60 mb-2">Your site will move to:</p>
             <p className="text-sm font-medium text-[#2d2b25] bg-[#2d2b25]/5 border border-[#2d2b25]/10 rounded-sm px-3 py-2 mb-4 break-all">
-              ithinkshewifey.com/<span className="font-bold">{site.slug}</span>
+              {site.slug}.ithinkshewifey.com
             </p>
             <p className="text-[10px] text-[#2d2b25]/40 uppercase tracking-wider mb-6">
               This will change your public website link. You will be redirected to the new dashboard.

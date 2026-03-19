@@ -6,7 +6,7 @@ import { compare } from "bcryptjs";
 import { rateLimit } from "@/lib/rate-limit";
 import LoginForm from "./LoginForm";
 
-export const metadata = { title: "Login — I Think She Wifey" };
+export const metadata = { title: "Login — ITSW" };
 
 async function loginAction(formData: FormData) {
   "use server";

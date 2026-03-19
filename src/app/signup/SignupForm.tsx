@@ -61,7 +61,7 @@ export default function SignupForm({
               href="/"
               className="font-['Cormorant_Garamond',serif] text-lg font-medium text-[#2d2b25]/60"
             >
-              I Think She Wifey
+              ITSW
             </Link>
           </div>
 

@@ -60,7 +60,7 @@ export default function LandingPage() {
             href="/"
             className="font-['Cormorant_Garamond',serif] text-xl tracking-tight font-medium"
           >
-            I Think She Wifey
+            ITSW
           </Link>
           <div className="hidden md:flex items-center gap-8">
             <a
@@ -664,7 +664,7 @@ export default function LandingPage() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div>
               <p className="font-['Cormorant_Garamond',serif] text-xl font-medium">
-                I Think She Wifey
+                ITSW
               </p>
               <p className="font-['DM_Sans',sans-serif] text-[11px] text-[#2d2b25]/40 tracking-wide mt-1">
                 Wedding websites, elevated.
@@ -688,7 +688,7 @@ export default function LandingPage() {
           <div className="h-px bg-[#2d2b25]/10 my-8" />
           <div className="flex flex-col md:flex-row items-center justify-between gap-3">
             <p className="font-['DM_Sans',sans-serif] text-[11px] text-[#2d2b25]/30">
-              &copy; 2026 I Think She Wifey. All rights reserved.
+              &copy; 2026 ITSW. All rights reserved.
             </p>
             <div className="flex items-center gap-3 font-['DM_Sans',sans-serif] text-[11px] text-[#2d2b25]/25">
               <span>Created by</span>
