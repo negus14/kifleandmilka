@@ -6,6 +6,13 @@ export const metadata: Metadata = {
   title: "I Think She Wifey — Wedding Website Builder",
   description:
     "Create a fully customisable wedding website in minutes — with RSVP, gallery, schedule, and everything your guests need.",
+  openGraph: {
+    title: "I Think She Wifey",
+    description: "Create a fully customisable wedding website in minutes — with RSVP, gallery, schedule, and everything your guests need.",
+    url: "https://www.ithinkshewifey.com",
+    type: "website",
+    siteName: "I Think She Wifey",
+  },
 };
 
 export default function RootLayout({

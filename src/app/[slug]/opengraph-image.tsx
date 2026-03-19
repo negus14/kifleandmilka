@@ -80,10 +80,8 @@ export default async function OGImage({
           {site.dateDisplayText}{site.locationText ? ` — ${site.locationText}` : ""}
         </div>
 
-        {/* ITSW branding */}
-        <div style={{ position: "absolute", bottom: 28, fontSize: 10, color: "#5a5549", letterSpacing: "0.3em", textTransform: "uppercase", display: "flex" }}>
-          ithinkshewifey.com
-        </div>
+        {/* Subtle decorative line */}
+        <div style={{ position: "absolute", bottom: 28, width: 40, height: 2, backgroundColor: "#5a5549", borderRadius: 1, display: "flex" }} />
       </div>
     ),
     { ...size }

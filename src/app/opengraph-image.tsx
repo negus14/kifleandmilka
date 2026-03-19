@@ -29,6 +29,31 @@ export default function OGImage() {
             padding: "60px 80px",
           }}
         >
+          {/* Logo */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: 64,
+              height: 64,
+              borderRadius: 12,
+              backgroundColor: "#2d2b25",
+              marginBottom: 32,
+            }}
+          >
+            <span
+              style={{
+                fontSize: 20,
+                fontWeight: 700,
+                fontStyle: "italic",
+                color: "#faf1e1",
+                letterSpacing: "0.05em",
+              }}
+            >
+              ITSW
+            </span>
+          </div>
           <div
             style={{
               fontSize: 64,

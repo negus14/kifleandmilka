@@ -89,7 +89,7 @@ function SlugField({ currentSlug, onSave, customDomain, domainVerified }: { curr
 
   const shareUrl = customDomain
     ? `https://${customDomain}`
-    : `https://${currentSlug}.ithinkshewifey.com`;
+    : `https://${currentSlug}.itsw.com`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(shareUrl);
@@ -1336,7 +1336,7 @@ function MessagesPanel({ msgData, loadMessages, site }: {
             <button
               onClick={() => {
                 const names = `${site.partner1Name} & ${site.partner2Name}`;
-                const url = site.customDomain ? `https://${site.customDomain}` : `https://${site.slug}.ithinkshewifey.com`;
+                const url = site.customDomain ? `https://${site.customDomain}` : `https://${site.slug}.itsw.com`;
                 setSubject(`You're Invited — ${names}`);
                 setBody(`We are delighted to invite you to celebrate our wedding!\n\n${site.dateDisplayText ? `Date: ${site.dateDisplayText}\n` : ""}${site.locationText ? `Venue: ${site.locationText}\n` : ""}\nPlease visit our wedding website for all the details and to RSVP:\n${url}\n\nWe can't wait to celebrate with you!\n\nWith love,\n${names}`);
               }}
@@ -3197,7 +3197,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                           </p>
                           <p className="text-[10px] text-[#2d2b25]/40 mt-0.5">
                             {site.isPublished
-                              ? <>Visible at <a href={site.customDomain ? `https://${site.customDomain}` : `https://${site.slug}.ithinkshewifey.com`} target="_blank" className="underline">{site.customDomain || `${site.slug}.ithinkshewifey.com`}</a></>
+                              ? <>Visible at <a href={site.customDomain ? `https://${site.customDomain}` : `https://${site.slug}.itsw.com`} target="_blank" className="underline">{site.customDomain || `${site.slug}.itsw.com`}</a></>
                               : "Toggle to make your site visible to guests"}
                           </p>
                         </div>
