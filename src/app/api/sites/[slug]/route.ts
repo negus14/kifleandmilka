@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { requireAuth, createSession } from "../../../../lib/auth";
 import { getSiteBySlug, updateSite, renameSite } from "../../../../lib/data/sites";
 import type { WeddingSite } from "../../../../lib/types/wedding-site";
+import { generateAndUploadOgImage } from "../../../../lib/og-image";
 
 const RESERVED_SLUGS = [
   "dashboard", "api", "login", "signup", "pricing", "about", "admin", "logout", "auth", "preview"
@@ -61,6 +62,13 @@ export async function PUT(
     if (!updated) {
       console.error(`[API] Site update returned null for: ${currentSlug}`);
       return NextResponse.json({ error: "Site not found or update failed to persist" }, { status: 404 });
+    }
+
+    // Regenerate OG image if partner names changed
+    if (body.partner1Name || body.partner2Name) {
+      generateAndUploadOgImage(updated).catch((err) =>
+        console.error("[OG] Failed to generate OG image:", err)
+      );
     }
 
     console.log(`[API] Site Updated & Verified: ${currentSlug}`);
