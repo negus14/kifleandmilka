@@ -16,15 +16,24 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const displayUrl = site.customDomain
     ? `https://${site.customDomain}`
     : `https://${slug}.ithinkshewifey.com`;
+  const ogImage = `https://www.ithinkshewifey.com/${slug}/opengraph-image`;
+  const description = `Join us in celebrating the wedding of ${site.partner1Name} and ${site.partner2Name} — ${site.dateDisplayText} in ${site.locationText}.`;
   return {
     metadataBase: new URL("https://www.ithinkshewifey.com"),
     title: `${site.partner1Name} & ${site.partner2Name} — ${site.dateDisplayText}`,
-    description: `Join us in celebrating the wedding of ${site.partner1Name} and ${site.partner2Name} — ${site.dateDisplayText} in ${site.locationText}.`,
+    description,
     openGraph: {
       title: `${site.partner1Name} & ${site.partner2Name}`,
-      description: `Join us in celebrating the wedding of ${site.partner1Name} and ${site.partner2Name} — ${site.dateDisplayText} in ${site.locationText}.`,
+      description,
       url: displayUrl,
       type: "website",
+      images: [{ url: ogImage, width: 1200, height: 630, type: "image/png" }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${site.partner1Name} & ${site.partner2Name}`,
+      description,
+      images: [ogImage],
     },
   };
 }
