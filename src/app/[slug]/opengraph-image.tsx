@@ -2,6 +2,7 @@ import { ImageResponse } from "next/og";
 import { getSiteBySlug } from "@/lib/data/sites";
 import { ogImageUrl, generateAndUploadOgImage } from "@/lib/og-image";
 import { R2_PUBLIC_URL } from "@/lib/r2";
+import { getOgFont, ogFontConfig } from "@/lib/og-font";
 
 export const runtime = "nodejs";
 export const alt = "Wedding invitation preview";
@@ -38,6 +39,7 @@ export default async function OGImage({
 
   const i1 = (site.partner1Name || "A").charAt(0).toUpperCase();
   const i2 = (site.partner2Name || "B").charAt(0).toUpperCase();
+  const fontData = await getOgFont();
 
   const response = new ImageResponse(
     (
@@ -49,7 +51,7 @@ export default async function OGImage({
           alignItems: "center",
           justifyContent: "center",
           backgroundColor: "#2d2b25",
-          fontFamily: "Georgia, serif",
+          fontFamily: "'Playfair Display', serif",
         }}
       >
         <span
@@ -64,7 +66,10 @@ export default async function OGImage({
         </span>
       </div>
     ),
-    { ...size }
+    {
+      ...size,
+      fonts: [{ name: ogFontConfig.name, data: fontData, style: ogFontConfig.style, weight: ogFontConfig.weight }],
+    }
   );
 
   // Upload to R2 in background for next time

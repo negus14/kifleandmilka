@@ -2,6 +2,7 @@ import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { ImageResponse } from "next/og";
 import { r2, R2_BUCKET, R2_PUBLIC_URL } from "./r2";
 import type { WeddingSite } from "./types/wedding-site";
+import { getOgFont, ogFontConfig } from "./og-font";
 
 export function ogImageKey(slug: string): string {
   return `sites/${slug}/og-image.png`;
@@ -16,6 +17,7 @@ export async function generateAndUploadOgImage(site: WeddingSite): Promise<strin
 
   const i1 = (site.partner1Name || "A").charAt(0).toUpperCase();
   const i2 = (site.partner2Name || "B").charAt(0).toUpperCase();
+  const fontData = await getOgFont();
 
   const response = new ImageResponse(
     (
@@ -27,7 +29,7 @@ export async function generateAndUploadOgImage(site: WeddingSite): Promise<strin
           alignItems: "center",
           justifyContent: "center",
           backgroundColor: "#2d2b25",
-          fontFamily: "Georgia, serif",
+          fontFamily: "'Playfair Display', serif",
         }}
       >
         <span
@@ -42,7 +44,11 @@ export async function generateAndUploadOgImage(site: WeddingSite): Promise<strin
         </span>
       </div>
     ),
-    { width: 1200, height: 630 }
+    {
+      width: 1200,
+      height: 630,
+      fonts: [{ name: ogFontConfig.name, data: fontData, style: ogFontConfig.style, weight: ogFontConfig.weight }],
+    }
   );
 
   const arrayBuffer = await response.arrayBuffer();
