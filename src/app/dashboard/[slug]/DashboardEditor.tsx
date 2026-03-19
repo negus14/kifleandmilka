@@ -3065,6 +3065,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                               Cancel request
                             </button>
                           </div>
+                          <DomainStatus slug={site.slug} domain={site.customDomain} />
                           <DomainRequest slug={site.slug} existingDomain={site.customDomain} />
                         </div>
                       ) : (
