@@ -81,21 +81,27 @@ export async function POST(
       return apiError("This domain is already registered with another site.", 409);
     }
 
-    // Verify DNS CNAME
+    // Verify DNS — check CNAME first, then fall back to A record resolution
+    // (Cloudflare-proxied domains hide the CNAME and return A records instead)
+    let dnsVerified = false;
     try {
       const records = await dns.promises.resolveCname(site.customDomain);
-      const pointsCorrectly = records.some(
+      dnsVerified = records.some(
         (r) => r.toLowerCase() === EXPECTED_CNAME
       );
-      if (!pointsCorrectly) {
-        return apiError(
-          `Your domain's CNAME points to ${records[0]}, but it should point to ${EXPECTED_CNAME}`,
-          400
-        );
-      }
     } catch {
+      // CNAME not found — try resolving A records (proxied Cloudflare domains)
+      try {
+        const aRecords = await dns.promises.resolve4(site.customDomain);
+        dnsVerified = aRecords.length > 0;
+      } catch {
+        // No DNS records at all
+      }
+    }
+
+    if (!dnsVerified) {
       return apiError(
-        `CNAME record not found for ${site.customDomain}. Add a CNAME record pointing to ${EXPECTED_CNAME} at your domain registrar. DNS changes can take up to 48 hours.`,
+        `DNS not configured for ${site.customDomain}. Add a CNAME record pointing to ${EXPECTED_CNAME} at your domain registrar.`,
         400
       );
     }

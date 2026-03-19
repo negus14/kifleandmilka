@@ -472,9 +472,9 @@ function DomainStatus({ slug, domain }: { slug: string; domain: string }) {
   };
 
   return (
-    <div className="mt-3 flex items-center gap-2">
-      <button onClick={check} className="text-[10px] font-bold uppercase tracking-wider text-[#2d2b25]/60 hover:text-[#2d2b25] transition-colors">
-        {status === "checking" ? "Checking..." : "Verify DNS"}
+    <div className="mt-3 flex items-center gap-3">
+      <button onClick={check} disabled={status === "checking"} className="px-4 py-2 text-[10px] font-bold uppercase tracking-wider bg-[#2d2b25] text-white rounded-sm hover:bg-[#2d2b25]/90 disabled:opacity-50 transition-all">
+        {status === "checking" ? "Verifying..." : "Verify & Connect"}
       </button>
       {status === "configured" && <span className="text-[10px] text-green-600 font-medium">{message}</span>}
       {status === "pending" && <span className="text-[10px] text-yellow-600 font-medium">{message}</span>}
