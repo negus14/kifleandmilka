@@ -1,7 +1,7 @@
-import { ImageResponse } from "next/og";
 import { getSiteByDomain } from "@/lib/data/sites";
-import { ogImageUrl } from "@/lib/og-image";
+import { ogImageUrl, generateAndUploadOgImage } from "@/lib/og-image";
 import { R2_PUBLIC_URL } from "@/lib/r2";
+import sharp from "sharp";
 
 export const runtime = "nodejs";
 export const alt = "Wedding invitation preview";
@@ -29,40 +29,28 @@ export default async function OGImage({
         return Response.redirect(r2Url, 302);
       }
     } catch {
-      // Fall through to dynamic generation
+      // Fall through
     }
+
+    // Generate, upload to R2, and serve
+    generateAndUploadOgImage(site).catch(() => {});
   }
 
-  // Fallback: generate on the fly
+  // Generate inline with sharp (same style as R2 version)
   const i1 = (site.partner1Name || "A").charAt(0).toUpperCase();
   const i2 = (site.partner2Name || "B").charAt(0).toUpperCase();
 
-  return new ImageResponse(
-    (
-      <div
-        style={{
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: "#2d2b25",
-          fontFamily: "serif",
-        }}
-      >
-        <div
-          style={{
-            fontSize: 120,
-            fontWeight: 700,
-            fontStyle: "italic",
-            color: "#faf1e1",
-            display: "flex",
-          }}
-        >
-          {i1} & {i2}
-        </div>
-      </div>
-    ),
-    { ...size }
-  );
+  const svg = `<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#2d2b25"/>
+  <text x="600" y="340" text-anchor="middle" font-family="Georgia, serif" font-size="120" font-weight="bold" font-style="italic" fill="#faf1e1">${i1} &amp; ${i2}</text>
+</svg>`;
+
+  const pngBuffer = await sharp(Buffer.from(svg)).png().toBuffer();
+
+  return new Response(pngBuffer, {
+    headers: {
+      "Content-Type": "image/png",
+      "Cache-Control": "public, max-age=86400",
+    },
+  });
 }
