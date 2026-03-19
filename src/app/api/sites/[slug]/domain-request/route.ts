@@ -77,6 +77,9 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       `,
     });
 
+    // Save the requested domain to the site
+    await updateSite(slug, { customDomain: domain } as any);
+
     console.log(`[Domain Request] Email sent for ${slug} requesting ${domain}`);
     return apiOk({ message: "Request submitted" });
   } catch (error) {
