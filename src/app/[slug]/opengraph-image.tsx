@@ -24,13 +24,18 @@ export default async function OGImage({
     return new Response("Not found", { status: 404 });
   }
 
-  // Try to serve from R2
+  // Try to serve from R2 (proxy, not redirect — scrapers don't follow redirects)
   if (R2_PUBLIC_URL) {
     const r2Url = ogImageUrl(slug);
     try {
-      const res = await fetch(r2Url, { method: "HEAD" });
+      const res = await fetch(r2Url);
       if (res.ok) {
-        return Response.redirect(r2Url, 302);
+        return new Response(res.body, {
+          headers: {
+            "Content-Type": "image/png",
+            "Cache-Control": "public, max-age=86400",
+          },
+        });
       }
     } catch {
       // Fall through
