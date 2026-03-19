@@ -678,7 +678,7 @@ export function ModernTemplate({ site, isPreview, onFieldUpdate }: { site: Weddi
 
   return (
     <div className="modern-site" style={themeVars}>
-      {isPreview && site.weddingDate && (
+      {site.weddingDate && (
         <CountdownClient weddingDate={site.weddingDate} />
       )}
       {!isPreview && (

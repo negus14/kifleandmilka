@@ -755,7 +755,7 @@ export function ClassicTemplate({ site, isPreview, onFieldUpdate }: { site: Wedd
           sectionOrder={site.sectionOrder}
         />
       )}
-      {isPreview && site.weddingDate && (
+      {site.weddingDate && (
         <CountdownClient weddingDate={site.weddingDate} />
       )}
 
