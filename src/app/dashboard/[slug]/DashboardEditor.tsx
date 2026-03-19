@@ -3197,7 +3197,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                           </p>
                           <p className="text-[10px] text-[#2d2b25]/40 mt-0.5">
                             {site.isPublished
-                              ? `Visible at ithinkshewifey.com/${site.slug}`
+                              ? <>Visible at <a href={site.customDomain ? `https://${site.customDomain}` : `https://${site.slug}.ithinkshewifey.com`} target="_blank" className="underline">{site.customDomain || `${site.slug}.ithinkshewifey.com`}</a></>
                               : "Toggle to make your site visible to guests"}
                           </p>
                         </div>
