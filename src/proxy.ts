@@ -49,7 +49,7 @@ export default async function(request: NextRequest) {
     !isPlatformHost &&
     !pathname.startsWith("/api/") &&
     !pathname.startsWith("/_next/") &&
-    !pathname.startsWith("/_domain/") &&
+    !pathname.startsWith("/cd/") &&
     !pathname.includes(".")
   ) {
     // Validate hostname format — reject obviously invalid or malicious values.
@@ -59,7 +59,7 @@ export default async function(request: NextRequest) {
     }
 
     const url = request.nextUrl.clone();
-    url.pathname = `/_domain/${hostname}${pathname}`;
+    url.pathname = `/cd/${hostname}${pathname}`;
     return NextResponse.rewrite(url);
   }
 
