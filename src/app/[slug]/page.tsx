@@ -15,9 +15,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!site) return {};
   const displayUrl = site.customDomain
     ? `https://${site.customDomain}`
-    : `https://${slug}.ithinkshewifey.com`;
+    : `https://${slug}.itsw.com`;
   return {
-    metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || "https://ithinkshewifey.com"),
+    metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || "https://www.ithinkshewifey.com"),
     title: `${site.partner1Name} & ${site.partner2Name} — ${site.dateDisplayText}`,
     description: `Join us in celebrating the wedding of ${site.partner1Name} and ${site.partner2Name} — ${site.dateDisplayText} in ${site.locationText}.`,
     openGraph: {
