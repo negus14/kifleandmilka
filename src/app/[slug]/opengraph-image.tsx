@@ -1,7 +1,7 @@
+import { ImageResponse } from "next/og";
 import { getSiteBySlug } from "@/lib/data/sites";
 import { ogImageUrl, generateAndUploadOgImage } from "@/lib/og-image";
 import { R2_PUBLIC_URL } from "@/lib/r2";
-import sharp from "sharp";
 
 export const runtime = "nodejs";
 export const alt = "Wedding invitation preview";
@@ -34,26 +34,43 @@ export default async function OGImage({
     } catch {
       // Fall through
     }
-
-    // Generate, upload to R2, and serve
-    generateAndUploadOgImage(site).catch(() => {});
   }
 
-  // Generate inline with sharp (same style as R2 version)
   const i1 = (site.partner1Name || "A").charAt(0).toUpperCase();
   const i2 = (site.partner2Name || "B").charAt(0).toUpperCase();
 
-  const svg = `<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
-  <rect width="1200" height="630" fill="#2d2b25"/>
-  <text x="600" y="340" text-anchor="middle" font-family="Georgia, serif" font-size="120" font-weight="bold" font-style="italic" fill="#faf1e1">${i1} &amp; ${i2}</text>
-</svg>`;
+  const response = new ImageResponse(
+    (
+      <div
+        style={{
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: "#2d2b25",
+          fontFamily: "Georgia, serif",
+        }}
+      >
+        <span
+          style={{
+            fontSize: 140,
+            fontWeight: 700,
+            fontStyle: "italic",
+            color: "#faf1e1",
+          }}
+        >
+          {i1} & {i2}
+        </span>
+      </div>
+    ),
+    { ...size }
+  );
 
-  const pngBuffer = await sharp(Buffer.from(svg)).png().toBuffer();
+  // Upload to R2 in background for next time
+  if (R2_PUBLIC_URL) {
+    generateAndUploadOgImage(site).catch(() => {});
+  }
 
-  return new Response(new Uint8Array(pngBuffer), {
-    headers: {
-      "Content-Type": "image/png",
-      "Cache-Control": "public, max-age=86400",
-    },
-  });
+  return response;
 }
