@@ -50,7 +50,7 @@ export default async function OGImage({
 
   const pngBuffer = await sharp(Buffer.from(svg)).png().toBuffer();
 
-  return new Response(pngBuffer, {
+  return new Response(new Uint8Array(pngBuffer), {
     headers: {
       "Content-Type": "image/png",
       "Cache-Control": "public, max-age=86400",
