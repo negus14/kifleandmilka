@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || "https://www.ithinkshewifey.com"),
+  metadataBase: new URL("https://www.ithinkshewifey.com"),
   title: "ITSW — Wedding Website Builder",
   description:
     "Create a fully customisable wedding website in minutes — with RSVP, gallery, schedule, and everything your guests need.",
