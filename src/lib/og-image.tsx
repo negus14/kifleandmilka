@@ -5,7 +5,7 @@ import type { WeddingSite } from "./types/wedding-site";
 import { getOgFont, ogFontConfig } from "./og-font";
 
 export function ogImageKey(slug: string): string {
-  return `sites/${slug}/og-image.png`;
+  return `sites/${slug}/og-image-v2.png`;
 }
 
 export function ogImageUrl(slug: string): string {
