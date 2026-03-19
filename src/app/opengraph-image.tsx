@@ -13,103 +13,36 @@ export default function OGImage() {
           width: "100%",
           height: "100%",
           display: "flex",
-          flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: "#faf1e1",
-          fontFamily: "serif",
+          backgroundColor: "#2d2b25",
         }}
       >
         <div
           style={{
             display: "flex",
-            flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            padding: "60px 80px",
+            width: 180,
+            height: 180,
+            borderRadius: 36,
+            backgroundColor: "#2d2b25",
+            border: "3px solid #faf1e1",
           }}
         >
-          {/* Logo */}
-          <div
+          <span
             style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: 64,
-              height: 64,
-              borderRadius: 12,
-              backgroundColor: "#2d2b25",
-              marginBottom: 32,
-            }}
-          >
-            <span
-              style={{
-                fontSize: 20,
-                fontWeight: 700,
-                fontStyle: "italic",
-                color: "#faf1e1",
-                letterSpacing: "0.05em",
-              }}
-            >
-              ITSW
-            </span>
-          </div>
-          <div
-            style={{
-              fontSize: 64,
+              fontSize: 56,
               fontWeight: 700,
               fontStyle: "italic",
-              color: "#2d2b25",
-              textAlign: "center",
-              lineHeight: 1.1,
-              marginBottom: 24,
+              color: "#faf1e1",
+              fontFamily: "serif",
+              letterSpacing: "0.05em",
             }}
           >
             ITSW
-          </div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 16,
-              marginBottom: 24,
-            }}
-          >
-            <div style={{ width: 60, height: 1, backgroundColor: "#8b7355" }} />
-            <div
-              style={{
-                fontSize: 20,
-                color: "#8b7355",
-                letterSpacing: "0.2em",
-                textTransform: "uppercase",
-              }}
-            >
-              Wedding Website Builder
-            </div>
-            <div style={{ width: 60, height: 1, backgroundColor: "#8b7355" }} />
-          </div>
-          <div
-            style={{
-              fontSize: 22,
-              color: "#5a5549",
-              textAlign: "center",
-              maxWidth: 600,
-              lineHeight: 1.5,
-            }}
-          >
-            Create a fully customisable wedding website in minutes
-          </div>
+          </span>
         </div>
-        <div
-          style={{
-            position: "absolute",
-            bottom: 24,
-            width: 40,
-            height: 2,
-            backgroundColor: "#c4b5a0",
-            borderRadius: 1,
-          }}
-        />
       </div>
     ),
     { ...size }
