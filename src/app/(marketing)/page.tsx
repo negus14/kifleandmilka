@@ -58,7 +58,8 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-6 md:px-10 h-16 flex items-center justify-between">
           <Link
             href="/"
-            className="font-['Cormorant_Garamond',serif] text-xl tracking-tight font-medium"
+            className="text-[#2d2b25] text-xl font-bold italic"
+            style={{ fontFamily: "'Playfair Display', serif" }}
           >
             ITSW
           </Link>
@@ -663,9 +664,9 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-6 md:px-10 pb-14">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="text-center md:text-left">
-              <p className="font-['Cormorant_Garamond',serif] text-xl font-medium">
+              <Link href="/" className="text-[#2d2b25] text-xl font-bold italic" style={{ fontFamily: "'Playfair Display', serif" }}>
                 ITSW
-              </p>
+              </Link>
               <p className="font-['DM_Sans',sans-serif] text-[11px] text-[#2d2b25]/40 tracking-wide mt-1">
                 Wedding websites, elevated.
               </p>

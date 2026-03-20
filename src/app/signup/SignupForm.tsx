@@ -24,7 +24,27 @@ export default function SignupForm({
   );
 
   return (
-    <div className="min-h-screen flex bg-[#faf1e1] font-sans">
+    <div className="min-h-screen flex flex-col bg-[#faf1e1] font-sans">
+      {/* Nav */}
+      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-[#faf1e1]/80 border-b border-[#2d2b25]/[0.06]">
+        <div className="max-w-7xl mx-auto px-6 md:px-10 h-16 flex items-center justify-between">
+          <Link
+            href="/"
+            className="text-[#2d2b25] text-xl font-bold italic"
+            style={{ fontFamily: "'Playfair Display', serif" }}
+          >
+            ITSW
+          </Link>
+          <Link
+            href="/login"
+            className="font-['DM_Sans',sans-serif] text-[13px] font-semibold tracking-[0.08em] uppercase text-[#2d2b25]/60 hover:text-[#2d2b25] transition-colors"
+          >
+            Log In
+          </Link>
+        </div>
+      </nav>
+
+      <div className="flex flex-1 pt-16">
       {/* Left — Image Showcase (hidden on mobile) */}
       <div className="hidden lg:block lg:w-[55%] xl:w-[60%] relative">
         <ImageShowcase
@@ -55,16 +75,6 @@ export default function SignupForm({
       {/* Right — Form */}
       <div className="w-full lg:w-[45%] xl:w-[40%] flex items-center justify-center p-8 lg:p-12">
         <div className="w-full max-w-[380px]">
-          {/* Mobile-only brand header */}
-          <div className="lg:hidden text-center mb-8">
-            <Link
-              href="/"
-              className="font-['Cormorant_Garamond',serif] text-lg font-medium text-[#2d2b25]/60"
-            >
-              ITSW
-            </Link>
-          </div>
-
           <div className="animate-[fieldReveal_0.6s_ease_0.1s_both]">
             <h1 className="font-['Cormorant_Garamond',serif] italic text-4xl text-[#2d2b25] mb-2 text-center lg:text-left font-light">
               Create your site
@@ -154,6 +164,7 @@ export default function SignupForm({
             </p>
           </form>
         </div>
+      </div>
       </div>
     </div>
   );

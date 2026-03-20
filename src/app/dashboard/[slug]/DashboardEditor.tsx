@@ -50,7 +50,7 @@ type Tab = string; // Allows dynamic tabs like "story-123"
 
 function Label({ children }: { children: React.ReactNode }) {
   return (
-    <label className="block text-[11px] font-semibold tracking-[0.15em] uppercase text-[#2d2b25]/60 mb-3 mt-8 first:mt-0">
+    <label className="block text-[11px] font-semibold tracking-[0.15em] uppercase text-[var(--dash-text)]/60 mb-3 mt-8 first:mt-0">
       {children}
     </label>
   );
@@ -68,14 +68,14 @@ function Field({ label, value, onChange, placeholder, multiline, rows, type = "t
         <textarea
           value={val} onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder} rows={rows || 4}
-          className="w-full px-3 py-2 border border-[#2d2b25]/15 bg-white/50 text-[#2d2b25] text-sm outline-none focus:border-[#2d2b25]/40 resize-y rounded-sm"
+          className="w-full px-3 py-2 border border-[var(--dash-text)]/15 bg-[var(--dash-surface)] text-[var(--dash-text)] text-sm outline-none focus:border-[var(--dash-text)]/40 resize-y rounded-sm"
         />
       ) : (
         <input
           type={type}
           value={val} onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
-          className="w-full px-3 py-2 border border-[#2d2b25]/15 bg-white/50 text-[#2d2b25] text-sm outline-none focus:border-[#2d2b25]/40 rounded-sm"
+          className="w-full px-3 py-2 border border-[var(--dash-text)]/15 bg-[var(--dash-surface)] text-[var(--dash-text)] text-sm outline-none focus:border-[var(--dash-text)]/40 rounded-sm"
         />
       )}
     </div>
@@ -98,22 +98,22 @@ function SlugField({ currentSlug, onSave, customDomain, domainVerified }: { curr
   };
 
   return (
-    <div className="mb-6 p-4 bg-[#2d2b25]/5 border border-[#2d2b25]/10 rounded-sm">
+    <div className="mb-6 p-4 bg-[var(--dash-text)]/5 border border-[var(--dash-text)]/10 rounded-sm">
       <Label>Site URL</Label>
 
       {/* Shareable link with copy */}
-      <div className="flex items-center gap-2 mt-1 mb-3 p-2.5 bg-white/60 border border-[#2d2b25]/10 rounded-sm">
-        <span className="flex-1 text-sm text-[#2d2b25]/70 truncate select-all">{shareUrl}</span>
+      <div className="flex items-center gap-2 mt-1 mb-3 p-2.5 bg-[var(--dash-surface-alt)] border border-[var(--dash-text)]/10 rounded-sm">
+        <span className="flex-1 text-sm text-[var(--dash-text)]/70 truncate select-all">{shareUrl}</span>
         <button
           onClick={handleCopy}
-          className="shrink-0 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider bg-[#2d2b25] text-white rounded-sm hover:bg-[#2d2b25]/90 transition-all"
+          className="shrink-0 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider bg-[var(--dash-btn-bg)] text-white rounded-sm hover:bg-[var(--dash-text)]/90 transition-all"
         >
           {copied ? "Copied!" : "Copy"}
         </button>
       </div>
 
       <div className="flex items-center gap-2">
-        <span className="text-xs text-[#2d2b25]/40 shrink-0 hidden sm:inline">ithinkshewifey.com/</span>
+        <span className="text-xs text-[var(--dash-text)]/40 shrink-0 hidden sm:inline">ithinkshewifey.com/</span>
         <input
           type="text"
           value={draft}
@@ -121,19 +121,19 @@ function SlugField({ currentSlug, onSave, customDomain, domainVerified }: { curr
             const val = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "");
             setDraft(val);
           }}
-          className="flex-1 min-w-0 px-3 py-2 border border-[#2d2b25]/15 bg-white/50 text-[#2d2b25] text-sm font-medium outline-none focus:border-[#2d2b25]/40 rounded-sm"
+          className="flex-1 min-w-0 px-3 py-2 border border-[var(--dash-text)]/15 bg-[var(--dash-surface)] text-[var(--dash-text)] text-sm font-medium outline-none focus:border-[var(--dash-text)]/40 rounded-sm"
           placeholder="your-url-here"
         />
       </div>
       {hasChanged && (
         <button
           onClick={() => onSave(draft)}
-          className="mt-2 w-full px-4 py-2 bg-[#2d2b25] text-[#faf1e1] text-[10px] font-bold tracking-widest uppercase rounded-sm hover:opacity-90 transition-opacity"
+          className="mt-2 w-full px-4 py-2 bg-[var(--dash-btn-bg)] text-[var(--dash-bg)] text-[10px] font-bold tracking-widest uppercase rounded-sm hover:opacity-90 transition-opacity"
         >
           Update URL
         </button>
       )}
-      <p className="text-[10px] text-[#2d2b25]/40 mt-2 uppercase tracking-wider">
+      <p className="text-[10px] text-[var(--dash-text)]/40 mt-2 uppercase tracking-wider">
         Caution: Changing this will change your public website address.
       </p>
     </div>
@@ -157,8 +157,8 @@ const DatePickerTrigger = forwardRef<HTMLDivElement, { value?: string; onClick?:
 
     return (
       <div ref={ref} onClick={onClick} className="group cursor-pointer">
-        <div className="flex items-center gap-3 w-full px-4 py-3.5 border border-[#2d2b25]/15 bg-white text-[#2d2b25] text-sm outline-none group-focus-within:border-[#2d2b25]/40 rounded-sm transition-all group-hover:border-[#2d2b25]/30 shadow-sm">
-          <div className="text-[#2d2b25]/30 group-hover:text-[#2d2b25]/50 transition-colors">
+        <div className="flex items-center gap-3 w-full px-4 py-3.5 border border-[var(--dash-text)]/15 bg-[var(--dash-surface)] text-[var(--dash-text)] text-sm outline-none group-focus-within:border-[var(--dash-text)]/40 rounded-sm transition-all group-hover:border-[var(--dash-text)]/30 shadow-sm">
+          <div className="text-[var(--dash-text)]/30 group-hover:text-[var(--dash-text)]/50 transition-colors">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
               <line x1="16" y1="2" x2="16" y2="6"/>
@@ -167,17 +167,17 @@ const DatePickerTrigger = forwardRef<HTMLDivElement, { value?: string; onClick?:
             </svg>
           </div>
           <div className="flex-1 flex flex-col items-start overflow-hidden">
-            <span className={`text-base font-serif italic leading-none ${hasValue ? "text-[#2d2b25]" : "text-[#2d2b25]/20"}`}>
+            <span className={`text-base font-serif italic leading-none ${hasValue ? "text-[var(--dash-text)]" : "text-[var(--dash-text)]/20"}`}>
               {hasValue ? date : "Set Date & Time"}
             </span>
             {hasValue && (
-              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#2d2b25]/40 mt-1.5 flex items-center gap-1.5">
-                <span className="w-1 h-1 rounded-full bg-[#2d2b25]/20" />
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--dash-text)]/40 mt-1.5 flex items-center gap-1.5">
+                <span className="w-1 h-1 rounded-full bg-[var(--dash-text)]/20" />
                 {time}
               </span>
             )}
           </div>
-          <div className="text-[#2d2b25]/10 group-hover:text-[#2d2b25]/25 transition-colors">
+          <div className="text-[var(--dash-text)]/10 group-hover:text-[var(--dash-text)]/25 transition-colors">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M7 7l5 5 5-5M7 13l5 5 5-5" />
             </svg>
@@ -236,20 +236,20 @@ function TimePicker({ label, hour, period, onChange }: {
              value={hour}
              onChange={(e) => onChange(e.target.value, period)}
              placeholder="4:00"
-             className="w-full pl-9 pr-3 py-2 border border-[#2d2b25]/15 bg-white/50 text-[#2d2b25] text-sm outline-none focus:border-[#2d2b25]/40 rounded-sm transition-all group-hover:border-[#2d2b25]/30"
+             className="w-full pl-9 pr-3 py-2 border border-[var(--dash-text)]/15 bg-[var(--dash-surface)] text-[var(--dash-text)] text-sm outline-none focus:border-[var(--dash-text)]/40 rounded-sm transition-all group-hover:border-[var(--dash-text)]/30"
            />
-           <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#2d2b25]/30 group-focus-within:text-[#2d2b25]/50 transition-colors">
+           <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--dash-text)]/30 group-focus-within:text-[var(--dash-text)]/50 transition-colors">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
            </div>
         </div>
-        <div className="flex border border-[#2d2b25]/15 rounded-sm overflow-hidden bg-white/50">
+        <div className="flex border border-[var(--dash-text)]/15 rounded-sm overflow-hidden bg-[var(--dash-surface)]">
           {(["AM", "PM"] as const).map((p) => (
             <button
               key={p}
               type="button"
               onClick={() => onChange(hour, p)}
               className={`px-3 py-2 text-[10px] font-bold transition-all ${
-                period === p ? "bg-[#2d2b25] text-[#faf1e1]" : "text-[#2d2b25]/40 hover:text-[#2d2b25] hover:bg-[#2d2b25]/5"
+                period === p ? "bg-[var(--dash-btn-bg)] text-[var(--dash-bg)]" : "text-[var(--dash-text)]/40 hover:text-[var(--dash-text)] hover:bg-[var(--dash-text)]/5"
               }`}
             >
               {p}
@@ -263,11 +263,11 @@ function TimePicker({ label, hour, period, onChange }: {
 
 function Card({ children, onRemove, title }: { children: React.ReactNode; onRemove?: () => void; title?: string }) {
   return (
-    <div className="border border-[#2d2b25]/10 bg-white/40 p-4 rounded-sm mb-3 relative transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(45,43,37,0.06)]">
-      {title && <p className="text-xs font-semibold tracking-wide uppercase text-[#2d2b25]/40 mb-3">{title}</p>}
+    <div className="border border-[var(--dash-text)]/10 bg-white/40 p-4 rounded-sm mb-3 relative transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(45,43,37,0.06)]">
+      {title && <p className="text-xs font-semibold tracking-wide uppercase text-[var(--dash-text)]/40 mb-3">{title}</p>}
       {onRemove && (
         <button onClick={onRemove} type="button"
-          className="absolute top-3 right-3 text-[#2d2b25]/30 hover:text-red-500 text-lg leading-none transition-colors"
+          className="absolute top-3 right-3 text-[var(--dash-text)]/30 hover:text-red-500 text-lg leading-none transition-colors"
           title="Remove"
         >&times;</button>
       )}
@@ -279,7 +279,7 @@ function Card({ children, onRemove, title }: { children: React.ReactNode; onRemo
 function AddButton({ onClick, label }: { onClick: () => void; label: string }) {
   return (
     <button onClick={onClick} type="button"
-      className="text-xs font-semibold tracking-[0.1em] uppercase text-[#2d2b25]/50 border border-dashed border-[#2d2b25]/20 px-4 py-2.5 hover:border-[#2d2b25]/40 hover:text-[#2d2b25] hover:bg-[#2d2b25]/[0.02] transition-all duration-200 w-full mt-1 mb-4 rounded-sm hover:scale-[1.01]"
+      className="text-xs font-semibold tracking-[0.1em] uppercase text-[var(--dash-text)]/50 border border-dashed border-[var(--dash-text)]/20 px-4 py-2.5 hover:border-[var(--dash-text)]/40 hover:text-[var(--dash-text)] hover:bg-[var(--dash-text)]/[0.02] transition-all duration-200 w-full mt-1 mb-4 rounded-sm hover:scale-[1.01]"
     >+ {label}</button>
   );
 }
@@ -339,7 +339,7 @@ function DomainRequest({ slug, existingDomain }: { slug: string; existingDomain?
     return (
       <button
         onClick={() => setExpanded(true)}
-        className="text-[10px] text-[#2d2b25]/50 underline hover:text-[#2d2b25]/70 transition-colors"
+        className="text-[10px] text-[var(--dash-text)]/50 underline hover:text-[var(--dash-text)]/70 transition-colors"
       >
         Change requested domain
       </button>
@@ -352,17 +352,17 @@ function DomainRequest({ slug, existingDomain }: { slug: string; existingDomain?
       <div className="space-y-2">
         <button
           onClick={() => setMode("buy")}
-          className="w-full p-3 text-left border border-[#2d2b25]/10 rounded-sm hover:border-[#2d2b25]/30 transition-colors"
+          className="w-full p-3 text-left border border-[var(--dash-text)]/10 rounded-sm hover:border-[var(--dash-text)]/30 transition-colors"
         >
-          <p className="text-xs font-medium text-[#2d2b25]">I need a new domain</p>
-          <p className="text-[10px] text-[#2d2b25]/50 mt-0.5">We&apos;ll purchase and set it up for you — from £15/year</p>
+          <p className="text-xs font-medium text-[var(--dash-text)]">I need a new domain</p>
+          <p className="text-[10px] text-[var(--dash-text)]/50 mt-0.5">We&apos;ll purchase and set it up for you — from £15/year</p>
         </button>
         <button
           onClick={() => setMode("own")}
-          className="w-full p-3 text-left border border-[#2d2b25]/10 rounded-sm hover:border-[#2d2b25]/30 transition-colors"
+          className="w-full p-3 text-left border border-[var(--dash-text)]/10 rounded-sm hover:border-[var(--dash-text)]/30 transition-colors"
         >
-          <p className="text-xs font-medium text-[#2d2b25]">I already have a domain</p>
-          <p className="text-[10px] text-[#2d2b25]/50 mt-0.5">We&apos;ll connect your existing domain for free</p>
+          <p className="text-xs font-medium text-[var(--dash-text)]">I already have a domain</p>
+          <p className="text-[10px] text-[var(--dash-text)]/50 mt-0.5">We&apos;ll connect your existing domain for free</p>
         </button>
       </div>
     );
@@ -370,7 +370,7 @@ function DomainRequest({ slug, existingDomain }: { slug: string; existingDomain?
 
   return (
     <div className="space-y-3">
-      <p className="text-xs text-[#2d2b25]/70">
+      <p className="text-xs text-[var(--dash-text)]/70">
         {existingDomain
           ? "Enter a different domain to update your request:"
           : mode === "own"
@@ -382,11 +382,11 @@ function DomainRequest({ slug, existingDomain }: { slug: string; existingDomain?
         value={domain}
         onChange={(e) => { setDomain(e.target.value.toLowerCase().replace(/[^a-z0-9.-]/g, "")); if (status === "error") setStatus("idle"); }}
         placeholder="e.g. milkaandkifle.com"
-        className="w-full text-sm px-3 py-2.5 bg-white border border-[#2d2b25]/15 rounded-sm focus:outline-none focus:border-[#2d2b25]/40 transition-colors placeholder:text-[#2d2b25]/25"
+        className="w-full text-sm px-3 py-2.5 bg-[var(--dash-surface)] border border-[var(--dash-text)]/15 rounded-sm focus:outline-none focus:border-[var(--dash-text)]/40 transition-colors placeholder:text-[var(--dash-text)]/25"
       />
       {mode === "own" && domain && (
-        <div className="p-3 bg-[#f7f6f3] border border-[#2d2b25]/10 rounded-sm">
-          <p className="text-[10px] text-[#2d2b25]/60">
+        <div className="p-3 bg-[#f7f6f3] border border-[var(--dash-text)]/10 rounded-sm">
+          <p className="text-[10px] text-[var(--dash-text)]/60">
             After submitting, you&apos;ll need to add a DNS record pointing to us. We&apos;ll email you the instructions.
           </p>
         </div>
@@ -398,7 +398,7 @@ function DomainRequest({ slug, existingDomain }: { slug: string; existingDomain?
         <button
           onClick={() => handleSubmit(mode === "choose" ? "buy" : mode)}
           disabled={status === "sending"}
-          className="w-full py-2.5 text-[10px] font-semibold tracking-[0.12em] uppercase bg-[#2d2b25] text-[#faf1e1] hover:bg-[#1a1812] disabled:opacity-50 transition-colors rounded-sm"
+          className="w-full py-2.5 text-[10px] font-semibold tracking-[0.12em] uppercase bg-[var(--dash-btn-bg)] text-[var(--dash-bg)] hover:bg-[#1a1812] disabled:opacity-50 transition-colors rounded-sm"
         >
           {status === "sending" ? "Submitting..." : existingDomain ? `Update to ${domain}` : mode === "own" ? `Connect ${domain}` : `Request ${domain}`}
         </button>
@@ -407,7 +407,7 @@ function DomainRequest({ slug, existingDomain }: { slug: string; existingDomain?
         {!existingDomain && (
           <button
             onClick={() => { setMode("choose"); setDomain(""); setStatus("idle"); }}
-            className="text-[10px] text-[#2d2b25]/40 hover:text-[#2d2b25]/60 transition-colors"
+            className="text-[10px] text-[var(--dash-text)]/40 hover:text-[var(--dash-text)]/60 transition-colors"
           >
             Back
           </button>
@@ -415,14 +415,14 @@ function DomainRequest({ slug, existingDomain }: { slug: string; existingDomain?
         {existingDomain && (
           <button
             onClick={() => setExpanded(false)}
-            className="text-[10px] text-[#2d2b25]/40 hover:text-[#2d2b25]/60 transition-colors"
+            className="text-[10px] text-[var(--dash-text)]/40 hover:text-[var(--dash-text)]/60 transition-colors"
           >
             Cancel
           </button>
         )}
       </div>
       {mode === "buy" && !existingDomain && (
-        <p className="text-[10px] text-[#2d2b25]/40">
+        <p className="text-[10px] text-[var(--dash-text)]/40">
           Custom domains are £15/year. We&apos;ll check availability and send you a payment link.
         </p>
       )}
@@ -473,7 +473,7 @@ function DomainStatus({ slug, domain }: { slug: string; domain: string }) {
 
   return (
     <div className="mt-3 flex items-center gap-3">
-      <button onClick={check} disabled={status === "checking"} className="px-4 py-2 text-[10px] font-bold uppercase tracking-wider bg-[#2d2b25] text-white rounded-sm hover:bg-[#2d2b25]/90 disabled:opacity-50 transition-all">
+      <button onClick={check} disabled={status === "checking"} className="px-4 py-2 text-[10px] font-bold uppercase tracking-wider bg-[var(--dash-btn-bg)] text-white rounded-sm hover:bg-[var(--dash-text)]/90 disabled:opacity-50 transition-all">
         {status === "checking" ? "Verifying..." : "Verify & Connect"}
       </button>
       {status === "configured" && <span className="text-[10px] text-green-600 font-medium">{message}</span>}
@@ -506,17 +506,17 @@ function ColorPicker({ label, value, onChange, themeColors }: {
             type="button"
             onClick={() => onChange(opt.id as any)}
             className={`group relative flex flex-col items-center gap-1.5 p-1 rounded-sm transition-all ${
-              value === opt.id ? "bg-[#2d2b25]/5" : "hover:bg-[#2d2b25]/5"
+              value === opt.id ? "bg-[var(--dash-text)]/5" : "hover:bg-[var(--dash-text)]/5"
             }`}
           >
             <div 
-              className={`w-8 h-8 rounded-full border ${opt.border} border-[#2d2b25]/20 shadow-sm transition-transform group-hover:scale-105 ${
-                value === opt.id ? "ring-2 ring-[#2d2b25] ring-offset-2" : ""
+              className={`w-8 h-8 rounded-full border ${opt.border} border-[var(--dash-text)]/20 shadow-sm transition-transform group-hover:scale-105 ${
+                value === opt.id ? "ring-2 ring-[var(--dash-text)] ring-offset-2" : ""
               }`}
               style={{ backgroundColor: opt.color }}
             />
             <span className={`text-[9px] font-bold uppercase tracking-wider ${
-              value === opt.id ? "text-[#2d2b25]" : "text-[#2d2b25]/40"
+              value === opt.id ? "text-[var(--dash-text)]" : "text-[var(--dash-text)]/40"
             }`}>{opt.name}</span>
           </button>
         ))}
@@ -588,21 +588,21 @@ function MediaLibrary({ onSelect, onClose, recentLinks = [] }: { onSelect: (url:
   }, []);
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#2d2b25]/60 backdrop-blur-sm p-4">
-      <div className="bg-[#faf1e1] w-full max-w-4xl max-h-[80vh] flex flex-col rounded-sm shadow-2xl border border-[#2d2b25]/10">
-        <div className="p-6 border-b border-[#2d2b25]/10 flex justify-between items-center">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[var(--dash-text)]/60 backdrop-blur-sm p-4">
+      <div className="bg-[var(--dash-bg)] w-full max-w-4xl max-h-[80vh] flex flex-col rounded-sm shadow-2xl border border-[var(--dash-text)]/10">
+        <div className="p-6 border-b border-[var(--dash-text)]/10 flex justify-between items-center">
           <div>
             <h2 className="text-xl font-serif italic">Media Library</h2>
             <div className="flex gap-4 mt-2">
               <button 
                 onClick={() => setLibTab("uploads")}
-                className={`text-[10px] font-bold uppercase tracking-widest pb-1 border-b-2 transition-all ${libTab === "uploads" ? "border-[#2d2b25] text-[#2d2b25]" : "border-transparent text-[#2d2b25]/40 hover:text-[#2d2b25]/60"}`}
+                className={`text-[10px] font-bold uppercase tracking-widest pb-1 border-b-2 transition-all ${libTab === "uploads" ? "border-[var(--dash-text)] text-[var(--dash-text)]" : "border-transparent text-[var(--dash-text)]/40 hover:text-[var(--dash-text)]/60"}`}
               >
                 Uploads
               </button>
               <button 
                 onClick={() => setLibTab("recent")}
-                className={`text-[10px] font-bold uppercase tracking-widest pb-1 border-b-2 transition-all ${libTab === "recent" ? "border-[#2d2b25] text-[#2d2b25]" : "border-transparent text-[#2d2b25]/40 hover:text-[#2d2b25]/60"}`}
+                className={`text-[10px] font-bold uppercase tracking-widest pb-1 border-b-2 transition-all ${libTab === "recent" ? "border-[var(--dash-text)] text-[var(--dash-text)]" : "border-transparent text-[var(--dash-text)]/40 hover:text-[var(--dash-text)]/60"}`}
               >
                 Recently Used {recentLinks.length > 0 && `(${recentLinks.length})`}
               </button>
@@ -625,7 +625,7 @@ function MediaLibrary({ onSelect, onClose, recentLinks = [] }: { onSelect: (url:
                   }
                   refresh();
                 }}
-                className="text-[10px] font-bold uppercase tracking-widest text-[#2d2b25]/40 hover:text-[#2d2b25] ml-4 flex items-center gap-1"
+                className="text-[10px] font-bold uppercase tracking-widest text-[var(--dash-text)]/40 hover:text-[var(--dash-text)] ml-4 flex items-center gap-1"
               >
                 <svg className={`w-3 h-3 ${loading ? "animate-spin" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -634,24 +634,24 @@ function MediaLibrary({ onSelect, onClose, recentLinks = [] }: { onSelect: (url:
               </button>
             </div>
           </div>
-          <button onClick={onClose} className="text-[#2d2b25]/40 hover:text-[#2d2b25] text-2xl">&times;</button>
+          <button onClick={onClose} className="text-[var(--dash-text)]/40 hover:text-[var(--dash-text)] text-2xl">&times;</button>
         </div>
         
         <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
           {libTab === "uploads" ? (
             loading ? (
-              <div className="flex items-center justify-center h-64 text-[#2d2b25]/40 italic uppercase tracking-widest text-xs">Loading your media...</div>
+              <div className="flex items-center justify-center h-64 text-[var(--dash-text)]/40 italic uppercase tracking-widest text-xs">Loading your media...</div>
             ) : error && !loading ? (
               <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-[#2d2b25]/20 mb-4">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-[var(--dash-text)]/20 mb-4">
                   <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
                   <circle cx="8.5" cy="8.5" r="1.5"/>
                   <path d="M21 15l-5-5L5 21"/>
                 </svg>
-                <p className="text-sm text-[#2d2b25]/50 max-w-xs">{error}</p>
+                <p className="text-sm text-[var(--dash-text)]/50 max-w-xs">{error}</p>
               </div>
             ) : images.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-64 text-[#2d2b25]/40 gap-4">
+              <div className="flex flex-col items-center justify-center h-64 text-[var(--dash-text)]/40 gap-4">
                 <p className="italic">Your library is empty.</p>
                 <p className="text-[10px] uppercase tracking-widest text-center max-w-xs">Upload images using the "Upload" button in the editor to see them here.</p>
               </div>
@@ -661,17 +661,17 @@ function MediaLibrary({ onSelect, onClose, recentLinks = [] }: { onSelect: (url:
                   <button
                     key={img.key}
                     onClick={() => { onSelect(img.url); onClose(); }}
-                    className="group relative aspect-square bg-white border border-[#2d2b25]/5 hover:border-[#2d2b25]/40 transition-all overflow-hidden rounded-sm"
+                    className="group relative aspect-square bg-[var(--dash-surface)] border border-[var(--dash-text)]/5 hover:border-[var(--dash-text)]/40 transition-all overflow-hidden rounded-sm"
                   >
                     <img src={img.url} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                    <div className="absolute inset-0 bg-[#2d2b25]/0 group-hover:bg-[#2d2b25]/10 transition-colors" />
+                    <div className="absolute inset-0 bg-[var(--dash-text)]/0 group-hover:bg-[var(--dash-text)]/10 transition-colors" />
                   </button>
                 ))}
               </div>
             )
           ) : (
             recentLinks.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-64 text-[#2d2b25]/40 gap-4">
+              <div className="flex flex-col items-center justify-center h-64 text-[var(--dash-text)]/40 gap-4">
                 <p className="italic">No recently used links yet.</p>
                 <p className="text-[10px] uppercase tracking-widest text-center max-w-xs">Any images you paste as a URL or upload will appear here for easy re-use.</p>
               </div>
@@ -681,11 +681,11 @@ function MediaLibrary({ onSelect, onClose, recentLinks = [] }: { onSelect: (url:
                   <button
                     key={i}
                     onClick={() => { onSelect(url); onClose(); }}
-                    className="group relative aspect-square bg-white border border-[#2d2b25]/5 hover:border-[#2d2b25]/40 transition-all overflow-hidden rounded-sm"
+                    className="group relative aspect-square bg-[var(--dash-surface)] border border-[var(--dash-text)]/5 hover:border-[var(--dash-text)]/40 transition-all overflow-hidden rounded-sm"
                   >
                     <img src={url} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                    <div className="absolute inset-0 bg-[#2d2b25]/0 group-hover:bg-[#2d2b25]/10 transition-colors" />
-                    <div className="absolute bottom-1 left-1 bg-white/80 px-1 py-0.5 rounded-[1px] text-[8px] uppercase tracking-widest font-bold text-[#2d2b25]/60 shadow-sm border border-[#2d2b25]/5">Recent</div>
+                    <div className="absolute inset-0 bg-[var(--dash-text)]/0 group-hover:bg-[var(--dash-text)]/10 transition-colors" />
+                    <div className="absolute bottom-1 left-1 bg-white/80 px-1 py-0.5 rounded-[1px] text-[8px] uppercase tracking-widest font-bold text-[var(--dash-text)]/60 shadow-sm border border-[var(--dash-text)]/5">Recent</div>
                   </button>
                 ))}
               </div>
@@ -693,8 +693,8 @@ function MediaLibrary({ onSelect, onClose, recentLinks = [] }: { onSelect: (url:
           )}
         </div>
         
-        <div className="p-4 border-t border-[#2d2b25]/5 bg-[#2d2b25]/[0.02] text-right">
-          <button onClick={onClose} className="px-6 py-2 text-[10px] font-bold uppercase tracking-widest text-[#2d2b25]/60 hover:text-[#2d2b25]">Close Library</button>
+        <div className="p-4 border-t border-[var(--dash-text)]/5 bg-[var(--dash-text)]/[0.02] text-right">
+          <button onClick={onClose} className="px-6 py-2 text-[10px] font-bold uppercase tracking-widest text-[var(--dash-text)]/60 hover:text-[var(--dash-text)]">Close Library</button>
         </div>
       </div>
     </div>
@@ -755,7 +755,7 @@ function ImageField({ label, value, onChange, recentLinks = [], onAddRecentLink 
           }}
           onPaste={handlePaste}
           placeholder="Paste URL or paste image directly (Ctrl+V)"
-          className="flex-1 px-3 py-2 border border-[#2d2b25]/15 bg-white/50 text-[#2d2b25] text-sm outline-none focus:border-[#2d2b25]/40 rounded-sm"
+          className="flex-1 px-3 py-2 border border-[var(--dash-text)]/15 bg-[var(--dash-surface)] text-[var(--dash-text)] text-sm outline-none focus:border-[var(--dash-text)]/40 rounded-sm"
         />
         {value && (
           <button
@@ -769,7 +769,7 @@ function ImageField({ label, value, onChange, recentLinks = [], onAddRecentLink 
         <button
           type="button"
           onClick={() => setShowLibrary(true)}
-          className="px-3 py-2 text-xs font-semibold tracking-wide uppercase border border-[#2d2b25]/15 text-[#2d2b25]/60 hover:text-[#2d2b25] hover:border-[#2d2b25]/30 transition-colors rounded-sm whitespace-nowrap"
+          className="px-3 py-2 text-xs font-semibold tracking-wide uppercase border border-[var(--dash-text)]/15 text-[var(--dash-text)]/60 hover:text-[var(--dash-text)] hover:border-[var(--dash-text)]/30 transition-colors rounded-sm whitespace-nowrap"
         >
           Library
         </button>
@@ -777,7 +777,7 @@ function ImageField({ label, value, onChange, recentLinks = [], onAddRecentLink 
           type="button"
           onClick={() => inputRef.current?.click()}
           disabled={uploading}
-          className="px-3 py-2 text-xs font-semibold tracking-wide uppercase border border-[#2d2b25]/15 text-[#2d2b25]/60 hover:text-[#2d2b25] hover:border-[#2d2b25]/30 transition-colors rounded-sm disabled:opacity-50 whitespace-nowrap"
+          className="px-3 py-2 text-xs font-semibold tracking-wide uppercase border border-[var(--dash-text)]/15 text-[var(--dash-text)]/60 hover:text-[var(--dash-text)] hover:border-[var(--dash-text)]/30 transition-colors rounded-sm disabled:opacity-50 whitespace-nowrap"
         >
           {uploading ? "Uploading..." : "Upload"}
         </button>
@@ -790,11 +790,11 @@ function ImageField({ label, value, onChange, recentLinks = [], onAddRecentLink 
           }}
         />
       </div>
-      <p className="text-[9px] text-[#2d2b25]/40 mt-1 uppercase tracking-tighter">
+      <p className="text-[9px] text-[var(--dash-text)]/40 mt-1 uppercase tracking-tighter">
         Tip: You can paste a Canva "Shared Link" here, or upload an optimized image for better speed.
       </p>
       {value && (
-        <img src={value} alt="Preview" className="w-full max-w-xs h-32 object-cover rounded-sm border border-[#2d2b25]/10 mt-2" />
+        <img src={value} alt="Preview" className="w-full max-w-xs h-32 object-cover rounded-sm border border-[var(--dash-text)]/10 mt-2" />
       )}
       
       {showLibrary && (
@@ -810,15 +810,15 @@ function ImageField({ label, value, onChange, recentLinks = [], onAddRecentLink 
       {/* Large file confirmation modal */}
       {largeFileConfirm && (
         <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setLargeFileConfirm(null)}>
-          <div className="bg-[#faf1e1] border border-[#2d2b25]/15 rounded-sm p-6 max-w-sm mx-4 shadow-xl" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-[var(--dash-bg)] border border-[var(--dash-text)]/15 rounded-sm p-6 max-w-sm mx-4 shadow-xl" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-base font-medium mb-1" style={{ fontFamily: "'Cormorant Garamond', serif" }}>Large Image</h3>
-            <p className="text-sm text-[#2d2b25]/60 mb-2">This image is over 5MB. Large images can slow down your site for guests.</p>
-            <p className="text-[10px] text-[#2d2b25]/40 uppercase tracking-wider mb-6">Would you like to upload it anyway?</p>
+            <p className="text-sm text-[var(--dash-text)]/60 mb-2">This image is over 5MB. Large images can slow down your site for guests.</p>
+            <p className="text-[10px] text-[var(--dash-text)]/40 uppercase tracking-wider mb-6">Would you like to upload it anyway?</p>
             <div className="flex items-center justify-end gap-3">
-              <button onClick={() => setLargeFileConfirm(null)} className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-[#2d2b25]/50 hover:text-[#2d2b25] transition-colors">
+              <button onClick={() => setLargeFileConfirm(null)} className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-[var(--dash-text)]/50 hover:text-[var(--dash-text)] transition-colors">
                 Cancel
               </button>
-              <button onClick={() => { const f = largeFileConfirm; setLargeFileConfirm(null); processUpload(f); }} className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest bg-[#2d2b25] text-[#faf1e1] rounded-sm hover:opacity-90 transition-opacity">
+              <button onClick={() => { const f = largeFileConfirm; setLargeFileConfirm(null); processUpload(f); }} className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest bg-[var(--dash-btn-bg)] text-[var(--dash-bg)] rounded-sm hover:opacity-90 transition-opacity">
                 Upload Anyway
               </button>
             </div>
@@ -828,11 +828,11 @@ function ImageField({ label, value, onChange, recentLinks = [], onAddRecentLink 
       {/* Upload error modal */}
       {uploadError && (
         <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setUploadError(null)}>
-          <div className="bg-[#faf1e1] border border-[#2d2b25]/15 rounded-sm p-6 max-w-sm mx-4 shadow-xl" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-[var(--dash-bg)] border border-[var(--dash-text)]/15 rounded-sm p-6 max-w-sm mx-4 shadow-xl" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-base font-medium mb-1 text-red-700" style={{ fontFamily: "'Cormorant Garamond', serif" }}>Upload Failed</h3>
-            <p className="text-sm text-[#2d2b25]/70 mb-6 break-words">{uploadError}</p>
+            <p className="text-sm text-[var(--dash-text)]/70 mb-6 break-words">{uploadError}</p>
             <div className="flex items-center justify-end">
-              <button onClick={() => setUploadError(null)} className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest bg-[#2d2b25] text-[#faf1e1] rounded-sm hover:opacity-90 transition-opacity">
+              <button onClick={() => setUploadError(null)} className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest bg-[var(--dash-btn-bg)] text-[var(--dash-bg)] rounded-sm hover:opacity-90 transition-opacity">
                 Dismiss
               </button>
             </div>
@@ -849,7 +849,7 @@ function DragHandle({ listeners, attributes }: { listeners?: Record<string, Func
   return (
     <button
       type="button"
-      className="absolute top-3 left-3 cursor-grab active:cursor-grabbing text-[#2d2b25]/25 hover:text-[#2d2b25]/50 touch-none"
+      className="absolute top-3 left-3 cursor-grab active:cursor-grabbing text-[var(--dash-text)]/25 hover:text-[var(--dash-text)]/50 touch-none"
       {...attributes}
       {...listeners}
     >
@@ -877,12 +877,12 @@ function SortableCard({ id, children, onRemove, title }: {
 
   return (
     <div ref={setNodeRef} style={style}>
-      <div className="border border-[#2d2b25]/10 bg-white/40 p-4 pl-10 rounded-sm mb-3 relative">
+      <div className="border border-[var(--dash-text)]/10 bg-white/40 p-4 pl-10 rounded-sm mb-3 relative">
         <DragHandle listeners={listeners} attributes={attributes} />
-        {title && <p className="text-xs font-semibold tracking-wide uppercase text-[#2d2b25]/40 mb-3">{title}</p>}
+        {title && <p className="text-xs font-semibold tracking-wide uppercase text-[var(--dash-text)]/40 mb-3">{title}</p>}
         {onRemove && (
           <button onClick={onRemove} type="button"
-            className="absolute top-3 right-3 text-[#2d2b25]/30 hover:text-red-500 text-lg leading-none transition-colors"
+            className="absolute top-3 right-3 text-[var(--dash-text)]/30 hover:text-red-500 text-lg leading-none transition-colors"
             title="Remove"
           >&times;</button>
         )}
@@ -975,9 +975,9 @@ function GiftTrackerPanel({ giftData, loadGifts, site }: {
       <div className="flex items-start justify-between mb-2">
         <div>
           <h2 className="text-lg" style={{ fontFamily: "'Cormorant Garamond', serif" }}>Gift Tracker{giftData.total > 0 ? ` (${giftData.total})` : ""}</h2>
-          <p className="text-xs text-[#2d2b25]/40 mt-1">Track contributions and well wishes from guests</p>
+          <p className="text-xs text-[var(--dash-text)]/40 mt-1">Track contributions and well wishes from guests</p>
         </div>
-        <button onClick={() => loadGifts(giftData.page)} disabled={loading} className="p-2 text-[#2d2b25]/40 hover:text-[#2d2b25] hover:bg-[#2d2b25]/5 rounded-sm transition-all" title="Refresh">
+        <button onClick={() => loadGifts(giftData.page)} disabled={loading} className="p-2 text-[var(--dash-text)]/40 hover:text-[var(--dash-text)] hover:bg-[var(--dash-text)]/5 rounded-sm transition-all" title="Refresh">
           <svg className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
           </svg>
@@ -993,14 +993,14 @@ function GiftTrackerPanel({ giftData, loadGifts, site }: {
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-6 mt-6">
         {[
-          { label: "Gifts", value: contributions.length, color: "text-[#2d2b25]" },
-          { label: "Total", value: `${currencySymbol}${totalAmount.toFixed(0)}`, color: "text-[#2d2b25]" },
+          { label: "Gifts", value: contributions.length, color: "text-[var(--dash-text)]" },
+          { label: "Total", value: `${currencySymbol}${totalAmount.toFixed(0)}`, color: "text-[var(--dash-text)]" },
           { label: "Confirmed", value: confirmed, color: "text-green-700" },
-          { label: "Pending", value: pending, color: "text-[#2d2b25]/40" },
+          { label: "Pending", value: pending, color: "text-[var(--dash-text)]/40" },
         ].map((stat) => (
-          <div key={stat.label} className="p-3 bg-white border border-[#2d2b25]/8 rounded-sm text-center transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(45,43,37,0.06)]">
+          <div key={stat.label} className="p-3 bg-[var(--dash-surface)] border border-[var(--dash-text)]/8 rounded-sm text-center transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(45,43,37,0.06)]">
             <p className={`text-xl font-serif italic ${stat.color}`}>{stat.value}</p>
-            <p className="text-[8px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/35 mt-0.5">{stat.label}</p>
+            <p className="text-[8px] font-bold uppercase tracking-[0.15em] text-[var(--dash-text)]/35 mt-0.5">{stat.label}</p>
           </div>
         ))}
       </div>
@@ -1009,11 +1009,11 @@ function GiftTrackerPanel({ giftData, loadGifts, site }: {
       {loading && !giftData.loaded && (
         <div className="flex items-center justify-center py-20">
           <div className="flex flex-col items-center gap-3">
-            <svg className="w-6 h-6 animate-spin text-[#2d2b25]/25" fill="none" viewBox="0 0 24 24">
+            <svg className="w-6 h-6 animate-spin text-[var(--dash-text)]/25" fill="none" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
             </svg>
-            <span className="text-[10px] font-bold uppercase tracking-widest text-[#2d2b25]/30">Loading gifts</span>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--dash-text)]/30">Loading gifts</span>
           </div>
         </div>
       )}
@@ -1021,46 +1021,46 @@ function GiftTrackerPanel({ giftData, loadGifts, site }: {
       {/* Empty */}
       {!loading && contributions.length === 0 && !error && (
         <div className="flex flex-col items-center justify-center py-20 text-center">
-          <div className="w-16 h-16 rounded-full bg-[#2d2b25]/[0.04] flex items-center justify-center mb-4">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-[#2d2b25]/20">
+          <div className="w-16 h-16 rounded-full bg-[var(--dash-text)]/[0.04] flex items-center justify-center mb-4">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-[var(--dash-text)]/20">
               <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
             </svg>
           </div>
-          <p className="text-sm font-medium text-[#2d2b25]/50">No gifts yet</p>
-          <p className="text-xs text-[#2d2b25]/30 mt-1 max-w-[220px]">When guests send gifts and well wishes, they will appear here</p>
+          <p className="text-sm font-medium text-[var(--dash-text)]/50">No gifts yet</p>
+          <p className="text-xs text-[var(--dash-text)]/30 mt-1 max-w-[220px]">When guests send gifts and well wishes, they will appear here</p>
         </div>
       )}
 
       {/* Table */}
       {contributions.length > 0 && (
-        <div className="bg-white border border-[#2d2b25]/10 rounded-sm overflow-hidden">
+        <div className="bg-[var(--dash-surface)] border border-[var(--dash-text)]/10 rounded-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className="border-b border-[#2d2b25]/8 bg-[#2d2b25]/[0.02]">
-                  <th className="px-4 py-2.5 text-[9px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/40">From</th>
-                  <th className="px-4 py-2.5 text-[9px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/40 hidden sm:table-cell">Gift</th>
-                  <th className="px-4 py-2.5 text-[9px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/40 text-right">Amount</th>
-                  <th className="px-4 py-2.5 text-[9px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/40 hidden sm:table-cell">Message</th>
-                  <th className="px-4 py-2.5 text-[9px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/40 text-center">Status</th>
+                <tr className="border-b border-[var(--dash-text)]/8 bg-[var(--dash-text)]/[0.02]">
+                  <th className="px-4 py-2.5 text-[9px] font-bold uppercase tracking-[0.15em] text-[var(--dash-text)]/40">From</th>
+                  <th className="px-4 py-2.5 text-[9px] font-bold uppercase tracking-[0.15em] text-[var(--dash-text)]/40 hidden sm:table-cell">Gift</th>
+                  <th className="px-4 py-2.5 text-[9px] font-bold uppercase tracking-[0.15em] text-[var(--dash-text)]/40 text-right">Amount</th>
+                  <th className="px-4 py-2.5 text-[9px] font-bold uppercase tracking-[0.15em] text-[var(--dash-text)]/40 hidden sm:table-cell">Message</th>
+                  <th className="px-4 py-2.5 text-[9px] font-bold uppercase tracking-[0.15em] text-[var(--dash-text)]/40 text-center">Status</th>
                   <th className="px-4 py-2.5 w-16"></th>
                 </tr>
               </thead>
               <tbody>
                 {contributions.map((c) => (
-                  <tr key={c.id} className="border-b border-[#2d2b25]/5 last:border-0 hover:bg-[#2d2b25]/[0.015] transition-colors">
+                  <tr key={c.id} className="border-b border-[var(--dash-text)]/5 last:border-0 hover:bg-[var(--dash-text)]/[0.015] transition-colors">
                     <td className="px-4 py-2.5">
-                      <p className="text-sm text-[#2d2b25] font-medium">{c.guest_name}</p>
-                      <p className="text-[10px] text-[#2d2b25]/30">{c.created_at ? new Date(c.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : ""}</p>
+                      <p className="text-sm text-[var(--dash-text)] font-medium">{c.guest_name}</p>
+                      <p className="text-[10px] text-[var(--dash-text)]/30">{c.created_at ? new Date(c.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : ""}</p>
                     </td>
                     <td className="px-4 py-2.5 hidden sm:table-cell">
-                      <span className="text-xs text-[#2d2b25]/50">{c.gift_name}</span>
+                      <span className="text-xs text-[var(--dash-text)]/50">{c.gift_name}</span>
                     </td>
                     <td className="px-4 py-2.5 text-right">
-                      <span className="text-sm font-medium text-[#2d2b25]">{c.amount ? `${getCurrencySymbol(c.currency || site.giftCurrency || "GBP")}${c.amount}` : "\u2014"}</span>
+                      <span className="text-sm font-medium text-[var(--dash-text)]">{c.amount ? `${getCurrencySymbol(c.currency || site.giftCurrency || "GBP")}${c.amount}` : "\u2014"}</span>
                     </td>
                     <td className="px-4 py-2.5 hidden sm:table-cell">
-                      <span className="text-xs text-[#2d2b25]/45 truncate block max-w-[200px]">{c.message || "\u2014"}</span>
+                      <span className="text-xs text-[var(--dash-text)]/45 truncate block max-w-[200px]">{c.message || "\u2014"}</span>
                     </td>
                     <td className="px-4 py-2.5 text-center">
                       <button
@@ -1073,7 +1073,7 @@ function GiftTrackerPanel({ giftData, loadGifts, site }: {
                       </button>
                     </td>
                     <td className="px-4 py-2.5 text-right">
-                      <button onClick={() => setDeleteConfirm(c.id)} className="p-1 text-[#2d2b25]/20 hover:text-red-500 transition-colors" title="Delete">
+                      <button onClick={() => setDeleteConfirm(c.id)} className="p-1 text-[var(--dash-text)]/20 hover:text-red-500 transition-colors" title="Delete">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                       </button>
                     </td>
@@ -1087,21 +1087,21 @@ function GiftTrackerPanel({ giftData, loadGifts, site }: {
 
       {/* Pagination */}
       {giftData.totalPages > 1 && (
-        <div className="flex items-center justify-between mt-4 pt-3 border-t border-[#2d2b25]/8">
+        <div className="flex items-center justify-between mt-4 pt-3 border-t border-[var(--dash-text)]/8">
           <button
             onClick={() => loadGifts(giftData.page - 1)}
             disabled={giftData.page <= 1 || loading}
-            className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-[#2d2b25]/50 hover:text-[#2d2b25] border border-[#2d2b25]/10 hover:border-[#2d2b25]/25 rounded-sm transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+            className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-[var(--dash-text)]/50 hover:text-[var(--dash-text)] border border-[var(--dash-text)]/10 hover:border-[var(--dash-text)]/25 rounded-sm transition-all disabled:opacity-30 disabled:cursor-not-allowed"
           >
             Prev
           </button>
-          <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/40">
+          <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--dash-text)]/40">
             Page {giftData.page} of {giftData.totalPages}
           </span>
           <button
             onClick={() => loadGifts(giftData.page + 1)}
             disabled={giftData.page >= giftData.totalPages || loading}
-            className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-[#2d2b25]/50 hover:text-[#2d2b25] border border-[#2d2b25]/10 hover:border-[#2d2b25]/25 rounded-sm transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+            className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-[var(--dash-text)]/50 hover:text-[var(--dash-text)] border border-[var(--dash-text)]/10 hover:border-[var(--dash-text)]/25 rounded-sm transition-all disabled:opacity-30 disabled:cursor-not-allowed"
           >
             Next
           </button>
@@ -1111,11 +1111,11 @@ function GiftTrackerPanel({ giftData, loadGifts, site }: {
       {/* Delete modal */}
       {deleteConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setDeleteConfirm(null)}>
-          <div className="bg-[#faf1e1] border border-[#2d2b25]/15 rounded-sm p-6 max-w-sm mx-4 shadow-xl" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-[var(--dash-bg)] border border-[var(--dash-text)]/15 rounded-sm p-6 max-w-sm mx-4 shadow-xl" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-base font-medium mb-2" style={{ fontFamily: "'Cormorant Garamond', serif" }}>Delete Gift</h3>
-            <p className="text-sm text-[#2d2b25]/60 mb-6">Are you sure? This cannot be undone.</p>
+            <p className="text-sm text-[var(--dash-text)]/60 mb-6">Are you sure? This cannot be undone.</p>
             <div className="flex items-center justify-end gap-3">
-              <button onClick={() => setDeleteConfirm(null)} className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-[#2d2b25]/50 hover:text-[#2d2b25] transition-colors">Cancel</button>
+              <button onClick={() => setDeleteConfirm(null)} className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-[var(--dash-text)]/50 hover:text-[var(--dash-text)] transition-colors">Cancel</button>
               <button onClick={() => deleteGift(deleteConfirm)} className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest bg-red-600 text-white rounded-sm hover:bg-red-700 transition-colors">Delete</button>
             </div>
           </div>
@@ -1168,14 +1168,14 @@ function MessagesPanel({ msgData, loadMessages, site }: {
     return (
       <div className="flex flex-col items-center justify-center pt-20">
         {msgData.loading ? (
-          <p className="text-[11px] font-bold uppercase tracking-widest text-[#2d2b25]/40 animate-pulse">Loading messages...</p>
+          <p className="text-[11px] font-bold uppercase tracking-widest text-[var(--dash-text)]/40 animate-pulse">Loading messages...</p>
         ) : msgData.error ? (
           <div className="text-center">
             <p className="text-[11px] text-red-600 mb-4">{msgData.error}</p>
-            <button onClick={loadMessages} className="text-[10px] font-bold uppercase tracking-wider px-4 py-2 border border-[#2d2b25]/15 hover:border-[#2d2b25]/30 rounded-sm">Retry</button>
+            <button onClick={loadMessages} className="text-[10px] font-bold uppercase tracking-wider px-4 py-2 border border-[var(--dash-text)]/15 hover:border-[var(--dash-text)]/30 rounded-sm">Retry</button>
           </div>
         ) : (
-          <button onClick={loadMessages} className="text-[10px] font-bold uppercase tracking-wider px-6 py-3 border border-[#2d2b25]/15 hover:border-[#2d2b25]/30 rounded-sm transition-all">Load Messages</button>
+          <button onClick={loadMessages} className="text-[10px] font-bold uppercase tracking-wider px-6 py-3 border border-[var(--dash-text)]/15 hover:border-[var(--dash-text)]/30 rounded-sm transition-all">Load Messages</button>
         )}
       </div>
     );
@@ -1306,7 +1306,7 @@ function MessagesPanel({ msgData, loadMessages, site }: {
 
   return (
     <div className="p-6 max-w-2xl mx-auto">
-      <h2 className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#2d2b25]/60 mb-6">Messages</h2>
+      <h2 className="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--dash-text)]/60 mb-6">Messages</h2>
 
       {!isPremium && (
         <div className="mb-6 p-4 border border-amber-200 bg-amber-50 rounded-sm">
@@ -1316,12 +1316,12 @@ function MessagesPanel({ msgData, loadMessages, site }: {
       )}
 
       {/* View Tabs */}
-      <div className="flex gap-1 mb-8 border-b border-[#2d2b25]/10 pb-px">
+      <div className="flex gap-1 mb-8 border-b border-[var(--dash-text)]/10 pb-px">
         {(["compose", "history", "groups"] as const).map((v) => (
           <button
             key={v}
             onClick={() => setActiveView(v)}
-            className={`text-[10px] font-bold uppercase tracking-wider px-4 py-2.5 transition-all border-b-2 -mb-px ${activeView === v ? "border-[#2d2b25] text-[#2d2b25]" : "border-transparent text-[#2d2b25]/40 hover:text-[#2d2b25]/60"}`}
+            className={`text-[10px] font-bold uppercase tracking-wider px-4 py-2.5 transition-all border-b-2 -mb-px ${activeView === v ? "border-[var(--dash-text)] text-[var(--dash-text)]" : "border-transparent text-[var(--dash-text)]/40 hover:text-[var(--dash-text)]/60"}`}
           >
             {v === "compose" ? "Compose" : v === "history" ? "History" : "Groups"}
           </button>
@@ -1340,7 +1340,7 @@ function MessagesPanel({ msgData, loadMessages, site }: {
                 setSubject(`You're Invited — ${names}`);
                 setBody(`We are delighted to invite you to celebrate our wedding!\n\n${site.dateDisplayText ? `Date: ${site.dateDisplayText}\n` : ""}${site.locationText ? `Venue: ${site.locationText}\n` : ""}\nPlease visit our wedding website for all the details and to RSVP:\n${url}\n\nWe can't wait to celebrate with you!\n\nWith love,\n${names}`);
               }}
-              className="w-full mb-5 py-3 border border-dashed border-[#2d2b25]/20 text-[11px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/50 hover:text-[#2d2b25]/80 hover:border-[#2d2b25]/40 rounded-sm transition-all"
+              className="w-full mb-5 py-3 border border-dashed border-[var(--dash-text)]/20 text-[11px] font-bold uppercase tracking-[0.15em] text-[var(--dash-text)]/50 hover:text-[var(--dash-text)]/80 hover:border-[var(--dash-text)]/40 rounded-sm transition-all"
             >
               Use Invite Template
             </button>
@@ -1348,30 +1348,30 @@ function MessagesPanel({ msgData, loadMessages, site }: {
 
           {/* Channel Toggle */}
           <div className="mb-5">
-            <label className="block text-[11px] font-semibold tracking-[0.15em] uppercase text-[#2d2b25]/60 mb-3">Channel</label>
-            <div className="flex gap-0 border border-[#2d2b25]/15 rounded-sm overflow-hidden w-fit">
+            <label className="block text-[11px] font-semibold tracking-[0.15em] uppercase text-[var(--dash-text)]/60 mb-3">Channel</label>
+            <div className="flex gap-0 border border-[var(--dash-text)]/15 rounded-sm overflow-hidden w-fit">
               {(["email", "sms"] as const).map((ch) => (
                 <button
                   key={ch}
                   type="button"
                   onClick={() => setChannel(ch)}
-                  className={`px-4 py-2 text-[10px] font-bold uppercase tracking-wider transition-all ${channel === ch ? "bg-[#2d2b25] text-white" : "bg-white/50 text-[#2d2b25]/50 hover:text-[#2d2b25]/80"}`}
+                  className={`px-4 py-2 text-[10px] font-bold uppercase tracking-wider transition-all ${channel === ch ? "bg-[var(--dash-btn-bg)] text-white" : "bg-[var(--dash-surface)] text-[var(--dash-text)]/50 hover:text-[var(--dash-text)]/80"}`}
                 >
                   {ch === "email" ? "Email" : "SMS"}
                 </button>
               ))}
             </div>
             {channel === "sms" && (
-              <p className="text-[10px] text-[#2d2b25]/40 mt-2">Only guests who provided a phone number will receive this message.</p>
+              <p className="text-[10px] text-[var(--dash-text)]/40 mt-2">Only guests who provided a phone number will receive this message.</p>
             )}
           </div>
 
           <div className="mb-4">
-            <label className="block text-[11px] font-semibold tracking-[0.15em] uppercase text-[#2d2b25]/60 mb-3">Send To</label>
+            <label className="block text-[11px] font-semibold tracking-[0.15em] uppercase text-[var(--dash-text)]/60 mb-3">Send To</label>
             <select
               value={selectedGroup}
               onChange={(e) => setSelectedGroup(e.target.value)}
-              className="w-full px-3 py-2 border border-[#2d2b25]/15 bg-white/50 text-[#2d2b25] text-sm outline-none focus:border-[#2d2b25]/40 rounded-sm"
+              className="w-full px-3 py-2 border border-[var(--dash-text)]/15 bg-[var(--dash-surface)] text-[var(--dash-text)] text-sm outline-none focus:border-[var(--dash-text)]/40 rounded-sm"
             >
               <option value="">Select a group...</option>
               {smartGroups.length > 0 && (
@@ -1388,29 +1388,29 @@ function MessagesPanel({ msgData, loadMessages, site }: {
           </div>
 
           <div className="mb-4">
-            <label className="block text-[11px] font-semibold tracking-[0.15em] uppercase text-[#2d2b25]/60 mb-3">
+            <label className="block text-[11px] font-semibold tracking-[0.15em] uppercase text-[var(--dash-text)]/60 mb-3">
               {channel === "sms" ? "Header (optional)" : "Subject"}
             </label>
             <input
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
               placeholder={channel === "sms" ? "e.g. Wedding Update" : "e.g. Important Update"}
-              className="w-full px-3 py-2 border border-[#2d2b25]/15 bg-white/50 text-[#2d2b25] text-sm outline-none focus:border-[#2d2b25]/40 rounded-sm"
+              className="w-full px-3 py-2 border border-[var(--dash-text)]/15 bg-[var(--dash-surface)] text-[var(--dash-text)] text-sm outline-none focus:border-[var(--dash-text)]/40 rounded-sm"
             />
           </div>
 
           <div className="mb-6">
-            <label className="block text-[11px] font-semibold tracking-[0.15em] uppercase text-[#2d2b25]/60 mb-3">Message</label>
+            <label className="block text-[11px] font-semibold tracking-[0.15em] uppercase text-[var(--dash-text)]/60 mb-3">Message</label>
             <textarea
               value={body}
               onChange={(e) => setBody(e.target.value)}
               placeholder="Write your message here..."
               rows={8}
               maxLength={channel === "sms" ? 1600 : undefined}
-              className="w-full px-3 py-2 border border-[#2d2b25]/15 bg-white/50 text-[#2d2b25] text-sm outline-none focus:border-[#2d2b25]/40 resize-y rounded-sm"
+              className="w-full px-3 py-2 border border-[var(--dash-text)]/15 bg-[var(--dash-surface)] text-[var(--dash-text)] text-sm outline-none focus:border-[var(--dash-text)]/40 resize-y rounded-sm"
             />
             {channel === "sms" && (
-              <p className="text-[10px] text-[#2d2b25]/30 mt-1 text-right">{body.length}/1600 {body.length > 160 && `(${Math.ceil(body.length / 153)} SMS parts)`}</p>
+              <p className="text-[10px] text-[var(--dash-text)]/30 mt-1 text-right">{body.length}/1600 {body.length > 160 && `(${Math.ceil(body.length / 153)} SMS parts)`}</p>
             )}
           </div>
 
@@ -1423,7 +1423,7 @@ function MessagesPanel({ msgData, loadMessages, site }: {
           <button
             onClick={handleSend}
             disabled={sending || !selectedGroup || !body.trim() || (channel === "email" && !subject.trim()) || !isPremium}
-            className="w-full py-3 text-[11px] font-bold uppercase tracking-[0.2em] bg-[#2d2b25] text-white rounded-sm hover:bg-[#2d2b25]/90 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+            className="w-full py-3 text-[11px] font-bold uppercase tracking-[0.2em] bg-[var(--dash-btn-bg)] text-white rounded-sm hover:bg-[var(--dash-text)]/90 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
           >
             {sending ? "Sending..." : channel === "sms" ? "Send SMS" : "Send Email"}
           </button>
@@ -1434,17 +1434,17 @@ function MessagesPanel({ msgData, loadMessages, site }: {
       {activeView === "history" && (
         <div>
           {sentBroadcasts.length === 0 ? (
-            <p className="text-center text-[#2d2b25]/40 text-sm pt-8">No messages sent yet</p>
+            <p className="text-center text-[var(--dash-text)]/40 text-sm pt-8">No messages sent yet</p>
           ) : (
             <div className="space-y-3">
               {sentBroadcasts.map((b) => {
                 const group = msgData.groups.find((g) => g.id === b.groupId);
                 return (
-                  <div key={b.id} className="p-4 border border-[#2d2b25]/10 rounded-sm">
+                  <div key={b.id} className="p-4 border border-[var(--dash-text)]/10 rounded-sm">
                     <div className="flex items-start justify-between gap-4">
                       <div className="min-w-0">
-                        <p className="text-sm font-medium text-[#2d2b25] truncate">{b.subject}</p>
-                        <p className="text-[11px] text-[#2d2b25]/50 mt-1">
+                        <p className="text-sm font-medium text-[var(--dash-text)] truncate">{b.subject}</p>
+                        <p className="text-[11px] text-[var(--dash-text)]/50 mt-1">
                           To: {group?.name || "Unknown group"} &middot; {b.recipientCount || "?"} recipient{b.recipientCount === 1 ? "" : "s"}
                         </p>
                       </div>
@@ -1456,7 +1456,7 @@ function MessagesPanel({ msgData, loadMessages, site }: {
                           {b.status}
                         </span>
                         {b.sentAt && (
-                          <p className="text-[10px] text-[#2d2b25]/40 mt-1">
+                          <p className="text-[10px] text-[var(--dash-text)]/40 mt-1">
                             {new Date(b.sentAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                           </p>
                         )}
@@ -1475,12 +1475,12 @@ function MessagesPanel({ msgData, loadMessages, site }: {
         <div>
           {smartGroups.length > 0 && (
             <div className="mb-8">
-              <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#2d2b25]/40 mb-3">Smart Groups (auto-updated)</h3>
+              <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--dash-text)]/40 mb-3">Smart Groups (auto-updated)</h3>
               <div className="space-y-2">
                 {smartGroups.map((g) => (
-                  <div key={g.id} className="flex items-center justify-between p-3 border border-[#2d2b25]/10 rounded-sm">
-                    <span className="text-sm text-[#2d2b25]">{g.name}</span>
-                    <span className="text-[10px] text-[#2d2b25]/40 uppercase tracking-wider">Auto</span>
+                  <div key={g.id} className="flex items-center justify-between p-3 border border-[var(--dash-text)]/10 rounded-sm">
+                    <span className="text-sm text-[var(--dash-text)]">{g.name}</span>
+                    <span className="text-[10px] text-[var(--dash-text)]/40 uppercase tracking-wider">Auto</span>
                   </div>
                 ))}
               </div>
@@ -1488,35 +1488,35 @@ function MessagesPanel({ msgData, loadMessages, site }: {
           )}
 
           <div className="mb-6">
-            <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#2d2b25]/40 mb-3">Custom Groups</h3>
+            <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--dash-text)]/40 mb-3">Custom Groups</h3>
             {customGroups.length > 0 ? (
               <div className="space-y-3 mb-4">
                 {customGroups.map((g) => {
                   const members = (g.members as string[]) || [];
                   const isEditing = editingGroupId === g.id;
                   return (
-                    <div key={g.id} className="border border-[#2d2b25]/10 rounded-sm">
+                    <div key={g.id} className="border border-[var(--dash-text)]/10 rounded-sm">
                       <div className="flex items-center justify-between p-3">
                         <button
                           onClick={() => { setEditingGroupId(isEditing ? null : g.id); setMemberInput(""); }}
                           className="flex items-center gap-2 text-left"
                         >
-                          <svg width="10" height="10" viewBox="0 0 10 10" className={`text-[#2d2b25]/40 transition-transform ${isEditing ? "rotate-90" : ""}`}><path d="M3 1l4 4-4 4" fill="none" stroke="currentColor" strokeWidth="1.5" /></svg>
-                          <span className="text-sm text-[#2d2b25]">{g.name}</span>
-                          <span className="text-[10px] text-[#2d2b25]/40">({members.length} member{members.length !== 1 ? "s" : ""})</span>
+                          <svg width="10" height="10" viewBox="0 0 10 10" className={`text-[var(--dash-text)]/40 transition-transform ${isEditing ? "rotate-90" : ""}`}><path d="M3 1l4 4-4 4" fill="none" stroke="currentColor" strokeWidth="1.5" /></svg>
+                          <span className="text-sm text-[var(--dash-text)]">{g.name}</span>
+                          <span className="text-[10px] text-[var(--dash-text)]/40">({members.length} member{members.length !== 1 ? "s" : ""})</span>
                         </button>
                         <button onClick={() => handleDeleteGroup(g.id)} className="text-[10px] text-red-500 hover:text-red-700 uppercase tracking-wider font-bold">Remove</button>
                       </div>
 
                       {isEditing && (
-                        <div className="px-3 pb-3 border-t border-[#2d2b25]/5 pt-3">
+                        <div className="px-3 pb-3 border-t border-[var(--dash-text)]/5 pt-3">
                           {/* Existing members */}
                           {members.length > 0 && (
                             <div className="flex flex-wrap gap-1.5 mb-3">
                               {members.map((email) => (
-                                <span key={email} className="inline-flex items-center gap-1 px-2 py-1 bg-[#2d2b25]/5 rounded text-[11px] text-[#2d2b25]/70">
+                                <span key={email} className="inline-flex items-center gap-1 px-2 py-1 bg-[var(--dash-text)]/5 rounded text-[11px] text-[var(--dash-text)]/70">
                                   {email}
-                                  <button onClick={() => handleRemoveMember(g.id, email)} className="text-[#2d2b25]/30 hover:text-red-500 ml-0.5">&times;</button>
+                                  <button onClick={() => handleRemoveMember(g.id, email)} className="text-[var(--dash-text)]/30 hover:text-red-500 ml-0.5">&times;</button>
                                 </span>
                               ))}
                             </div>
@@ -1529,12 +1529,12 @@ function MessagesPanel({ msgData, loadMessages, site }: {
                               onChange={(e) => setMemberInput(e.target.value)}
                               placeholder="Paste emails here — separated by commas, spaces, or new lines"
                               rows={3}
-                              className="w-full px-3 py-2 border border-[#2d2b25]/15 bg-white/50 text-[#2d2b25] text-sm outline-none focus:border-[#2d2b25]/40 rounded-sm resize-y"
+                              className="w-full px-3 py-2 border border-[var(--dash-text)]/15 bg-[var(--dash-surface)] text-[var(--dash-text)] text-sm outline-none focus:border-[var(--dash-text)]/40 rounded-sm resize-y"
                             />
                             <button
                               onClick={() => handleAddMembers(g.id)}
                               disabled={savingMembers || !memberInput.trim()}
-                              className="mt-2 px-4 py-2 text-[10px] font-bold uppercase tracking-wider bg-[#2d2b25] text-white rounded-sm hover:bg-[#2d2b25]/90 disabled:opacity-30"
+                              className="mt-2 px-4 py-2 text-[10px] font-bold uppercase tracking-wider bg-[var(--dash-btn-bg)] text-white rounded-sm hover:bg-[var(--dash-text)]/90 disabled:opacity-30"
                             >
                               {savingMembers ? "Adding..." : "Add Emails"}
                             </button>
@@ -1546,7 +1546,7 @@ function MessagesPanel({ msgData, loadMessages, site }: {
                 })}
               </div>
             ) : (
-              <p className="text-sm text-[#2d2b25]/40 mb-4">No custom groups yet</p>
+              <p className="text-sm text-[var(--dash-text)]/40 mb-4">No custom groups yet</p>
             )}
 
             <div className="flex gap-2">
@@ -1554,13 +1554,13 @@ function MessagesPanel({ msgData, loadMessages, site }: {
                 value={newGroupName}
                 onChange={(e) => setNewGroupName(e.target.value)}
                 placeholder="New group name"
-                className="flex-1 px-3 py-2 border border-[#2d2b25]/15 bg-white/50 text-[#2d2b25] text-sm outline-none focus:border-[#2d2b25]/40 rounded-sm"
+                className="flex-1 px-3 py-2 border border-[var(--dash-text)]/15 bg-[var(--dash-surface)] text-[var(--dash-text)] text-sm outline-none focus:border-[var(--dash-text)]/40 rounded-sm"
                 onKeyDown={(e) => e.key === "Enter" && handleCreateGroup()}
               />
               <button
                 onClick={handleCreateGroup}
                 disabled={creatingGroup || !newGroupName.trim()}
-                className="px-4 py-2 text-[10px] font-bold uppercase tracking-wider bg-[#2d2b25] text-white rounded-sm hover:bg-[#2d2b25]/90 disabled:opacity-30"
+                className="px-4 py-2 text-[10px] font-bold uppercase tracking-wider bg-[var(--dash-btn-bg)] text-white rounded-sm hover:bg-[var(--dash-text)]/90 disabled:opacity-30"
               >
                 {creatingGroup ? "..." : "Add"}
               </button>
@@ -1750,7 +1750,7 @@ function GuestListPanel({ rsvpData, loadRSVPs, site, set }: {
       <div className="flex items-start justify-between mb-2">
         <div>
           <h2 className="text-lg" style={{ fontFamily: "'Cormorant Garamond', serif" }}>Guest List{rsvpData.total > 0 ? ` (${rsvpData.total})` : ""}</h2>
-          <p className="text-xs text-[#2d2b25]/40 mt-1">Track RSVPs and manage your guest list</p>
+          <p className="text-xs text-[var(--dash-text)]/40 mt-1">Track RSVPs and manage your guest list</p>
         </div>
         <div className="flex items-center gap-2">
           {allGuests.length > 0 && (
@@ -1759,7 +1759,7 @@ function GuestListPanel({ rsvpData, loadRSVPs, site, set }: {
               className={`flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest rounded-sm border transition-all ${
                 copied
                   ? "text-green-700 bg-green-50 border-green-200"
-                  : "text-[#2d2b25]/60 hover:text-[#2d2b25] border-[#2d2b25]/10 hover:border-[#2d2b25]/25"
+                  : "text-[var(--dash-text)]/60 hover:text-[var(--dash-text)] border-[var(--dash-text)]/10 hover:border-[var(--dash-text)]/25"
               }`}
             >
               {copied ? (
@@ -1773,7 +1773,7 @@ function GuestListPanel({ rsvpData, loadRSVPs, site, set }: {
           <button
             onClick={() => loadRSVPs(rsvpData.page)}
             disabled={rsvpLoading}
-            className="p-2 text-[#2d2b25]/40 hover:text-[#2d2b25] hover:bg-[#2d2b25]/5 rounded-sm transition-all"
+            className="p-2 text-[var(--dash-text)]/40 hover:text-[var(--dash-text)] hover:bg-[var(--dash-text)]/5 rounded-sm transition-all"
             title="Refresh"
           >
             <svg className={`w-4 h-4 ${rsvpLoading ? "animate-spin" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -1793,14 +1793,14 @@ function GuestListPanel({ rsvpData, loadRSVPs, site, set }: {
       {/* Stats row */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-6 mt-6">
         {[
-          { label: "Responses", value: rsvps.length, color: "text-[#2d2b25]" },
-          { label: "Total Guests", value: allGuests.length, color: "text-[#2d2b25]" },
+          { label: "Responses", value: rsvps.length, color: "text-[var(--dash-text)]" },
+          { label: "Total Guests", value: allGuests.length, color: "text-[var(--dash-text)]" },
           { label: "Attending", value: attending, color: "text-green-700" },
-          { label: "Declined", value: declined, color: "text-[#2d2b25]/40" },
+          { label: "Declined", value: declined, color: "text-[var(--dash-text)]/40" },
         ].map((stat) => (
-          <div key={stat.label} className="p-3 bg-white border border-[#2d2b25]/8 rounded-sm text-center transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(45,43,37,0.06)]">
+          <div key={stat.label} className="p-3 bg-[var(--dash-surface)] border border-[var(--dash-text)]/8 rounded-sm text-center transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(45,43,37,0.06)]">
             <p className={`text-xl font-serif italic ${stat.color}`}>{stat.value}</p>
-            <p className="text-[8px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/35 mt-0.5">{stat.label}</p>
+            <p className="text-[8px] font-bold uppercase tracking-[0.15em] text-[var(--dash-text)]/35 mt-0.5">{stat.label}</p>
           </div>
         ))}
       </div>
@@ -1809,16 +1809,16 @@ function GuestListPanel({ rsvpData, loadRSVPs, site, set }: {
       {attending > 0 && Object.keys(mealCounts).length > 0 && (
         <div className="mb-6">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/50">Meals</span>
+            <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--dash-text)]/50">Meals</span>
             {Object.keys(dietaryCounts).length > 0 && (
               <span className="text-[10px] font-medium text-green-600">
                 {Object.entries(dietaryCounts).map(([d, c]) => `${c} ${d}`).join(", ")}
               </span>
             )}
           </div>
-          <div className="flex h-2 rounded-full overflow-hidden bg-[#2d2b25]/5">
+          <div className="flex h-2 rounded-full overflow-hidden bg-[var(--dash-text)]/5">
             {Object.entries(mealCounts).map(([meal, count], i) => {
-              const colors = ["bg-[#2d2b25]", "bg-[#2d2b25]/60", "bg-[#2d2b25]/35", "bg-[#2d2b25]/20", "bg-[#2d2b25]/10"];
+              const colors = ["bg-[var(--dash-btn-bg)]", "bg-[var(--dash-text)]/60", "bg-[var(--dash-text)]/35", "bg-[var(--dash-text)]/20", "bg-[var(--dash-text)]/10"];
               return (
                 <div
                   key={meal}
@@ -1831,11 +1831,11 @@ function GuestListPanel({ rsvpData, loadRSVPs, site, set }: {
           </div>
           <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2">
             {Object.entries(mealCounts).sort((a, b) => b[1] - a[1]).map(([meal, count], i) => {
-              const dots = ["bg-[#2d2b25]", "bg-[#2d2b25]/60", "bg-[#2d2b25]/35", "bg-[#2d2b25]/20", "bg-[#2d2b25]/10"];
+              const dots = ["bg-[var(--dash-btn-bg)]", "bg-[var(--dash-text)]/60", "bg-[var(--dash-text)]/35", "bg-[var(--dash-text)]/20", "bg-[var(--dash-text)]/10"];
               return (
-                <span key={meal} className="flex items-center gap-1.5 text-[10px] text-[#2d2b25]/60">
+                <span key={meal} className="flex items-center gap-1.5 text-[10px] text-[var(--dash-text)]/60">
                   <span className={`w-2 h-2 rounded-full ${dots[i % dots.length]}`} />
-                  {meal} <span className="text-[#2d2b25]/30">{count}</span>
+                  {meal} <span className="text-[var(--dash-text)]/30">{count}</span>
                 </span>
               );
             })}
@@ -1847,11 +1847,11 @@ function GuestListPanel({ rsvpData, loadRSVPs, site, set }: {
       {rsvpLoading && !rsvpData.loaded && (
         <div className="flex items-center justify-center py-20">
           <div className="flex flex-col items-center gap-3">
-            <svg className="w-6 h-6 animate-spin text-[#2d2b25]/25" fill="none" viewBox="0 0 24 24">
+            <svg className="w-6 h-6 animate-spin text-[var(--dash-text)]/25" fill="none" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
             </svg>
-            <span className="text-[10px] font-bold uppercase tracking-widest text-[#2d2b25]/30">Loading responses</span>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--dash-text)]/30">Loading responses</span>
           </div>
         </div>
       )}
@@ -1859,16 +1859,16 @@ function GuestListPanel({ rsvpData, loadRSVPs, site, set }: {
       {/* Empty state */}
       {!rsvpLoading && rsvps.length === 0 && !rsvpError && (
         <div className="flex flex-col items-center justify-center py-20 text-center">
-          <div className="w-16 h-16 rounded-full bg-[#2d2b25]/[0.04] flex items-center justify-center mb-4">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-[#2d2b25]/20">
+          <div className="w-16 h-16 rounded-full bg-[var(--dash-text)]/[0.04] flex items-center justify-center mb-4">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-[var(--dash-text)]/20">
               <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
               <circle cx="9" cy="7" r="4" />
               <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
               <path d="M16 3.13a4 4 0 0 1 0 7.75" />
             </svg>
           </div>
-          <p className="text-sm font-medium text-[#2d2b25]/50">No RSVPs yet</p>
-          <p className="text-xs text-[#2d2b25]/30 mt-1 max-w-[200px]">Once guests respond to your invitation, their details will appear here</p>
+          <p className="text-sm font-medium text-[var(--dash-text)]/50">No RSVPs yet</p>
+          <p className="text-xs text-[var(--dash-text)]/30 mt-1 max-w-[200px]">Once guests respond to your invitation, their details will appear here</p>
         </div>
       )}
 
@@ -1878,7 +1878,7 @@ function GuestListPanel({ rsvpData, loadRSVPs, site, set }: {
           <div className="flex items-center gap-2 mb-4">
             {/* Search */}
             <div className="relative flex-1">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="absolute left-3 top-1/2 -translate-y-1/2 text-[#2d2b25]/25">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--dash-text)]/25">
                 <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
               </svg>
               <input
@@ -1886,12 +1886,12 @@ function GuestListPanel({ rsvpData, loadRSVPs, site, set }: {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search by name or email..."
-                className="w-full pl-9 pr-3 py-2 text-sm border border-[#2d2b25]/10 bg-white rounded-sm outline-none focus:border-[#2d2b25]/30 transition-colors placeholder:text-[#2d2b25]/20"
+                className="w-full pl-9 pr-3 py-2 text-sm border border-[var(--dash-text)]/10 bg-[var(--dash-surface)] rounded-sm outline-none focus:border-[var(--dash-text)]/30 transition-colors placeholder:text-[var(--dash-text)]/20"
               />
             </div>
 
             {/* Filter pills */}
-            <div className="flex bg-[#2d2b25]/5 rounded-sm p-0.5 shrink-0">
+            <div className="flex bg-[var(--dash-text)]/5 rounded-sm p-0.5 shrink-0">
               {([
                 { key: "all" as const, label: "All" },
                 { key: "attending" as const, label: "Yes" },
@@ -1902,8 +1902,8 @@ function GuestListPanel({ rsvpData, loadRSVPs, site, set }: {
                   onClick={() => setFilter(f.key)}
                   className={`px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-sm transition-all ${
                     filter === f.key
-                      ? "bg-[#2d2b25] text-white shadow-sm"
-                      : "text-[#2d2b25]/40 hover:text-[#2d2b25]/60"
+                      ? "bg-[var(--dash-btn-bg)] text-white shadow-sm"
+                      : "text-[var(--dash-text)]/40 hover:text-[var(--dash-text)]/60"
                   }`}
                 >
                   {f.label}
@@ -1912,17 +1912,17 @@ function GuestListPanel({ rsvpData, loadRSVPs, site, set }: {
             </div>
 
             {/* View toggle */}
-            <div className="flex bg-[#2d2b25]/5 rounded-sm p-0.5 shrink-0">
+            <div className="flex bg-[var(--dash-text)]/5 rounded-sm p-0.5 shrink-0">
               <button
                 onClick={() => setView("table")}
-                className={`p-1.5 rounded-sm transition-all ${view === "table" ? "bg-white shadow-sm text-[#2d2b25]" : "text-[#2d2b25]/30"}`}
+                className={`p-1.5 rounded-sm transition-all ${view === "table" ? "bg-[var(--dash-surface)] shadow-sm text-[var(--dash-text)]" : "text-[var(--dash-text)]/30"}`}
                 title="Table view"
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
               </button>
               <button
                 onClick={() => setView("cards")}
-                className={`p-1.5 rounded-sm transition-all ${view === "cards" ? "bg-white shadow-sm text-[#2d2b25]" : "text-[#2d2b25]/30"}`}
+                className={`p-1.5 rounded-sm transition-all ${view === "cards" ? "bg-[var(--dash-surface)] shadow-sm text-[var(--dash-text)]" : "text-[var(--dash-text)]/30"}`}
                 title="Card view"
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
@@ -1932,25 +1932,25 @@ function GuestListPanel({ rsvpData, loadRSVPs, site, set }: {
 
           {/* Results count */}
           <div className="flex items-center justify-between mb-3">
-            <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/35">
+            <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--dash-text)]/35">
               {filtered.length} guest{filtered.length !== 1 ? "s" : ""}{filter !== "all" ? ` (${filter})` : ""}{search ? ` matching "${search}"` : ""}
             </span>
           </div>
 
           {/* Table view */}
           {view === "table" && (
-            <div className="bg-white border border-[#2d2b25]/10 rounded-sm overflow-hidden">
+            <div className="bg-[var(--dash-surface)] border border-[var(--dash-text)]/10 rounded-sm overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-left">
                   <thead>
-                    <tr className="border-b border-[#2d2b25]/8 bg-[#2d2b25]/[0.02]">
-                      <th className="px-4 py-2.5 text-[9px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/40">Guest</th>
-                      <th className="px-4 py-2.5 text-[9px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/40 hidden sm:table-cell">Email</th>
-                      <th className="px-4 py-2.5 text-[9px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/40 hidden sm:table-cell">Phone</th>
-                      <th className="px-4 py-2.5 text-[9px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/40 text-center">RSVP</th>
-                      <th className="px-4 py-2.5 text-[9px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/40 hidden sm:table-cell">Meal</th>
-                      <th className="px-4 py-2.5 text-[9px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/40 text-right">Date</th>
-                      <th className="px-4 py-2.5 text-[9px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/40 w-16"></th>
+                    <tr className="border-b border-[var(--dash-text)]/8 bg-[var(--dash-text)]/[0.02]">
+                      <th className="px-4 py-2.5 text-[9px] font-bold uppercase tracking-[0.15em] text-[var(--dash-text)]/40">Guest</th>
+                      <th className="px-4 py-2.5 text-[9px] font-bold uppercase tracking-[0.15em] text-[var(--dash-text)]/40 hidden sm:table-cell">Email</th>
+                      <th className="px-4 py-2.5 text-[9px] font-bold uppercase tracking-[0.15em] text-[var(--dash-text)]/40 hidden sm:table-cell">Phone</th>
+                      <th className="px-4 py-2.5 text-[9px] font-bold uppercase tracking-[0.15em] text-[var(--dash-text)]/40 text-center">RSVP</th>
+                      <th className="px-4 py-2.5 text-[9px] font-bold uppercase tracking-[0.15em] text-[var(--dash-text)]/40 hidden sm:table-cell">Meal</th>
+                      <th className="px-4 py-2.5 text-[9px] font-bold uppercase tracking-[0.15em] text-[var(--dash-text)]/40 text-right">Date</th>
+                      <th className="px-4 py-2.5 text-[9px] font-bold uppercase tracking-[0.15em] text-[var(--dash-text)]/40 w-16"></th>
                     </tr>
                   </thead>
                   <tbody>
@@ -1958,39 +1958,39 @@ function GuestListPanel({ rsvpData, loadRSVPs, site, set }: {
                       // Find original rsvp for this guest row
                       const rsvp = rsvps.find(r => r.id === guest.rsvpId);
                       return (
-                        <tr key={`${guest.rsvpId}-${i}`} className="border-b border-[#2d2b25]/5 last:border-0 hover:bg-[#2d2b25]/[0.015] transition-colors">
+                        <tr key={`${guest.rsvpId}-${i}`} className="border-b border-[var(--dash-text)]/5 last:border-0 hover:bg-[var(--dash-text)]/[0.015] transition-colors">
                           <td className="px-4 py-2.5">
                             <div className="flex items-center gap-2">
-                              <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${guest.attending ? "bg-green-500" : "bg-[#2d2b25]/15"}`} />
-                              <span className="text-sm text-[#2d2b25] font-medium">{guest.name}</span>
+                              <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${guest.attending ? "bg-green-500" : "bg-[var(--dash-text)]/15"}`} />
+                              <span className="text-sm text-[var(--dash-text)] font-medium">{guest.name}</span>
                             </div>
                           </td>
                           <td className="px-4 py-2.5 hidden sm:table-cell">
-                            <span className="text-xs text-[#2d2b25]/45 truncate block max-w-[180px]">{guest.email || "\u2014"}</span>
+                            <span className="text-xs text-[var(--dash-text)]/45 truncate block max-w-[180px]">{guest.email || "\u2014"}</span>
                           </td>
                           <td className="px-4 py-2.5 hidden sm:table-cell">
-                            <span className="text-xs text-[#2d2b25]/45 truncate block max-w-[140px]">{guest.phone || "\u2014"}</span>
+                            <span className="text-xs text-[var(--dash-text)]/45 truncate block max-w-[140px]">{guest.phone || "\u2014"}</span>
                           </td>
                           <td className="px-4 py-2.5 text-center">
                             <span className={`inline-flex px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest rounded-full ${
                               guest.attending
                                 ? "bg-green-50 text-green-700"
-                                : "bg-[#2d2b25]/5 text-[#2d2b25]/35"
+                                : "bg-[var(--dash-text)]/5 text-[var(--dash-text)]/35"
                             }`}>
                               {guest.attending ? "Attending" : "Declined"}
                             </span>
                           </td>
                           <td className="px-4 py-2.5 hidden sm:table-cell">
                             {guest.attending && guest.mealChoice ? (
-                              <span className="text-xs text-[#2d2b25]/50">
+                              <span className="text-xs text-[var(--dash-text)]/50">
                                 {guest.mealChoice}{(guest.dietaryPreference || guest.isHalal) ? <span className="text-green-600 ml-1 text-[9px] font-bold">({guest.dietaryPreference || "Halal"})</span> : ""}
                               </span>
                             ) : (
-                              <span className="text-xs text-[#2d2b25]/15">{"\u2014"}</span>
+                              <span className="text-xs text-[var(--dash-text)]/15">{"\u2014"}</span>
                             )}
                           </td>
                           <td className="px-4 py-2.5 text-right">
-                            <span className="text-[10px] text-[#2d2b25]/30">
+                            <span className="text-[10px] text-[var(--dash-text)]/30">
                               {guest.date ? new Date(guest.date).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : ""}
                             </span>
                           </td>
@@ -1998,10 +1998,10 @@ function GuestListPanel({ rsvpData, loadRSVPs, site, set }: {
                             <div className="flex items-center justify-end gap-1">
                               {rsvp && (
                                 <>
-                                  <button onClick={() => startEdit(rsvp)} className="p-1 text-[#2d2b25]/20 hover:text-[#2d2b25]/60 transition-colors" title="Edit">
+                                  <button onClick={() => startEdit(rsvp)} className="p-1 text-[var(--dash-text)]/20 hover:text-[var(--dash-text)]/60 transition-colors" title="Edit">
                                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                                   </button>
-                                  <button onClick={() => setDeleteConfirm(rsvp.id)} className="p-1 text-[#2d2b25]/20 hover:text-red-500 transition-colors" title="Delete">
+                                  <button onClick={() => setDeleteConfirm(rsvp.id)} className="p-1 text-[var(--dash-text)]/20 hover:text-red-500 transition-colors" title="Delete">
                                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                                   </button>
                                 </>
@@ -2015,7 +2015,7 @@ function GuestListPanel({ rsvpData, loadRSVPs, site, set }: {
                 </table>
               </div>
               {filtered.length === 0 && (
-                <div className="py-8 text-center text-sm text-[#2d2b25]/30">No guests match your search</div>
+                <div className="py-8 text-center text-sm text-[var(--dash-text)]/30">No guests match your search</div>
               )}
             </div>
           )}
@@ -2037,19 +2037,19 @@ function GuestListPanel({ rsvpData, loadRSVPs, site, set }: {
                 const attendingCount = rsvp.guests.filter(g => g.attending).length;
 
                 return (
-                  <div key={rsvp.id} className={`bg-white border rounded-sm overflow-hidden ${isEditing ? "border-[#2d2b25]/30 ring-1 ring-[#2d2b25]/10" : "border-[#2d2b25]/10"}`}>
+                  <div key={rsvp.id} className={`bg-[var(--dash-surface)] border rounded-sm overflow-hidden ${isEditing ? "border-[var(--dash-text)]/30 ring-1 ring-[var(--dash-text)]/10" : "border-[var(--dash-text)]/10"}`}>
                     <div className="flex items-center">
                       <button
                         onClick={() => { setExpandedRsvp(isExpanded ? null : rsvp.id); if (isEditing && isExpanded) cancelEdit(); }}
-                        className="flex-1 px-4 py-3 flex items-center justify-between hover:bg-[#2d2b25]/[0.02] transition-colors text-left"
+                        className="flex-1 px-4 py-3 flex items-center justify-between hover:bg-[var(--dash-text)]/[0.02] transition-colors text-left"
                       >
                         <div className="flex items-center gap-3 min-w-0">
-                          <div className="w-8 h-8 rounded-full bg-[#2d2b25]/[0.06] flex items-center justify-center shrink-0">
-                            <span className="text-xs font-bold text-[#2d2b25]/50">{guestCount}</span>
+                          <div className="w-8 h-8 rounded-full bg-[var(--dash-text)]/[0.06] flex items-center justify-center shrink-0">
+                            <span className="text-xs font-bold text-[var(--dash-text)]/50">{guestCount}</span>
                           </div>
                           <div className="min-w-0">
-                            <p className="text-sm text-[#2d2b25] font-medium truncate">{rsvp.email || "No email"}</p>
-                            <p className="text-[10px] text-[#2d2b25]/35 mt-0.5">
+                            <p className="text-sm text-[var(--dash-text)] font-medium truncate">{rsvp.email || "No email"}</p>
+                            <p className="text-[10px] text-[var(--dash-text)]/35 mt-0.5">
                               {attendingCount === guestCount ? (
                                 <span className="text-green-600">All attending</span>
                               ) : attendingCount === 0 ? (
@@ -2063,44 +2063,44 @@ function GuestListPanel({ rsvpData, loadRSVPs, site, set }: {
                             </p>
                           </div>
                         </div>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={`text-[#2d2b25]/20 shrink-0 transition-transform ${isExpanded ? "rotate-180" : ""}`}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={`text-[var(--dash-text)]/20 shrink-0 transition-transform ${isExpanded ? "rotate-180" : ""}`}>
                           <polyline points="6 9 12 15 18 9" />
                         </svg>
                       </button>
                       <div className="flex items-center gap-0.5 pr-3">
-                        <button onClick={() => isEditing ? cancelEdit() : startEdit(rsvp)} className={`p-1.5 rounded-sm transition-colors ${isEditing ? "text-[#2d2b25] bg-[#2d2b25]/10" : "text-[#2d2b25]/20 hover:text-[#2d2b25]/60"}`} title={isEditing ? "Cancel" : "Edit"}>
+                        <button onClick={() => isEditing ? cancelEdit() : startEdit(rsvp)} className={`p-1.5 rounded-sm transition-colors ${isEditing ? "text-[var(--dash-text)] bg-[var(--dash-text)]/10" : "text-[var(--dash-text)]/20 hover:text-[var(--dash-text)]/60"}`} title={isEditing ? "Cancel" : "Edit"}>
                           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                         </button>
-                        <button onClick={() => setDeleteConfirm(rsvp.id)} className="p-1.5 text-[#2d2b25]/20 hover:text-red-500 rounded-sm transition-colors" title="Delete">
+                        <button onClick={() => setDeleteConfirm(rsvp.id)} className="p-1.5 text-[var(--dash-text)]/20 hover:text-red-500 rounded-sm transition-colors" title="Delete">
                           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                         </button>
                       </div>
                     </div>
 
                     {isExpanded && !isEditing && (
-                      <div className="border-t border-[#2d2b25]/8">
+                      <div className="border-t border-[var(--dash-text)]/8">
                         {rsvp.guests.map((guest, gi) => (
-                          <div key={gi} className={`px-4 py-3 flex items-center justify-between ${gi > 0 ? "border-t border-[#2d2b25]/5" : ""}`}>
+                          <div key={gi} className={`px-4 py-3 flex items-center justify-between ${gi > 0 ? "border-t border-[var(--dash-text)]/5" : ""}`}>
                             <div className="flex items-center gap-2.5">
-                              <span className={`w-2 h-2 rounded-full ${guest.attending ? "bg-green-500" : "bg-[#2d2b25]/15"}`} />
+                              <span className={`w-2 h-2 rounded-full ${guest.attending ? "bg-green-500" : "bg-[var(--dash-text)]/15"}`} />
                               <div>
-                                <p className="text-sm text-[#2d2b25] font-medium">{guest.name}</p>
+                                <p className="text-sm text-[var(--dash-text)] font-medium">{guest.name}</p>
                                 {guest.attending && guest.mealChoice && (
-                                  <p className="text-[10px] text-[#2d2b25]/40 mt-0.5">
+                                  <p className="text-[10px] text-[var(--dash-text)]/40 mt-0.5">
                                     {guest.mealChoice}{(guest.dietaryPreference || guest.isHalal) ? ` \u00b7 ${guest.dietaryPreference || "Halal"}` : ""}
                                   </p>
                                 )}
                               </div>
                             </div>
-                            <span className={`text-[9px] font-bold uppercase tracking-widest ${guest.attending ? "text-green-600" : "text-[#2d2b25]/25"}`}>
+                            <span className={`text-[9px] font-bold uppercase tracking-widest ${guest.attending ? "text-green-600" : "text-[var(--dash-text)]/25"}`}>
                               {guest.attending ? "Yes" : "No"}
                             </span>
                           </div>
                         ))}
                         {rsvp.message && (
-                          <div className="px-4 py-3 border-t border-[#2d2b25]/5 bg-[#2d2b25]/[0.015]">
-                            <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/30 mb-1">Message</p>
-                            <p className="text-xs text-[#2d2b25]/60 italic leading-relaxed">&ldquo;{rsvp.message}&rdquo;</p>
+                          <div className="px-4 py-3 border-t border-[var(--dash-text)]/5 bg-[var(--dash-text)]/[0.015]">
+                            <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--dash-text)]/30 mb-1">Message</p>
+                            <p className="text-xs text-[var(--dash-text)]/60 italic leading-relaxed">&ldquo;{rsvp.message}&rdquo;</p>
                           </div>
                         )}
                       </div>
@@ -2108,20 +2108,20 @@ function GuestListPanel({ rsvpData, loadRSVPs, site, set }: {
 
                     {/* Edit form */}
                     {isExpanded && isEditing && editData && (
-                      <div className="border-t border-[#2d2b25]/8 bg-[#2d2b25]/[0.02] p-4">
+                      <div className="border-t border-[var(--dash-text)]/8 bg-[var(--dash-text)]/[0.02] p-4">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
                           <div>
-                            <label className="text-[9px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/40 block mb-1">Email</label>
+                            <label className="text-[9px] font-bold uppercase tracking-[0.15em] text-[var(--dash-text)]/40 block mb-1">Email</label>
                             <input
                               type="email"
                               value={editData.email}
                               onChange={(e) => setEditData({ ...editData, email: e.target.value })}
-                              className="w-full px-3 py-2 text-sm border border-[#2d2b25]/10 bg-white rounded-sm outline-none focus:border-[#2d2b25]/30"
+                              className="w-full px-3 py-2 text-sm border border-[var(--dash-text)]/10 bg-[var(--dash-surface)] rounded-sm outline-none focus:border-[var(--dash-text)]/30"
                               placeholder="guest@email.com"
                             />
                           </div>
                           <div>
-                            <label className="text-[9px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/40 block mb-1">WhatsApp</label>
+                            <label className="text-[9px] font-bold uppercase tracking-[0.15em] text-[var(--dash-text)]/40 block mb-1">WhatsApp</label>
                             <div className="flex">
                               <CountryCodePicker
                                 compact
@@ -2144,22 +2144,22 @@ function GuestListPanel({ rsvpData, loadRSVPs, site, set }: {
                                   const code = matchCountry(editData.phone)?.code || "+44";
                                   setEditData({ ...editData, phone: code + local });
                                 }}
-                                className="flex-1 min-w-0 px-3 py-2 text-sm border border-[#2d2b25]/10 bg-white rounded-r-sm outline-none focus:border-[#2d2b25]/30"
+                                className="flex-1 min-w-0 px-3 py-2 text-sm border border-[var(--dash-text)]/10 bg-[var(--dash-surface)] rounded-r-sm outline-none focus:border-[var(--dash-text)]/30"
                                 placeholder="7123456789"
                               />
                             </div>
                           </div>
                         </div>
 
-                        <label className="text-[9px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/40 block mb-2">Guests</label>
+                        <label className="text-[9px] font-bold uppercase tracking-[0.15em] text-[var(--dash-text)]/40 block mb-2">Guests</label>
                         <div className="space-y-2 mb-4">
                           {editData.guests.map((g, gi) => (
-                            <div key={gi} className="flex items-center gap-2 bg-white border border-[#2d2b25]/10 rounded-sm p-2">
+                            <div key={gi} className="flex items-center gap-2 bg-[var(--dash-surface)] border border-[var(--dash-text)]/10 rounded-sm p-2">
                               <input
                                 type="text"
                                 value={g.name}
                                 onChange={(e) => updateEditGuest(gi, { name: e.target.value })}
-                                className="flex-1 min-w-0 px-2 py-1 text-sm border border-[#2d2b25]/10 rounded-sm outline-none focus:border-[#2d2b25]/30"
+                                className="flex-1 min-w-0 px-2 py-1 text-sm border border-[var(--dash-text)]/10 rounded-sm outline-none focus:border-[var(--dash-text)]/30"
                                 placeholder="Guest name"
                               />
                               <button
@@ -2168,7 +2168,7 @@ function GuestListPanel({ rsvpData, loadRSVPs, site, set }: {
                                 className={`shrink-0 px-2 py-1 text-[9px] font-bold uppercase tracking-widest rounded-sm border transition-colors ${
                                   g.attending
                                     ? "bg-green-50 text-green-700 border-green-200"
-                                    : "bg-[#2d2b25]/5 text-[#2d2b25]/35 border-[#2d2b25]/10"
+                                    : "bg-[var(--dash-text)]/5 text-[var(--dash-text)]/35 border-[var(--dash-text)]/10"
                                 }`}
                               >
                                 {g.attending ? "Yes" : "No"}
@@ -2177,13 +2177,13 @@ function GuestListPanel({ rsvpData, loadRSVPs, site, set }: {
                                 type="text"
                                 value={g.mealChoice || ""}
                                 onChange={(e) => updateEditGuest(gi, { mealChoice: e.target.value })}
-                                className="w-24 shrink-0 px-2 py-1 text-xs border border-[#2d2b25]/10 rounded-sm outline-none focus:border-[#2d2b25]/30 hidden sm:block"
+                                className="w-24 shrink-0 px-2 py-1 text-xs border border-[var(--dash-text)]/10 rounded-sm outline-none focus:border-[var(--dash-text)]/30 hidden sm:block"
                                 placeholder="Meal"
                               />
                               <select
                                 value={g.dietaryPreference || (g.isHalal ? "Halal" : "")}
                                 onChange={(e) => updateEditGuest(gi, { dietaryPreference: e.target.value, isHalal: e.target.value === "Halal" })}
-                                className="w-24 shrink-0 px-1 py-1 text-[10px] border border-[#2d2b25]/10 rounded-sm outline-none focus:border-[#2d2b25]/30 hidden sm:block"
+                                className="w-24 shrink-0 px-1 py-1 text-[10px] border border-[var(--dash-text)]/10 rounded-sm outline-none focus:border-[var(--dash-text)]/30 hidden sm:block"
                               >
                                 <option value="">No dietary</option>
                                 {["Halal", "Kosher", "Vegan", "Vegetarian", "Gluten-Free", "Dairy-Free", "Nut-Free"].map(opt => (
@@ -2191,31 +2191,31 @@ function GuestListPanel({ rsvpData, loadRSVPs, site, set }: {
                                 ))}
                               </select>
                               {editData.guests.length > 1 && (
-                                <button onClick={() => removeEditGuest(gi)} className="p-1 text-[#2d2b25]/20 hover:text-red-500 shrink-0" title="Remove guest">
+                                <button onClick={() => removeEditGuest(gi)} className="p-1 text-[var(--dash-text)]/20 hover:text-red-500 shrink-0" title="Remove guest">
                                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                                 </button>
                               )}
                             </div>
                           ))}
                         </div>
-                        <button onClick={addEditGuest} className="text-[10px] font-bold uppercase tracking-widest text-[#2d2b25]/40 hover:text-[#2d2b25]/60 mb-4 block">+ Add guest</button>
+                        <button onClick={addEditGuest} className="text-[10px] font-bold uppercase tracking-widest text-[var(--dash-text)]/40 hover:text-[var(--dash-text)]/60 mb-4 block">+ Add guest</button>
 
                         <div className="mb-4">
-                          <label className="text-[9px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/40 block mb-1">Message</label>
+                          <label className="text-[9px] font-bold uppercase tracking-[0.15em] text-[var(--dash-text)]/40 block mb-1">Message</label>
                           <textarea
                             value={editData.message}
                             onChange={(e) => setEditData({ ...editData, message: e.target.value })}
                             rows={2}
-                            className="w-full px-3 py-2 text-sm border border-[#2d2b25]/10 bg-white rounded-sm outline-none focus:border-[#2d2b25]/30 resize-none"
+                            className="w-full px-3 py-2 text-sm border border-[var(--dash-text)]/10 bg-[var(--dash-surface)] rounded-sm outline-none focus:border-[var(--dash-text)]/30 resize-none"
                             placeholder="Optional message"
                           />
                         </div>
 
                         <div className="flex items-center justify-end gap-2">
-                          <button onClick={cancelEdit} className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-[#2d2b25]/40 hover:text-[#2d2b25] transition-colors">
+                          <button onClick={cancelEdit} className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-[var(--dash-text)]/40 hover:text-[var(--dash-text)] transition-colors">
                             Cancel
                           </button>
-                          <button onClick={saveEdit} disabled={saving} className="px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest bg-[#2d2b25] text-[#faf1e1] rounded-sm hover:bg-[#1a1812] transition-colors disabled:opacity-50">
+                          <button onClick={saveEdit} disabled={saving} className="px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest bg-[var(--dash-btn-bg)] text-[var(--dash-bg)] rounded-sm hover:bg-[#1a1812] transition-colors disabled:opacity-50">
                             {saving ? "Saving..." : "Save"}
                           </button>
                         </div>
@@ -2229,21 +2229,21 @@ function GuestListPanel({ rsvpData, loadRSVPs, site, set }: {
 
           {/* Pagination */}
           {rsvpData.totalPages > 1 && (
-            <div className="flex items-center justify-between mt-4 pt-3 border-t border-[#2d2b25]/8">
+            <div className="flex items-center justify-between mt-4 pt-3 border-t border-[var(--dash-text)]/8">
               <button
                 onClick={() => loadRSVPs(rsvpData.page - 1)}
                 disabled={rsvpData.page <= 1 || rsvpLoading}
-                className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-[#2d2b25]/50 hover:text-[#2d2b25] border border-[#2d2b25]/10 hover:border-[#2d2b25]/25 rounded-sm transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-[var(--dash-text)]/50 hover:text-[var(--dash-text)] border border-[var(--dash-text)]/10 hover:border-[var(--dash-text)]/25 rounded-sm transition-all disabled:opacity-30 disabled:cursor-not-allowed"
               >
                 Prev
               </button>
-              <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/40">
+              <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--dash-text)]/40">
                 Page {rsvpData.page} of {rsvpData.totalPages}
               </span>
               <button
                 onClick={() => loadRSVPs(rsvpData.page + 1)}
                 disabled={rsvpData.page >= rsvpData.totalPages || rsvpLoading}
-                className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-[#2d2b25]/50 hover:text-[#2d2b25] border border-[#2d2b25]/10 hover:border-[#2d2b25]/25 rounded-sm transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-[var(--dash-text)]/50 hover:text-[var(--dash-text)] border border-[var(--dash-text)]/10 hover:border-[var(--dash-text)]/25 rounded-sm transition-all disabled:opacity-30 disabled:cursor-not-allowed"
               >
                 Next
               </button>
@@ -2255,13 +2255,13 @@ function GuestListPanel({ rsvpData, loadRSVPs, site, set }: {
       {/* Delete confirmation modal */}
       {deleteConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setDeleteConfirm(null)}>
-          <div className="bg-[#faf1e1] border border-[#2d2b25]/15 rounded-sm p-6 max-w-sm mx-4 shadow-xl" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-[var(--dash-bg)] border border-[var(--dash-text)]/15 rounded-sm p-6 max-w-sm mx-4 shadow-xl" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-base font-medium mb-2" style={{ fontFamily: "'Cormorant Garamond', serif" }}>Delete RSVP</h3>
-            <p className="text-sm text-[#2d2b25]/60 mb-6">Are you sure you want to delete this RSVP? This action cannot be undone.</p>
+            <p className="text-sm text-[var(--dash-text)]/60 mb-6">Are you sure you want to delete this RSVP? This action cannot be undone.</p>
             <div className="flex items-center justify-end gap-3">
               <button
                 onClick={() => setDeleteConfirm(null)}
-                className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-[#2d2b25]/50 hover:text-[#2d2b25] transition-colors"
+                className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-[var(--dash-text)]/50 hover:text-[var(--dash-text)] transition-colors"
               >
                 Cancel
               </button>
@@ -2788,12 +2788,12 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
   }
 
   return (
-    <div className="min-h-screen bg-[#faf1e1]" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+    <div className="min-h-screen bg-[var(--dash-bg)]" style={{ fontFamily: "'DM Sans', sans-serif" }}>
       {/* ... Existing Head/Scripts ... */}
       
       {/* Upgrade banner for unpaid sites */}
       {!site.isPaid && (
-        <div className="sticky top-0 z-[60] bg-gradient-to-r from-[#2d2b25] via-[#3a3730] to-[#2d2b25] text-[#faf1e1] px-4 py-2.5 flex items-center justify-between">
+        <div className="sticky top-0 z-[60] bg-gradient-to-r from-[#2d2b25] via-[#3a3730] to-[#2d2b25] text-[var(--dash-bg)] px-4 py-2.5 flex items-center justify-between">
           <p className="text-xs">
             <span className="font-bold uppercase tracking-wider">Free plan</span>
             <span className="opacity-60 ml-2">Upgrade to publish your site and go live</span>
@@ -2801,7 +2801,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
           <button
             onClick={handleCheckout}
             disabled={isPaying}
-            className="px-4 py-1.5 bg-white text-[#2d2b25] text-[10px] font-bold uppercase tracking-widest rounded-sm hover:bg-white/90 disabled:opacity-50 transition-all"
+            className="px-4 py-1.5 bg-[var(--dash-surface)] text-[var(--dash-text)] text-[10px] font-bold uppercase tracking-widest rounded-sm hover:bg-[var(--dash-surface)]/90 disabled:opacity-50 transition-all"
           >
             {isPaying ? "Loading..." : "Upgrade — £50"}
           </button>
@@ -2809,22 +2809,21 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
       )}
 
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-[#2d2b25]/[0.08] bg-[#faf1e1]/95 backdrop-blur-sm">
+      <header className="sticky top-0 z-50 border-b border-[var(--dash-text)]/[0.08] bg-[var(--dash-bg)]/95 backdrop-blur-sm">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <a href="/" className="text-base hidden sm:block font-medium italic" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+            <a href="/" className="flex-shrink-0 text-[var(--dash-text)] text-xl font-bold italic" style={{ fontFamily: "'Playfair Display', serif" }} title="Home">
               ITSW
             </a>
-            <a href="/" className="text-base sm:hidden italic" style={{ fontFamily: "'Cormorant Garamond', serif" }}>ITSW</a>
-            <span className="text-[#2d2b25]/30">/</span>
-            <span className="text-xs sm:text-sm text-[#2d2b25]/60 truncate max-w-[100px] sm:max-w-none">{site.partner1Name} & {site.partner2Name}</span>
+            <span className="text-[var(--dash-text)]/30">/</span>
+            <span className="text-xs sm:text-sm text-[var(--dash-text)]/60 truncate max-w-[100px] sm:max-w-none">{site.partner1Name} & {site.partner2Name}</span>
           </div>
           <div className="flex items-center gap-1.5 sm:gap-3">
-            <div className="flex items-center gap-0.5 bg-[#2d2b25]/5 p-0.5 sm:p-1 rounded-sm">
+            <div className="flex items-center gap-0.5 bg-[var(--dash-text)]/5 p-0.5 sm:p-1 rounded-sm">
               <button
                 onClick={undo}
                 disabled={past.length === 0}
-                className="p-1 sm:p-1.5 rounded-sm hover:bg-white disabled:opacity-30 transition-all text-[#2d2b25]"
+                className="p-1 sm:p-1.5 rounded-sm hover:bg-[var(--dash-surface)] disabled:opacity-30 transition-all text-[var(--dash-text)]"
                 title="Undo (Ctrl+Z)"
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>
@@ -2832,7 +2831,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
               <button
                 onClick={redo}
                 disabled={future.length === 0}
-                className="p-1 sm:p-1.5 rounded-sm hover:bg-white disabled:opacity-30 transition-all text-[#2d2b25]"
+                className="p-1 sm:p-1.5 rounded-sm hover:bg-[var(--dash-surface)] disabled:opacity-30 transition-all text-[var(--dash-text)]"
                 title="Redo (Ctrl+Y)"
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3l3 2.7"/></svg>
@@ -2841,25 +2840,25 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
 
             <div className="flex items-center gap-1 px-1 sm:px-3">
               <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 transition-all duration-300 ${saveError ? "bg-red-500 animate-pulse" : saving ? "bg-amber-400 animate-pulse" : saved ? "bg-green-500 shadow-[0_0_6px_rgba(34,197,94,0.4)]" : "bg-amber-400"}`} />
-              <span className={`hidden sm:inline text-[10px] font-bold uppercase tracking-widest whitespace-nowrap transition-colors duration-300 ${saveError ? "text-red-600" : saved && !saving ? "text-green-600" : "text-[#2d2b25]/40"}`}>
+              <span className={`hidden sm:inline text-[10px] font-bold uppercase tracking-widest whitespace-nowrap transition-colors duration-300 ${saveError ? "text-red-600" : saved && !saving ? "text-green-600" : "text-[var(--dash-text)]/40"}`}>
                 {saveError ? "Error" : saving ? "Saving..." : saved ? "Saved" : "Unsaved"}
               </span>
             </div>
 
             {site.isPaid && site.isPublished && (
               <a href={`/${site.slug}`} target="_blank"
-                className="hidden sm:block text-xs tracking-wide uppercase text-[#2d2b25]/50 hover:text-[#2d2b25] transition-colors">
+                className="hidden sm:block text-xs tracking-wide uppercase text-[var(--dash-text)]/50 hover:text-[var(--dash-text)] transition-colors">
                 View Live
               </a>
             )}
 
-            <div className="flex bg-[#2d2b25]/5 rounded-sm p-0.5 sm:p-1">
+            <div className="flex bg-[var(--dash-text)]/5 rounded-sm p-0.5 sm:p-1">
               <button
                 onClick={() => { setView("website"); setIsPreview(false); }}
                 className={`px-2 sm:px-3 py-1 sm:py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-sm transition-all ${
                   view === "website" && !isPreview
-                  ? "bg-[#2d2b25] text-white shadow-sm"
-                  : "text-[#2d2b25]/40 hover:text-[#2d2b25]/60"
+                  ? "bg-[var(--dash-btn-bg)] text-white shadow-sm"
+                  : "text-[var(--dash-text)]/40 hover:text-[var(--dash-text)]/60"
                 }`}
               >
                 Edit
@@ -2868,19 +2867,19 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                 onClick={() => { setView("website"); setIsPreview(true); }}
                 className={`px-2 sm:px-3 py-1 sm:py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-sm transition-all ${
                   view === "website" && isPreview
-                  ? "bg-[#2d2b25] text-white shadow-sm"
-                  : "text-[#2d2b25]/40 hover:text-[#2d2b25]/60"
+                  ? "bg-[var(--dash-btn-bg)] text-white shadow-sm"
+                  : "text-[var(--dash-text)]/40 hover:text-[var(--dash-text)]/60"
                 }`}
               >
                 Live
               </button>
             </div>
 
-            <div className="hidden lg:flex bg-[#2d2b25]/5 rounded-sm p-1">
+            <div className="hidden lg:flex bg-[var(--dash-text)]/5 rounded-sm p-1">
               <button
                 onClick={() => setPreviewDevice("desktop")}
                 className={`px-2 py-1.5 rounded-sm transition-all ${
-                  previewDevice === "desktop" ? "bg-white shadow-sm text-[#2d2b25]" : "text-[#2d2b25]/40 hover:text-[#2d2b25]/60"
+                  previewDevice === "desktop" ? "bg-[var(--dash-surface)] shadow-sm text-[var(--dash-text)]" : "text-[var(--dash-text)]/40 hover:text-[var(--dash-text)]/60"
                 }`}
                 title="Desktop Preview"
               >
@@ -2889,7 +2888,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
               <button
                 onClick={() => setPreviewDevice("mobile")}
                 className={`px-2 py-1.5 rounded-sm transition-all ${
-                  previewDevice === "mobile" ? "bg-white shadow-sm text-[#2d2b25]" : "text-[#2d2b25]/40 hover:text-[#2d2b25]/60"
+                  previewDevice === "mobile" ? "bg-[var(--dash-surface)] shadow-sm text-[var(--dash-text)]" : "text-[var(--dash-text)]/40 hover:text-[var(--dash-text)]/60"
                 }`}
                 title="Mobile Preview"
               >
@@ -2899,7 +2898,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
 
             <form action="/api/auth/logout" method="POST">
               <button type="submit"
-                className="p-1 sm:p-0 text-[#2d2b25]/40 hover:text-red-500 transition-colors"
+                className="p-1 sm:p-0 text-[var(--dash-text)]/40 hover:text-red-500 transition-colors"
                 title="Logout"
               >
                 <span className="hidden sm:inline text-xs tracking-wide uppercase">Logout</span>
@@ -2913,7 +2912,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
       {/* Main Layout with Sidebar */}
       <div className={`mx-auto transition-all ${view === "website" && isPreview ? "max-w-[1800px] px-0 lg:px-3 py-0 lg:py-0" : "max-w-6xl px-3 sm:px-6 py-4 lg:py-8"} flex flex-col lg:flex-row gap-0 ${view === "website" && isPreview ? "lg:gap-4" : "lg:gap-8"}`}>
         {/* Sidebar / Mobile Tabs */}
-        <nav className={`shrink-0 sticky top-14 lg:top-[3.5rem] z-40 self-start transition-all ${view === "website" && isPreview ? "lg:w-36 lg:h-[calc(100vh-3.5rem)] lg:overflow-y-auto lg:pt-4" : "lg:w-44"} w-full overflow-x-auto lg:overflow-x-visible no-scrollbar mb-6 lg:mb-0 px-4 lg:px-0 block bg-[#faf1e1]/95 backdrop-blur-sm lg:bg-transparent lg:backdrop-blur-none py-2 lg:py-0 -mx-0 border-b border-[#2d2b25]/[0.06] lg:border-b-0`}>
+        <nav className={`shrink-0 sticky top-14 lg:top-[3.5rem] z-40 self-start transition-all ${view === "website" && isPreview ? "lg:w-36 lg:h-[calc(100vh-3.5rem)] lg:overflow-y-auto lg:pt-4" : "lg:w-44"} w-full overflow-x-auto lg:overflow-x-visible no-scrollbar mb-6 lg:mb-0 px-4 lg:px-0 block bg-[var(--dash-bg)]/95 backdrop-blur-sm lg:bg-transparent lg:backdrop-blur-none py-2 lg:py-0 -mx-0 border-b border-[var(--dash-text)]/[0.06] lg:border-b-0`}>
           <div className="flex lg:flex-col gap-1 min-w-max lg:min-w-0">
             {(() => {
               const order = site.sectionOrder ?? DEFAULT_SECTION_ORDER;
@@ -2936,10 +2935,10 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                 return (
                   <React.Fragment key={t.id}>
                   {t.divider && (
-                    <div className="hidden lg:block w-full h-px bg-[#2d2b25]/8 my-1" />
+                    <div className="hidden lg:block w-full h-px bg-[var(--dash-text)]/8 my-1" />
                   )}
                   {t.divider && (
-                    <span className="hidden lg:block text-[8px] font-bold uppercase tracking-[0.2em] text-[#2d2b25]/25 px-3 mt-1 mb-0.5">Sections</span>
+                    <span className="hidden lg:block text-[8px] font-bold uppercase tracking-[0.2em] text-[var(--dash-text)]/25 px-3 mt-1 mb-0.5">Sections</span>
                   )}
                   <button
                     onClick={() => {
@@ -2951,10 +2950,10 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                     }}
                     className={`whitespace-nowrap px-4 lg:px-3 py-1.5 lg:py-1.5 text-[11px] lg:text-[13px] transition-all duration-200 text-left rounded-sm ${
                       view === "website" && tab === t.id
-                        ? "text-[#2d2b25] font-semibold bg-[#2d2b25]/[0.08] shadow-sm"
+                        ? "text-[var(--dash-text)] font-semibold bg-[var(--dash-text)]/[0.08] shadow-sm"
                         : isHidden
-                          ? "text-[#2d2b25]/20 cursor-not-allowed italic"
-                          : "text-[#2d2b25]/40 hover:text-[#2d2b25]/70 hover:bg-[#2d2b25]/[0.03]"
+                          ? "text-[var(--dash-text)]/20 cursor-not-allowed italic"
+                          : "text-[var(--dash-text)]/40 hover:text-[var(--dash-text)]/70 hover:bg-[var(--dash-text)]/[0.03]"
                     }`}
                     title={isHidden ? `${t.label} is hidden in layout` : ""}
                   >
@@ -2974,8 +2973,8 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
             })()}
 
             {/* Management */}
-            <div className="hidden lg:block w-full h-px bg-[#2d2b25]/8 my-1" />
-            <span className="hidden lg:block text-[8px] font-bold uppercase tracking-[0.2em] text-[#2d2b25]/25 px-3 mt-1 mb-0.5">Management</span>
+            <div className="hidden lg:block w-full h-px bg-[var(--dash-text)]/8 my-1" />
+            <span className="hidden lg:block text-[8px] font-bold uppercase tracking-[0.2em] text-[var(--dash-text)]/25 px-3 mt-1 mb-0.5">Management</span>
             {([
               { id: "guests" as View, label: "Guests", icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> },
               { id: "gifts" as View, label: "Gifts", icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg> },
@@ -2986,8 +2985,8 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                 onClick={() => setView(item.id)}
                 className={`whitespace-nowrap px-4 lg:px-3 py-1.5 lg:py-1.5 text-[11px] lg:text-[13px] transition-all duration-200 w-full text-left rounded-sm ${
                   view === item.id
-                    ? "text-[#2d2b25] font-semibold bg-[#2d2b25]/[0.08] shadow-sm"
-                    : "text-[#2d2b25]/40 hover:text-[#2d2b25]/70 hover:bg-[#2d2b25]/[0.03]"
+                    ? "text-[var(--dash-text)] font-semibold bg-[var(--dash-text)]/[0.08] shadow-sm"
+                    : "text-[var(--dash-text)]/40 hover:text-[var(--dash-text)]/70 hover:bg-[var(--dash-text)]/[0.03]"
                 }`}
               >
                 <div className="flex items-center gap-2">
@@ -3035,9 +3034,9 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
 
                   {/* Custom Domain — right below Site URL */}
                   {site.isPaid && (
-                    <div className="mb-6 p-4 bg-[#2d2b25]/5 border border-[#2d2b25]/10 rounded-sm">
+                    <div className="mb-6 p-4 bg-[var(--dash-text)]/5 border border-[var(--dash-text)]/10 rounded-sm">
                       <Label>Custom Domain</Label>
-                      <p className="text-[10px] text-[#2d2b25]/40 mb-4 uppercase tracking-wider">Use your own domain instead of {site.slug}.ithinkshewifey.com</p>
+                      <p className="text-[10px] text-[var(--dash-text)]/40 mb-4 uppercase tracking-wider">Use your own domain instead of {site.slug}.ithinkshewifey.com</p>
                       {site.domainVerifiedAt ? (
                         <div className="p-4 bg-green-50 border border-green-200 rounded-sm">
                           <div className="flex items-center gap-2 mb-1">
@@ -3050,14 +3049,14 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                         </div>
                       ) : site.customDomain ? (
                         <div className="space-y-3">
-                          <div className="p-4 bg-[#2d2b25]/5 border border-[#2d2b25]/10 rounded-sm">
-                            <p className="text-sm font-medium text-[#2d2b25] mb-1">{site.customDomain}</p>
-                            <p className="text-[10px] text-[#2d2b25]/40">Point your domain&apos;s CNAME to <strong>proxy.ithinkshewifey.com</strong>, then verify below.</p>
+                          <div className="p-4 bg-[var(--dash-text)]/5 border border-[var(--dash-text)]/10 rounded-sm">
+                            <p className="text-sm font-medium text-[var(--dash-text)] mb-1">{site.customDomain}</p>
+                            <p className="text-[10px] text-[var(--dash-text)]/40">Point your domain&apos;s CNAME to <strong>proxy.ithinkshewifey.com</strong>, then verify below.</p>
                           </div>
                           <DomainStatus slug={site.slug} domain={site.customDomain} />
                           <button
                             onClick={() => setShowCancelDomainModal(true)}
-                            className="text-[10px] text-[#2d2b25]/40 underline hover:text-[#2d2b25]/60"
+                            className="text-[10px] text-[var(--dash-text)]/40 underline hover:text-[var(--dash-text)]/60"
                           >
                             Remove domain
                           </button>
@@ -3106,12 +3105,12 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                         onClick={() => set("layoutId", layout.id)}
                         className={`text-left p-4 rounded-sm border-2 transition-all ${
                           (site.layoutId || "classic") === layout.id
-                            ? "border-[#2d2b25] bg-[#2d2b25]/[0.02]"
-                            : "border-[#2d2b25]/10 hover:border-[#2d2b25]/30"
+                            ? "border-[var(--dash-text)] bg-[var(--dash-text)]/[0.02]"
+                            : "border-[var(--dash-text)]/10 hover:border-[var(--dash-text)]/30"
                         }`}
                       >
-                        <p className="text-sm font-bold text-[#2d2b25] uppercase tracking-tight">{layout.name}</p>
-                        <p className="text-[10px] text-[#2d2b25]/50 mt-1 leading-tight">{layout.desc}</p>
+                        <p className="text-sm font-bold text-[var(--dash-text)] uppercase tracking-tight">{layout.name}</p>
+                        <p className="text-[10px] text-[var(--dash-text)]/50 mt-1 leading-tight">{layout.desc}</p>
                       </button>
                     ))}
                   </div>
@@ -3124,8 +3123,8 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                         onClick={() => { set("templateId", theme.id); set("customColors", undefined as any); }}
                         className={`relative text-left p-3 rounded-sm border-2 transition-all ${
                           site.templateId === theme.id
-                            ? "border-[#2d2b25] shadow-sm bg-[#2d2b25]/[0.02]"
-                            : "border-[#2d2b25]/10 hover:border-[#2d2b25]/30"
+                            ? "border-[var(--dash-text)] shadow-sm bg-[var(--dash-text)]/[0.02]"
+                            : "border-[var(--dash-text)]/10 hover:border-[var(--dash-text)]/30"
                         }`}
                       >
                         <div className="flex gap-1.5 mb-2">
@@ -3133,9 +3132,9 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                           <span className="w-5 h-5 rounded-full border border-black/10" style={{ background: theme.colors.accent }} />
                           <span className="w-5 h-5 rounded-full border border-black/10" style={{ background: theme.colors.dark }} />
                         </div>
-                        <p className="text-[11px] font-bold uppercase tracking-tight text-[#2d2b25]">{theme.name}</p>
+                        <p className="text-[11px] font-bold uppercase tracking-tight text-[var(--dash-text)]">{theme.name}</p>
                         {site.templateId === theme.id && (
-                          <span className="absolute top-2 right-2 text-[8px] font-bold uppercase tracking-widest text-[#2d2b25]/40">Active</span>
+                          <span className="absolute top-2 right-2 text-[8px] font-bold uppercase tracking-widest text-[var(--dash-text)]/40">Active</span>
                         )}
                       </button>
                     ))}
@@ -3157,18 +3156,18 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                         onClick={() => { set("fontStyleId", style.id); set("customFonts", undefined as any); }}
                         className={`relative text-left p-4 rounded-sm border-2 transition-all ${
                           (site.fontStyleId || "timeless") === style.id
-                            ? "border-[#2d2b25] shadow-sm bg-[#2d2b25]/[0.02]"
-                            : "border-[#2d2b25]/10 hover:border-[#2d2b25]/30"
+                            ? "border-[var(--dash-text)] shadow-sm bg-[var(--dash-text)]/[0.02]"
+                            : "border-[var(--dash-text)]/10 hover:border-[var(--dash-text)]/30"
                         }`}
                       >
-                        <p className="text-sm font-bold text-[#2d2b25] uppercase tracking-tight mb-2">{style.name}</p>
-                        <div className="flex flex-col gap-1 border-t border-[#2d2b25]/5 pt-2">
+                        <p className="text-sm font-bold text-[var(--dash-text)] uppercase tracking-tight mb-2">{style.name}</p>
+                        <div className="flex flex-col gap-1 border-t border-[var(--dash-text)]/5 pt-2">
                           <span className="text-lg" style={{ fontFamily: style.fonts.script }}>The Wedding of</span>
                           <span className="text-xs uppercase tracking-widest" style={{ fontFamily: style.fonts.serif }}>Partner & Partner</span>
                           <span className="text-[9px] uppercase font-bold opacity-40" style={{ fontFamily: style.fonts.sans }}>Saturday, August 1st 2026</span>
                         </div>
                         {(site.fontStyleId || "timeless") === style.id && (
-                          <span className="absolute top-2 right-2 text-[9px] font-bold uppercase tracking-widest text-[#2d2b25]/40">Active</span>
+                          <span className="absolute top-2 right-2 text-[9px] font-bold uppercase tracking-widest text-[var(--dash-text)]/40">Active</span>
                         )}
                       </button>
                     ))}
@@ -3182,15 +3181,15 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                   </div>
 
                   {/* Publish Section */}
-                  <div className="mt-10 pt-8 border-t border-[#2d2b25]/10">
+                  <div className="mt-10 pt-8 border-t border-[var(--dash-text)]/10">
                     <Label>Publish Your Site</Label>
                     {site.isPaid ? (
-                      <div className="flex items-center justify-between p-4 bg-white border border-[#2d2b25]/10 rounded-sm">
+                      <div className="flex items-center justify-between p-4 bg-[var(--dash-surface)] border border-[var(--dash-text)]/10 rounded-sm">
                         <div>
-                          <p className="text-sm font-medium text-[#2d2b25]">
+                          <p className="text-sm font-medium text-[var(--dash-text)]">
                             {site.isPublished ? "Your site is live" : "Your site is hidden"}
                           </p>
-                          <p className="text-[10px] text-[#2d2b25]/40 mt-0.5">
+                          <p className="text-[10px] text-[var(--dash-text)]/40 mt-0.5">
                             {site.isPublished
                               ? <>Visible at <a href={site.customDomain ? `https://${site.customDomain}` : `https://${site.slug}.ithinkshewifey.com`} target="_blank" className="underline">{site.customDomain || `${site.slug}.ithinkshewifey.com`}</a></>
                               : "Toggle to make your site visible to guests"}
@@ -3198,17 +3197,17 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                         </div>
                         <button
                           onClick={() => set("isPublished", !site.isPublished)}
-                          className={`relative w-12 h-7 rounded-full transition-colors ${site.isPublished ? "bg-green-500" : "bg-[#2d2b25]/15"}`}
+                          className={`relative w-12 h-7 rounded-full transition-colors ${site.isPublished ? "bg-green-500" : "bg-[var(--dash-text)]/15"}`}
                         >
-                          <span className={`absolute top-1 w-5 h-5 bg-white rounded-full shadow-sm transition-transform ${site.isPublished ? "left-6" : "left-1"}`} />
+                          <span className={`absolute top-1 w-5 h-5 bg-[var(--dash-surface)] rounded-full shadow-sm transition-transform ${site.isPublished ? "left-6" : "left-1"}`} />
                         </button>
                       </div>
                     ) : (
-                      <div className="p-5 bg-white border border-[#2d2b25]/10 rounded-sm">
-                        <p className="text-sm text-[#2d2b25]/60 mb-4 leading-relaxed">
+                      <div className="p-5 bg-[var(--dash-surface)] border border-[var(--dash-text)]/10 rounded-sm">
+                        <p className="text-sm text-[var(--dash-text)]/60 mb-4 leading-relaxed">
                           Upgrade to publish your wedding site and share it with your guests.
                         </p>
-                        <ul className="text-sm text-[#2d2b25]/70 space-y-2 mb-5">
+                        <ul className="text-sm text-[var(--dash-text)]/70 space-y-2 mb-5">
                           <li className="flex gap-2.5 items-center">
                             <svg className="shrink-0 text-green-600" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
                             Publish & share your site
@@ -3225,7 +3224,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                         <button
                           onClick={handleCheckout}
                           disabled={isPaying}
-                          className="w-full py-3 bg-[#2d2b25] text-[#faf1e1] font-bold uppercase tracking-widest text-[10px] rounded-sm hover:opacity-90 disabled:opacity-50 transition-all"
+                          className="w-full py-3 bg-[var(--dash-btn-bg)] text-[var(--dash-bg)] font-bold uppercase tracking-widest text-[10px] rounded-sm hover:opacity-90 disabled:opacity-50 transition-all"
                         >
                           {isPaying ? "Preparing Checkout..." : "Upgrade — £50 one-time"}
                         </button>
@@ -3238,7 +3237,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
               if (tab === "Layout") return (
                 <div>
                   <SectionTitle>Section Order & Visibility</SectionTitle>
-                  <p className="text-xs text-[#2d2b25]/50 mb-4">
+                  <p className="text-xs text-[var(--dash-text)]/50 mb-4">
                     Drag to reorder sections. Duplicate or remove as needed.
                   </p>
                   <SortableList
@@ -3251,10 +3250,10 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                         <div className="flex flex-col gap-3">
                           <div className="flex items-center justify-between">
                             <div className="flex flex-col">
-                              <span className={`text-sm font-medium ${section.visible ? "text-[#2d2b25]" : "text-[#2d2b25]/30 line-through"}`}>
+                              <span className={`text-sm font-medium ${section.visible ? "text-[var(--dash-text)]" : "text-[var(--dash-text)]/30 line-through"}`}>
                                 {SECTION_LABELS[section.type] || SECTION_LABELS[section.id] || section.id}
                               </span>
-                              <span className="text-[9px] font-bold uppercase tracking-widest text-[#2d2b25]/30">
+                              <span className="text-[9px] font-bold uppercase tracking-widest text-[var(--dash-text)]/30">
                                 {section.id}
                               </span>
                             </div>
@@ -3263,7 +3262,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                               <button
                                 type="button"
                                 onClick={() => duplicateSection(i)}
-                                className="p-1.5 text-[#2d2b25]/40 hover:text-[#2d2b25] transition-colors"
+                                className="p-1.5 text-[var(--dash-text)]/40 hover:text-[var(--dash-text)] transition-colors"
                                 title="Duplicate Section"
                               >
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -3274,7 +3273,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                               <button
                                 type="button"
                                 onClick={() => removeSection(i)}
-                                className="p-1.5 text-[#2d2b25]/40 hover:text-red-500 transition-colors"
+                                className="p-1.5 text-[var(--dash-text)]/40 hover:text-red-500 transition-colors"
                                 title="Remove Section"
                               >
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -3293,8 +3292,8 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                                 }}
                                 className={`p-1.5 transition-colors ${
                                   section.visible
-                                    ? "text-[#2d2b25]/60 hover:text-[#2d2b25]"
-                                    : "text-[#2d2b25]/20 hover:text-[#2d2b25]/40"
+                                    ? "text-[var(--dash-text)]/60 hover:text-[var(--dash-text)]"
+                                    : "text-[var(--dash-text)]/20 hover:text-[var(--dash-text)]/40"
                                 }`}
                                 title={section.visible ? "Hide section" : "Show section"}
                               >
@@ -3317,9 +3316,9 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                     )}
                   </SortableList>
 
-                  <div className="mt-8 pt-8 border-t border-[#2d2b25]/10">
+                  <div className="mt-8 pt-8 border-t border-[var(--dash-text)]/10">
                     <SectionTitle>Add New Section</SectionTitle>
-                    <p className="text-[10px] font-medium text-[#2d2b25]/40 uppercase tracking-widest mb-4">Click to append to layout</p>
+                    <p className="text-[10px] font-medium text-[var(--dash-text)]/40 uppercase tracking-widest mb-4">Click to append to layout</p>
                     <div className="flex flex-wrap gap-2">
                       {Object.entries(SECTION_LABELS).map(([type, label]) => {
                         // Unique sections that shouldn't be duplicated usually, 
@@ -3332,7 +3331,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                           <button
                             key={type}
                             onClick={() => addSection(type)}
-                            className="text-[10px] font-bold uppercase tracking-wider px-3 py-2 border border-[#2d2b25]/10 bg-white/30 hover:border-[#2d2b25]/30 hover:bg-white/60 transition-all rounded-sm"
+                            className="text-[10px] font-bold uppercase tracking-wider px-3 py-2 border border-[var(--dash-text)]/10 bg-white/30 hover:border-[var(--dash-text)]/30 hover:bg-[var(--dash-surface-alt)] transition-all rounded-sm"
                           >+ {label}</button>
                         );
                       })}
@@ -3347,9 +3346,9 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
               const section = order.find(s => s.id === tab);
               
               if (!section) return (
-                <div className="flex flex-col items-center justify-center h-full text-[#2d2b25]/40 pt-20">
+                <div className="flex flex-col items-center justify-center h-full text-[var(--dash-text)]/40 pt-20">
                   <p>Section not found or removed.</p>
-                  <button onClick={() => handleTabChange("Basics")} className="mt-4 text-sm font-bold uppercase tracking-wider text-[#2d2b25] hover:underline">Go to Basics</button>
+                  <button onClick={() => handleTabChange("Basics")} className="mt-4 text-sm font-bold uppercase tracking-wider text-[var(--dash-text)] hover:underline">Go to Basics</button>
                 </div>
               );
 
@@ -3389,7 +3388,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                     onChange={setBgColor as any}
                     themeColors={activeTheme.colors}
                   />
-                  <div className="h-px bg-[#2d2b25]/5 my-6" />
+                  <div className="h-px bg-[var(--dash-text)]/5 my-6" />
                   <ImageField
                     label={label}
                     value={bg}
@@ -3400,7 +3399,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                   {bg && (
                     <div className="mt-4">
                       <Label>Text Color</Label>
-                      <p className="text-[10px] text-[#2d2b25]/40 mb-2 uppercase tracking-wider">Text color over the background image</p>
+                      <p className="text-[10px] text-[var(--dash-text)]/40 mb-2 uppercase tracking-wider">Text color over the background image</p>
                       <div className="flex gap-2">
                         {([
                           { id: "", name: "Default", color: activeTheme.colors.accent },
@@ -3413,16 +3412,16 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                             key={opt.id || "default"}
                             type="button"
                             onClick={() => setTextColor(opt.id)}
-                            className={`flex items-center gap-2 px-3 py-2 rounded-sm border transition-all ${textColor === opt.id ? "border-[#2d2b25] bg-[#2d2b25]/5" : "border-[#2d2b25]/10 hover:border-[#2d2b25]/30"}`}
+                            className={`flex items-center gap-2 px-3 py-2 rounded-sm border transition-all ${textColor === opt.id ? "border-[var(--dash-text)] bg-[var(--dash-text)]/5" : "border-[var(--dash-text)]/10 hover:border-[var(--dash-text)]/30"}`}
                           >
-                            <span className="w-4 h-4 rounded-full border border-[#2d2b25]/20" style={{ background: opt.color }} />
+                            <span className="w-4 h-4 rounded-full border border-[var(--dash-text)]/20" style={{ background: opt.color }} />
                             <span className="text-[10px] font-bold uppercase tracking-wider">{opt.name}</span>
                           </button>
                         ))}
                       </div>
                     </div>
                   )}
-                  <div className="h-px bg-[#2d2b25]/10 mt-6" />
+                  <div className="h-px bg-[var(--dash-text)]/10 mt-6" />
                 </div>
               );
 
@@ -3460,7 +3459,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                             body[i] = e.target.value;
                             set("storyBody", body);
                           }}
-                          className="w-full px-3 py-2 border border-[#2d2b25]/15 bg-white/50 text-[#2d2b25] text-sm outline-none focus:border-[#2d2b25]/40 resize-y rounded-sm"
+                          className="w-full px-3 py-2 border border-[var(--dash-text)]/15 bg-[var(--dash-surface)] text-[var(--dash-text)] text-sm outline-none focus:border-[var(--dash-text)]/40 resize-y rounded-sm"
                         />
                       </SortableCard>
                     )}
@@ -3515,7 +3514,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                             body[i] = e.target.value;
                             set("letterBody", body);
                           }}
-                          className="w-full px-3 py-2 border border-[#2d2b25]/15 bg-white/50 text-[#2d2b25] text-sm outline-none focus:border-[#2d2b25]/40 resize-y rounded-sm"
+                          className="w-full px-3 py-2 border border-[var(--dash-text)]/15 bg-[var(--dash-surface)] text-[var(--dash-text)] text-sm outline-none focus:border-[var(--dash-text)]/40 resize-y rounded-sm"
                         />
                       </SortableCard>
                     )}
@@ -3533,7 +3532,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                 <div>
                   <SectionTitle>Celebration Events</SectionTitle>
                   {renderBg("Details Background Image")}
-                  <p className="text-xs text-[#2d2b25]/50 mb-6">
+                  <p className="text-xs text-[var(--dash-text)]/50 mb-6">
                     Add multiple days or events (e.g., Wedding Day, Farewell Brunch). Each can have its own venues and info.
                   </p>
 
@@ -3579,17 +3578,17 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                                   type="button"
                                   onClick={() => set("eventDays", updateInArray(site.eventDays, di, { detailsStyle: style }))}
                                   className={`p-2 rounded-sm border transition-all text-center ${
-                                    (day.detailsStyle || "grid") === style ? "border-[#2d2b25] bg-[#2d2b25]/5" : "border-[#2d2b25]/10 hover:border-[#2d2b25]/30"
+                                    (day.detailsStyle || "grid") === style ? "border-[var(--dash-text)] bg-[var(--dash-text)]/5" : "border-[var(--dash-text)]/10 hover:border-[var(--dash-text)]/30"
                                   }`}
                                 >
-                                  <p className="text-[9px] font-bold uppercase tracking-widest text-[#2d2b25]">{style}</p>
+                                  <p className="text-[9px] font-bold uppercase tracking-widest text-[var(--dash-text)]">{style}</p>
                                 </button>
                               ))}
                             </div>
                           </div>
 
                           <div className="space-y-4">
-                            <p className="text-[10px] font-bold uppercase tracking-wider text-[#2d2b25]/40">Venues & Locations</p>
+                            <p className="text-[10px] font-bold uppercase tracking-wider text-[var(--dash-text)]/40">Venues & Locations</p>
                             <SortableList items={day.venues} prefix={`venues-${dayId}`} onReorder={(newVenues) => set("eventDays", updateInArray(site.eventDays, di, { venues: newVenues }))}>
                               {(v, vi, vId) => (
                                 <SortableCard key={vId} id={vId} title={v.label || `Venue ${vi + 1}`} onRemove={() => set("eventDays", updateInArray(site.eventDays, di, { venues: removeFromArray(day.venues, vi) }))}>
@@ -3601,11 +3600,11 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                                 </SortableCard>
                               )}
                             </SortableList>
-                            <button type="button" onClick={() => set("eventDays", updateInArray(site.eventDays, di, { venues: [...day.venues, { label: "", name: "", address: "", time: "" }] }))} className="text-[10px] font-bold uppercase text-[#2d2b25]/40 hover:text-[#2d2b25] transition-colors">+ Add Venue</button>
+                            <button type="button" onClick={() => set("eventDays", updateInArray(site.eventDays, di, { venues: [...day.venues, { label: "", name: "", address: "", time: "" }] }))} className="text-[10px] font-bold uppercase text-[var(--dash-text)]/40 hover:text-[var(--dash-text)] transition-colors">+ Add Venue</button>
                           </div>
 
                           <div className="space-y-4">
-                            <p className="text-[10px] font-bold uppercase tracking-wider text-[#2d2b25]/40">Information Blocks</p>
+                            <p className="text-[10px] font-bold uppercase tracking-wider text-[var(--dash-text)]/40">Information Blocks</p>
                             <SortableList items={day.infoBlocks} prefix={`info-${dayId}`} onReorder={(newBlocks) => set("eventDays", updateInArray(site.eventDays, di, { infoBlocks: newBlocks }))}>
                               {(b, bi, bId) => (
                                 <SortableCard key={bId} id={bId} onRemove={() => set("eventDays", updateInArray(site.eventDays, di, { infoBlocks: removeFromArray(day.infoBlocks, bi) }))}>
@@ -3614,7 +3613,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                                 </SortableCard>
                               )}
                             </SortableList>
-                            <button type="button" onClick={() => set("eventDays", updateInArray(site.eventDays, di, { infoBlocks: [...day.infoBlocks, { text: "" }] }))} className="text-[10px] font-bold uppercase text-[#2d2b25]/40 hover:text-[#2d2b25] transition-colors">+ Add Info Block</button>
+                            <button type="button" onClick={() => set("eventDays", updateInArray(site.eventDays, di, { infoBlocks: [...day.infoBlocks, { text: "" }] }))} className="text-[10px] font-bold uppercase text-[var(--dash-text)]/40 hover:text-[var(--dash-text)] transition-colors">+ Add Info Block</button>
                           </div>
 
                           <Field label="Additional Note" value={day.note || ""} onChange={(v) => set("eventDays", updateInArray(site.eventDays, di, { note: v }))} multiline rows={2} />
@@ -3633,8 +3632,8 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                   <Label>Visualization Style</Label>
                   <div className="grid grid-cols-3 gap-3 mt-2 mb-8">
                     {(["classic", "minimal", "cards"] as const).map((style) => (
-                      <button key={style} type="button" onClick={() => set("scheduleStyle", style)} className={`p-3 rounded-sm border-2 transition-all text-center ${(site.scheduleStyle || "classic") === style ? "border-[#2d2b25] bg-[#2d2b25]/5" : "border-[#2d2b25]/10 hover:border-[#2d2b25]/30"}`}>
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-[#2d2b25]">{style}</p>
+                      <button key={style} type="button" onClick={() => set("scheduleStyle", style)} className={`p-3 rounded-sm border-2 transition-all text-center ${(site.scheduleStyle || "classic") === style ? "border-[var(--dash-text)] bg-[var(--dash-text)]/5" : "border-[var(--dash-text)]/10 hover:border-[var(--dash-text)]/30"}`}>
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--dash-text)]">{style}</p>
                       </button>
                     ))}
                   </div>
@@ -3647,8 +3646,8 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                           <Field label="Date" value={day.date || ""} onChange={(v) => set("weddingDays", updateInArray(site.weddingDays ?? [], di, { date: v }))} placeholder="August 1st" />
                         </div>
                         <div className="flex items-center gap-2 mb-4">
-                          <input type="checkbox" id={`private-${di}`} checked={day.isPrivate} onChange={(e) => set("weddingDays", updateInArray(site.weddingDays ?? [], di, { isPrivate: e.target.checked }))} className="accent-[#2d2b25]" />
-                          <label htmlFor={`private-${di}`} className="text-xs text-[#2d2b25]/60">Private (hidden from public site)</label>
+                          <input type="checkbox" id={`private-${di}`} checked={day.isPrivate} onChange={(e) => set("weddingDays", updateInArray(site.weddingDays ?? [], di, { isPrivate: e.target.checked }))} className="accent-[var(--dash-text)]" />
+                          <label htmlFor={`private-${di}`} className="text-xs text-[var(--dash-text)]/60">Private (hidden from public site)</label>
                         </div>
                         <Label>Items</Label>
                         <SortableList items={day.items} prefix={`items-${sid}`} onReorder={(items) => set("weddingDays", updateInArray(site.weddingDays ?? [], di, { items }))}>
@@ -3727,9 +3726,9 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                   <Field label="Menu Note" value={site.menuNote} onChange={(v) => set("menuNote", v)} multiline rows={2} />
 
                   {!hasCategories && site.menuItems.length > 0 && (
-                    <div className="mb-4 p-3 border border-dashed border-[#2d2b25]/15 rounded-sm">
-                      <p className="text-[10px] text-[#2d2b25]/50 mb-2">You have dishes without categories. Organise them into courses?</p>
-                      <button type="button" onClick={migrateToCategories} className="text-[10px] font-bold uppercase tracking-wider text-[#2d2b25] hover:underline">
+                    <div className="mb-4 p-3 border border-dashed border-[var(--dash-text)]/15 rounded-sm">
+                      <p className="text-[10px] text-[var(--dash-text)]/50 mb-2">You have dishes without categories. Organise them into courses?</p>
+                      <button type="button" onClick={migrateToCategories} className="text-[10px] font-bold uppercase tracking-wider text-[var(--dash-text)] hover:underline">
                         Convert to Categories
                       </button>
                     </div>
@@ -3743,7 +3742,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                             <Field label="Name" value={m.name} onChange={(v) => set("menuItems", updateInArray(site.menuItems, i, { name: v }))} placeholder="e.g. Chicken, Beef, Vegetarian" />
                             <Field label="Description" value={m.description} onChange={(v) => set("menuItems", updateInArray(site.menuItems, i, { description: v }))} multiline rows={2} />
                             <div className="mt-2">
-                              <label className="text-[9px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/40 block mb-2">Dietary Options Available</label>
+                              <label className="text-[9px] font-bold uppercase tracking-[0.15em] text-[var(--dash-text)]/40 block mb-2">Dietary Options Available</label>
                               <div className="flex flex-wrap gap-1.5">
                                 {["Halal", "Kosher", "Vegan", "Vegetarian", "Gluten-Free", "Dairy-Free", "Nut-Free"].map(opt => {
                                   const active = m.dietaryOptions?.includes(opt);
@@ -3758,8 +3757,8 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                                       }}
                                       className={`px-2.5 py-1 text-[10px] font-medium rounded-sm border transition-all ${
                                         active
-                                          ? "bg-[#2d2b25] text-white border-[#2d2b25]"
-                                          : "text-[#2d2b25]/40 border-[#2d2b25]/10 hover:border-[#2d2b25]/25"
+                                          ? "bg-[var(--dash-btn-bg)] text-white border-[var(--dash-text)]"
+                                          : "text-[var(--dash-text)]/40 border-[var(--dash-text)]/10 hover:border-[var(--dash-text)]/25"
                                       }`}
                                     >
                                       {opt}
@@ -3767,7 +3766,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                                   );
                                 })}
                               </div>
-                              <p className="text-[9px] text-[#2d2b25]/30 mt-1.5">Select which dietary options are available for this dish. These appear in the RSVP form.</p>
+                              <p className="text-[9px] text-[var(--dash-text)]/30 mt-1.5">Select which dietary options are available for this dish. These appear in the RSVP form.</p>
                             </div>
                           </SortableCard>
                         )}
@@ -3784,20 +3783,20 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                   {hasCategories && (
                     <>
                       {categories.map((cat, catIdx) => (
-                        <div key={cat.id} className="mb-6 border border-[#2d2b25]/10 rounded-sm overflow-hidden">
+                        <div key={cat.id} className="mb-6 border border-[var(--dash-text)]/10 rounded-sm overflow-hidden">
                           {/* Category header */}
-                          <div className="bg-[#2d2b25]/[0.03] px-3 py-2.5 flex items-center gap-2 border-b border-[#2d2b25]/10">
+                          <div className="bg-[var(--dash-text)]/[0.03] px-3 py-2.5 flex items-center gap-2 border-b border-[var(--dash-text)]/10">
                             <input
                               type="text"
                               value={cat.name}
                               onChange={(e) => updateCategory(catIdx, { name: e.target.value })}
                               placeholder="e.g. Starters, Main Course, Desserts"
-                              className="flex-1 bg-transparent text-sm font-bold uppercase tracking-[0.08em] text-[#2d2b25] outline-none placeholder:text-[#2d2b25]/25 placeholder:normal-case placeholder:font-normal placeholder:tracking-normal"
+                              className="flex-1 bg-transparent text-sm font-bold uppercase tracking-[0.08em] text-[var(--dash-text)] outline-none placeholder:text-[var(--dash-text)]/25 placeholder:normal-case placeholder:font-normal placeholder:tracking-normal"
                             />
                             <button
                               type="button"
                               onClick={() => removeCategory(catIdx)}
-                              className="text-[#2d2b25]/25 hover:text-red-500 transition-colors shrink-0"
+                              className="text-[var(--dash-text)]/25 hover:text-red-500 transition-colors shrink-0"
                               title="Remove category"
                             >
                               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -3808,11 +3807,11 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                           {/* Dishes in this category */}
                           <div className="px-3 py-2 space-y-3">
                             {cat.items.map((dish, dishIdx) => (
-                              <div key={dishIdx} className="relative pl-3 border-l-2 border-[#2d2b25]/10">
+                              <div key={dishIdx} className="relative pl-3 border-l-2 border-[var(--dash-text)]/10">
                                 <button
                                   type="button"
                                   onClick={() => removeDish(catIdx, dishIdx)}
-                                  className="absolute top-0 right-0 text-[#2d2b25]/20 hover:text-red-500 transition-colors"
+                                  className="absolute top-0 right-0 text-[var(--dash-text)]/20 hover:text-red-500 transition-colors"
                                   title="Remove dish"
                                 >
                                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -3822,7 +3821,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                                 <Field label="Dish Name" value={dish.name} onChange={(v) => updateDish(catIdx, dishIdx, { name: v })} placeholder="e.g. Grilled Salmon" />
                                 <Field label="Description" value={dish.description} onChange={(v) => updateDish(catIdx, dishIdx, { description: v })} placeholder="A brief description" multiline rows={2} />
                                 <div className="mt-1">
-                                  <label className="text-[9px] font-bold uppercase tracking-[0.15em] text-[#2d2b25]/40 block mb-2">Dietary Options</label>
+                                  <label className="text-[9px] font-bold uppercase tracking-[0.15em] text-[var(--dash-text)]/40 block mb-2">Dietary Options</label>
                                   <div className="flex flex-wrap gap-1.5">
                                     {["Halal", "Kosher", "Vegan", "Vegetarian", "Gluten-Free", "Dairy-Free", "Nut-Free"].map(opt => {
                                       const active = dish.dietaryOptions?.includes(opt);
@@ -3837,8 +3836,8 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                                           }}
                                           className={`px-2.5 py-1 text-[10px] font-medium rounded-sm border transition-all ${
                                             active
-                                              ? "bg-[#2d2b25] text-white border-[#2d2b25]"
-                                              : "text-[#2d2b25]/40 border-[#2d2b25]/10 hover:border-[#2d2b25]/25"
+                                              ? "bg-[var(--dash-btn-bg)] text-white border-[var(--dash-text)]"
+                                              : "text-[var(--dash-text)]/40 border-[var(--dash-text)]/10 hover:border-[var(--dash-text)]/25"
                                           }`}
                                         >
                                           {opt}
@@ -3852,7 +3851,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                             <button
                               type="button"
                               onClick={() => addDishToCategory(catIdx)}
-                              className="w-full py-2 text-[10px] font-bold uppercase tracking-wider text-[#2d2b25]/30 hover:text-[#2d2b25]/60 border border-dashed border-[#2d2b25]/10 hover:border-[#2d2b25]/25 rounded-sm transition-all"
+                              className="w-full py-2 text-[10px] font-bold uppercase tracking-wider text-[var(--dash-text)]/30 hover:text-[var(--dash-text)]/60 border border-dashed border-[var(--dash-text)]/10 hover:border-[var(--dash-text)]/25 rounded-sm transition-all"
                             >
                               + Add Dish
                             </button>
@@ -3947,7 +3946,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                           <Field label="Website URL" value={h.bookingUrl} onChange={(v) => set("accommodations", updateInArray(site.accommodations, i, { bookingUrl: v }))} placeholder="https://hotel.com/book" />
                           <Field label="Website Button Label" value={h.buttonLabel || ""} onChange={(v) => set("accommodations", updateInArray(site.accommodations, i, { buttonLabel: v }))} placeholder="Visit Website" />
                         </div>
-                        <p className="text-[10px] text-[#2d2b25]/40 mt-1">Fill in phone, email, or website to show a contact button. Multiple options create a dropdown.</p>
+                        <p className="text-[10px] text-[var(--dash-text)]/40 mt-1">Fill in phone, email, or website to show a contact button. Multiple options create a dropdown.</p>
                       </SortableCard>
                     )}
                   </SortableList>
@@ -3962,9 +3961,9 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                   <Field label="Heading" value={site.rsvpHeading} onChange={(v) => set("rsvpHeading", v)} />
                   <Field label="Deadline Text" value={site.rsvpDeadlineText} onChange={(v) => set("rsvpDeadlineText", v)} />
 
-                  <div className="mt-10 pt-8 border-t border-[#2d2b25]/10">
+                  <div className="mt-10 pt-8 border-t border-[var(--dash-text)]/10">
                     <Label>Email Notifications</Label>
-                    <p className="text-[10px] text-[#2d2b25]/40 mb-4 uppercase tracking-wider">Get notified when guests RSVP and send them a confirmation</p>
+                    <p className="text-[10px] text-[var(--dash-text)]/40 mb-4 uppercase tracking-wider">Get notified when guests RSVP and send them a confirmation</p>
                     <Field label="Your Email" value={site.coupleEmail || ""} onChange={(v) => set("coupleEmail", v)} placeholder="you@example.com — receive RSVP notifications" />
                     <Field label="Custom Confirmation Message" value={site.rsvpConfirmationMessage || ""} onChange={(v) => set("rsvpConfirmationMessage", v)} placeholder="Optional message to include in the guest's confirmation email" multiline rows={3} />
                   </div>
@@ -3978,10 +3977,10 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                   <Field label="Heading" value={site.giftHeading} onChange={(v) => set("giftHeading", v)} />
                   <Field label="Subheading" value={site.giftSubheading} onChange={(v) => set("giftSubheading", v)} multiline rows={3} />
                   <Field label="Footnote / Thank You Message" value={site.giftNote || ""} onChange={(v) => set("giftNote", v)} multiline rows={2} placeholder="e.g. Thank you for your generosity!" />
-                  <div className="mt-8 mb-4 p-4 bg-[#2d2b25]/5 border border-[#2d2b25]/10 rounded-sm flex items-center justify-between">
+                  <div className="mt-8 mb-4 p-4 bg-[var(--dash-text)]/5 border border-[var(--dash-text)]/10 rounded-sm flex items-center justify-between">
                     <div>
                       <Label>Add Gift Items</Label>
-                      <p className="text-[10px] text-[#2d2b25]/40 mt-1 uppercase tracking-wider">
+                      <p className="text-[10px] text-[var(--dash-text)]/40 mt-1 uppercase tracking-wider">
                         {(site.giftEnableContributions ?? true)
                           ? "Guests pick from your gift list, then contribute an amount"
                           : "Guests go straight to the contribution form"}
@@ -3989,22 +3988,22 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                     </div>
                     <button
                       onClick={() => set("giftEnableContributions", !(site.giftEnableContributions ?? true))}
-                      className={`relative w-12 h-7 rounded-full transition-colors flex-shrink-0 ${(site.giftEnableContributions ?? true) ? "bg-[#2d2b25]" : "bg-[#2d2b25]/15"}`}
+                      className={`relative w-12 h-7 rounded-full transition-colors flex-shrink-0 ${(site.giftEnableContributions ?? true) ? "bg-[var(--dash-btn-bg)]" : "bg-[var(--dash-text)]/15"}`}
                     >
-                      <span className={`absolute top-1 w-5 h-5 bg-white rounded-full shadow-sm transition-transform ${(site.giftEnableContributions ?? true) ? "left-6" : "left-1"}`} />
+                      <span className={`absolute top-1 w-5 h-5 bg-[var(--dash-surface)] rounded-full shadow-sm transition-transform ${(site.giftEnableContributions ?? true) ? "left-6" : "left-1"}`} />
                     </button>
                   </div>
 
-                  <div className="mb-4 p-4 bg-[#2d2b25]/5 border border-[#2d2b25]/10 rounded-sm flex items-center justify-between">
+                  <div className="mb-4 p-4 bg-[var(--dash-text)]/5 border border-[var(--dash-text)]/10 rounded-sm flex items-center justify-between">
                     <div>
                       <Label>Show Guest Name Field</Label>
-                      <p className="text-[10px] text-[#2d2b25]/40 mt-1 uppercase tracking-wider">Ask guests for their name on the contribution form</p>
+                      <p className="text-[10px] text-[var(--dash-text)]/40 mt-1 uppercase tracking-wider">Ask guests for their name on the contribution form</p>
                     </div>
                     <button
                       onClick={() => set("giftShowName", !(site.giftShowName ?? false))}
-                      className={`relative w-12 h-7 rounded-full transition-colors flex-shrink-0 ${(site.giftShowName ?? false) ? "bg-[#2d2b25]" : "bg-[#2d2b25]/15"}`}
+                      className={`relative w-12 h-7 rounded-full transition-colors flex-shrink-0 ${(site.giftShowName ?? false) ? "bg-[var(--dash-btn-bg)]" : "bg-[var(--dash-text)]/15"}`}
                     >
-                      <span className={`absolute top-1 w-5 h-5 bg-white rounded-full shadow-sm transition-transform ${(site.giftShowName ?? false) ? "left-6" : "left-1"}`} />
+                      <span className={`absolute top-1 w-5 h-5 bg-[var(--dash-surface)] rounded-full shadow-sm transition-transform ${(site.giftShowName ?? false) ? "left-6" : "left-1"}`} />
                     </button>
                   </div>
 
@@ -4012,7 +4011,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                   {(site.giftEnableContributions ?? true) && (
                     <div className="mt-4 mb-10 animate-in fade-in slide-in-from-top-2 duration-300">
                       <Label>Gift Items</Label>
-                      <p className="text-[10px] text-[#2d2b25]/40 mb-4 uppercase tracking-wider">Add gifts guests can contribute towards</p>
+                      <p className="text-[10px] text-[var(--dash-text)]/40 mb-4 uppercase tracking-wider">Add gifts guests can contribute towards</p>
 
                       <SortableList
                         items={site.giftItems || []}
@@ -4036,7 +4035,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
 
                   <div className="mt-8 mb-10">
                     <Label>External Registry Links</Label>
-                    <p className="text-[10px] text-[#2d2b25]/40 mb-4 uppercase tracking-wider">Link each account to the currencies it accepts</p>
+                    <p className="text-[10px] text-[var(--dash-text)]/40 mb-4 uppercase tracking-wider">Link each account to the currencies it accepts</p>
 
                     <SortableList
                       items={site.giftPaymentLinks || []}
@@ -4063,7 +4062,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
 
                   <div className="mt-8">
                     <Label>Bank & Payment Options</Label>
-                    <p className="text-[10px] text-[#2d2b25]/40 mb-4 uppercase tracking-wider">Add bank details with their accepted currencies</p>
+                    <p className="text-[10px] text-[var(--dash-text)]/40 mb-4 uppercase tracking-wider">Add bank details with their accepted currencies</p>
 
                     <SortableList
                       items={site.giftBankDetails || []}
@@ -4137,9 +4136,9 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
             <div 
               onMouseDown={startResizing}
               onTouchStart={startResizing}
-              className="w-1.5 h-full cursor-col-resize hover:bg-[#2d2b25]/10 active:bg-[#2d2b25]/20 transition-colors flex items-center justify-center group relative z-10 mx-1"
+              className="w-1.5 h-full cursor-col-resize hover:bg-[var(--dash-text)]/10 active:bg-[var(--dash-text)]/20 transition-colors flex items-center justify-center group relative z-10 mx-1"
             >
-              <div className="w-px h-12 bg-[#2d2b25]/10 group-hover:bg-[#2d2b25]/30 group-active:bg-[#2d2b25]/50 transition-colors" />
+              <div className="w-px h-12 bg-[var(--dash-text)]/10 group-hover:bg-[var(--dash-text)]/30 group-active:bg-[var(--dash-text)]/50 transition-colors" />
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-8 bg-transparent" /> {/* Larger hit area */}
             </div>
           )}
@@ -4148,17 +4147,17 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
           {isPreview && (
             <div
               style={{ width: `${100 - editorWidth}%`, maxWidth: `${100 - editorWidth}%` }}
-              className="sticky top-[3.5rem] h-[calc(100vh-3.5rem)] border border-[#2d2b25]/10 bg-white rounded-sm overflow-hidden flex flex-col shadow-xl transition-all min-w-0 shrink-0 hidden lg:flex"
+              className="sticky top-[3.5rem] h-[calc(100vh-3.5rem)] border border-[var(--dash-text)]/10 bg-[var(--dash-surface)] rounded-sm overflow-hidden flex flex-col shadow-xl transition-all min-w-0 shrink-0 hidden lg:flex"
             >
-              <div className="bg-[#2d2b25]/[0.02] border-b border-[#2d2b25]/10 px-4 py-2 flex items-center justify-between">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#2d2b25]/40">Real-time Preview</span>
-                <span className="text-[10px] text-[#2d2b25]/30">{previewDevice === "desktop" ? "Desktop Mode" : "Mobile View"} &bull; Auto-syncing</span>
+              <div className="bg-[var(--dash-text)]/[0.02] border-b border-[var(--dash-text)]/10 px-4 py-2 flex items-center justify-between">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--dash-text)]/40">Real-time Preview</span>
+                <span className="text-[10px] text-[var(--dash-text)]/30">{previewDevice === "desktop" ? "Desktop Mode" : "Mobile View"} &bull; Auto-syncing</span>
               </div>
               <div className="flex-1 bg-[#f0f0f0] overflow-hidden flex justify-center p-0 lg:p-4 min-w-0">
                 <div
                   ref={previewContainerRef}
                   style={{ containerType: "inline-size" }}
-                  className={`bg-white shadow-2xl transition-all h-full origin-top overflow-y-auto overflow-x-hidden ${
+                  className={`bg-[var(--dash-surface)] shadow-2xl transition-all h-full origin-top overflow-y-auto overflow-x-hidden ${
                     previewDevice === "mobile" ? "w-full max-w-[375px]" : "w-full"
                   } ${isDragging ? "pointer-events-none" : ""}`}
                   onClick={(e) => {
@@ -4189,12 +4188,12 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
 
       {/* Mobile full-screen preview overlay */}
       {isMobile && isPreview && view === "website" && (
-        <div className="fixed inset-0 z-[100] bg-white flex flex-col">
-          <div className="flex items-center justify-between px-4 py-2 border-b border-[#2d2b25]/10 bg-[#faf1e1]">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[#2d2b25]/40">Preview</span>
+        <div className="fixed inset-0 z-[100] bg-[var(--dash-surface)] flex flex-col">
+          <div className="flex items-center justify-between px-4 py-2 border-b border-[var(--dash-text)]/10 bg-[var(--dash-bg)]">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--dash-text)]/40">Preview</span>
             <button
               onClick={() => setIsPreview(false)}
-              className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider bg-[#2d2b25] text-white rounded-sm"
+              className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider bg-[var(--dash-btn-bg)] text-white rounded-sm"
             >
               Back to Edit
             </button>
@@ -4212,19 +4211,19 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
       {/* URL Rename Confirmation Modal */}
       {showRenameConfirm && (
         <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setShowRenameConfirm(false)}>
-          <div className="bg-[#faf1e1] border border-[#2d2b25]/15 rounded-sm p-6 max-w-sm mx-4 shadow-xl" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-[var(--dash-bg)] border border-[var(--dash-text)]/15 rounded-sm p-6 max-w-sm mx-4 shadow-xl" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-base font-medium mb-1" style={{ fontFamily: "'Cormorant Garamond', serif" }}>Change Site URL</h3>
-            <p className="text-sm text-[#2d2b25]/60 mb-2">Your site will move to:</p>
-            <p className="text-sm font-medium text-[#2d2b25] bg-[#2d2b25]/5 border border-[#2d2b25]/10 rounded-sm px-3 py-2 mb-4 break-all">
+            <p className="text-sm text-[var(--dash-text)]/60 mb-2">Your site will move to:</p>
+            <p className="text-sm font-medium text-[var(--dash-text)] bg-[var(--dash-text)]/5 border border-[var(--dash-text)]/10 rounded-sm px-3 py-2 mb-4 break-all">
               {site.slug}.ithinkshewifey.com
             </p>
-            <p className="text-[10px] text-[#2d2b25]/40 uppercase tracking-wider mb-6">
+            <p className="text-[10px] text-[var(--dash-text)]/40 uppercase tracking-wider mb-6">
               This will change your public website link. You will be redirected to the new dashboard.
             </p>
             <div className="flex items-center justify-end gap-3">
               <button
                 onClick={() => setShowRenameConfirm(false)}
-                className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-[#2d2b25]/50 hover:text-[#2d2b25] transition-colors"
+                className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-[var(--dash-text)]/50 hover:text-[var(--dash-text)] transition-colors"
               >
                 Cancel
               </button>
@@ -4233,7 +4232,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                   setShowRenameConfirm(false);
                   handleSave(false, true);
                 }}
-                className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest bg-[#2d2b25] text-[#faf1e1] rounded-sm hover:opacity-90 transition-opacity"
+                className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest bg-[var(--dash-btn-bg)] text-[var(--dash-bg)] rounded-sm hover:opacity-90 transition-opacity"
               >
                 Confirm Change
               </button>
@@ -4245,18 +4244,18 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
       {/* Cancel Domain Request Modal */}
       {showCancelDomainModal && (
         <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setShowCancelDomainModal(false)}>
-          <div className="bg-[#faf1e1] border border-[#2d2b25]/15 rounded-sm p-6 max-w-sm mx-4 shadow-xl" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-[var(--dash-bg)] border border-[var(--dash-text)]/15 rounded-sm p-6 max-w-sm mx-4 shadow-xl" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-base font-medium mb-1" style={{ fontFamily: "'Cormorant Garamond', serif" }}>Cancel Domain Request</h3>
-            <p className="text-sm text-[#2d2b25]/60 mb-2">
+            <p className="text-sm text-[var(--dash-text)]/60 mb-2">
               Are you sure you want to cancel your request for <strong>{site.customDomain}</strong>?
             </p>
-            <p className="text-[10px] text-[#2d2b25]/40 uppercase tracking-wider mb-6">
+            <p className="text-[10px] text-[var(--dash-text)]/40 uppercase tracking-wider mb-6">
               You can always request a new domain later.
             </p>
             <div className="flex items-center justify-end gap-3">
               <button
                 onClick={() => setShowCancelDomainModal(false)}
-                className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-[#2d2b25]/50 hover:text-[#2d2b25] transition-colors"
+                className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-[var(--dash-text)]/50 hover:text-[var(--dash-text)] transition-colors"
               >
                 Keep Request
               </button>
@@ -4278,16 +4277,16 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
       {/* Save Error Modal */}
       {showSaveErrorModal && (
         <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setShowSaveErrorModal(null)}>
-          <div className="bg-[#faf1e1] border border-[#2d2b25]/15 rounded-sm p-6 max-w-sm mx-4 shadow-xl" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-[var(--dash-bg)] border border-[var(--dash-text)]/15 rounded-sm p-6 max-w-sm mx-4 shadow-xl" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-base font-medium mb-1 text-red-700" style={{ fontFamily: "'Cormorant Garamond', serif" }}>Save Failed</h3>
-            <p className="text-sm text-[#2d2b25]/70 mb-2 break-words">{showSaveErrorModal}</p>
-            <p className="text-[10px] text-[#2d2b25]/40 uppercase tracking-wider mb-6">
+            <p className="text-sm text-[var(--dash-text)]/70 mb-2 break-words">{showSaveErrorModal}</p>
+            <p className="text-[10px] text-[var(--dash-text)]/40 uppercase tracking-wider mb-6">
               Your changes have not been saved. Please check your connection and try again.
             </p>
             <div className="flex items-center justify-end">
               <button
                 onClick={() => setShowSaveErrorModal(null)}
-                className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest bg-[#2d2b25] text-[#faf1e1] rounded-sm hover:opacity-90 transition-opacity"
+                className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest bg-[var(--dash-btn-bg)] text-[var(--dash-bg)] rounded-sm hover:opacity-90 transition-opacity"
               >
                 Dismiss
               </button>

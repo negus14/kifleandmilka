@@ -36,7 +36,8 @@ function baseLayout(content: string, site: WeddingSite) {
 <tr><td align="center">
 <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:4px;overflow:hidden;max-width:100%;">
   <tr><td style="padding:40px 40px 0;text-align:center;">
-    <p style="font-size:12px;letter-spacing:3px;text-transform:uppercase;color:#8a8578;margin:0 0 8px;">
+    <a href="https://www.ithinkshewifey.com" style="font-family:'Playfair Display',Georgia,serif;font-size:18px;font-weight:bold;font-style:italic;color:#2d2b25;text-decoration:none;">ITSW</a>
+    <p style="font-size:12px;letter-spacing:3px;text-transform:uppercase;color:#8a8578;margin:12px 0 8px;">
       ${escapeHtml(site.partner1Name)} &amp; ${escapeHtml(site.partner2Name)}
     </p>
   </td></tr>
