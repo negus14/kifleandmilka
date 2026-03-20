@@ -449,14 +449,15 @@
 .gift-contrib__error { color: #dc2626; font-size: 0.85rem; }
 
 .gift-contrib__btn {
-  width: 100%; padding: 0.9rem; font: inherit; font-size: 0.85rem; font-weight: 600;
-  text-transform: uppercase; letter-spacing: 0.15em; cursor: pointer; transition: all 0.2s;
+  display: block; width: auto; margin: 2rem auto 0; padding: 0.85rem 3rem;
+  font: inherit; font-size: 0.72rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.18em; cursor: pointer; transition: all 0.3s ease;
   background: var(--color-dark, #2d2b25); color: var(--color-primary, #faf1e1); border: 1px solid var(--color-dark, #2d2b25);
 }
 .gift-contrib__btn:hover { background: transparent; color: var(--color-dark, #2d2b25); }
 .gift-contrib__btn:disabled { opacity: 0.5; cursor: not-allowed; }
-.gift-contrib__btn--outline { background: transparent; color: var(--color-dark, #2d2b25); }
-.gift-contrib__btn--outline:hover { background: var(--color-dark, #2d2b25); color: var(--color-primary, #faf1e1); }
+.gift-contrib__btn--outline { background: transparent; color: var(--color-dark, #2d2b25); border: 1px solid color-mix(in srgb, var(--color-dark, #2d2b25), transparent 70%); }
+.gift-contrib__btn--outline:hover { border-color: var(--color-dark, #2d2b25); background: var(--color-dark, #2d2b25); color: var(--color-primary, #faf1e1); }
 
 .gift-contrib__success { text-align: center; padding: 2rem 0; }
 .gift-contrib__success-title { font-size: 1.3rem; font-weight: 600; margin-bottom: 0.5rem; }

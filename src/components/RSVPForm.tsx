@@ -422,7 +422,6 @@ export default function RSVPForm({ slug, mealOptions, mealDietaryOptions, calend
           type="button"
           onClick={addGuest}
           className="rsvp__button rsvp__button--outline"
-          style={{ width: "100%", marginBottom: "2rem", padding: "0.8rem", borderStyle: "dashed" }}
         >
           + Add Partner / Family Member
         </button>
@@ -446,7 +445,6 @@ export default function RSVPForm({ slug, mealOptions, mealDietaryOptions, calend
         type="submit"
         disabled={status === "loading"}
         className="rsvp__button"
-        style={{ width: "100%", padding: "1rem", fontSize: "1.1rem" }}
       >
         {status === "loading" ? "Sending RSVP..." : "Submit RSVP"}
       </button>
