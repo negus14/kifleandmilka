@@ -1262,19 +1262,20 @@ img[data-zoomable] {
 }
 
 .gift-contrib__btn {
-  width: 100%;
-  padding: 1.25rem;
+  display: block;
+  width: auto;
+  margin: 2rem auto 0;
+  padding: 0.85rem 3rem;
   background: var(--color-dark);
   color: var(--color-primary);
   font-family: var(--font-sans);
-  font-size: 0.85rem;
-  font-weight: 700;
-  letter-spacing: 0.2em;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  border: 2px solid var(--color-dark);
+  border: 1px solid var(--color-dark);
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-top: 1rem;
 }
 
 .gift-contrib__btn:hover {
@@ -1549,19 +1550,20 @@ img[data-zoomable] {
 }
 
 .rsvp__button {
-  width: 100%;
-  padding: 1.25rem;
+  display: block;
+  width: auto;
+  margin: 2rem auto 0;
+  padding: 0.85rem 3rem;
   background: var(--color-dark);
   color: var(--color-primary);
   font-family: var(--font-sans);
-  font-size: 0.85rem;
-  font-weight: 700;
-  letter-spacing: 0.2em;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  border: 2px solid var(--color-dark);
+  border: 1px solid var(--color-dark);
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-top: 1rem;
 }
 
 .rsvp__button:hover {
@@ -1577,9 +1579,12 @@ img[data-zoomable] {
 .rsvp__button--outline {
   background: transparent;
   color: var(--color-dark);
+  border: 1px solid color-mix(in srgb, var(--color-dark), transparent 70%);
+  font-weight: 500;
 }
 
 .rsvp__button--outline:hover {
+  border-color: var(--color-dark);
   background: var(--color-dark);
   color: var(--color-primary);
 }
