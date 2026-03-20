@@ -265,7 +265,7 @@ function TimePicker({ label, hour, period, onChange }: {
 
 function Card({ children, onRemove, title }: { children: React.ReactNode; onRemove?: () => void; title?: string }) {
   return (
-    <div className="border border-[var(--dash-text)]/10 bg-white/40 p-4 rounded-sm mb-3 relative transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(45,43,37,0.06)]">
+    <div className="border border-[var(--dash-text)]/10 bg-[var(--dash-surface)] p-4 rounded-sm mb-3 relative transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
       {title && <p className="text-xs font-semibold tracking-wide uppercase text-[var(--dash-text)]/40 mb-3">{title}</p>}
       {onRemove && (
         <button onClick={onRemove} type="button"
@@ -879,7 +879,7 @@ function SortableCard({ id, children, onRemove, title }: {
 
   return (
     <div ref={setNodeRef} style={style}>
-      <div className="border border-[var(--dash-text)]/10 bg-white/40 p-4 pl-10 rounded-sm mb-3 relative">
+      <div className="border border-[var(--dash-text)]/10 bg-[var(--dash-surface)] p-4 pl-10 rounded-sm mb-3 relative">
         <DragHandle listeners={listeners} attributes={attributes} />
         {title && <p className="text-xs font-semibold tracking-wide uppercase text-[var(--dash-text)]/40 mb-3">{title}</p>}
         {onRemove && (
@@ -1000,7 +1000,7 @@ function GiftTrackerPanel({ giftData, loadGifts, site }: {
           { label: "Confirmed", value: confirmed, color: "text-green-700" },
           { label: "Pending", value: pending, color: "text-[var(--dash-text)]/40" },
         ].map((stat) => (
-          <div key={stat.label} className="p-3 bg-[var(--dash-surface)] border border-[var(--dash-text)]/8 rounded-sm text-center transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(45,43,37,0.06)]">
+          <div key={stat.label} className="p-3 bg-[var(--dash-surface)] border border-[var(--dash-text)]/8 rounded-sm text-center transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
             <p className={`text-xl font-serif italic ${stat.color}`}>{stat.value}</p>
             <p className="text-[8px] font-bold uppercase tracking-[0.15em] text-[var(--dash-text)]/35 mt-0.5">{stat.label}</p>
           </div>
@@ -1800,7 +1800,7 @@ function GuestListPanel({ rsvpData, loadRSVPs, site, set }: {
           { label: "Attending", value: attending, color: "text-green-700" },
           { label: "Declined", value: declined, color: "text-[var(--dash-text)]/40" },
         ].map((stat) => (
-          <div key={stat.label} className="p-3 bg-[var(--dash-surface)] border border-[var(--dash-text)]/8 rounded-sm text-center transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(45,43,37,0.06)]">
+          <div key={stat.label} className="p-3 bg-[var(--dash-surface)] border border-[var(--dash-text)]/8 rounded-sm text-center transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
             <p className={`text-xl font-serif italic ${stat.color}`}>{stat.value}</p>
             <p className="text-[8px] font-bold uppercase tracking-[0.15em] text-[var(--dash-text)]/35 mt-0.5">{stat.label}</p>
           </div>
@@ -2796,7 +2796,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
       
       {/* Upgrade banner for unpaid sites */}
       {!site.isPaid && (
-        <div className="sticky top-0 z-[60] bg-gradient-to-r from-[#2d2b25] via-[#3a3730] to-[#2d2b25] text-[var(--dash-bg)] px-4 py-2.5 flex items-center justify-between">
+        <div className="sticky top-0 z-[60] bg-gradient-to-r from-[var(--dash-btn-bg)] via-[color-mix(in_srgb,var(--dash-btn-bg),var(--dash-text)_15%)] to-[var(--dash-btn-bg)] text-[var(--dash-bg)] px-4 py-2.5 flex items-center justify-between">
           <p className="text-xs">
             <span className="font-bold uppercase tracking-wider">Free plan</span>
             <span className="opacity-60 ml-2">Upgrade to publish your site and go live</span>
@@ -3354,7 +3354,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                           <button
                             key={type}
                             onClick={() => addSection(type)}
-                            className="text-[10px] font-bold uppercase tracking-wider px-3 py-2 border border-[var(--dash-text)]/10 bg-white/30 hover:border-[var(--dash-text)]/30 hover:bg-[var(--dash-surface-alt)] transition-all rounded-sm"
+                            className="text-[10px] font-bold uppercase tracking-wider px-3 py-2 border border-[var(--dash-text)]/10 bg-[var(--dash-surface)] hover:border-[var(--dash-text)]/30 hover:bg-[var(--dash-surface-alt)] transition-all rounded-sm"
                           >+ {label}</button>
                         );
                       })}
