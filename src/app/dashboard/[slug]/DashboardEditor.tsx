@@ -41,6 +41,8 @@ import ClassicTemplate from "@/templates/classic/Template";
 import ModernTemplate from "@/templates/modern/Template";
 import ColorCustomizer from "@/components/dashboard/ColorCustomizer";
 import FontCustomizer from "@/components/dashboard/FontCustomizer";
+import ThemeToggle from "@/components/dashboard/ThemeToggle";
+import { useTheme } from "@/components/dashboard/ThemeProvider";
 
 const STATIC_TABS = ["Basics", "Layout"] as const;
 type View = "website" | "guests" | "gifts" | "messages";
@@ -106,7 +108,7 @@ function SlugField({ currentSlug, onSave, customDomain, domainVerified }: { curr
         <span className="flex-1 text-sm text-[var(--dash-text)]/70 truncate select-all">{shareUrl}</span>
         <button
           onClick={handleCopy}
-          className="shrink-0 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider bg-[var(--dash-btn-bg)] text-white rounded-sm hover:bg-[var(--dash-text)]/90 transition-all"
+          className="shrink-0 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider bg-[var(--dash-btn-bg)] text-[var(--dash-btn-text)] rounded-sm hover:bg-[var(--dash-text)]/90 transition-all"
         >
           {copied ? "Copied!" : "Copy"}
         </button>
@@ -473,7 +475,7 @@ function DomainStatus({ slug, domain }: { slug: string; domain: string }) {
 
   return (
     <div className="mt-3 flex items-center gap-3">
-      <button onClick={check} disabled={status === "checking"} className="px-4 py-2 text-[10px] font-bold uppercase tracking-wider bg-[var(--dash-btn-bg)] text-white rounded-sm hover:bg-[var(--dash-text)]/90 disabled:opacity-50 transition-all">
+      <button onClick={check} disabled={status === "checking"} className="px-4 py-2 text-[10px] font-bold uppercase tracking-wider bg-[var(--dash-btn-bg)] text-[var(--dash-btn-text)] rounded-sm hover:bg-[var(--dash-text)]/90 disabled:opacity-50 transition-all">
         {status === "checking" ? "Verifying..." : "Verify & Connect"}
       </button>
       {status === "configured" && <span className="text-[10px] text-green-600 font-medium">{message}</span>}
@@ -1355,7 +1357,7 @@ function MessagesPanel({ msgData, loadMessages, site }: {
                   key={ch}
                   type="button"
                   onClick={() => setChannel(ch)}
-                  className={`px-4 py-2 text-[10px] font-bold uppercase tracking-wider transition-all ${channel === ch ? "bg-[var(--dash-btn-bg)] text-white" : "bg-[var(--dash-surface)] text-[var(--dash-text)]/50 hover:text-[var(--dash-text)]/80"}`}
+                  className={`px-4 py-2 text-[10px] font-bold uppercase tracking-wider transition-all ${channel === ch ? "bg-[var(--dash-btn-bg)] text-[var(--dash-btn-text)]" : "bg-[var(--dash-surface)] text-[var(--dash-text)]/50 hover:text-[var(--dash-text)]/80"}`}
                 >
                   {ch === "email" ? "Email" : "SMS"}
                 </button>
@@ -1423,7 +1425,7 @@ function MessagesPanel({ msgData, loadMessages, site }: {
           <button
             onClick={handleSend}
             disabled={sending || !selectedGroup || !body.trim() || (channel === "email" && !subject.trim()) || !isPremium}
-            className="w-full py-3 text-[11px] font-bold uppercase tracking-[0.2em] bg-[var(--dash-btn-bg)] text-white rounded-sm hover:bg-[var(--dash-text)]/90 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+            className="w-full py-3 text-[11px] font-bold uppercase tracking-[0.2em] bg-[var(--dash-btn-bg)] text-[var(--dash-btn-text)] rounded-sm hover:bg-[var(--dash-text)]/90 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
           >
             {sending ? "Sending..." : channel === "sms" ? "Send SMS" : "Send Email"}
           </button>
@@ -1534,7 +1536,7 @@ function MessagesPanel({ msgData, loadMessages, site }: {
                             <button
                               onClick={() => handleAddMembers(g.id)}
                               disabled={savingMembers || !memberInput.trim()}
-                              className="mt-2 px-4 py-2 text-[10px] font-bold uppercase tracking-wider bg-[var(--dash-btn-bg)] text-white rounded-sm hover:bg-[var(--dash-text)]/90 disabled:opacity-30"
+                              className="mt-2 px-4 py-2 text-[10px] font-bold uppercase tracking-wider bg-[var(--dash-btn-bg)] text-[var(--dash-btn-text)] rounded-sm hover:bg-[var(--dash-text)]/90 disabled:opacity-30"
                             >
                               {savingMembers ? "Adding..." : "Add Emails"}
                             </button>
@@ -1560,7 +1562,7 @@ function MessagesPanel({ msgData, loadMessages, site }: {
               <button
                 onClick={handleCreateGroup}
                 disabled={creatingGroup || !newGroupName.trim()}
-                className="px-4 py-2 text-[10px] font-bold uppercase tracking-wider bg-[var(--dash-btn-bg)] text-white rounded-sm hover:bg-[var(--dash-text)]/90 disabled:opacity-30"
+                className="px-4 py-2 text-[10px] font-bold uppercase tracking-wider bg-[var(--dash-btn-bg)] text-[var(--dash-btn-text)] rounded-sm hover:bg-[var(--dash-text)]/90 disabled:opacity-30"
               >
                 {creatingGroup ? "..." : "Add"}
               </button>
@@ -1902,7 +1904,7 @@ function GuestListPanel({ rsvpData, loadRSVPs, site, set }: {
                   onClick={() => setFilter(f.key)}
                   className={`px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-sm transition-all ${
                     filter === f.key
-                      ? "bg-[var(--dash-btn-bg)] text-white shadow-sm"
+                      ? "bg-[var(--dash-btn-bg)] text-[var(--dash-btn-text)] shadow-sm"
                       : "text-[var(--dash-text)]/40 hover:text-[var(--dash-text)]/60"
                   }`}
                 >
@@ -2283,7 +2285,8 @@ function GuestListPanel({ rsvpData, loadRSVPs, site, set }: {
 
 export default function DashboardEditor({ site: initial }: { site: WeddingSite }) {
   const router = useRouter();
-  
+  const { pref, setPref } = useTheme();
+
   const [site, setSite] = useState(initial);
   
   // History stacks
@@ -2788,7 +2791,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
   }
 
   return (
-    <div className="min-h-screen bg-[var(--dash-bg)]" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+    <div className="min-h-screen bg-[var(--dash-bg)]" style={{ fontFamily: "'DM Sans', sans-serif", transition: "background-color 0.2s, color 0.2s" }}>
       {/* ... Existing Head/Scripts ... */}
       
       {/* Upgrade banner for unpaid sites */}
@@ -2857,7 +2860,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                 onClick={() => { setView("website"); setIsPreview(false); }}
                 className={`px-2 sm:px-3 py-1 sm:py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-sm transition-all ${
                   view === "website" && !isPreview
-                  ? "bg-[var(--dash-btn-bg)] text-white shadow-sm"
+                  ? "bg-[var(--dash-btn-bg)] text-[var(--dash-btn-text)] shadow-sm"
                   : "text-[var(--dash-text)]/40 hover:text-[var(--dash-text)]/60"
                 }`}
               >
@@ -2867,7 +2870,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                 onClick={() => { setView("website"); setIsPreview(true); }}
                 className={`px-2 sm:px-3 py-1 sm:py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-sm transition-all ${
                   view === "website" && isPreview
-                  ? "bg-[var(--dash-btn-bg)] text-white shadow-sm"
+                  ? "bg-[var(--dash-btn-bg)] text-[var(--dash-btn-text)] shadow-sm"
                   : "text-[var(--dash-text)]/40 hover:text-[var(--dash-text)]/60"
                 }`}
               >
@@ -2895,6 +2898,8 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
               </button>
             </div>
+
+            <ThemeToggle />
 
             <form action="/api/auth/logout" method="POST">
               <button type="submit"
@@ -3178,6 +3183,24 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                       customFonts={site.customFonts}
                       onChange={(fonts) => set("customFonts", fonts as any)}
                     />
+                  </div>
+
+                  {/* Appearance */}
+                  <Label>Appearance</Label>
+                  <div className="flex gap-1 bg-[var(--dash-text)]/5 rounded-sm p-1">
+                    {(["system", "light", "dark"] as const).map((opt) => (
+                      <button
+                        key={opt}
+                        onClick={() => setPref(opt)}
+                        className={`flex-1 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-sm transition-all ${
+                          pref === opt
+                            ? "bg-[var(--dash-btn-bg)] text-[var(--dash-btn-text)] shadow-sm"
+                            : "text-[var(--dash-text)]/40 hover:text-[var(--dash-text)]/60"
+                        }`}
+                      >
+                        {opt === "system" ? "System" : opt === "light" ? "Light" : "Dark"}
+                      </button>
+                    ))}
                   </div>
 
                   {/* Publish Section */}
@@ -3757,7 +3780,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                                       }}
                                       className={`px-2.5 py-1 text-[10px] font-medium rounded-sm border transition-all ${
                                         active
-                                          ? "bg-[var(--dash-btn-bg)] text-white border-[var(--dash-text)]"
+                                          ? "bg-[var(--dash-btn-bg)] text-[var(--dash-btn-text)] border-[var(--dash-text)]"
                                           : "text-[var(--dash-text)]/40 border-[var(--dash-text)]/10 hover:border-[var(--dash-text)]/25"
                                       }`}
                                     >
@@ -3836,7 +3859,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                                           }}
                                           className={`px-2.5 py-1 text-[10px] font-medium rounded-sm border transition-all ${
                                             active
-                                              ? "bg-[var(--dash-btn-bg)] text-white border-[var(--dash-text)]"
+                                              ? "bg-[var(--dash-btn-bg)] text-[var(--dash-btn-text)] border-[var(--dash-text)]"
                                               : "text-[var(--dash-text)]/40 border-[var(--dash-text)]/10 hover:border-[var(--dash-text)]/25"
                                           }`}
                                         >
@@ -4193,7 +4216,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
             <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--dash-text)]/40">Preview</span>
             <button
               onClick={() => setIsPreview(false)}
-              className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider bg-[var(--dash-btn-bg)] text-white rounded-sm"
+              className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider bg-[var(--dash-btn-bg)] text-[var(--dash-btn-text)] rounded-sm"
             >
               Back to Edit
             </button>
