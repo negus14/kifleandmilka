@@ -64,22 +64,22 @@ export default function FontCustomizer({ fontStyleId, customFonts, onChange }: F
       <button
         type="button"
         onClick={() => setExpanded(true)}
-        className="w-full text-left px-3 py-3 border border-[#2d2b25]/10 rounded-sm hover:border-[#2d2b25]/30 transition-all group"
+        className="w-full text-left px-3 py-3 border border-[var(--dash-text)]/10 rounded-sm hover:border-[var(--dash-text)]/30 transition-all group"
       >
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-[#2d2b25]/70">
+            <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-[var(--dash-text)]/70">
               Customize Fonts
             </p>
-            <p className="text-[10px] text-[#2d2b25]/40 mt-0.5">
+            <p className="text-[10px] text-[var(--dash-text)]/40 mt-0.5">
               {hasCustom ? "Custom font overrides active" : "Pick individual fonts"}
             </p>
           </div>
           <div className="flex items-center gap-1.5">
             {hasCustom && (
-              <span className="w-2 h-2 rounded-full bg-[#2d2b25]/60" />
+              <span className="w-2 h-2 rounded-full bg-[var(--dash-text)]/60" />
             )}
-            <svg className="w-4 h-4 text-[#2d2b25]/30 group-hover:text-[#2d2b25]/50 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 text-[var(--dash-text)]/30 group-hover:text-[var(--dash-text)]/50 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>
           </div>
@@ -89,16 +89,16 @@ export default function FontCustomizer({ fontStyleId, customFonts, onChange }: F
   }
 
   return (
-    <div className="border border-[#2d2b25]/10 rounded-sm overflow-hidden">
+    <div className="border border-[var(--dash-text)]/10 rounded-sm overflow-hidden">
       <button
         type="button"
         onClick={() => setExpanded(false)}
-        className="w-full text-left px-3 py-3 hover:bg-[#2d2b25]/[0.02] transition-all flex items-center justify-between"
+        className="w-full text-left px-3 py-3 hover:bg-[var(--dash-text)]/[0.02] transition-all flex items-center justify-between"
       >
-        <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-[#2d2b25]/70">
+        <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-[var(--dash-text)]/70">
           Customize Fonts
         </p>
-        <svg className="w-4 h-4 text-[#2d2b25]/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-4 h-4 text-[var(--dash-text)]/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
         </svg>
       </button>
@@ -112,20 +112,20 @@ export default function FontCustomizer({ fontStyleId, customFonts, onChange }: F
           return (
             <div key={key}>
               <div className="flex items-center gap-2 mb-1.5">
-                <span className="text-[11px] font-bold uppercase tracking-tight text-[#2d2b25]">
+                <span className="text-[11px] font-bold uppercase tracking-tight text-[var(--dash-text)]">
                   {label}
                 </span>
                 {isCustom && (
-                  <span className="text-[8px] font-bold uppercase tracking-widest text-[#2d2b25]/30">
+                  <span className="text-[8px] font-bold uppercase tracking-widest text-[var(--dash-text)]/30">
                     Custom
                   </span>
                 )}
               </div>
-              <p className="text-[9px] text-[#2d2b25]/40 mb-2">{desc}</p>
+              <p className="text-[9px] text-[var(--dash-text)]/40 mb-2">{desc}</p>
               <select
                 value={currentFont}
                 onChange={(e) => setFont(key, e.target.value)}
-                className="w-full px-3 py-2.5 border border-[#2d2b25]/15 bg-white/50 text-[#2d2b25] text-sm outline-none focus:border-[#2d2b25]/40 rounded-sm appearance-none cursor-pointer"
+                className="w-full px-3 py-2.5 border border-[var(--dash-text)]/15 bg-[var(--dash-surface)] text-[var(--dash-text)] text-sm outline-none focus:border-[var(--dash-text)]/40 rounded-sm appearance-none cursor-pointer"
                 style={{ fontFamily: currentFont }}
               >
                 {options.map((font) => (
@@ -140,7 +140,7 @@ export default function FontCustomizer({ fontStyleId, customFonts, onChange }: F
               </select>
               {/* Preview */}
               <p
-                className="mt-1.5 text-lg text-[#2d2b25]/70 truncate"
+                className="mt-1.5 text-lg text-[var(--dash-text)]/70 truncate"
                 style={{ fontFamily: currentFont }}
               >
                 {key === "script" ? "The Wedding of" : key === "serif" ? "Partner & Partner" : "Saturday, August 1st"}
@@ -153,7 +153,7 @@ export default function FontCustomizer({ fontStyleId, customFonts, onChange }: F
           <button
             type="button"
             onClick={resetAll}
-            className="w-full text-center py-2 text-[10px] font-bold uppercase tracking-wider text-[#2d2b25]/50 hover:text-[#2d2b25]/80 border border-dashed border-[#2d2b25]/15 rounded-sm hover:border-[#2d2b25]/30 transition-all mt-2"
+            className="w-full text-center py-2 text-[10px] font-bold uppercase tracking-wider text-[var(--dash-text)]/50 hover:text-[var(--dash-text)]/80 border border-dashed border-[var(--dash-text)]/15 rounded-sm hover:border-[var(--dash-text)]/30 transition-all mt-2"
           >
             Reset to Preset
           </button>
