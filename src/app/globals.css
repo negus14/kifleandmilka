@@ -1,5 +1,25 @@
 @import "tailwindcss";
 
+/* ─── Dashboard theme variables ─── */
+
+:root {
+  --dash-bg: #faf1e1;
+  --dash-text: #2d2b25;
+  --dash-surface: rgba(255, 255, 255, 0.5);
+  --dash-surface-alt: rgba(255, 255, 255, 0.6);
+  --dash-btn-bg: #2d2b25;
+  --dash-btn-text: #ffffff;
+}
+
+.dark {
+  --dash-bg: #1a1917;
+  --dash-text: #e8e0d4;
+  --dash-surface: rgba(255, 255, 255, 0.05);
+  --dash-surface-alt: rgba(255, 255, 255, 0.08);
+  --dash-btn-bg: #e8e0d4;
+  --dash-btn-text: #1a1917;
+}
+
 /* ─── react-datepicker overrides (wedding dashboard) ─── */
 
 .wedding-datepicker .react-datepicker-popper {
@@ -8,10 +28,10 @@
 
 .wedding-datepicker .react-datepicker {
   font-family: inherit;
-  border: 1px solid rgba(45, 43, 37, 0.12);
+  border: 1px solid color-mix(in srgb, var(--dash-text), transparent 88%);
   border-radius: 2px;
-  box-shadow: 0 8px 30px rgba(45, 43, 37, 0.1), 0 2px 8px rgba(45, 43, 37, 0.06);
-  background: #fff;
+  box-shadow: 0 8px 30px color-mix(in srgb, var(--dash-text), transparent 90%), 0 2px 8px color-mix(in srgb, var(--dash-text), transparent 94%);
+  background: var(--dash-surface);
   overflow: hidden;
 }
 
@@ -21,8 +41,8 @@
 
 /* Header */
 .wedding-datepicker .react-datepicker__header {
-  background: #fafaf8;
-  border-bottom: 1px solid rgba(45, 43, 37, 0.08);
+  background: var(--dash-bg);
+  border-bottom: 1px solid color-mix(in srgb, var(--dash-text), transparent 92%);
   padding-top: 12px;
 }
 
@@ -31,12 +51,12 @@
   font-style: italic;
   font-weight: 400;
   font-size: 15px;
-  color: #2d2b25;
+  color: var(--dash-text);
   margin-bottom: 8px;
 }
 
 .wedding-datepicker .react-datepicker__day-name {
-  color: rgba(45, 43, 37, 0.4);
+  color: color-mix(in srgb, var(--dash-text), transparent 60%);
   font-size: 10px;
   font-weight: 600;
   text-transform: uppercase;
@@ -52,14 +72,14 @@
 }
 
 .wedding-datepicker .react-datepicker__navigation-icon::before {
-  border-color: rgba(45, 43, 37, 0.35);
+  border-color: color-mix(in srgb, var(--dash-text), transparent 65%);
   border-width: 2px 2px 0 0;
   height: 8px;
   width: 8px;
 }
 
 .wedding-datepicker .react-datepicker__navigation:hover .react-datepicker__navigation-icon::before {
-  border-color: #2d2b25;
+  border-color: var(--dash-text);
 }
 
 /* Day cells */
@@ -68,27 +88,27 @@
   line-height: 36px;
   margin: 0;
   border-radius: 0;
-  color: #2d2b25;
+  color: var(--dash-text);
   font-size: 13px;
   transition: all 0.15s ease;
 }
 
 .wedding-datepicker .react-datepicker__day:hover {
-  background: rgba(45, 43, 37, 0.06);
+  background: color-mix(in srgb, var(--dash-text), transparent 94%);
   border-radius: 0;
 }
 
 .wedding-datepicker .react-datepicker__day--selected,
 .wedding-datepicker .react-datepicker__day--keyboard-selected {
-  background: #2d2b25 !important;
-  color: #fff !important;
+  background: var(--dash-text) !important;
+  color: var(--dash-bg) !important;
   border-radius: 0;
   font-weight: 500;
 }
 
 .wedding-datepicker .react-datepicker__day--today {
   font-weight: 700;
-  color: #2d2b25;
+  color: var(--dash-text);
   background: transparent;
   position: relative;
 }
@@ -102,7 +122,7 @@
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: rgba(45, 43, 37, 0.3);
+  background: color-mix(in srgb, var(--dash-text), transparent 70%);
 }
 
 .wedding-datepicker .react-datepicker__day--today.react-datepicker__day--selected::after {
@@ -110,22 +130,22 @@
 }
 
 .wedding-datepicker .react-datepicker__day--outside-month {
-  color: rgba(45, 43, 37, 0.2);
+  color: color-mix(in srgb, var(--dash-text), transparent 80%);
 }
 
 /* Time list */
 .wedding-datepicker .react-datepicker__time-container {
-  border-left: 1px solid rgba(45, 43, 37, 0.08);
+  border-left: 1px solid color-mix(in srgb, var(--dash-text), transparent 92%);
   width: 100px;
 }
 
 .wedding-datepicker .react-datepicker__time-container .react-datepicker__time {
-  background: #fff;
+  background: var(--dash-surface);
 }
 
 .wedding-datepicker .react-datepicker__header--time {
-  background: #fafaf8;
-  border-bottom: 1px solid rgba(45, 43, 37, 0.08);
+  background: var(--dash-bg);
+  border-bottom: 1px solid color-mix(in srgb, var(--dash-text), transparent 92%);
   padding: 12px 0 8px;
 }
 
@@ -134,12 +154,12 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.15em;
-  color: rgba(45, 43, 37, 0.4);
+  color: color-mix(in srgb, var(--dash-text), transparent 60%);
 }
 
 .wedding-datepicker .react-datepicker__time-list-item {
   font-size: 12px !important;
-  color: #2d2b25;
+  color: var(--dash-text);
   height: auto !important;
   padding: 6px 12px !important;
   display: flex;
@@ -147,12 +167,12 @@
 }
 
 .wedding-datepicker .react-datepicker__time-list-item:hover {
-  background: rgba(45, 43, 37, 0.05) !important;
+  background: color-mix(in srgb, var(--dash-text), transparent 95%) !important;
 }
 
 .wedding-datepicker .react-datepicker__time-list-item--selected {
-  background: #2d2b25 !important;
-  color: #fff !important;
+  background: var(--dash-text) !important;
+  color: var(--dash-bg) !important;
   font-weight: 500;
 }
 
@@ -163,8 +183,8 @@
 }
 
 .wedding-datepicker .react-datepicker__close-icon::after {
-  background: rgba(45, 43, 37, 0.15);
-  color: #2d2b25;
+  background: color-mix(in srgb, var(--dash-text), transparent 85%);
+  color: var(--dash-text);
   font-size: 14px;
   height: 18px;
   width: 18px;
@@ -173,7 +193,7 @@
 }
 
 .wedding-datepicker .react-datepicker__close-icon:hover::after {
-  background: rgba(45, 43, 37, 0.25);
+  background: color-mix(in srgb, var(--dash-text), transparent 75%);
 }
 
 /* ─── Fade In (dashboard tab transitions) ─── */
@@ -355,7 +375,7 @@
   left: 0;
   width: 0;
   height: 1.5px;
-  background: #2d2b25;
+  background: var(--dash-text);
   transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -371,11 +391,11 @@
     background: transparent;
   }
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: rgba(45, 43, 37, 0.1);
+    background: color-mix(in srgb, var(--dash-text), transparent 90%);
     border-radius: 10px;
   }
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: rgba(45, 43, 37, 0.2);
+    background: color-mix(in srgb, var(--dash-text), transparent 80%);
   }
   
   .no-scrollbar::-webkit-scrollbar {
