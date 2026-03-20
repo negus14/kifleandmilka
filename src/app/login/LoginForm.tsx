@@ -28,20 +28,20 @@ export default function LoginForm({
   );
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#faf1e1] font-sans">
+    <div className="min-h-screen flex flex-col bg-[var(--dash-bg)] font-sans">
       {/* Nav */}
-      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-[#faf1e1]/80 border-b border-[#2d2b25]/[0.06]">
+      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-[var(--dash-bg)]/80 border-b border-[var(--dash-text)]/[0.06]">
         <div className="max-w-7xl mx-auto px-6 md:px-10 h-16 flex items-center justify-between">
           <Link
             href="/"
-            className="text-[#2d2b25] text-xl font-bold italic"
+            className="text-[var(--dash-text)] text-xl font-bold italic"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
             ITSW
           </Link>
           <Link
             href="/signup"
-            className="font-['DM_Sans',sans-serif] text-[13px] font-semibold tracking-[0.08em] uppercase text-[#2d2b25]/60 hover:text-[#2d2b25] transition-colors"
+            className="font-['DM_Sans',sans-serif] text-[13px] font-semibold tracking-[0.08em] uppercase text-[var(--dash-text)]/60 hover:text-[var(--dash-text)] transition-colors"
           >
             Sign Up
           </Link>
@@ -75,26 +75,26 @@ export default function LoginForm({
       <div className="w-full lg:w-[45%] xl:w-[40%] flex items-center justify-center p-8 lg:p-12">
         <div className="w-full max-w-[380px]">
           <div className="animate-[fieldReveal_0.6s_ease_0.1s_both]">
-            <h1 className="font-['Cormorant_Garamond',serif] italic text-4xl text-[#2d2b25] mb-2 text-center lg:text-left font-light">
+            <h1 className="font-['Cormorant_Garamond',serif] italic text-4xl text-[var(--dash-text)] mb-2 text-center lg:text-left font-light">
               Welcome back
             </h1>
-            <p className="text-sm text-[#2d2b25]/50 text-center lg:text-left mb-2">
+            <p className="text-sm text-[var(--dash-text)]/50 text-center lg:text-left mb-2">
               Log in to edit your wedding site
             </p>
           </div>
 
           {/* Diamond divider */}
           <div className="flex items-center gap-3 my-8 animate-[fieldReveal_0.6s_ease_0.2s_both]">
-            <div className="h-px flex-1 bg-[#2d2b25]/10" />
+            <div className="h-px flex-1 bg-[var(--dash-text)]/10" />
             <div className="w-1.5 h-1.5 rotate-45 border border-[#cdc1ab]" />
-            <div className="h-px flex-1 bg-[#2d2b25]/10" />
+            <div className="h-px flex-1 bg-[var(--dash-text)]/10" />
           </div>
 
           <form action={formAction} className="space-y-5">
             <div className="animate-[fieldReveal_0.6s_ease_0.3s_both]">
               <label
                 htmlFor="slug"
-                className="block text-[11px] font-semibold tracking-[0.15em] uppercase text-[#2d2b25]/60 mb-1.5"
+                className="block text-[11px] font-semibold tracking-[0.15em] uppercase text-[var(--dash-text)]/60 mb-1.5"
               >
                 Site Name
               </label>
@@ -106,14 +106,14 @@ export default function LoginForm({
                   required
                   autoComplete="username"
                   placeholder="e.g. adamandeve"
-                  className="w-full px-4 py-3 border border-[#2d2b25]/15 bg-transparent font-inherit text-base text-[#2d2b25] outline-none focus:border-[#2d2b25]/40 transition-colors rounded-sm"
+                  className="w-full px-4 py-3 border border-[var(--dash-text)]/15 bg-transparent font-inherit text-base text-[var(--dash-text)] outline-none focus:border-[var(--dash-text)]/40 transition-colors rounded-sm"
                 />
               </div>
             </div>
             <div className="animate-[fieldReveal_0.6s_ease_0.4s_both]">
               <label
                 htmlFor="password"
-                className="block text-[11px] font-semibold tracking-[0.15em] uppercase text-[#2d2b25]/60 mb-1.5"
+                className="block text-[11px] font-semibold tracking-[0.15em] uppercase text-[var(--dash-text)]/60 mb-1.5"
               >
                 Password
               </label>
@@ -124,7 +124,7 @@ export default function LoginForm({
                   type="password"
                   required
                   autoComplete="current-password"
-                  className="w-full px-4 py-3 border border-[#2d2b25]/15 bg-transparent font-inherit text-base text-[#2d2b25] outline-none focus:border-[#2d2b25]/40 transition-colors rounded-sm"
+                  className="w-full px-4 py-3 border border-[var(--dash-text)]/15 bg-transparent font-inherit text-base text-[var(--dash-text)] outline-none focus:border-[var(--dash-text)]/40 transition-colors rounded-sm"
                 />
               </div>
             </div>
@@ -136,7 +136,7 @@ export default function LoginForm({
             )}
 
             {loggedOut && !state?.error && (
-              <p className="text-[#2d2b25] text-sm text-center bg-[#2d2b25]/5 p-2 rounded-sm">
+              <p className="text-[var(--dash-text)] text-sm text-center bg-[var(--dash-text)]/5 p-2 rounded-sm">
                 Logged out successfully
               </p>
             )}
@@ -145,7 +145,7 @@ export default function LoginForm({
               <button
                 type="submit"
                 disabled={pending}
-                className="group w-full py-3.5 bg-[#2d2b25] text-[#faf1e1] font-semibold text-xs tracking-[0.15em] uppercase transition-all rounded-sm disabled:opacity-70 disabled:cursor-wait hover:opacity-90 relative overflow-hidden"
+                className="group w-full py-3.5 bg-[var(--dash-btn-bg)] text-[var(--dash-btn-text)] font-semibold text-xs tracking-[0.15em] uppercase transition-all rounded-sm disabled:opacity-70 disabled:cursor-wait hover:opacity-90 relative overflow-hidden"
               >
                 <span className="relative z-10">
                   {pending ? "Logging in..." : "Log In"}
@@ -154,11 +154,11 @@ export default function LoginForm({
               </button>
             </div>
 
-            <p className="text-center text-sm text-[#2d2b25]/50 mt-6 animate-[fieldReveal_0.6s_ease_0.6s_both]">
+            <p className="text-center text-sm text-[var(--dash-text)]/50 mt-6 animate-[fieldReveal_0.6s_ease_0.6s_both]">
               Don&apos;t have a site yet?{" "}
               <Link
                 href="/signup"
-                className="text-[#2d2b25] font-semibold no-underline hover:underline"
+                className="text-[var(--dash-text)] font-semibold no-underline hover:underline"
               >
                 Create one
               </Link>

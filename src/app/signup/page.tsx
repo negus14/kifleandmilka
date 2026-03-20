@@ -5,6 +5,7 @@ import { getSiteBySlug, createSite } from "@/lib/data/sites";
 import { hash } from "bcryptjs";
 import { rateLimit } from "@/lib/rate-limit";
 import SignupForm from "./SignupForm";
+import ThemeProvider from "@/components/dashboard/ThemeProvider";
 import { DEFAULT_SECTION_ORDER, type WeddingSite } from "@/lib/types/wedding-site";
 
 export const metadata = { title: "Sign Up — ITSW" };
@@ -164,5 +165,9 @@ export default async function SignupPage() {
     redirect(`/dashboard/${session.slug}`);
   }
 
-  return <SignupForm action={signupAction} />;
+  return (
+    <ThemeProvider>
+      <SignupForm action={signupAction} />
+    </ThemeProvider>
+  );
 }

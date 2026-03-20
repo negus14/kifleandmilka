@@ -5,6 +5,7 @@ import { getSiteBySlug } from "@/lib/data/sites";
 import { compare } from "bcryptjs";
 import { rateLimit } from "@/lib/rate-limit";
 import LoginForm from "./LoginForm";
+import ThemeProvider from "@/components/dashboard/ThemeProvider";
 
 export const metadata = { title: "Login — ITSW" };
 
@@ -46,5 +47,9 @@ export default async function LoginPage() {
     redirect(`/dashboard/${session.slug}`);
   }
 
-  return <LoginForm action={loginAction} />;
+  return (
+    <ThemeProvider>
+      <LoginForm action={loginAction} />
+    </ThemeProvider>
+  );
 }

@@ -24,20 +24,20 @@ export default function SignupForm({
   );
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#faf1e1] font-sans">
+    <div className="min-h-screen flex flex-col bg-[var(--dash-bg)] font-sans">
       {/* Nav */}
-      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-[#faf1e1]/80 border-b border-[#2d2b25]/[0.06]">
+      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-[var(--dash-bg)]/80 border-b border-[var(--dash-text)]/[0.06]">
         <div className="max-w-7xl mx-auto px-6 md:px-10 h-16 flex items-center justify-between">
           <Link
             href="/"
-            className="text-[#2d2b25] text-xl font-bold italic"
+            className="text-[var(--dash-text)] text-xl font-bold italic"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
             ITSW
           </Link>
           <Link
             href="/login"
-            className="font-['DM_Sans',sans-serif] text-[13px] font-semibold tracking-[0.08em] uppercase text-[#2d2b25]/60 hover:text-[#2d2b25] transition-colors"
+            className="font-['DM_Sans',sans-serif] text-[13px] font-semibold tracking-[0.08em] uppercase text-[var(--dash-text)]/60 hover:text-[var(--dash-text)] transition-colors"
           >
             Log In
           </Link>
@@ -76,32 +76,32 @@ export default function SignupForm({
       <div className="w-full lg:w-[45%] xl:w-[40%] flex items-center justify-center p-8 lg:p-12">
         <div className="w-full max-w-[380px]">
           <div className="animate-[fieldReveal_0.6s_ease_0.1s_both]">
-            <h1 className="font-['Cormorant_Garamond',serif] italic text-4xl text-[#2d2b25] mb-2 text-center lg:text-left font-light">
+            <h1 className="font-['Cormorant_Garamond',serif] italic text-4xl text-[var(--dash-text)] mb-2 text-center lg:text-left font-light">
               Create your site
             </h1>
-            <p className="text-sm text-[#2d2b25]/50 text-center lg:text-left mb-2">
+            <p className="text-sm text-[var(--dash-text)]/50 text-center lg:text-left mb-2">
               Choose a URL and password to get started
             </p>
           </div>
 
           {/* Diamond divider */}
           <div className="flex items-center gap-3 my-8 animate-[fieldReveal_0.6s_ease_0.2s_both]">
-            <div className="h-px flex-1 bg-[#2d2b25]/10" />
+            <div className="h-px flex-1 bg-[var(--dash-text)]/10" />
             <div className="w-1.5 h-1.5 rotate-45 border border-[#cdc1ab]" />
-            <div className="h-px flex-1 bg-[#2d2b25]/10" />
+            <div className="h-px flex-1 bg-[var(--dash-text)]/10" />
           </div>
 
           <form action={formAction} className="space-y-5">
             <div className="animate-[fieldReveal_0.6s_ease_0.3s_both]">
               <label
                 htmlFor="slug"
-                className="block text-[11px] font-semibold tracking-[0.15em] uppercase text-[#2d2b25]/60 mb-1.5"
+                className="block text-[11px] font-semibold tracking-[0.15em] uppercase text-[var(--dash-text)]/60 mb-1.5"
               >
                 Desired Site URL
               </label>
               <div className="input-animated-wrap">
-                <div className="flex items-center border border-[#2d2b25]/15 rounded-sm overflow-hidden focus-within:border-[#2d2b25]/40 transition-colors">
-                  <span className="pl-4 py-3 text-base text-[#2d2b25]/30 whitespace-nowrap bg-transparent">
+                <div className="flex items-center border border-[var(--dash-text)]/15 rounded-sm overflow-hidden focus-within:border-[var(--dash-text)]/40 transition-colors">
+                  <span className="pl-4 py-3 text-base text-[var(--dash-text)]/30 whitespace-nowrap bg-transparent">
                     ithinkshewifey.com/
                   </span>
                   <input
@@ -110,7 +110,7 @@ export default function SignupForm({
                     type="text"
                     required
                     placeholder="adamandeve"
-                    className="w-full pl-1 pr-4 py-3 bg-transparent font-inherit text-base text-[#2d2b25] outline-none"
+                    className="w-full pl-1 pr-4 py-3 bg-transparent font-inherit text-base text-[var(--dash-text)] outline-none"
                   />
                 </div>
               </div>
@@ -119,7 +119,7 @@ export default function SignupForm({
             <div className="animate-[fieldReveal_0.6s_ease_0.4s_both]">
               <label
                 htmlFor="password"
-                className="block text-[11px] font-semibold tracking-[0.15em] uppercase text-[#2d2b25]/60 mb-1.5"
+                className="block text-[11px] font-semibold tracking-[0.15em] uppercase text-[var(--dash-text)]/60 mb-1.5"
               >
                 Create Password
               </label>
@@ -129,7 +129,7 @@ export default function SignupForm({
                   name="password"
                   type="password"
                   required
-                  className="w-full px-4 py-3 border border-[#2d2b25]/15 bg-transparent font-inherit text-base text-[#2d2b25] outline-none focus:border-[#2d2b25]/40 transition-colors rounded-sm"
+                  className="w-full px-4 py-3 border border-[var(--dash-text)]/15 bg-transparent font-inherit text-base text-[var(--dash-text)] outline-none focus:border-[var(--dash-text)]/40 transition-colors rounded-sm"
                 />
               </div>
             </div>
@@ -144,7 +144,7 @@ export default function SignupForm({
               <button
                 type="submit"
                 disabled={pending}
-                className="group w-full py-3.5 bg-[#2d2b25] text-[#faf1e1] font-semibold text-xs tracking-[0.15em] uppercase transition-all rounded-sm disabled:opacity-70 disabled:cursor-wait hover:opacity-90 mt-2 relative overflow-hidden"
+                className="group w-full py-3.5 bg-[var(--dash-btn-bg)] text-[var(--dash-btn-text)] font-semibold text-xs tracking-[0.15em] uppercase transition-all rounded-sm disabled:opacity-70 disabled:cursor-wait hover:opacity-90 mt-2 relative overflow-hidden"
               >
                 <span className="relative z-10">
                   {pending ? "Creating..." : "Create My Site"}
@@ -153,11 +153,11 @@ export default function SignupForm({
               </button>
             </div>
 
-            <p className="text-center text-sm text-[#2d2b25]/50 mt-6 animate-[fieldReveal_0.6s_ease_0.6s_both]">
+            <p className="text-center text-sm text-[var(--dash-text)]/50 mt-6 animate-[fieldReveal_0.6s_ease_0.6s_both]">
               Already have a site?{" "}
               <Link
                 href="/login"
-                className="text-[#2d2b25] font-semibold no-underline hover:underline"
+                className="text-[var(--dash-text)] font-semibold no-underline hover:underline"
               >
                 Log In
               </Link>
