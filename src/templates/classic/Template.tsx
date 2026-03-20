@@ -249,7 +249,7 @@ export function ClassicTemplate({ site, isPreview, onFieldUpdate }: { site: Wedd
               <section key={day.id} id={di === 0 ? id : undefined} className={finalCls} style={sectionBaseStyle}>
                 {bgUrl && (
                   <>
-                    <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
+                    <div style={{ position: 'absolute', inset: 0, zIndex: 0 }} className="section-bg-image section-bg-desktop">
                       <SafeImage
                         src={bgUrl}
                         alt=""
@@ -259,6 +259,21 @@ export function ClassicTemplate({ site, isPreview, onFieldUpdate }: { site: Wedd
                         sizes="100vw"
                         style={{
                           objectFit: 'cover',
+                        }}
+                      />
+                    </div>
+                    <div className="section-bg-mobile">
+                      <SafeImage
+                        src={bgUrl}
+                        alt=""
+                        width={1200}
+                        height={800}
+                        quality={100}
+                        sizes="100vw"
+                        style={{
+                          width: '100%',
+                          height: 'auto',
+                          display: 'block',
                         }}
                       />
                     </div>
@@ -840,7 +855,8 @@ export function ClassicTemplate({ site, isPreview, onFieldUpdate }: { site: Wedd
           >
             {bgUrl && (
               <>
-                <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
+                {/* Desktop: absolute-positioned cover background */}
+                <div style={{ position: 'absolute', inset: 0, zIndex: 0 }} className="section-bg-image section-bg-desktop">
                   <SafeImage
                     src={bgUrl}
                     alt=""
@@ -850,6 +866,22 @@ export function ClassicTemplate({ site, isPreview, onFieldUpdate }: { site: Wedd
                     sizes="100vw"
                     style={{
                       objectFit: 'cover',
+                    }}
+                  />
+                </div>
+                {/* Mobile: block-level image that preserves aspect ratio */}
+                <div className="section-bg-mobile">
+                  <SafeImage
+                    src={bgUrl}
+                    alt=""
+                    width={1200}
+                    height={800}
+                    quality={100}
+                    sizes="100vw"
+                    style={{
+                      width: '100%',
+                      height: 'auto',
+                      display: 'block',
                     }}
                   />
                 </div>

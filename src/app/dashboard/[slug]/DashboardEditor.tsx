@@ -501,7 +501,7 @@ function ColorPicker({ label, value, onChange, themeColors }: {
   return (
     <div className="mb-6">
       <Label>{label}</Label>
-      <div className="flex gap-2 mt-2">
+      <div className="flex flex-wrap gap-2 mt-2">
         {options.map((opt) => (
           <button
             key={opt.id}
@@ -511,7 +511,7 @@ function ColorPicker({ label, value, onChange, themeColors }: {
               value === opt.id ? "bg-[var(--dash-text)]/5" : "hover:bg-[var(--dash-text)]/5"
             }`}
           >
-            <div 
+            <div
               className={`w-8 h-8 rounded-full border ${opt.border} border-[var(--dash-text)]/20 shadow-sm transition-transform group-hover:scale-105 ${
                 value === opt.id ? "ring-2 ring-[var(--dash-text)] ring-offset-2" : ""
               }`}
@@ -748,22 +748,22 @@ function ImageField({ label, value, onChange, recentLinks = [], onAddRecentLink 
   return (
     <div className="mb-6">
       <Label>{label}</Label>
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         <input
-          value={value} 
+          value={value}
           onChange={(e) => {
             onChange(e.target.value);
             if (e.target.value && onAddRecentLink) onAddRecentLink(e.target.value);
           }}
           onPaste={handlePaste}
           placeholder="Paste URL or paste image directly (Ctrl+V)"
-          className="flex-1 px-3 py-2 border border-[var(--dash-text)]/15 bg-[var(--dash-surface)] text-[var(--dash-text)] text-sm outline-none focus:border-[var(--dash-text)]/40 rounded-sm"
+          className="w-full px-3 py-2 border border-[var(--dash-text)]/15 bg-[var(--dash-surface)] text-[var(--dash-text)] text-sm outline-none focus:border-[var(--dash-text)]/40 rounded-sm"
         />
         {value && (
           <button
             type="button"
             onClick={() => onChange("")}
-            className="px-3 py-2 text-xs font-semibold tracking-wide uppercase border border-red-500/30 text-red-600/80 hover:text-red-700 hover:border-red-500/50 hover:bg-red-50 transition-colors rounded-sm whitespace-nowrap"
+            className="px-3 py-2 text-xs font-semibold tracking-wide uppercase border border-red-500/30 text-red-500 bg-red-500/10 hover:bg-red-500/20 hover:border-red-500/50 transition-colors rounded-sm whitespace-nowrap"
           >
             Clear
           </button>
@@ -771,7 +771,7 @@ function ImageField({ label, value, onChange, recentLinks = [], onAddRecentLink 
         <button
           type="button"
           onClick={() => setShowLibrary(true)}
-          className="px-3 py-2 text-xs font-semibold tracking-wide uppercase border border-[var(--dash-text)]/15 text-[var(--dash-text)]/60 hover:text-[var(--dash-text)] hover:border-[var(--dash-text)]/30 transition-colors rounded-sm whitespace-nowrap"
+          className="px-3 py-2 text-xs font-semibold tracking-wide uppercase border border-[var(--dash-text)]/15 bg-[var(--dash-text)]/5 text-[var(--dash-text)]/60 hover:text-[var(--dash-text)] hover:bg-[var(--dash-text)]/10 hover:border-[var(--dash-text)]/30 transition-colors rounded-sm whitespace-nowrap"
         >
           Library
         </button>
@@ -779,7 +779,7 @@ function ImageField({ label, value, onChange, recentLinks = [], onAddRecentLink 
           type="button"
           onClick={() => inputRef.current?.click()}
           disabled={uploading}
-          className="px-3 py-2 text-xs font-semibold tracking-wide uppercase border border-[var(--dash-text)]/15 text-[var(--dash-text)]/60 hover:text-[var(--dash-text)] hover:border-[var(--dash-text)]/30 transition-colors rounded-sm disabled:opacity-50 whitespace-nowrap"
+          className="px-3 py-2 text-xs font-semibold tracking-wide uppercase border border-[var(--dash-text)]/15 bg-[var(--dash-text)]/5 text-[var(--dash-text)]/60 hover:text-[var(--dash-text)] hover:bg-[var(--dash-text)]/10 hover:border-[var(--dash-text)]/30 transition-colors rounded-sm disabled:opacity-50 whitespace-nowrap"
         >
           {uploading ? "Uploading..." : "Upload"}
         </button>
@@ -2791,7 +2791,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
   }
 
   return (
-    <div className="min-h-screen bg-[var(--dash-bg)]" style={{ fontFamily: "'DM Sans', sans-serif", transition: "background-color 0.2s, color 0.2s" }}>
+    <div className="min-h-screen bg-[var(--dash-bg)] text-[var(--dash-text)]" style={{ fontFamily: "'DM Sans', sans-serif", transition: "background-color 0.2s, color 0.2s" }}>
       {/* ... Existing Head/Scripts ... */}
       
       {/* Upgrade banner for unpaid sites */}
@@ -2819,7 +2819,12 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
               ITSW
             </a>
             <span className="text-[var(--dash-text)]/30">/</span>
-            <span className="text-xs sm:text-sm text-[var(--dash-text)]/60 truncate max-w-[100px] sm:max-w-none">{site.partner1Name} & {site.partner2Name}</span>
+            <div
+              className="w-7 h-7 rounded-full flex items-center justify-center bg-[var(--dash-btn-bg)] text-[var(--dash-btn-text)] text-[10px] font-bold italic flex-shrink-0"
+              style={{ fontFamily: "'Playfair Display', serif" }}
+            >
+              {(site.partner1Name || "A").charAt(0).toUpperCase()}&{(site.partner2Name || "B").charAt(0).toUpperCase()}
+            </div>
           </div>
           <div className="flex items-center gap-1.5 sm:gap-3">
             <div className="flex items-center gap-0.5 bg-[var(--dash-text)]/5 p-0.5 sm:p-1 rounded-sm">
@@ -3188,7 +3193,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                   {/* Appearance */}
                   <Label>Appearance</Label>
                   <div className="flex gap-1 bg-[var(--dash-text)]/5 rounded-sm p-1">
-                    {(["system", "light", "dark"] as const).map((opt) => (
+                    {(["light", "dark"] as const).map((opt) => (
                       <button
                         key={opt}
                         onClick={() => setPref(opt)}
@@ -3198,7 +3203,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                             : "text-[var(--dash-text)]/40 hover:text-[var(--dash-text)]/60"
                         }`}
                       >
-                        {opt === "system" ? "System" : opt === "light" ? "Light" : "Dark"}
+                        {opt === "light" ? "Light" : "Dark"}
                       </button>
                     ))}
                   </div>
@@ -3220,9 +3225,9 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                         </div>
                         <button
                           onClick={() => set("isPublished", !site.isPublished)}
-                          className={`relative w-12 h-7 rounded-full transition-colors ${site.isPublished ? "bg-green-500" : "bg-[var(--dash-text)]/15"}`}
+                          className={`relative w-12 h-7 rounded-full transition-colors ${site.isPublished ? "bg-green-500" : "bg-[var(--dash-text)]/20"}`}
                         >
-                          <span className={`absolute top-1 w-5 h-5 bg-[var(--dash-surface)] rounded-full shadow-sm transition-transform ${site.isPublished ? "left-6" : "left-1"}`} />
+                          <span className={`absolute top-1 w-5 h-5 bg-white rounded-full shadow-sm transition-transform ${site.isPublished ? "left-6" : "left-1"}`} />
                         </button>
                       </div>
                     ) : (
@@ -3423,7 +3428,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                     <div className="mt-4">
                       <Label>Text Color</Label>
                       <p className="text-[10px] text-[var(--dash-text)]/40 mb-2 uppercase tracking-wider">Text color over the background image</p>
-                      <div className="flex gap-2">
+                      <div className="flex flex-wrap gap-2">
                         {([
                           { id: "", name: "Default", color: activeTheme.colors.accent },
                           { id: activeTheme.colors.primary, name: "Light", color: activeTheme.colors.primary },
@@ -4176,13 +4181,14 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                 <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--dash-text)]/40">Real-time Preview</span>
                 <span className="text-[10px] text-[var(--dash-text)]/30">{previewDevice === "desktop" ? "Desktop Mode" : "Mobile View"} &bull; Auto-syncing</span>
               </div>
-              <div className="flex-1 bg-[#f0f0f0] overflow-hidden flex justify-center p-0 lg:p-4 min-w-0">
+              <div className={`flex-1 overflow-hidden flex justify-center min-w-0 ${previewDevice === "mobile" ? "bg-[var(--dash-text)]/5 items-stretch py-3" : "bg-[#f0f0f0] p-0 lg:p-4"}`}>
                 <div
                   ref={previewContainerRef}
                   style={{ containerType: "inline-size" }}
-                  className={`bg-[var(--dash-surface)] shadow-2xl transition-all h-full origin-top overflow-y-auto overflow-x-hidden ${
-                    previewDevice === "mobile" ? "w-full max-w-[375px]" : "w-full"
+                  className={`bg-[var(--dash-surface)] shadow-2xl transition-all origin-top overflow-y-auto overflow-x-hidden ${
+                    previewDevice === "mobile" ? "w-[393px] max-w-full rounded-md border border-[var(--dash-text)]/10" : "w-full h-full"
                   } ${isDragging ? "pointer-events-none" : ""}`}
+
                   onClick={(e) => {
                     // Intercept anchor clicks in preview to prevent navigation
                     const target = (e.target as HTMLElement).closest("a");

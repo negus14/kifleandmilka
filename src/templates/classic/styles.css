@@ -585,6 +585,36 @@
   z-index: 2;
 }
 
+/* Section background image: banner style (not stretched to fill) */
+.section-bg-desktop {
+  display: none !important;
+}
+.section-bg-mobile {
+  display: block;
+  position: relative;
+  z-index: 0;
+  width: 100%;
+  height: 50vh;
+  min-height: 280px;
+  max-height: 500px;
+  overflow: hidden;
+  line-height: 0;
+}
+.section-bg-mobile img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+}
+
+@media (max-width: 768px) {
+  .section-bg-mobile {
+    height: 40vh;
+    min-height: 220px;
+    max-height: 320px;
+  }
+}
+
 .section--has-bg.section--light-text,
 .section--has-bg.section--light-text .section__title,
 .section--has-bg.section--light-text .section__subtitle,
@@ -696,6 +726,22 @@
 .preview .hero {
   min-height: 100cqh;
 }
+.preview .hero__names {
+  font-size: clamp(3.5rem, 13cqw, 9rem);
+}
+.preview .hero__pretext {
+  font-size: clamp(0.55rem, 1.8cqw, 0.76rem);
+}
+.preview .hero__tagline {
+  font-size: clamp(0.9rem, 3cqw, 1.2rem);
+}
+.preview .hero__date-line {
+  font-size: clamp(0.65rem, 2cqw, 0.85rem);
+}
+.preview .hero__btn {
+  font-size: clamp(0.55rem, 1.5cqw, 0.7rem);
+  padding: clamp(0.6rem, 2cqw, 1rem) clamp(1.5rem, 4cqw, 2.5rem);
+}
 .preview .nav {
   display: none;
 }
@@ -747,6 +793,11 @@
   }
   .preview .hero__countdown {
     gap: 1.25rem;
+  }
+  .preview .section-bg-mobile {
+    height: 40cqh;
+    min-height: 180px;
+    max-height: 280px;
   }
 }
 
@@ -1323,19 +1374,20 @@
 }
 
 .rsvp__button {
-  width: 100%;
-  padding: 1rem;
+  display: block;
+  width: auto;
+  margin: 2rem auto 0;
+  padding: 0.85rem 3rem;
   background: var(--color-dark);
   color: var(--color-primary);
   font-family: var(--font-sans);
-  font-size: 0.8rem;
-  font-weight: 500;
-  letter-spacing: 0.15em;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  border: 2px solid var(--color-dark);
+  border: 1px solid var(--color-dark);
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-top: 1rem;
 }
 
 .rsvp__button:hover {
@@ -1351,9 +1403,12 @@
 .rsvp__button--outline {
   background: transparent;
   color: var(--color-dark);
+  border: 1px solid color-mix(in srgb, var(--color-dark), transparent 70%);
+  font-weight: 500;
 }
 
 .rsvp__button--outline:hover {
+  border-color: var(--color-dark);
   background: var(--color-dark);
   color: var(--color-primary);
 }
@@ -1804,20 +1859,20 @@
 .hotel-card__link {
   display: inline-block;
   font-family: var(--font-sans);
-  font-size: 0.74rem;
-  font-weight: 500;
-  letter-spacing: 0.2em;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--color-primary);
-  background: var(--color-dark);
-  border: 2px solid var(--color-dark);
-  padding: 0.65rem 1.5rem;
+  color: var(--color-dark);
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--color-dark), transparent 60%);
+  padding: 0.6rem 1.4rem;
   transition: all 0.3s ease;
 }
 
 .hotel-card__link:hover {
-  background: transparent;
-  color: var(--color-dark);
+  background: var(--color-dark);
+  color: var(--color-primary);
   border-color: var(--color-dark);
 }
 
@@ -2310,19 +2365,20 @@
 }
 
 .gift-contrib__btn {
-  width: 100%;
-  padding: 1.1rem;
+  display: block;
+  width: auto;
+  margin: 2rem auto 0;
+  padding: 0.85rem 3rem;
   background: var(--color-dark);
   color: var(--color-primary);
   font-family: var(--font-sans);
-  font-size: 0.8rem;
-  font-weight: 500;
-  letter-spacing: 0.2em;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  border: 2px solid var(--color-dark);
+  border: 1px solid var(--color-dark);
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-top: 1rem;
 }
 
 .gift-contrib__btn:hover {
@@ -2338,6 +2394,7 @@
 .gift-contrib__btn--outline {
   background: transparent;
   color: var(--color-dark);
+  border: 1px solid color-mix(in srgb, var(--color-dark), transparent 70%);
 }
 
 .gift-contrib__btn--outline:hover {
@@ -2863,6 +2920,7 @@ img[data-zoomable] {
     grid-template-columns: 1fr;
     gap: 2.5rem;
   }
+
 
   .gallery-float {
     gap: 1rem;

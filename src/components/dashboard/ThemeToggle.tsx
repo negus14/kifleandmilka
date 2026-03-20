@@ -3,33 +3,22 @@
 import { useTheme } from "./ThemeProvider";
 
 export default function ThemeToggle() {
-  const { pref, resolved, cycle } = useTheme();
-
-  const title =
-    pref === "system" ? "Theme: System" :
-    pref === "light" ? "Theme: Light" : "Theme: Dark";
+  const { pref, toggle } = useTheme();
 
   return (
     <button
-      onClick={cycle}
+      onClick={toggle}
       className="p-1 sm:p-1.5 rounded-sm hover:bg-[var(--dash-text)]/10 transition-all"
       style={{ color: "var(--dash-text)", opacity: 0.5 }}
-      title={title}
+      title={pref === "light" ? "Switch to dark mode" : "Switch to light mode"}
     >
-      {pref === "system" ? (
-        /* Monitor icon for system */
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-          <line x1="8" y1="21" x2="16" y2="21"/>
-          <line x1="12" y1="17" x2="12" y2="21"/>
-        </svg>
-      ) : resolved === "dark" ? (
-        /* Moon icon */
+      {pref === "dark" ? (
+        /* Moon icon — click to go light */
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
         </svg>
       ) : (
-        /* Sun icon */
+        /* Sun icon — click to go dark */
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="12" cy="12" r="5"/>
           <line x1="12" y1="1" x2="12" y2="3"/>
