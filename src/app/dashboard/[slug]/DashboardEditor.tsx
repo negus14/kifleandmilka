@@ -2434,6 +2434,14 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
   const [showSaveErrorModal, setShowSaveErrorModal] = useState<string | null>(null);
   const [showCancelDomainModal, setShowCancelDomainModal] = useState(false);
   const [showLargeImageModal, setShowLargeImageModal] = useState<(() => void) | null>(null);
+  const [toast, setToast] = useState<{ message: string; type: "error" | "info" } | null>(null);
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  function showToast(message: string, type: "error" | "info" = "info") {
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    setToast({ message, type });
+    toastTimerRef.current = setTimeout(() => setToast(null), 5000);
+  }
   const saveRetryCountRef = useRef(0);
   const MAX_SAVE_RETRIES = 2;
   const [isPreview, setIsPreview] = useState(true);
@@ -2643,11 +2651,11 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
     const order = site.sectionOrder || DEFAULT_SECTION_ORDER;
     const section = order[index];
     if (section.type === "hero" || section.type === "footer") {
-      alert("The Hero and Footer sections are mandatory and cannot be removed.");
+      showToast("The Hero and Footer sections are mandatory and cannot be removed.", "info");
       return;
     }
     if (order.length <= 1) {
-      alert("You must have at least one section in your layout.");
+      showToast("You must have at least one section in your layout.", "info");
       return;
     }
     set("sectionOrder", removeFromArray(order, index));
@@ -2657,7 +2665,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
     const order = site.sectionOrder || DEFAULT_SECTION_ORDER;
     const original = order[index];
     if (original.type === "hero" || original.type === "footer") {
-      alert("The Hero and Footer sections cannot be duplicated.");
+      showToast("The Hero and Footer sections cannot be duplicated.", "info");
       return;
     }
     const newId = `${original.type}-${Date.now()}`;
@@ -2788,7 +2796,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
         throw new Error(data.error || "Failed to create checkout session");
       }
     } catch (err: any) {
-      alert(err.message);
+      showToast(err.message, "error");
       setIsPaying(false);
     }
   }
@@ -2956,7 +2964,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                   <button
                     onClick={() => {
                       if (isHidden) {
-                        alert(`The "${t.label}" section is currently hidden. Enable it in the "Layout" tab to edit its content and see it in the preview.`);
+                        showToast(`The "${t.label}" section is currently hidden. Enable it in the "Layout" tab to edit its content and see it in the preview.`, "info");
                         return;
                       }
                       handleTabChange(t.id);
@@ -4365,6 +4373,23 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                 Dismiss
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Toast Notification */}
+      {toast && (
+        <div
+          className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[120] animate-in fade-in slide-in-from-bottom-4 duration-200"
+          onClick={() => setToast(null)}
+        >
+          <div className={`flex items-center gap-3 px-5 py-3 rounded-sm shadow-xl border cursor-pointer ${
+            toast.type === "error"
+              ? "bg-red-950 border-red-800/30 text-red-100"
+              : "bg-[var(--dash-btn-bg)] border-[var(--dash-text)]/10 text-[var(--dash-btn-text)]"
+          }`}>
+            <span className="text-sm">{toast.message}</span>
+            <span className="text-xs opacity-50 ml-2 shrink-0">dismiss</span>
           </div>
         </div>
       )}
