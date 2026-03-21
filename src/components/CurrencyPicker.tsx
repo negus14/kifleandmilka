@@ -108,19 +108,19 @@ export default function CurrencyPicker({ selected, onChange }: {
 
   return (
     <div ref={ref} className="relative">
-      <label className="block text-[10px] font-bold uppercase tracking-[0.12em] text-[#2d2b25]/50 mb-2">
+      <label className="block text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--dash-text)]/50 mb-2">
         Accepted Currencies
       </label>
 
       {/* Selected tags */}
       <div
-        className="flex flex-wrap gap-1.5 min-h-[38px] p-2 border border-[#2d2b25]/15 bg-white rounded-sm cursor-text"
+        className="flex flex-wrap gap-1.5 min-h-[38px] p-2 border border-[var(--dash-text)]/15 bg-[var(--dash-bg)] rounded-sm cursor-text"
         onClick={() => setOpen(true)}
       >
         {selected.map(code => {
           const c = ALL_CURRENCIES.find(x => x.code === code);
           return (
-            <span key={code} className="inline-flex items-center gap-1 px-2 py-0.5 bg-[#2d2b25] text-white text-[10px] font-bold rounded-sm leading-tight">
+            <span key={code} className="inline-flex items-center gap-1 px-2 py-0.5 bg-[var(--dash-text)] text-[var(--dash-bg)] text-[10px] font-bold rounded-sm leading-tight">
               {c ? `${c.symbol} ${c.code}` : code}
               <button
                 type="button"
@@ -133,20 +133,20 @@ export default function CurrencyPicker({ selected, onChange }: {
           );
         })}
         {selected.length === 0 && (
-          <span className="text-[#2d2b25]/30 text-xs py-0.5">Click to add currencies...</span>
+          <span className="text-[var(--dash-text)]/30 text-xs py-0.5">Click to add currencies...</span>
         )}
       </div>
 
       {/* Dropdown */}
       {open && (
         <div
-          className="absolute left-0 top-full mt-1 bg-white border border-[#2d2b25]/15 overflow-hidden z-50 flex flex-col"
-          style={{ width: "100%", maxHeight: "300px", borderRadius: "4px", boxShadow: "0 12px 40px rgba(0,0,0,0.12), 0 4px 12px rgba(0,0,0,0.08)" }}
+          className="absolute left-0 top-full mt-1 bg-[var(--dash-bg)] border border-[var(--dash-text)]/15 overflow-hidden z-50 flex flex-col"
+          style={{ width: "100%", maxHeight: "300px", borderRadius: "4px", boxShadow: "0 12px 40px color-mix(in srgb, var(--dash-text), transparent 88%), 0 4px 12px color-mix(in srgb, var(--dash-text), transparent 92%)" }}
         >
           {/* Search */}
-          <div className="p-2 border-b border-[#2d2b25]/6">
+          <div className="p-2 border-b border-[var(--dash-text)]/[0.06]">
             <div className="relative">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#2d2b25]/25 pointer-events-none">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--dash-text)]/25 pointer-events-none">
                 <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
               </svg>
               <input
@@ -155,7 +155,7 @@ export default function CurrencyPicker({ selected, onChange }: {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search currencies..."
-                className="w-full pl-8 pr-3 py-2 text-sm border border-[#2d2b25]/10 rounded-sm outline-none focus:border-[#2d2b25]/30 bg-[#2d2b25]/[0.02] transition-colors"
+                className="w-full pl-8 pr-3 py-2 text-sm border border-[var(--dash-text)]/10 rounded-sm outline-none focus:border-[var(--dash-text)]/30 bg-[var(--dash-text)]/[0.02] transition-colors"
               />
             </div>
           </div>
@@ -163,7 +163,7 @@ export default function CurrencyPicker({ selected, onChange }: {
           {/* List */}
           <div className="overflow-y-auto flex-1" style={{ maxHeight: "240px" }}>
             {filtered.length === 0 && (
-              <div className="py-6 text-center text-xs text-[#2d2b25]/30">
+              <div className="py-6 text-center text-xs text-[var(--dash-text)]/30">
                 {search ? `No currencies match "${search}"` : "All currencies selected"}
               </div>
             )}
@@ -175,12 +175,12 @@ export default function CurrencyPicker({ selected, onChange }: {
                   onChange([...selected, c.code]);
                   setSearch("");
                 }}
-                className="w-full flex items-center gap-3 px-3 py-2.5 text-left text-sm hover:bg-[#2d2b25]/[0.04] transition-colors border-none cursor-pointer"
+                className="w-full flex items-center gap-3 px-3 py-2.5 text-left text-sm hover:bg-[var(--dash-text)]/[0.04] transition-colors border-none cursor-pointer"
                 style={{ background: "transparent", fontFamily: "inherit" }}
               >
-                <span className="text-[#2d2b25]/70 font-bold w-8 text-right shrink-0">{c.symbol}</span>
-                <span className="flex-1 text-[#2d2b25] truncate">{c.name}</span>
-                <span className="text-[10px] font-bold text-[#2d2b25]/35 tracking-wider">{c.code}</span>
+                <span className="text-[var(--dash-text)]/70 font-bold w-8 text-right shrink-0">{c.symbol}</span>
+                <span className="flex-1 text-[var(--dash-text)] truncate">{c.name}</span>
+                <span className="text-[10px] font-bold text-[var(--dash-text)]/35 tracking-wider">{c.code}</span>
               </button>
             ))}
           </div>

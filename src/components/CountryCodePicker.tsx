@@ -279,11 +279,11 @@ export default function CountryCodePicker({ value, onChange, className, compact 
         onClick={() => setOpen(!open)}
         className={`flex items-center gap-2 px-3 py-2 border border-r-0 h-full whitespace-nowrap transition-colors ${textSize}`}
         style={{
-          borderColor: open ? "rgba(0,0,0,0.3)" : "rgba(0,0,0,0.12)",
+          borderColor: open ? "color-mix(in srgb, var(--dash-text), transparent 70%)" : "color-mix(in srgb, var(--dash-text), transparent 88%)",
           borderTopLeftRadius: compact ? "2px" : "0",
           borderBottomLeftRadius: compact ? "2px" : "0",
           minWidth: compact ? "80px" : "100px",
-          background: "rgba(0,0,0,0.02)",
+          background: "color-mix(in srgb, var(--dash-text), transparent 98%)",
           fontFamily: "inherit",
         }}
       >
@@ -299,19 +299,19 @@ export default function CountryCodePicker({ value, onChange, className, compact 
           {/* Backdrop for mobile */}
           <div className="fixed inset-0 z-40 sm:hidden" onClick={() => { setOpen(false); setSearch(""); }} />
           <div
-            className="absolute left-0 top-full mt-1 bg-white border overflow-hidden z-50"
+            className="absolute left-0 top-full mt-1 bg-[var(--dash-bg)] border overflow-hidden z-50"
             style={{
-              borderColor: "rgba(0,0,0,0.15)",
+              borderColor: "color-mix(in srgb, var(--dash-text), transparent 85%)",
               borderRadius: "4px",
               width: compact ? "280px" : "320px",
               maxHeight: "350px",
               display: "flex",
               flexDirection: "column",
-              boxShadow: "0 12px 40px rgba(0,0,0,0.12), 0 4px 12px rgba(0,0,0,0.08)",
+              boxShadow: "0 12px 40px color-mix(in srgb, var(--dash-text), transparent 88%), 0 4px 12px color-mix(in srgb, var(--dash-text), transparent 92%)",
             }}
           >
             {/* Search */}
-            <div style={{ padding: "10px 10px 8px", borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
+            <div style={{ padding: "10px 10px 8px", borderBottom: "1px solid color-mix(in srgb, var(--dash-text), transparent 94%)" }}>
               <div style={{ position: "relative" }}>
                 <svg
                   width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
@@ -329,14 +329,15 @@ export default function CountryCodePicker({ value, onChange, className, compact 
                     width: "100%",
                     padding: "10px 10px 10px 34px",
                     fontSize: "14px",
-                    border: "1px solid rgba(0,0,0,0.1)",
+                    border: "1px solid color-mix(in srgb, var(--dash-text), transparent 90%)",
                     borderRadius: "3px",
                     outline: "none",
-                    background: "rgba(0,0,0,0.02)",
+                    background: "color-mix(in srgb, var(--dash-text), transparent 98%)",
                     transition: "border-color 0.15s",
+                    color: "var(--dash-text)",
                   }}
-                  onFocus={(e) => { e.target.style.borderColor = "rgba(0,0,0,0.25)"; }}
-                  onBlur={(e) => { e.target.style.borderColor = "rgba(0,0,0,0.1)"; }}
+                  onFocus={(e) => { e.target.style.borderColor = "color-mix(in srgb, var(--dash-text), transparent 75%)"; }}
+                  onBlur={(e) => { e.target.style.borderColor = "color-mix(in srgb, var(--dash-text), transparent 90%)"; }}
                 />
               </div>
             </div>
@@ -371,14 +372,14 @@ export default function CountryCodePicker({ value, onChange, className, compact 
                       border: "none",
                       cursor: "pointer",
                       transition: "background 0.1s",
-                      background: isSelected ? "rgba(0,0,0,0.06)" : "transparent",
-                      borderLeft: isSelected ? "3px solid rgba(0,0,0,0.5)" : "3px solid transparent",
+                      background: isSelected ? "color-mix(in srgb, var(--dash-text), transparent 94%)" : "transparent",
+                      borderLeft: isSelected ? "3px solid color-mix(in srgb, var(--dash-text), transparent 50%)" : "3px solid transparent",
                     }}
-                    onMouseEnter={(e) => { if (!isSelected) e.currentTarget.style.background = "rgba(0,0,0,0.03)"; }}
+                    onMouseEnter={(e) => { if (!isSelected) e.currentTarget.style.background = "color-mix(in srgb, var(--dash-text), transparent 97%)"; }}
                     onMouseLeave={(e) => { if (!isSelected) e.currentTarget.style.background = "transparent"; }}
                   >
                     <span style={{ fontSize: "20px", lineHeight: 1, flexShrink: 0 }}>{c.flag}</span>
-                    <span style={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "#1a1a1a", fontWeight: isSelected ? 500 : 400 }}>
+                    <span style={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "var(--dash-text)", fontWeight: isSelected ? 500 : 400 }}>
                       {c.name}
                     </span>
                     <span style={{

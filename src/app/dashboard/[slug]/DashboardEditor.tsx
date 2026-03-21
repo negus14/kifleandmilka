@@ -19,6 +19,7 @@ import type {
 } from "@/lib/types/wedding-site";
 import { DEFAULT_SECTION_ORDER, SECTION_LABELS, type SectionConfig } from "@/lib/types/wedding-site";
 import { themes, fontStyles } from "@/lib/themes";
+import EasyMode from "@/components/dashboard/EasyMode";
 import CountryCodePicker, { matchCountry } from "@/components/CountryCodePicker";
 import CurrencyPicker, { getCurrencySymbol } from "@/components/CurrencyPicker";
 import {
@@ -322,14 +323,14 @@ function DomainRequest({ slug, existingDomain }: { slug: string; existingDomain?
 
   if (status === "sent") {
     return (
-      <div className="p-4 bg-green-50 border border-green-200 rounded-sm">
-        <p className="text-xs font-medium text-green-800">Request submitted!</p>
+      <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-sm">
+        <p className="text-xs font-medium text-green-600">Request submitted!</p>
         <p className="text-[10px] text-green-600 mt-1">
           We&apos;ll connect <strong>{domain}</strong> to your site. You&apos;ll receive an email when it&apos;s ready.
         </p>
         <button
           onClick={() => { setStatus("idle"); setDomain(""); }}
-          className="mt-2 text-[10px] text-green-700 underline hover:no-underline"
+          className="mt-2 text-[10px] text-green-600 underline hover:no-underline"
         >
           Change or cancel request
         </button>
@@ -387,7 +388,7 @@ function DomainRequest({ slug, existingDomain }: { slug: string; existingDomain?
         className="w-full text-sm px-3 py-2.5 bg-[var(--dash-surface)] border border-[var(--dash-text)]/15 rounded-sm focus:outline-none focus:border-[var(--dash-text)]/40 transition-colors placeholder:text-[var(--dash-text)]/25"
       />
       {mode === "own" && domain && (
-        <div className="p-3 bg-[#f7f6f3] border border-[var(--dash-text)]/10 rounded-sm">
+        <div className="p-3 bg-[var(--dash-text)]/[0.04] border border-[var(--dash-text)]/10 rounded-sm">
           <p className="text-[10px] text-[var(--dash-text)]/60">
             After submitting, you&apos;ll need to add a DNS record pointing to us. We&apos;ll email you the instructions.
           </p>
@@ -400,7 +401,7 @@ function DomainRequest({ slug, existingDomain }: { slug: string; existingDomain?
         <button
           onClick={() => handleSubmit(mode === "choose" ? "buy" : mode)}
           disabled={status === "sending"}
-          className="w-full py-2.5 text-[10px] font-semibold tracking-[0.12em] uppercase bg-[var(--dash-btn-bg)] text-[var(--dash-bg)] hover:bg-[#1a1812] disabled:opacity-50 transition-colors rounded-sm"
+          className="w-full py-2.5 text-[10px] font-semibold tracking-[0.12em] uppercase bg-[var(--dash-btn-bg)] text-[var(--dash-bg)] hover:opacity-85 disabled:opacity-50 transition-colors rounded-sm"
         >
           {status === "sending" ? "Submitting..." : existingDomain ? `Update to ${domain}` : mode === "own" ? `Connect ${domain}` : `Request ${domain}`}
         </button>
@@ -513,7 +514,7 @@ function ColorPicker({ label, value, onChange, themeColors }: {
           >
             <div
               className={`w-8 h-8 rounded-full border ${opt.border} border-[var(--dash-text)]/20 shadow-sm transition-transform group-hover:scale-105 ${
-                value === opt.id ? "ring-2 ring-[var(--dash-text)] ring-offset-2" : ""
+                value === opt.id ? "ring-2 ring-[var(--dash-text)] ring-offset-2 ring-offset-[var(--dash-bg)]" : ""
               }`}
               style={{ backgroundColor: opt.color }}
             />
@@ -687,7 +688,7 @@ function MediaLibrary({ onSelect, onClose, recentLinks = [] }: { onSelect: (url:
                   >
                     <img src={url} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     <div className="absolute inset-0 bg-[var(--dash-text)]/0 group-hover:bg-[var(--dash-text)]/10 transition-colors" />
-                    <div className="absolute bottom-1 left-1 bg-white/80 px-1 py-0.5 rounded-[1px] text-[8px] uppercase tracking-widest font-bold text-[var(--dash-text)]/60 shadow-sm border border-[var(--dash-text)]/5">Recent</div>
+                    <div className="absolute bottom-1 left-1 bg-[var(--dash-bg)]/80 px-1 py-0.5 rounded-[1px] text-[8px] uppercase tracking-widest font-bold text-[var(--dash-text)]/60 border border-[var(--dash-text)]/5">Recent</div>
                   </button>
                 ))}
               </div>
@@ -831,7 +832,7 @@ function ImageField({ label, value, onChange, recentLinks = [], onAddRecentLink 
       {uploadError && (
         <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setUploadError(null)}>
           <div className="bg-[var(--dash-bg)] border border-[var(--dash-text)]/15 rounded-sm p-6 max-w-sm mx-4 shadow-xl" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-base font-medium mb-1 text-red-700" style={{ fontFamily: "'Cormorant Garamond', serif" }}>Upload Failed</h3>
+            <h3 className="text-base font-medium mb-1 text-red-500" style={{ fontFamily: "'Cormorant Garamond', serif" }}>Upload Failed</h3>
             <p className="text-sm text-[var(--dash-text)]/70 mb-6 break-words">{uploadError}</p>
             <div className="flex items-center justify-end">
               <button onClick={() => setUploadError(null)} className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest bg-[var(--dash-btn-bg)] text-[var(--dash-bg)] rounded-sm hover:opacity-90 transition-opacity">
@@ -987,7 +988,7 @@ function GiftTrackerPanel({ giftData, loadGifts, site }: {
       </div>
 
       {error && (
-        <div className="mb-6 p-3 bg-red-50 border border-red-200 rounded-sm">
+        <div className="mb-6 p-3 bg-red-500/10 border border-red-500/20 rounded-sm">
           <p className="text-sm text-red-600">{error}</p>
         </div>
       )}
@@ -997,7 +998,7 @@ function GiftTrackerPanel({ giftData, loadGifts, site }: {
         {[
           { label: "Gifts", value: contributions.length, color: "text-[var(--dash-text)]" },
           { label: "Total", value: `${currencySymbol}${totalAmount.toFixed(0)}`, color: "text-[var(--dash-text)]" },
-          { label: "Confirmed", value: confirmed, color: "text-green-700" },
+          { label: "Confirmed", value: confirmed, color: "text-green-600" },
           { label: "Pending", value: pending, color: "text-[var(--dash-text)]/40" },
         ].map((stat) => (
           <div key={stat.label} className="p-3 bg-[var(--dash-surface)] border border-[var(--dash-text)]/8 rounded-sm text-center transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
@@ -1068,7 +1069,7 @@ function GiftTrackerPanel({ giftData, loadGifts, site }: {
                       <button
                         onClick={() => toggleStatus(c.id, c.status)}
                         className={`inline-flex px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest rounded-full cursor-pointer transition-colors ${
-                          c.status === "confirmed" ? "bg-green-50 text-green-700 hover:bg-green-100" : "bg-amber-50 text-amber-600 hover:bg-amber-100"
+                          c.status === "confirmed" ? "bg-green-500/10 text-green-600 hover:bg-green-500/20" : "bg-amber-500/10 text-amber-500 hover:bg-amber-500/20"
                         }`}
                       >
                         {c.status === "confirmed" ? "Confirmed" : "Pending"}
@@ -1112,13 +1113,13 @@ function GiftTrackerPanel({ giftData, loadGifts, site }: {
 
       {/* Delete modal */}
       {deleteConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setDeleteConfirm(null)}>
+        <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setDeleteConfirm(null)}>
           <div className="bg-[var(--dash-bg)] border border-[var(--dash-text)]/15 rounded-sm p-6 max-w-sm mx-4 shadow-xl" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-base font-medium mb-2" style={{ fontFamily: "'Cormorant Garamond', serif" }}>Delete Gift</h3>
             <p className="text-sm text-[var(--dash-text)]/60 mb-6">Are you sure? This cannot be undone.</p>
             <div className="flex items-center justify-end gap-3">
               <button onClick={() => setDeleteConfirm(null)} className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-[var(--dash-text)]/50 hover:text-[var(--dash-text)] transition-colors">Cancel</button>
-              <button onClick={() => deleteGift(deleteConfirm)} className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest bg-red-600 text-white rounded-sm hover:bg-red-700 transition-colors">Delete</button>
+              <button onClick={() => deleteGift(deleteConfirm)} className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest bg-red-600 text-red-50 rounded-sm hover:bg-red-500 transition-colors">Delete</button>
             </div>
           </div>
         </div>
@@ -1311,9 +1312,9 @@ function MessagesPanel({ msgData, loadMessages, site }: {
       <h2 className="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--dash-text)]/60 mb-6">Messages</h2>
 
       {!isPremium && (
-        <div className="mb-6 p-4 border border-amber-200 bg-amber-50 rounded-sm">
-          <p className="text-sm font-medium text-amber-800">Premium Feature</p>
-          <p className="text-[11px] text-amber-700 mt-1">Email and SMS broadcasts require a premium account. Upgrade to send messages to your guests.</p>
+        <div className="mb-6 p-4 border border-amber-500/20 bg-amber-500/10 rounded-sm">
+          <p className="text-sm font-medium text-amber-600">Premium Feature</p>
+          <p className="text-[11px] text-amber-600 mt-1">Email and SMS broadcasts require a premium account. Upgrade to send messages to your guests.</p>
         </div>
       )}
 
@@ -1417,7 +1418,7 @@ function MessagesPanel({ msgData, loadMessages, site }: {
           </div>
 
           {sendResult && (
-            <div className={`mb-4 p-3 rounded-sm text-sm ${sendResult.ok ? "bg-green-50 text-green-700 border border-green-200" : "bg-red-50 text-red-700 border border-red-200"}`}>
+            <div className={`mb-4 p-3 rounded-sm text-sm ${sendResult.ok ? "bg-green-500/10 text-green-600 border border-green-500/20" : "bg-red-500/10 text-red-600 border border-red-500/20"}`}>
               {sendResult.message}
             </div>
           )}
@@ -1451,10 +1452,10 @@ function MessagesPanel({ msgData, loadMessages, site }: {
                         </p>
                       </div>
                       <div className="text-right flex-shrink-0">
-                        <span className={`inline-block text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-sm mr-1 ${b.channel === "sms" ? "bg-emerald-50 text-emerald-700" : "bg-blue-50 text-blue-700"}`}>
+                        <span className={`inline-block text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-sm mr-1 ${b.channel === "sms" ? "bg-emerald-500/10 text-emerald-600" : "bg-blue-500/10 text-blue-600"}`}>
                           {b.channel === "sms" ? "SMS" : "Email"}
                         </span>
-                        <span className={`inline-block text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-sm ${b.status === "sent" ? "bg-green-50 text-green-700" : b.status === "failed" ? "bg-red-50 text-red-700" : "bg-yellow-50 text-yellow-700"}`}>
+                        <span className={`inline-block text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-sm ${b.status === "sent" ? "bg-green-500/10 text-green-600" : b.status === "failed" ? "bg-red-500/10 text-red-600" : "bg-yellow-500/10 text-yellow-600"}`}>
                           {b.status}
                         </span>
                         {b.sentAt && (
@@ -1507,7 +1508,7 @@ function MessagesPanel({ msgData, loadMessages, site }: {
                           <span className="text-sm text-[var(--dash-text)]">{g.name}</span>
                           <span className="text-[10px] text-[var(--dash-text)]/40">({members.length} member{members.length !== 1 ? "s" : ""})</span>
                         </button>
-                        <button onClick={() => handleDeleteGroup(g.id)} className="text-[10px] text-red-500 hover:text-red-700 uppercase tracking-wider font-bold">Remove</button>
+                        <button onClick={() => handleDeleteGroup(g.id)} className="text-[10px] text-red-500 hover:text-red-500 uppercase tracking-wider font-bold">Remove</button>
                       </div>
 
                       {isEditing && (
@@ -1760,7 +1761,7 @@ function GuestListPanel({ rsvpData, loadRSVPs, site, set }: {
               onClick={copyToClipboard}
               className={`flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest rounded-sm border transition-all ${
                 copied
-                  ? "text-green-700 bg-green-50 border-green-200"
+                  ? "text-green-600 bg-green-500/10 border-green-500/20"
                   : "text-[var(--dash-text)]/60 hover:text-[var(--dash-text)] border-[var(--dash-text)]/10 hover:border-[var(--dash-text)]/25"
               }`}
             >
@@ -1787,7 +1788,7 @@ function GuestListPanel({ rsvpData, loadRSVPs, site, set }: {
 
 
       {rsvpError && (
-        <div className="mb-6 p-3 bg-red-50 border border-red-200 rounded-sm">
+        <div className="mb-6 p-3 bg-red-500/10 border border-red-500/20 rounded-sm">
           <p className="text-sm text-red-600">{rsvpError}</p>
         </div>
       )}
@@ -1797,7 +1798,7 @@ function GuestListPanel({ rsvpData, loadRSVPs, site, set }: {
         {[
           { label: "Responses", value: rsvps.length, color: "text-[var(--dash-text)]" },
           { label: "Total Guests", value: allGuests.length, color: "text-[var(--dash-text)]" },
-          { label: "Attending", value: attending, color: "text-green-700" },
+          { label: "Attending", value: attending, color: "text-green-600" },
           { label: "Declined", value: declined, color: "text-[var(--dash-text)]/40" },
         ].map((stat) => (
           <div key={stat.label} className="p-3 bg-[var(--dash-surface)] border border-[var(--dash-text)]/8 rounded-sm text-center transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
@@ -1976,7 +1977,7 @@ function GuestListPanel({ rsvpData, loadRSVPs, site, set }: {
                           <td className="px-4 py-2.5 text-center">
                             <span className={`inline-flex px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest rounded-full ${
                               guest.attending
-                                ? "bg-green-50 text-green-700"
+                                ? "bg-green-500/10 text-green-600"
                                 : "bg-[var(--dash-text)]/5 text-[var(--dash-text)]/35"
                             }`}>
                               {guest.attending ? "Attending" : "Declined"}
@@ -2169,7 +2170,7 @@ function GuestListPanel({ rsvpData, loadRSVPs, site, set }: {
                                 onClick={() => updateEditGuest(gi, { attending: !g.attending })}
                                 className={`shrink-0 px-2 py-1 text-[9px] font-bold uppercase tracking-widest rounded-sm border transition-colors ${
                                   g.attending
-                                    ? "bg-green-50 text-green-700 border-green-200"
+                                    ? "bg-green-500/10 text-green-600 border-green-500/20"
                                     : "bg-[var(--dash-text)]/5 text-[var(--dash-text)]/35 border-[var(--dash-text)]/10"
                                 }`}
                               >
@@ -2217,7 +2218,7 @@ function GuestListPanel({ rsvpData, loadRSVPs, site, set }: {
                           <button onClick={cancelEdit} className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-[var(--dash-text)]/40 hover:text-[var(--dash-text)] transition-colors">
                             Cancel
                           </button>
-                          <button onClick={saveEdit} disabled={saving} className="px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest bg-[var(--dash-btn-bg)] text-[var(--dash-bg)] rounded-sm hover:bg-[#1a1812] transition-colors disabled:opacity-50">
+                          <button onClick={saveEdit} disabled={saving} className="px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest bg-[var(--dash-btn-bg)] text-[var(--dash-bg)] rounded-sm hover:opacity-85 transition-colors disabled:opacity-50">
                             {saving ? "Saving..." : "Save"}
                           </button>
                         </div>
@@ -2256,7 +2257,7 @@ function GuestListPanel({ rsvpData, loadRSVPs, site, set }: {
 
       {/* Delete confirmation modal */}
       {deleteConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setDeleteConfirm(null)}>
+        <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setDeleteConfirm(null)}>
           <div className="bg-[var(--dash-bg)] border border-[var(--dash-text)]/15 rounded-sm p-6 max-w-sm mx-4 shadow-xl" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-base font-medium mb-2" style={{ fontFamily: "'Cormorant Garamond', serif" }}>Delete RSVP</h3>
             <p className="text-sm text-[var(--dash-text)]/60 mb-6">Are you sure you want to delete this RSVP? This action cannot be undone.</p>
@@ -2269,7 +2270,7 @@ function GuestListPanel({ rsvpData, loadRSVPs, site, set }: {
               </button>
               <button
                 onClick={() => deleteRsvp(deleteConfirm)}
-                className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest bg-red-600 text-white rounded-sm hover:bg-red-700 transition-colors"
+                className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest bg-red-600 text-red-50 rounded-sm hover:bg-red-500 transition-colors"
               >
                 Delete
               </button>
@@ -2295,6 +2296,8 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
 
   const [tab, setTab] = useState<Tab>("Basics");
   const [view, setView] = useState<View>("website");
+  const [easyModeOpen, setEasyModeOpen] = useState(false);
+  const [easyModeDismissed, setEasyModeDismissed] = useState(false);
 
   // RSVP guest list state
   const [rsvpData, setRsvpData] = useState<{
@@ -2796,7 +2799,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
       
       {/* Upgrade banner for unpaid sites */}
       {!site.isPaid && (
-        <div className="sticky top-0 z-[60] bg-gradient-to-r from-[var(--dash-btn-bg)] via-[color-mix(in_srgb,var(--dash-btn-bg),var(--dash-text)_15%)] to-[var(--dash-btn-bg)] text-[var(--dash-bg)] px-4 py-2.5 flex items-center justify-between">
+        <div className="sticky top-0 z-[60] bg-[var(--dash-btn-bg)] text-[var(--dash-bg)] px-4 py-2.5 flex items-center justify-between">
           <p className="text-xs">
             <span className="font-bold uppercase tracking-wider">Free plan</span>
             <span className="opacity-60 ml-2">Upgrade to publish your site and go live</span>
@@ -2847,7 +2850,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
             </div>
 
             <div className="flex items-center gap-1 px-1 sm:px-3">
-              <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 transition-all duration-300 ${saveError ? "bg-red-500 animate-pulse" : saving ? "bg-amber-400 animate-pulse" : saved ? "bg-green-500 shadow-[0_0_6px_rgba(34,197,94,0.4)]" : "bg-amber-400"}`} />
+              <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 transition-all duration-300 ${saveError ? "bg-red-500 animate-pulse" : saving ? "bg-amber-400 animate-pulse" : saved ? "bg-green-500" : "bg-amber-400"}`} />
               <span className={`hidden sm:inline text-[10px] font-bold uppercase tracking-widest whitespace-nowrap transition-colors duration-300 ${saveError ? "text-red-600" : saved && !saving ? "text-green-600" : "text-[var(--dash-text)]/40"}`}>
                 {saveError ? "Error" : saving ? "Saving..." : saved ? "Saved" : "Unsaved"}
               </span>
@@ -3048,12 +3051,12 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                       <Label>Custom Domain</Label>
                       <p className="text-[10px] text-[var(--dash-text)]/40 mb-4 uppercase tracking-wider">Use your own domain instead of {site.slug}.ithinkshewifey.com</p>
                       {site.domainVerifiedAt ? (
-                        <div className="p-4 bg-green-50 border border-green-200 rounded-sm">
+                        <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-sm">
                           <div className="flex items-center gap-2 mb-1">
                             <span className="w-2 h-2 rounded-full bg-green-500" />
-                            <p className="text-xs font-medium text-green-800">Connected</p>
+                            <p className="text-xs font-medium text-green-600">Connected</p>
                           </div>
-                          <p className="text-xs text-green-700">
+                          <p className="text-xs text-green-600">
                             {site.customDomain} is live. Contact support to make changes.
                           </p>
                         </div>
@@ -3138,9 +3141,9 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                         }`}
                       >
                         <div className="flex gap-1.5 mb-2">
-                          <span className="w-5 h-5 rounded-full border border-black/10" style={{ background: theme.colors.primary }} />
-                          <span className="w-5 h-5 rounded-full border border-black/10" style={{ background: theme.colors.accent }} />
-                          <span className="w-5 h-5 rounded-full border border-black/10" style={{ background: theme.colors.dark }} />
+                          <span className="w-5 h-5 rounded-full border border-[var(--dash-text)]/10" style={{ background: theme.colors.primary }} />
+                          <span className="w-5 h-5 rounded-full border border-[var(--dash-text)]/10" style={{ background: theme.colors.accent }} />
+                          <span className="w-5 h-5 rounded-full border border-[var(--dash-text)]/10" style={{ background: theme.colors.dark }} />
                         </div>
                         <p className="text-[11px] font-bold uppercase tracking-tight text-[var(--dash-text)]">{theme.name}</p>
                         {site.templateId === theme.id && (
@@ -3227,7 +3230,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                           onClick={() => set("isPublished", !site.isPublished)}
                           className={`relative w-12 h-7 rounded-full transition-colors ${site.isPublished ? "bg-green-500" : "bg-[var(--dash-text)]/20"}`}
                         >
-                          <span className={`absolute top-1 w-5 h-5 bg-white rounded-full shadow-sm transition-transform ${site.isPublished ? "left-6" : "left-1"}`} />
+                          <span className={`absolute top-1 w-5 h-5 bg-[var(--dash-bg)] rounded-full shadow-sm transition-transform ${site.isPublished ? "left-6" : "left-1"}`} />
                         </button>
                       </div>
                     ) : (
@@ -4181,7 +4184,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                 <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--dash-text)]/40">Real-time Preview</span>
                 <span className="text-[10px] text-[var(--dash-text)]/30">{previewDevice === "desktop" ? "Desktop Mode" : "Mobile View"} &bull; Auto-syncing</span>
               </div>
-              <div className={`flex-1 overflow-hidden flex justify-center min-w-0 ${previewDevice === "mobile" ? "bg-[var(--dash-text)]/5 items-stretch py-3" : "bg-[#f0f0f0] p-0 lg:p-4"}`}>
+              <div className={`flex-1 overflow-hidden flex justify-center min-w-0 ${previewDevice === "mobile" ? "bg-[var(--dash-text)]/5 items-stretch py-3" : "bg-[var(--dash-text)]/[0.06] p-0 lg:p-4"}`}>
                 <div
                   ref={previewContainerRef}
                   style={{ containerType: "inline-size" }}
@@ -4294,7 +4297,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                   await fetch(`/api/sites/${site.slug}/domain-request`, { method: "DELETE" });
                   set("customDomain", null);
                 }}
-                className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest bg-red-600 text-white rounded-sm hover:bg-red-700 transition-colors"
+                className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest bg-red-600 text-red-50 rounded-sm hover:bg-red-500 transition-colors"
               >
                 Cancel Request
               </button>
@@ -4307,7 +4310,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
       {showSaveErrorModal && (
         <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setShowSaveErrorModal(null)}>
           <div className="bg-[var(--dash-bg)] border border-[var(--dash-text)]/15 rounded-sm p-6 max-w-sm mx-4 shadow-xl" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-base font-medium mb-1 text-red-700" style={{ fontFamily: "'Cormorant Garamond', serif" }}>Save Failed</h3>
+            <h3 className="text-base font-medium mb-1 text-red-500" style={{ fontFamily: "'Cormorant Garamond', serif" }}>Save Failed</h3>
             <p className="text-sm text-[var(--dash-text)]/70 mb-2 break-words">{showSaveErrorModal}</p>
             <p className="text-[10px] text-[var(--dash-text)]/40 uppercase tracking-wider mb-6">
               Your changes have not been saved. Please check your connection and try again.
@@ -4321,6 +4324,28 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Easy Mode */}
+      {easyModeOpen ? (
+        <EasyMode site={site} set={set} onClose={() => setEasyModeOpen(false)} />
+      ) : !easyModeDismissed && (
+        <div className="fixed bottom-6 right-6 z-40 flex items-center gap-1.5">
+          <button
+            onClick={() => setEasyModeOpen(true)}
+            className="flex items-center gap-2 bg-[var(--dash-btn-bg)] text-[var(--dash-btn-text)] px-5 py-2.5 rounded-full shadow-lg hover:opacity-90 transition-opacity text-[12px] font-bold uppercase tracking-wider"
+          >
+            <span>✦</span>
+            Easy Mode
+          </button>
+          <button
+            onClick={() => setEasyModeDismissed(true)}
+            className="w-7 h-7 flex items-center justify-center rounded-full bg-[var(--dash-btn-bg)] text-[var(--dash-btn-text)] shadow-lg hover:opacity-90 transition-opacity text-xs"
+            title="Dismiss"
+          >
+            ✕
+          </button>
         </div>
       )}
     </div>

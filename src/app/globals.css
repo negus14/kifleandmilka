@@ -412,10 +412,10 @@
 .gift-contrib { margin: 2rem auto; max-width: 560px; text-align: left; }
 .gift-contrib__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
 .gift-contrib__card {
-  background: rgba(0,0,0,0.02); border: 1px solid rgba(0,0,0,0.08); padding: 1.25rem;
+  background: color-mix(in srgb, var(--color-dark, #2d2b25), transparent 98%); border: 1px solid color-mix(in srgb, var(--color-dark, #2d2b25), transparent 92%); padding: 1.25rem;
   cursor: pointer; transition: all 0.2s; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
 }
-.gift-contrib__card:hover { border-color: rgba(0,0,0,0.25); background: rgba(0,0,0,0.04); }
+.gift-contrib__card:hover { border-color: color-mix(in srgb, var(--color-dark, #2d2b25), transparent 75%); background: color-mix(in srgb, var(--color-dark, #2d2b25), transparent 96%); }
 .gift-contrib__card-img { width: 80px; height: 80px; border-radius: 50%; overflow: hidden; margin-bottom: 0.5rem; }
 .gift-contrib__card-img img { width: 100%; height: 100%; object-fit: cover; }
 .gift-contrib__card-name { font-weight: 600; font-size: 0.95rem; }
@@ -438,8 +438,8 @@
 .gift-contrib__amount-row { display: flex; align-items: stretch; gap: 0; max-width: 50%; }
 .gift-contrib__label { font-size: 0.8rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.6; }
 .gift-contrib__input, .gift-contrib__textarea, .gift-contrib__select {
-  width: 100%; padding: 0.75rem; border: 1px solid rgba(0,0,0,0.12); background: transparent;
-  font: inherit; font-size: 0.95rem; outline: none; transition: border-color 0.2s;
+  width: 100%; padding: 0.75rem; border: 1px solid color-mix(in srgb, var(--color-dark, #2d2b25), transparent 88%); background: transparent;
+  font: inherit; font-size: 0.95rem; outline: none; transition: border-color 0.2s; color: inherit;
 }
 .gift-contrib__select {
   appearance: none; -webkit-appearance: none; -moz-appearance: none;
@@ -447,9 +447,9 @@
   background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 12px;
   padding-right: 2.5rem; cursor: pointer;
 }
-.gift-contrib__input:focus, .gift-contrib__textarea:focus, .gift-contrib__select:focus { border-color: rgba(0,0,0,0.35); }
+.gift-contrib__input:focus, .gift-contrib__textarea:focus, .gift-contrib__select:focus { border-color: color-mix(in srgb, var(--color-dark, #2d2b25), transparent 65%); }
 .gift-contrib__textarea { resize: vertical; min-height: 120px; }
-.gift-contrib__error { color: #dc2626; font-size: 0.85rem; }
+.gift-contrib__error { color: #ef4444; font-size: 0.85rem; }
 
 .gift-contrib__btn {
   display: block; width: auto; margin: 2rem auto 0; padding: 0.85rem 3rem;
