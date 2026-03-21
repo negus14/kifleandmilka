@@ -31,7 +31,7 @@
   border: 1px solid color-mix(in srgb, var(--dash-text), transparent 88%);
   border-radius: 2px;
   box-shadow: 0 8px 30px color-mix(in srgb, var(--dash-text), transparent 90%), 0 2px 8px color-mix(in srgb, var(--dash-text), transparent 94%);
-  background: var(--dash-surface);
+  background: var(--dash-bg);
   overflow: hidden;
 }
 
@@ -140,7 +140,7 @@
 }
 
 .wedding-datepicker .react-datepicker__time-container .react-datepicker__time {
-  background: var(--dash-surface);
+  background: var(--dash-bg);
 }
 
 .wedding-datepicker .react-datepicker__header--time {
