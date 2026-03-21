@@ -14,8 +14,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!site || !site.isPublished || !site.isPaid) return {};
 
   // Prefer R2 direct URL (no redirects for scrapers to follow), fall back to slug route
+  const style = site.ogStyle ?? "light";
   const ogImage = R2_PUBLIC_URL
-    ? ogImageUrl(site.slug)
+    ? ogImageUrl(site.slug, style)
     : `https://www.ithinkshewifey.com/${site.slug}/opengraph-image`;
   const description = `Join us in celebrating the wedding of ${site.partner1Name} and ${site.partner2Name} — ${site.dateDisplayText} in ${site.locationText}.`;
 

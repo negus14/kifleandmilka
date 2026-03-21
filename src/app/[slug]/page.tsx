@@ -18,8 +18,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const displayUrl = site.customDomain
     ? `https://${site.customDomain}`
     : `https://${slug}.ithinkshewifey.com`;
+  const style = site.ogStyle ?? "light";
   const ogImage = R2_PUBLIC_URL
-    ? ogImageUrl(slug)
+    ? ogImageUrl(slug, style)
     : `https://www.ithinkshewifey.com/${slug}/opengraph-image`;
   const description = `Join us in celebrating the wedding of ${site.partner1Name} and ${site.partner2Name} — ${site.dateDisplayText} in ${site.locationText}.`;
   return {
