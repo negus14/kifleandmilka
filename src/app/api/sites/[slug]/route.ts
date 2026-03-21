@@ -64,8 +64,8 @@ export async function PUT(
       return NextResponse.json({ error: "Site not found or update failed to persist" }, { status: 404 });
     }
 
-    // Regenerate OG image if partner names changed
-    if (body.partner1Name || body.partner2Name) {
+    // Regenerate OG image if relevant fields changed
+    if (body.partner1Name || body.partner2Name || body.ogStyle !== undefined || body.customColors || body.templateId) {
       generateAndUploadOgImage(updated).catch((err) =>
         console.error("[OG] Failed to generate OG image:", err)
       );

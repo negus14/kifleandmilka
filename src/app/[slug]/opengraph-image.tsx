@@ -1,7 +1,6 @@
 import { ImageResponse } from "next/og";
 import { getSiteBySlug } from "@/lib/data/sites";
-import { ogImageUrl, generateAndUploadOgImage } from "@/lib/og-image";
-import { resolveOgColors } from "@/lib/og-image";
+import { ogImageUrl, generateAndUploadOgImage, resolveOgColors } from "@/lib/og-image";
 import { R2_PUBLIC_URL } from "@/lib/r2";
 import { getOgFont, ogFontConfig } from "@/lib/og-font";
 
@@ -25,9 +24,11 @@ export default async function OGImage({
     return new Response("Not found", { status: 404 });
   }
 
+  const style = site.ogStyle ?? "light";
+
   // Try to serve from R2 (proxy, not redirect — scrapers don't follow redirects)
   if (R2_PUBLIC_URL) {
-    const r2Url = ogImageUrl(slug);
+    const r2Url = ogImageUrl(slug, style);
     try {
       const res = await fetch(r2Url);
       if (res.ok) {
@@ -79,7 +80,7 @@ export default async function OGImage({
     }
   );
 
-  // Upload to R2 in background for next time
+  // Upload both variants to R2 in background for next time
   if (R2_PUBLIC_URL) {
     generateAndUploadOgImage(site).catch(() => {});
   }

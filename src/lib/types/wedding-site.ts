@@ -261,6 +261,8 @@ export interface WeddingSite {
   domainVerifiedAt?: string | Date | null;
 
   // Custom overrides (merged on top of theme/font presets)
+  ogStyle?: "light" | "dark";
+
   customColors?: Partial<{
     dark: string;
     accent: string;

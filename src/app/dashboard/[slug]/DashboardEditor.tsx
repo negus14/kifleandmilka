@@ -3106,6 +3106,48 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
                   <Field label="Location" value={site.locationText} onChange={(v) => set("locationText", v)} />
                   <Field label="Nav Brand Text" value={site.navBrand} onChange={(v) => set("navBrand", v)} placeholder="K & M" />
 
+                  <Label>Link Preview Style</Label>
+                  <p className="text-[10px] text-[var(--dash-text)]/40 uppercase tracking-wider mb-2">How your site appears when shared on social media</p>
+                  <div className="grid grid-cols-2 gap-3 mt-1 mb-6">
+                    {(["light", "dark"] as const).map((style) => {
+                      const activeTheme = themes.find((t) => t.id === site.templateId) || themes[0];
+                      const colors = { ...activeTheme.colors, ...site.customColors };
+                      const bg = style === "dark" ? colors.dark : colors.primary;
+                      const fg = style === "dark" ? colors.primary : colors.dark;
+                      const initials = `${(site.partner1Name || "A").charAt(0).toUpperCase()} & ${(site.partner2Name || "B").charAt(0).toUpperCase()}`;
+                      const isActive = (site.ogStyle ?? "light") === style;
+                      return (
+                        <button
+                          key={style}
+                          type="button"
+                          onClick={() => set("ogStyle", style)}
+                          className={`relative rounded-sm border-2 overflow-hidden transition-all ${
+                            isActive
+                              ? "border-[var(--dash-text)] shadow-sm"
+                              : "border-[var(--dash-text)]/10 hover:border-[var(--dash-text)]/30"
+                          }`}
+                        >
+                          <div
+                            className="flex items-center justify-center py-6"
+                            style={{ backgroundColor: bg }}
+                          >
+                            <span
+                              className="text-2xl font-bold italic"
+                              style={{ color: fg, fontFamily: "'Playfair Display', serif" }}
+                            >
+                              {initials}
+                            </span>
+                          </div>
+                          <div className="px-3 py-2 text-center border-t border-[var(--dash-text)]/10">
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--dash-text)]/60">
+                              {style}
+                            </span>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+
                   <Label>Layout Style</Label>
                   <div className="grid grid-cols-2 gap-3 mt-2 mb-6">
                     {([
