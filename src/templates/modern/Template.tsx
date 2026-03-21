@@ -155,7 +155,16 @@ export function ModernTemplate({ site, isPreview, onFieldUpdate }: { site: Weddi
       const categories = site.menuCategories || [];
       const hasCategories = categories.length > 0;
       const hasContent = hasCategories || (site.menuItems && site.menuItems.length > 0);
-      if (!hasContent && !hasBg) return null;
+      if (!hasContent && !hasBg) {
+        if (!isPreview) return null;
+        return (
+          <section id={id} className={`modern-section ${cls}`} style={style}>
+            <div className="modern-container" style={{ padding: "3rem 1.5rem", textAlign: "center", opacity: 0.35 }}>
+              <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", letterSpacing: "0.1em", textTransform: "uppercase" }}>Menu — no content yet</p>
+            </div>
+          </section>
+        );
+      }
 
       // If parent didn't provide a background (tan or has-bg), default to dark for the menu
       const finalCls = cls.includes('modern-section--tan') || cls.includes('modern-section--has-bg') ? cls : `modern-section--dark ${cls}`;
@@ -494,8 +503,17 @@ export function ModernTemplate({ site, isPreview, onFieldUpdate }: { site: Weddi
       const hasBg = cls.includes("modern-section--has-bg");
       const hasContent = site.exploreGroups && site.exploreGroups.length > 0;
       
-      if (!hasContent && !hasBg) return null;
-      
+      if (!hasContent && !hasBg) {
+        if (!isPreview) return null;
+        return (
+          <section id={id} className={`modern-section ${cls}`} style={style}>
+            <div className="modern-container" style={{ padding: "3rem 1.5rem", textAlign: "center", opacity: 0.35 }}>
+              <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", letterSpacing: "0.1em", textTransform: "uppercase" }}>Things to Do — no content yet</p>
+            </div>
+          </section>
+        );
+      }
+
       const isPrv = cls.includes("preview");
       return (
         <section id={id} className={`modern-section ${cls}`} style={style}>
@@ -627,7 +645,16 @@ export function ModernTemplate({ site, isPreview, onFieldUpdate }: { site: Weddi
     },
 
     contact: (id, cls = "", style = {}) => {
-      if (!site.contactEntries || site.contactEntries.length === 0) return null;
+      if (!site.contactEntries || site.contactEntries.length === 0) {
+        if (!isPreview) return null;
+        return (
+          <section id={id} className={`modern-section ${cls}`} style={style}>
+            <div className="modern-container" style={{ padding: "3rem 1.5rem", textAlign: "center", opacity: 0.35 }}>
+              <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", letterSpacing: "0.1em", textTransform: "uppercase" }}>Contact — no content yet</p>
+            </div>
+          </section>
+        );
+      }
       return (
         <section className={`modern-section ${cls}`} id={id} style={style}>
           <div className="modern-container reveal text-center">

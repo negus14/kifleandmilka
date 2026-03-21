@@ -438,7 +438,16 @@ export function ClassicTemplate({ site, isPreview, onFieldUpdate }: { site: Wedd
       const categories = site.menuCategories || [];
       const hasCategories = categories.length > 0;
       const hasContent = hasCategories || (site.menuItems && site.menuItems.length > 0);
-      if (!hasContent && !hasBg) return null;
+      if (!hasContent && !hasBg) {
+        if (!isPreview) return null;
+        return (
+          <section id={id} className={`section ${cls}`} style={style}>
+            <div className="container" style={{ padding: "3rem 1.5rem", textAlign: "center", opacity: 0.35 }}>
+              <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", letterSpacing: "0.1em", textTransform: "uppercase" }}>Menu — no content yet</p>
+            </div>
+          </section>
+        );
+      }
 
       const renderDish = (item: { name: string; description: string }, i: number) => (
         <div key={i} className="menu__item">
@@ -546,8 +555,17 @@ export function ClassicTemplate({ site, isPreview, onFieldUpdate }: { site: Wedd
       const hasBg = cls.includes("section--has-bg");
       const hasContent = site.exploreGroups && site.exploreGroups.length > 0;
       
-      if (!hasContent && !hasBg) return null;
-      
+      if (!hasContent && !hasBg) {
+        if (!isPreview) return null;
+        return (
+          <section id={id} className={`section ${cls}`} style={style}>
+            <div className="container" style={{ padding: "3rem 1.5rem", textAlign: "center", opacity: 0.35 }}>
+              <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", letterSpacing: "0.1em", textTransform: "uppercase" }}>Things to Do — no content yet</p>
+            </div>
+          </section>
+        );
+      }
+
       return (
         <div className={`section ${cls}`} id={id} style={style}>
           <div className="container">
@@ -686,7 +704,16 @@ export function ClassicTemplate({ site, isPreview, onFieldUpdate }: { site: Wedd
     },
 
     contact: (id, cls = "", style = {}) => {
-      if (!site.contactEntries || site.contactEntries.length === 0) return null;
+      if (!site.contactEntries || site.contactEntries.length === 0) {
+        if (!isPreview) return null;
+        return (
+          <section id={id} className={`section ${cls}`} style={style}>
+            <div className="container" style={{ padding: "3rem 1.5rem", textAlign: "center", opacity: 0.35 }}>
+              <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", letterSpacing: "0.1em", textTransform: "uppercase" }}>Contact — no content yet</p>
+            </div>
+          </section>
+        );
+      }
       return (
         <section className={`section ${cls}`} id={id} style={style}>
           <div className="container">

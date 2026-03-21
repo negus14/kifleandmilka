@@ -2810,7 +2810,8 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
         <div className="sticky top-0 z-[60] bg-[var(--dash-btn-bg)] text-[var(--dash-bg)] px-4 py-2.5 flex items-center justify-between">
           <p className="text-xs">
             <span className="font-bold uppercase tracking-wider">Free plan</span>
-            <span className="opacity-60 ml-2">Upgrade to publish your site and go live</span>
+            <span className="opacity-60 ml-2 hidden sm:inline">Upgrade to publish your site and go live</span>
+            <span className="opacity-60 ml-2 sm:hidden">Upgrade to go live</span>
           </p>
           <button
             onClick={handleCheckout}
@@ -4380,16 +4381,16 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
       {/* Toast Notification */}
       {toast && (
         <div
-          className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[120] animate-in fade-in slide-in-from-bottom-4 duration-200"
+          className="fixed bottom-6 left-4 right-4 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 sm:max-w-sm z-[120]"
           onClick={() => setToast(null)}
         >
-          <div className={`flex items-center gap-3 px-5 py-3 rounded-sm shadow-xl border cursor-pointer ${
+          <div className={`flex items-center justify-between gap-3 px-4 py-3 rounded-sm shadow-xl border cursor-pointer text-xs ${
             toast.type === "error"
               ? "bg-red-950 border-red-800/30 text-red-100"
               : "bg-[var(--dash-btn-bg)] border-[var(--dash-text)]/10 text-[var(--dash-btn-text)]"
           }`}>
-            <span className="text-sm">{toast.message}</span>
-            <span className="text-xs opacity-50 ml-2 shrink-0">dismiss</span>
+            <span>{toast.message}</span>
+            <span className="opacity-50 shrink-0">dismiss</span>
           </div>
         </div>
       )}
