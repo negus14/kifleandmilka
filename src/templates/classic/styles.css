@@ -812,6 +812,26 @@
     min-height: 180px;
     max-height: 280px;
   }
+
+  /* RSVP & gift form mobile rules for preview */
+  .preview .rsvp__input--narrow,
+  .preview .gift-contrib__input--narrow {
+    max-width: 100%;
+  }
+
+  .preview .rsvp__phone-row--narrow,
+  .preview .gift-contrib__amount-row {
+    max-width: 100%;
+  }
+
+  .preview .rsvp__field--centered,
+  .preview .gift-contrib__field--centered {
+    text-align: left;
+  }
+
+  .preview .rsvp__row {
+    grid-template-columns: 1fr;
+  }
 }
 
 @container (max-width: 480px) {
