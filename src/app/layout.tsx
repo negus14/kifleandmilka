@@ -6,6 +6,12 @@ export const metadata: Metadata = {
   title: "ITSW — Wedding Website Builder",
   description:
     "Create a fully customisable wedding website in minutes — with RSVP, gallery, schedule, and everything your guests need.",
+  icons: {
+    icon: [
+      { url: "/icon-light.svg", media: "(prefers-color-scheme: light)" },
+      { url: "/icon-dark.svg", media: "(prefers-color-scheme: dark)" },
+    ],
+  },
   openGraph: {
     title: "ITSW — Wedding Website Builder",
     description: "Create a fully customisable wedding website in minutes — with RSVP, gallery, schedule, and everything your guests need.",

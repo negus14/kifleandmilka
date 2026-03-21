@@ -3,13 +3,24 @@ import { ImageResponse } from "next/og";
 import { r2, R2_BUCKET, R2_PUBLIC_URL } from "./r2";
 import type { WeddingSite } from "./types/wedding-site";
 import { getOgFont, ogFontConfig } from "./og-font";
+import { getTheme } from "./themes";
 
 export function ogImageKey(slug: string): string {
-  return `sites/${slug}/og-image-v2.png`;
+  return `sites/${slug}/og-image-v3.png`;
 }
 
 export function ogImageUrl(slug: string): string {
   return `${R2_PUBLIC_URL}/${ogImageKey(slug)}`;
+}
+
+/**
+ * Resolves the OG image background and foreground colors
+ * from the site's theme + custom overrides.
+ */
+export function resolveOgColors(site: WeddingSite): { bg: string; fg: string } {
+  const theme = getTheme(site.templateId);
+  const colors = { ...theme.colors, ...site.customColors };
+  return { bg: colors.primary, fg: colors.dark };
 }
 
 export async function generateAndUploadOgImage(site: WeddingSite): Promise<string | null> {
@@ -18,6 +29,7 @@ export async function generateAndUploadOgImage(site: WeddingSite): Promise<strin
   const i1 = (site.partner1Name || "A").charAt(0).toUpperCase();
   const i2 = (site.partner2Name || "B").charAt(0).toUpperCase();
   const fontData = await getOgFont();
+  const { bg, fg } = resolveOgColors(site);
 
   const response = new ImageResponse(
     (
@@ -28,7 +40,7 @@ export async function generateAndUploadOgImage(site: WeddingSite): Promise<strin
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: "#2d2b25",
+          backgroundColor: bg,
           fontFamily: "'Playfair Display', serif",
         }}
       >
@@ -37,7 +49,7 @@ export async function generateAndUploadOgImage(site: WeddingSite): Promise<strin
             fontSize: 140,
             fontWeight: 700,
             fontStyle: "italic",
-            color: "#faf1e1",
+            color: fg,
           }}
         >
           {i1} & {i2}

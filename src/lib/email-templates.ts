@@ -30,23 +30,45 @@ function siteUrlDisplay(site: WeddingSite): string {
 function baseLayout(content: string, site: WeddingSite) {
   return `<!DOCTYPE html>
 <html>
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark">
+<style>
+  :root { color-scheme: light dark; }
+  @media (prefers-color-scheme: dark) {
+    .email-body { background: #1a1917 !important; }
+    .email-card { background: #2d2b25 !important; }
+    .email-logo { color: #e8e0d4 !important; }
+    .email-subtitle { color: #a09888 !important; }
+    .email-heading { color: #e8e0d4 !important; }
+    .email-text { color: #e8e0d4 !important; }
+    .email-muted { color: #a09888 !important; }
+    .email-link { color: #e8e0d4 !important; }
+    .email-divider { border-color: #3d3b35 !important; }
+    .email-highlight { background: #1a1917 !important; }
+    .email-border { border-color: #3d3b35 !important; }
+    .email-btn { background: #e8e0d4 !important; color: #1a1917 !important; }
+  }
+</style>
+</head>
 <body style="margin:0;padding:0;background:#f7f6f3;font-family:Georgia,'Times New Roman',serif;">
-<table width="100%" cellpadding="0" cellspacing="0" style="background:#f7f6f3;padding:40px 0;">
+<table class="email-body" width="100%" cellpadding="0" cellspacing="0" style="background:#f7f6f3;padding:40px 0;">
 <tr><td align="center">
-<table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:4px;overflow:hidden;max-width:100%;">
+<table class="email-card" width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:4px;overflow:hidden;max-width:100%;">
   <tr><td style="padding:40px 40px 0;text-align:center;">
-    <a href="https://www.ithinkshewifey.com" style="font-family:'Playfair Display',Georgia,serif;font-size:18px;font-weight:bold;font-style:italic;color:#2d2b25;text-decoration:none;">ITSW</a>
-    <p style="font-size:12px;letter-spacing:3px;text-transform:uppercase;color:#8a8578;margin:12px 0 8px;">
+    <a class="email-logo" href="https://www.ithinkshewifey.com" style="font-family:'Playfair Display',Georgia,serif;font-size:18px;font-weight:bold;font-style:italic;color:#2d2b25;text-decoration:none;">ITSW</a>
+    <p class="email-subtitle" style="font-size:12px;letter-spacing:3px;text-transform:uppercase;color:#8a8578;margin:12px 0 8px;">
       ${escapeHtml(site.partner1Name)} &amp; ${escapeHtml(site.partner2Name)}
     </p>
   </td></tr>
   <tr><td style="padding:24px 40px 40px;">
     ${content}
   </td></tr>
-  <tr><td style="padding:24px 40px;border-top:1px solid #e8e6e1;text-align:center;">
-    <p style="font-size:11px;color:#8a8578;margin:0;">
-      Sent from <a href="${siteUrl(site)}" style="color:#8a8578;">${escapeHtml(siteUrlDisplay(site))}</a>
+  <tr><td class="email-divider" style="padding:24px 40px;border-top:1px solid #e8e6e1;text-align:center;">
+    <p class="email-muted" style="font-size:11px;color:#8a8578;margin:0;">
+      Sent from <a class="email-muted" href="${siteUrl(site)}" style="color:#8a8578;">${escapeHtml(siteUrlDisplay(site))}</a>
     </p>
   </td></tr>
 </table>
@@ -65,32 +87,32 @@ export function rsvpConfirmationHtml(
   const declined = guests.filter((g) => !g.attending);
 
   const customMsg = site.rsvpConfirmationMessage
-    ? `<p style="font-size:15px;color:#2d2b25;line-height:1.7;margin:0 0 20px;">${escapeHtml(site.rsvpConfirmationMessage)}</p>`
+    ? `<p class="email-text" style="font-size:15px;color:#2d2b25;line-height:1.7;margin:0 0 20px;">${escapeHtml(site.rsvpConfirmationMessage)}</p>`
     : "";
 
   let guestRows = "";
   for (const g of guests) {
     const status = g.attending ? "Attending" : "Declined";
     const meal = g.mealChoice ? ` — ${escapeHtml(g.mealChoice)}${g.isHalal ? " (Halal)" : ""}` : "";
-    const dietary = g.dietaryPreference ? `<br><span style="font-size:13px;color:#8a8578;">Dietary: ${escapeHtml(g.dietaryPreference)}</span>` : "";
+    const dietary = g.dietaryPreference ? `<br><span class="email-muted" style="font-size:13px;color:#8a8578;">Dietary: ${escapeHtml(g.dietaryPreference)}</span>` : "";
     guestRows += `<tr>
-      <td style="padding:10px 0;border-bottom:1px solid #f0eeea;font-size:14px;color:#2d2b25;">${escapeHtml(g.name)}</td>
-      <td style="padding:10px 0;border-bottom:1px solid #f0eeea;font-size:14px;color:#8a8578;text-align:right;">${status}${meal}${dietary}</td>
+      <td class="email-text email-border" style="padding:10px 0;border-bottom:1px solid #f0eeea;font-size:14px;color:#2d2b25;">${escapeHtml(g.name)}</td>
+      <td class="email-muted email-border" style="padding:10px 0;border-bottom:1px solid #f0eeea;font-size:14px;color:#8a8578;text-align:right;">${status}${meal}${dietary}</td>
     </tr>`;
   }
 
   const content = `
-    <h1 style="font-size:22px;font-weight:normal;color:#2d2b25;text-align:center;margin:0 0 24px;">Thank you for your RSVP!</h1>
+    <h1 class="email-heading" style="font-size:22px;font-weight:normal;color:#2d2b25;text-align:center;margin:0 0 24px;">Thank you for your RSVP!</h1>
     ${customMsg}
-    <p style="font-size:15px;color:#2d2b25;line-height:1.7;margin:0 0 8px;">
+    <p class="email-text" style="font-size:15px;color:#2d2b25;line-height:1.7;margin:0 0 8px;">
       ${attending.length > 0 ? `We're delighted ${attending.length === 1 ? "you" : `all ${attending.length} of you`} can join us!` : "We're sorry you won't be able to make it."}
     </p>
-    ${site.dateDisplayText ? `<p style="font-size:14px;color:#8a8578;margin:0 0 4px;">${escapeHtml(site.dateDisplayText)}</p>` : ""}
-    ${site.locationText ? `<p style="font-size:14px;color:#8a8578;margin:0 0 24px;">${escapeHtml(site.locationText)}</p>` : ""}
+    ${site.dateDisplayText ? `<p class="email-muted" style="font-size:14px;color:#8a8578;margin:0 0 4px;">${escapeHtml(site.dateDisplayText)}</p>` : ""}
+    ${site.locationText ? `<p class="email-muted" style="font-size:14px;color:#8a8578;margin:0 0 24px;">${escapeHtml(site.locationText)}</p>` : ""}
     <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px;">${guestRows}</table>
-    ${message ? `<div style="background:#f7f6f3;padding:16px;border-radius:4px;margin:0 0 24px;"><p style="font-size:13px;color:#8a8578;margin:0 0 4px;">Your message:</p><p style="font-size:14px;color:#2d2b25;margin:0;font-style:italic;">"${escapeHtml(message)}"</p></div>` : ""}
-    ${attending.length > 0 && site.weddingDate ? `<div style="text-align:center;margin:0 0 24px;"><a href="${googleCalendarUrl(site)}" target="_blank" style="display:inline-block;padding:12px 28px;background:#2d2b25;color:#fdfcf9;font-size:13px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;text-decoration:none;border-radius:3px;">Add to Calendar</a><p style="font-size:11px;color:#8a8578;margin:8px 0 0;">An .ics file is also attached for Apple &amp; Outlook calendars</p></div>` : ""}
-    <p style="font-size:13px;color:#8a8578;margin:0;text-align:center;">You can view the full wedding details at<br><a href="${siteUrl(site)}" style="color:#2d2b25;">${escapeHtml(siteUrlDisplay(site))}</a></p>
+    ${message ? `<div class="email-highlight" style="background:#f7f6f3;padding:16px;border-radius:4px;margin:0 0 24px;"><p class="email-muted" style="font-size:13px;color:#8a8578;margin:0 0 4px;">Your message:</p><p class="email-text" style="font-size:14px;color:#2d2b25;margin:0;font-style:italic;">"${escapeHtml(message)}"</p></div>` : ""}
+    ${attending.length > 0 && site.weddingDate ? `<div style="text-align:center;margin:0 0 24px;"><a class="email-btn" href="${googleCalendarUrl(site)}" target="_blank" style="display:inline-block;padding:12px 28px;background:#2d2b25;color:#fdfcf9;font-size:13px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;text-decoration:none;border-radius:3px;">Add to Calendar</a><p class="email-muted" style="font-size:11px;color:#8a8578;margin:8px 0 0;">An .ics file is also attached for Apple &amp; Outlook calendars</p></div>` : ""}
+    <p class="email-muted" style="font-size:13px;color:#8a8578;margin:0;text-align:center;">You can view the full wedding details at<br><a class="email-link" href="${siteUrl(site)}" style="color:#2d2b25;">${escapeHtml(siteUrlDisplay(site))}</a></p>
   `;
 
   return baseLayout(content, site);
@@ -109,21 +131,21 @@ export function rsvpNotificationHtml(
   for (const g of guests) {
     const status = g.attending ? "Attending" : "Declined";
     const meal = g.mealChoice ? ` — ${escapeHtml(g.mealChoice)}${g.isHalal ? " (Halal)" : ""}` : "";
-    guestList += `<li style="font-size:14px;color:#2d2b25;padding:4px 0;">${escapeHtml(g.name)}: <strong>${status}</strong>${meal}</li>`;
+    guestList += `<li class="email-text" style="font-size:14px;color:#2d2b25;padding:4px 0;">${escapeHtml(g.name)}: <strong>${status}</strong>${meal}</li>`;
   }
 
   const content = `
-    <h1 style="font-size:22px;font-weight:normal;color:#2d2b25;text-align:center;margin:0 0 24px;">New RSVP Received</h1>
-    <p style="font-size:15px;color:#2d2b25;line-height:1.7;margin:0 0 8px;">
+    <h1 class="email-heading" style="font-size:22px;font-weight:normal;color:#2d2b25;text-align:center;margin:0 0 24px;">New RSVP Received</h1>
+    <p class="email-text" style="font-size:15px;color:#2d2b25;line-height:1.7;margin:0 0 8px;">
       <strong>${escapeHtml(email)}</strong> just submitted an RSVP:
     </p>
-    <p style="font-size:14px;color:#8a8578;margin:0 0 16px;">
+    <p class="email-muted" style="font-size:14px;color:#8a8578;margin:0 0 16px;">
       ${attending.length} attending${declined.length > 0 ? `, ${declined.length} declined` : ""}
     </p>
     <ul style="list-style:none;padding:0;margin:0 0 24px;">${guestList}</ul>
-    ${message ? `<div style="background:#f7f6f3;padding:16px;border-radius:4px;margin:0 0 24px;"><p style="font-size:13px;color:#8a8578;margin:0 0 4px;">Message:</p><p style="font-size:14px;color:#2d2b25;margin:0;font-style:italic;">"${escapeHtml(message)}"</p></div>` : ""}
-    <p style="font-size:13px;color:#8a8578;margin:0;text-align:center;">
-      <a href="https://ithinkshewifey.com/dashboard/${escapeHtml(site.slug)}" style="color:#2d2b25;">View all RSVPs in dashboard</a>
+    ${message ? `<div class="email-highlight" style="background:#f7f6f3;padding:16px;border-radius:4px;margin:0 0 24px;"><p class="email-muted" style="font-size:13px;color:#8a8578;margin:0 0 4px;">Message:</p><p class="email-text" style="font-size:14px;color:#2d2b25;margin:0;font-style:italic;">"${escapeHtml(message)}"</p></div>` : ""}
+    <p class="email-muted" style="font-size:13px;color:#8a8578;margin:0;text-align:center;">
+      <a class="email-link" href="https://ithinkshewifey.com/dashboard/${escapeHtml(site.slug)}" style="color:#2d2b25;">View all RSVPs in dashboard</a>
     </p>
   `;
 
@@ -140,14 +162,14 @@ export function broadcastEmailHtml(
     .split(/\n\n+/)
     .map((p) => p.trim())
     .filter(Boolean)
-    .map((p) => `<p style="font-size:15px;color:#2d2b25;line-height:1.7;margin:0 0 16px;">${escapeHtml(p).replace(/\n/g, "<br>")}</p>`)
+    .map((p) => `<p class="email-text" style="font-size:15px;color:#2d2b25;line-height:1.7;margin:0 0 16px;">${escapeHtml(p).replace(/\n/g, "<br>")}</p>`)
     .join("");
 
   const content = `
-    <h1 style="font-size:22px;font-weight:normal;color:#2d2b25;text-align:center;margin:0 0 24px;">${escapeHtml(subject)}</h1>
+    <h1 class="email-heading" style="font-size:22px;font-weight:normal;color:#2d2b25;text-align:center;margin:0 0 24px;">${escapeHtml(subject)}</h1>
     ${paragraphs}
-    <p style="font-size:13px;color:#8a8578;margin:24px 0 0;text-align:center;">
-      <a href="${siteUrl(site)}" style="color:#2d2b25;">View wedding details</a>
+    <p class="email-muted" style="font-size:13px;color:#8a8578;margin:24px 0 0;text-align:center;">
+      <a class="email-link" href="${siteUrl(site)}" style="color:#2d2b25;">View wedding details</a>
     </p>
   `;
 

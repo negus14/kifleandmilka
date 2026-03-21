@@ -1,6 +1,7 @@
 import { ImageResponse } from "next/og";
 import { getSiteBySlug } from "@/lib/data/sites";
 import { ogImageUrl, generateAndUploadOgImage } from "@/lib/og-image";
+import { resolveOgColors } from "@/lib/og-image";
 import { R2_PUBLIC_URL } from "@/lib/r2";
 import { getOgFont, ogFontConfig } from "@/lib/og-font";
 
@@ -45,6 +46,7 @@ export default async function OGImage({
   const i1 = (site.partner1Name || "A").charAt(0).toUpperCase();
   const i2 = (site.partner2Name || "B").charAt(0).toUpperCase();
   const fontData = await getOgFont();
+  const { bg, fg } = resolveOgColors(site);
 
   const response = new ImageResponse(
     (
@@ -55,7 +57,7 @@ export default async function OGImage({
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: "#2d2b25",
+          backgroundColor: bg,
           fontFamily: "'Playfair Display', serif",
         }}
       >
@@ -64,7 +66,7 @@ export default async function OGImage({
             fontSize: 140,
             fontWeight: 700,
             fontStyle: "italic",
-            color: "#faf1e1",
+            color: fg,
           }}
         >
           {i1} & {i2}
