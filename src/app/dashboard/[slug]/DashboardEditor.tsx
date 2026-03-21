@@ -2807,7 +2807,7 @@ export default function DashboardEditor({ site: initial }: { site: WeddingSite }
           <button
             onClick={handleCheckout}
             disabled={isPaying}
-            className="px-4 py-1.5 bg-[var(--dash-surface)] text-[var(--dash-text)] text-[10px] font-bold uppercase tracking-widest rounded-sm hover:bg-[var(--dash-surface)]/90 disabled:opacity-50 transition-all"
+            className="px-4 py-1.5 bg-[var(--dash-bg)] text-[var(--dash-btn-bg)] text-[10px] font-bold uppercase tracking-widest rounded-sm hover:opacity-90 disabled:opacity-50 transition-all"
           >
             {isPaying ? "Loading..." : "Upgrade — £50"}
           </button>
