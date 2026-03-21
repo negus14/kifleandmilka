@@ -58,11 +58,16 @@ async function uploadOgVariant(
   style: "light" | "dark",
   fontData: ArrayBuffer,
 ): Promise<void> {
-  if (!r2 || !R2_BUCKET) return;
+  if (!r2 || !R2_BUCKET) {
+    console.warn(`[OG] Skipping ${style} upload for ${site.slug} — R2 not configured`);
+    return;
+  }
 
   const i1 = (site.partner1Name || "A").charAt(0).toUpperCase();
   const i2 = (site.partner2Name || "B").charAt(0).toUpperCase();
   const { bg, fg } = resolveOgColors(site, style);
+
+  console.log(`[OG] Generating ${style} variant for ${site.slug} (bg: ${bg}, fg: ${fg})`);
 
   const response = new ImageResponse(
     buildOgJsx(`${i1} & ${i2}`, bg, fg),
@@ -74,28 +79,47 @@ async function uploadOgVariant(
   );
 
   const arrayBuffer = await response.arrayBuffer();
+  const key = ogImageKey(site.slug, style);
 
   await r2.send(
     new PutObjectCommand({
       Bucket: R2_BUCKET,
-      Key: ogImageKey(site.slug, style),
+      Key: key,
       Body: new Uint8Array(arrayBuffer),
       ContentType: "image/png",
       CacheControl: "public, max-age=31536000, immutable",
     })
   );
+
+  console.log(`[OG] ✓ Uploaded ${key} (${arrayBuffer.byteLength} bytes)`);
 }
 
 export async function generateAndUploadOgImage(site: WeddingSite): Promise<string | null> {
-  if (!r2 || !R2_BUCKET || !R2_PUBLIC_URL) return null;
+  if (!r2 || !R2_BUCKET || !R2_PUBLIC_URL) {
+    console.warn(`[OG] Cannot generate OG images — R2 not configured (r2: ${!!r2}, bucket: ${!!R2_BUCKET}, url: ${!!R2_PUBLIC_URL})`);
+    return null;
+  }
 
-  const fontData = await getOgFont();
+  console.log(`[OG] Generating OG images for ${site.slug} (ogStyle: ${site.ogStyle ?? "light"}, template: ${site.templateId})`);
 
-  // Generate both light and dark variants
-  await Promise.all([
+  let fontData: ArrayBuffer;
+  try {
+    fontData = await getOgFont();
+  } catch (err) {
+    console.error(`[OG] Failed to load font:`, err);
+    return null;
+  }
+
+  const results = await Promise.allSettled([
     uploadOgVariant(site, "light", fontData),
     uploadOgVariant(site, "dark", fontData),
   ]);
+
+  for (const [i, result] of results.entries()) {
+    if (result.status === "rejected") {
+      console.error(`[OG] Failed to upload ${i === 0 ? "light" : "dark"} variant for ${site.slug}:`, result.reason);
+    }
+  }
 
   const style = site.ogStyle ?? "light";
   return ogImageUrl(site.slug, style);

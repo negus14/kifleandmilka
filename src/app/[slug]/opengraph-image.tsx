@@ -32,6 +32,7 @@ export default async function OGImage({
     try {
       const res = await fetch(r2Url);
       if (res.ok) {
+        console.log(`[OG] Serving from R2: ${r2Url}`);
         return new Response(res.body, {
           headers: {
             "Content-Type": "image/png",
@@ -39,8 +40,9 @@ export default async function OGImage({
           },
         });
       }
-    } catch {
-      // Fall through
+      console.log(`[OG] R2 miss (${res.status}) for ${r2Url}, generating on-the-fly`);
+    } catch (err) {
+      console.warn(`[OG] R2 fetch error for ${r2Url}:`, err);
     }
   }
 
