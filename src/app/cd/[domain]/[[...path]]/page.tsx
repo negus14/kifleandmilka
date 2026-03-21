@@ -3,8 +3,6 @@ import { notFound } from "next/navigation";
 import { getSiteByDomain } from "@/lib/data/sites";
 import ClassicTemplate from "@/templates/classic/Template";
 import ModernTemplate from "@/templates/modern/Template";
-import { ogImageUrl } from "@/lib/og-image";
-import { R2_PUBLIC_URL } from "@/lib/r2";
 
 type Props = { params: Promise<{ domain: string; path?: string[] }> };
 
@@ -13,11 +11,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const site = await getSiteByDomain(domain);
   if (!site || !site.isPublished || !site.isPaid) return {};
 
-  // Prefer R2 direct URL (no redirects for scrapers to follow), fall back to slug route
-  const style = site.ogStyle ?? "light";
-  const ogImage = R2_PUBLIC_URL
-    ? ogImageUrl(site.slug, style)
-    : `https://www.ithinkshewifey.com/${site.slug}/opengraph-image`;
+  // Always use the slug-based OG route — it handles R2 caching internally
+  // and generates on-the-fly if the cached image doesn't exist yet
+  const ogImage = `https://www.ithinkshewifey.com/${site.slug}/opengraph-image`;
   const description = `Join us in celebrating the wedding of ${site.partner1Name} and ${site.partner2Name} — ${site.dateDisplayText} in ${site.locationText}.`;
 
   return {

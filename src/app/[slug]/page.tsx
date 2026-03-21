@@ -5,9 +5,6 @@ import ClassicTemplate from "@/templates/classic/Template";
 import ModernTemplate from "@/templates/modern/Template";
 import { getSession } from "@/lib/auth";
 import Link from "next/link";
-import { ogImageUrl } from "@/lib/og-image";
-import { R2_PUBLIC_URL } from "@/lib/r2";
-
 type Props = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -18,10 +15,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const displayUrl = site.customDomain
     ? `https://${site.customDomain}`
     : `https://${slug}.ithinkshewifey.com`;
-  const style = site.ogStyle ?? "light";
-  const ogImage = R2_PUBLIC_URL
-    ? ogImageUrl(slug, style)
-    : `https://www.ithinkshewifey.com/${slug}/opengraph-image`;
+  // Use the opengraph-image route which handles R2 caching + on-the-fly generation
+  const ogImage = `https://www.ithinkshewifey.com/${slug}/opengraph-image`;
   const description = `Join us in celebrating the wedding of ${site.partner1Name} and ${site.partner2Name} — ${site.dateDisplayText} in ${site.locationText}.`;
   return {
     metadataBase: new URL("https://www.ithinkshewifey.com"),
