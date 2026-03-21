@@ -139,6 +139,7 @@ export default function RSVPForm({ slug, mealOptions, mealDietaryOptions, calend
   const [dialCode, setDialCode] = useState("+44");
   const [phoneLocal, setPhoneLocal] = useState("");
   const [message, setMessage] = useState("");
+  const [allergies, setAllergies] = useState<string[]>([]);
   
   const options = (mealOptions && mealOptions.length > 0) 
     ? mealOptions 
@@ -203,7 +204,7 @@ export default function RSVPForm({ slug, mealOptions, mealDietaryOptions, calend
           slug,
           email,
           phone: phoneLocal ? `${dialCode}${phoneLocal.replace(/[^0-9]/g, "").replace(/^0/, "")}` : undefined,
-          message,
+          message: [message, allergies.length > 0 ? `Allergies: ${allergies.join(", ")}` : ""].filter(Boolean).join("\n") || undefined,
           guests: formattedGuests,
         }),
       });
@@ -264,6 +265,7 @@ export default function RSVPForm({ slug, mealOptions, mealDietaryOptions, calend
             setGuests([createEmptyGuest()]);
             setEmail("");
             setPhoneLocal("");
+            setAllergies([]);
             setMessage("");
           }}
           className="rsvp__button rsvp__button--outline"
@@ -276,14 +278,14 @@ export default function RSVPForm({ slug, mealOptions, mealDietaryOptions, calend
   }
 
   return (
-    <form onSubmit={handleSubmit} className="rsvp__form" style={{ textAlign: "left", maxWidth: "600px", margin: "0 auto" }}>
-      <div className="rsvp__field">
+    <form onSubmit={handleSubmit} className="rsvp__form">
+      <div className="rsvp__field rsvp__field--centered">
         <label htmlFor="email" className="rsvp__label">Your Email Address</label>
         <input
           id="email"
           type="email"
           required
-          className="rsvp__input"
+          className="rsvp__input rsvp__input--narrow"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="your.email@example.com"
@@ -291,9 +293,9 @@ export default function RSVPForm({ slug, mealOptions, mealDietaryOptions, calend
         <p style={{ fontSize: "0.8rem", opacity: 0.7, marginTop: "0.2rem" }}>We will send any updates here.</p>
       </div>
 
-      <div className="rsvp__field">
+      <div className="rsvp__field rsvp__field--centered">
         <label htmlFor="phone" className="rsvp__label">WhatsApp Number (Optional)</label>
-        <div className="rsvp__phone-row">
+        <div className="rsvp__phone-row rsvp__phone-row--narrow">
           <CountryCodePicker
             value={dialCode}
             onChange={setDialCode}
@@ -314,35 +316,17 @@ export default function RSVPForm({ slug, mealOptions, mealDietaryOptions, calend
         <p style={{ fontSize: "0.8rem", opacity: 0.7, marginTop: "0.2rem" }}>For WhatsApp updates and calendar invites.</p>
       </div>
 
-      <div style={{ marginTop: "2rem", marginBottom: "1rem" }}>
-        <h3 className="rsvp__label" style={{ fontSize: "1.2rem", borderBottom: "1px solid rgba(0,0,0,0.1)", paddingBottom: "0.5rem" }}>Guest Details</h3>
+      <div className="rsvp__guest-heading-wrap">
+        <h3 className="rsvp__label rsvp__guest-heading">Guest Details</h3>
       </div>
 
       {guests.map((guest, index) => (
-        <div key={guest.id} style={{ 
-          marginBottom: "1.5rem", 
-          padding: "1rem", 
-          background: "rgba(0,0,0,0.02)", 
-          borderRadius: "8px",
-          position: "relative"
-        }}>
+        <div key={guest.id} className="rsvp__guest-card">
           {guests.length > 1 && (
-            <button 
-              type="button" 
+            <button
+              type="button"
               onClick={() => removeGuest(guest.id)}
-              style={{
-                position: "absolute",
-                top: "1rem",
-                right: "1rem",
-                background: "none",
-                border: "none",
-                color: "inherit",
-                opacity: 0.5,
-                cursor: "pointer",
-                fontSize: "0.8rem",
-                textTransform: "uppercase",
-                letterSpacing: "0.1em"
-              }}
+              className="rsvp__guest-remove"
             >
               Remove
             </button>
@@ -364,8 +348,8 @@ export default function RSVPForm({ slug, mealOptions, mealDietaryOptions, calend
             />
           </div>
 
-          <div className="rsvp__row" style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
-            <div className="rsvp__field" style={{ flex: "1 1 200px" }}>
+          <div className="rsvp__row">
+            <div className="rsvp__field">
               <label className="rsvp__label">Will attend?</label>
               <select
                 className="rsvp__select"
@@ -378,7 +362,7 @@ export default function RSVPForm({ slug, mealOptions, mealDietaryOptions, calend
             </div>
 
             {guest.attending === "yes" && (
-              <div className="rsvp__field" style={{ flex: "1 1 200px" }}>
+              <div className="rsvp__field">
                 <label className="rsvp__label">Meal Choice</label>
                 <select
                   className="rsvp__select"
@@ -432,7 +416,7 @@ export default function RSVPForm({ slug, mealOptions, mealDietaryOptions, calend
         <textarea
           id="message"
           className="rsvp__textarea"
-          rows={3}
+          rows={4}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder="Any additional notes or well wishes"

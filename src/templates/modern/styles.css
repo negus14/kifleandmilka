@@ -1086,7 +1086,8 @@ img[data-zoomable] {
 
 /* ===== GIFT CONTRIBUTION FORM ===== */
 .gift-contrib {
-  margin-top: 4rem;
+  margin: 4rem auto 0;
+  max-width: 560px;
   text-align: left;
 }
 
@@ -1206,12 +1207,32 @@ img[data-zoomable] {
 }
 
 .gift-contrib__form {
-  max-width: 550px;
+  max-width: 560px;
   margin: 0 auto;
+  text-align: left;
 }
 
 .gift-contrib__field {
   margin-bottom: 1.25rem;
+}
+
+.gift-contrib__field--centered {
+  text-align: center;
+}
+
+.gift-contrib__input--narrow {
+  max-width: 75%;
+  display: block;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.gift-contrib__amount-row {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  max-width: 50%;
+  margin: 0 auto;
 }
 
 .gift-contrib__label {
@@ -1438,7 +1459,7 @@ img[data-zoomable] {
 
 .rsvp__form {
   text-align: left;
-  max-width: 500px;
+  max-width: 560px;
   margin: 0 auto;
 }
 
@@ -1459,10 +1480,21 @@ img[data-zoomable] {
 }
 
 .rsvp__input,
-.rsvp__select,
+.rsvp__select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  border: 1px solid color-mix(in srgb, var(--color-dark), transparent 85%);
+  background: white;
+  color: var(--color-dark);
+  border-radius: 0;
+  transition: all 0.3s ease;
+}
+
 .rsvp__textarea {
   width: 100%;
-  padding: 1.1rem 1.25rem;
+  padding: 0.85rem 1rem;
   font-family: var(--font-sans);
   font-size: 1rem;
   border: 1px solid color-mix(in srgb, var(--color-dark), transparent 85%);
@@ -1496,7 +1528,7 @@ img[data-zoomable] {
 .rsvp__row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 /* Phone number field with country code picker */
@@ -1514,13 +1546,74 @@ img[data-zoomable] {
   font-family: var(--font-sans);
   font-size: 0.9rem;
   min-width: 110px !important;
-  padding: 1.1rem 0.75rem !important;
+  padding: 0.75rem 0.75rem !important;
 }
 
 .rsvp__phone-input {
   flex: 1;
   border-top-left-radius: 0 !important;
   border-bottom-left-radius: 0 !important;
+}
+
+.rsvp__field--centered {
+  text-align: center;
+}
+
+.rsvp__input--narrow {
+  max-width: 75%;
+  display: block;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.rsvp__phone-row--narrow {
+  max-width: 50%;
+  margin: 0 auto;
+}
+
+.rsvp__guest-heading-wrap {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.rsvp__guest-heading {
+  font-size: 1.2rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-dark), transparent 90%);
+  padding-bottom: 0.5rem;
+}
+
+.rsvp__guest-card {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: color-mix(in srgb, var(--color-dark), transparent 98%);
+  border-radius: 8px;
+  position: relative;
+}
+
+.rsvp__guest-remove {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  color: inherit;
+  opacity: 0.5;
+  cursor: pointer;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.rsvp__guest-remove:hover {
+  opacity: 1;
+}
+
+.modern-section--dark .rsvp__guest-heading {
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+.modern-section--dark .rsvp__guest-card {
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .modern-section--dark .rsvp__label { color: var(--color-accent); }
@@ -1581,12 +1674,38 @@ img[data-zoomable] {
   color: var(--color-dark);
   border: 1px solid color-mix(in srgb, var(--color-dark), transparent 70%);
   font-weight: 500;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .rsvp__button--outline:hover {
   border-color: var(--color-dark);
   background: var(--color-dark);
   color: var(--color-primary);
+}
+
+.rsvp__allergy-btn {
+  padding: 0.5rem 1rem;
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  background: transparent;
+  color: var(--color-dark);
+  border: 1px solid color-mix(in srgb, var(--color-dark), transparent 80%);
+  border-radius: 0;
+  transition: all 0.3s ease;
+}
+
+.rsvp__allergy-btn:hover {
+  border-color: var(--color-dark);
+}
+
+.rsvp__allergy-btn--active {
+  background: var(--color-dark);
+  color: var(--color-primary);
+  border-color: var(--color-dark);
 }
 
 .modern-section--dark .rsvp__button {
@@ -1771,6 +1890,24 @@ img[data-zoomable] {
     font-size: 1.1rem;
   }
 
+  .rsvp__input--narrow,
+  .gift-contrib__input--narrow {
+    max-width: 100%;
+  }
+
+  .rsvp__phone-row--narrow,
+  .gift-contrib__amount-row {
+    max-width: 100%;
+  }
+
+  .rsvp__field--centered,
+  .gift-contrib__field--centered {
+    text-align: left;
+  }
+
+  .rsvp__row {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* ─── Inline Editable Text ─── */

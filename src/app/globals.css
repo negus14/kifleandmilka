@@ -409,7 +409,7 @@
 
 /* ─── Gift Contribution Form ─── */
 
-.gift-contrib { margin: 2rem auto; max-width: 600px; text-align: left; }
+.gift-contrib { margin: 2rem auto; max-width: 560px; text-align: left; }
 .gift-contrib__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
 .gift-contrib__card {
   background: rgba(0,0,0,0.02); border: 1px solid rgba(0,0,0,0.08); padding: 1.25rem;
@@ -431,8 +431,11 @@
 .gift-contrib__selected { margin-bottom: 1.5rem; }
 .gift-contrib__selected h4 { font-size: 1.1rem; font-weight: 600; }
 
-.gift-contrib__form { display: flex; flex-direction: column; gap: 1.25rem; }
+.gift-contrib__form { display: flex; flex-direction: column; gap: 1.25rem; max-width: 560px; margin: 0 auto; }
 .gift-contrib__field { display: flex; flex-direction: column; gap: 0.3rem; }
+.gift-contrib__field--centered { text-align: center; align-items: center; }
+.gift-contrib__input--narrow { max-width: 75%; text-align: left; }
+.gift-contrib__amount-row { display: flex; align-items: stretch; gap: 0; max-width: 50%; }
 .gift-contrib__label { font-size: 0.8rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.6; }
 .gift-contrib__input, .gift-contrib__textarea, .gift-contrib__select {
   width: 100%; padding: 0.75rem; border: 1px solid rgba(0,0,0,0.12); background: transparent;
@@ -445,7 +448,7 @@
   padding-right: 2.5rem; cursor: pointer;
 }
 .gift-contrib__input:focus, .gift-contrib__textarea:focus, .gift-contrib__select:focus { border-color: rgba(0,0,0,0.35); }
-.gift-contrib__textarea { resize: vertical; min-height: 80px; }
+.gift-contrib__textarea { resize: vertical; min-height: 120px; }
 .gift-contrib__error { color: #dc2626; font-size: 0.85rem; }
 
 .gift-contrib__btn {

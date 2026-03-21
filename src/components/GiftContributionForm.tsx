@@ -318,12 +318,12 @@ export default function GiftContributionForm({ slug, giftItems, currency, paymen
 
       <form onSubmit={handleSubmit} className="gift-contrib__form">
         {showName && (
-          <div className="gift-contrib__field">
+          <div className="gift-contrib__field gift-contrib__field--centered">
             <label className="gift-contrib__label">Your Name</label>
             <input
               type="text"
               required
-              className="gift-contrib__input"
+              className="gift-contrib__input gift-contrib__input--narrow"
               value={guestName}
               onChange={(e) => setGuestName(e.target.value)}
               placeholder="Your full name"
@@ -331,9 +331,9 @@ export default function GiftContributionForm({ slug, giftItems, currency, paymen
           </div>
         )}
 
-        <div className="gift-contrib__field">
+        <div className="gift-contrib__field gift-contrib__field--centered">
           <label className="gift-contrib__label">Amount</label>
-          <div style={{ display: "flex", alignItems: "stretch", gap: "0" }}>
+          <div className="gift-contrib__amount-row">
             {effectiveCurrencies.length > 1 ? (
               <select
                 value={selectedCurrency}
@@ -401,7 +401,7 @@ export default function GiftContributionForm({ slug, giftItems, currency, paymen
           <label className="gift-contrib__label">Well Wishes (Optional)</label>
           <textarea
             className="gift-contrib__textarea"
-            rows={3}
+            rows={5}
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             placeholder="Write a message to the couple..."
